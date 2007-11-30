@@ -1,58 +1,64 @@
-// ---
-DOMAssistant.AJAX = {
-	XMLHttp : null,
-	callbackFunction : null,
-	response : null,
-	
-	init: function (){
-		if(!this.XMLHttp){
-			if(typeof XMLHttpRequest != "undefined"){
-				this.XMLHttp = new XMLHttpRequest();
-			}
-			else if(typeof window.ActiveXObject != "undefined"){
-				try {
-					this.XMLHttp = new ActiveXObject("Msxml2.XMLHTTP.4.0");
+// Developed by Robert Nyman, code: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
+/*extern DOMAssistant */
+DOMAssistant.AJAX = function () {
+	var XMLHttp = null;
+	var callbackFunction = null;
+	return{
+		init: function () {
+			if (!XMLHttp) {
+				if (typeof XMLHttpRequest !== "undefined") {
+					XMLHttp = new XMLHttpRequest();
 				}
-				catch(e){
-					try {
-						this.XMLHttp = new ActiveXObject("MSXML2.XMLHTTP");
+				else if (typeof window.ActiveXObject !== "undefined") {
+					try{
+						XMLHttp = new window.ActiveXObject("Msxml2.XMLHTTP.4.0");
 					}
-					catch(e){
-						try {
-							this.XMLHttp = new ActiveXObject("Microsoft.XMLHTTP");
+					catch(e) {
+						try{
+							XMLHttp = new window.ActiveXObject("MSXML2.XMLHTTP");
 						}
-						catch(e){
-							this.XMLHttp = null;
+						catch(e2) {
+							try{
+								XMLHttp = new window.ActiveXObject("Microsoft.XMLHTTP");
+							}
+							catch(e3) {
+								XMLHttp = null;
+							}
 						}
 					}
 				}
 			}
-		}
-		return this.XMLHttp;
-	},
+			return XMLHttp;
+		},
 	
-	get : function (url, callbackFunction){
-		if(this.init()){
-			if(typeof callbackFunction != "undefined"){
-				this.callbackFunction = callbackFunction;
+		get : function (url, callBack) {
+			if (this.init()) {
+				callbackFunction = callBack;
+				// This line needed to properly control the onreadystatechange event for Firefox
+				XMLHttp.onreadystatechange = function () {};
+				XMLHttp.abort();
+				XMLHttp.open("GET", url, true);
+				XMLHttp.setRequestHeader("AJAX", "true");
+				XMLHttp.onreadystatechange = this.contentReady;
+				XMLHttp.send(null);
 			}
-			// This line needed to properly control the onreadystatechange event for Firefox
-			this.XMLHttp.onreadystatechange = function (){};
-			this.XMLHttp.abort();
-			this.XMLHttp.open("GET", url, true);
-			this.XMLHttp.onreadystatechange = this.contentReady;
-			this.XMLHttp.send(null);
-		}
-	},
+		},
+		
+		getReadyState : function () {
+			return (XMLHttp && typeof XMLHttp.readyState !== "undefined")? XMLHttp.readyState : null;
+		},
+		
+		callFunction : function () {
+			if (callbackFunction && typeof callbackFunction === "function") {
+				callbackFunction(XMLHttp.responseText);
+			}
+		},
 	
-	contentReady : function (){
-		var AJAXObj = DOMAssistant.AJAX;
-		if(AJAXObj.XMLHttp && AJAXObj.XMLHttp.readyState == 4){
-			AJAXObj.response = AJAXObj.XMLHttp.responseText;
-			if(AJAXObj.callbackFunction && typeof AJAXObj.callbackFunction == "function"){
-				AJAXObj.callbackFunction(AJAXObj.response);
+		contentReady : function () {
+			var AJAXObj = DOMAssistant.AJAX;
+			if (AJAXObj.getReadyState() === 4) {
+				AJAXObj.callFunction();
 			}
 		}
-	}
-};
-// ---
+	};
+}();
