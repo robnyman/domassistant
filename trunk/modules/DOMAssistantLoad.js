@@ -1,77 +1,64 @@
-/*
-	DOMAssistant is developed by Robert Nyman, http://www.robertnyman.com, and it is released according to the
-	Creative Commons Deed license (http://creativecommons.org/licenses/GPL/2.0/)
-	For more information, please see http://www.robertnyman.com/domassistant
-	
-	This module by Robert Nyman, http://www.robertnyman.com
-	Inspired and influenced by Dean Edwards, Matthias Miller, and John Resig: http://dean.edwards.name/weblog/2006/06/again/
-*/
-DOMAssistant.functionsToCall = [];
-
-DOMAssistant.DOMReady = function (){
-	var func;
-	var functionToCall;
-	for (var i=0; i<arguments.length; i++) {
-		func = arguments[i];
-		functionToCall = (typeof func == "function")? func : new Function(func);
-		this.functionsToCall.push(functionToCall);
+// Developed by Robert Nyman, code: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant. Module inspiration by Dean Edwards, Matthias Miller, and John Resig: http://dean.edwards.name/weblog/2006/06/again/
+/*extern DOMAssistant */
+DOMAssistant.DOMLoad = function () {
+	var DOMLoaded = false;
+	var DOMLoadTimer = null;
+	var functionsToCall = [];
+	var execFunctions = function () {
+		if (DOMLoaded) {
+			clearInterval(DOMLoadTimer);
+		}
+		for (var i=0, il=functionsToCall.length; i<il; i++) {
+			try{
+				functionsToCall[i]();
+			}
+			catch(e) {
+				// Optional: handle error here
+			}
+		}
 	};
-};
-
-DOMAssistant.initLoad = function (){
-	this.DOMLoaded = false;
-	this.DOMLoadTimer = null;
-};
-
-DOMAssistant.DOMHasLoaded = function (){
-	if(DOMAssistant.DOMLoaded) return;
-	DOMAssistant.DOMLoaded = true;
-	DOMAssistant.execFunctions();
-};
-
-DOMAssistant.execFunctions = function (){
-	if(this.DOMLoaded){
-		clearInterval(this.DOMLoadTimer);
-	}
-	var functionToCall;
-	for(var i=0; i<this.functionsToCall.length; i++){
-		try{
-			this.functionsToCall[i]();
+	var DOMHasLoaded = function () {
+		if (DOMLoaded) {
+			return;
 		}
-		catch(e){
-			// Optional: handle error here
+		DOMLoaded = true;
+		execFunctions();
+	};
+	/* Internet Explorer */
+	/*@cc_on @*/
+	/*@if (@_win32)
+		if (document.getElementById) {
+			document.write("<script id=\"ieScriptLoad\" defer src=\"//:\"><\/script>");
+		    document.getElementById("ieScriptLoad").onreadystatechange = function() {
+		        if (this.readyState == "complete") {
+		            DOMHasLoaded();
+		        }
+		    };
 		}
+	/*@end @*/
+	/* Mozilla/Opera 9 */
+	if (document.addEventListener) {
+		document.addEventListener("DOMContentLoaded", DOMHasLoaded, false);
 	}
-};
-// ---
-/* Internet Explorer */
-/*@cc_on @*/
-/*@if (@_win32)
-	if(document.getElementById){
-		document.write("<script id=\"ieScriptLoad\" defer src=\"//:\"><\/script>");
-	    document.getElementById("ieScriptLoad").onreadystatechange = function() {
-	        if (this.readyState == "complete") {
-	            DOMAssistant.DOMHasLoaded();
-	        }
-	    };
+	/* Safari */
+	if (navigator.userAgent.search(/WebKit/i) !== -1) {
+	    DOMLoadTimer = setInterval(function () {
+			if (document.readyState.search(/loaded|complete/i) !== -1) {
+				var loaded = new DOMHasLoaded();
+			}
+		}, 10);
 	}
-/*@end @*/
-// ---
-/* Mozilla/Opera 9 */
-if (document.addEventListener) {
-	document.addEventListener("DOMContentLoaded", DOMAssistant.DOMHasLoaded, false);
-}
-// ---
-/* Safari */
-if(navigator.userAgent.search(/WebKit/i) != -1){
-    DOMAssistant.DOMLoadTimer = setInterval(function (){
-		if(document.readyState.search(/loaded|complete/i) != -1) {
-			DOMAssistant.DOMHasLoaded();
+	/* Other web browsers */
+	window.onload = DOMHasLoaded;
+	
+	return{
+		DOMReady : function () {
+			for (var i=0, il=arguments.length, func, callFunc; i<il; i++) {
+				func = arguments[i];
+				callFunc = (typeof func === "function")? func : new Function(func);
+				functionsToCall.push(callFunc);
+			}
 		}
-	}, 10);
-}
-// ---
-/* Other web browsers */
-window.onload = DOMAssistant.DOMHasLoaded;
-// ---
-DOMAssistant.initLoad();
+	};
+}();
+DOMAssistant.DOMReady = DOMAssistant.DOMLoad.DOMReady;
