@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/DTD/strict.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>DOM Assistant demo - DOM Assistant, the modular lightweight JavaScript library</title>
+	<script type="text/javascript" src="js/modules/DOMAssistant.js"></script>
+	<script type="text/javascript" src="js/modules/DOMAssistantLoad.js"></script>
+	<script type="text/javascript" src="js/modules/DOMAssistantCSS.js"></script>
+	<script type="text/javascript" src="js/modules/DOMAssistantContent.js"></script>
+	<script type="text/javascript" src="js/modules/DOMAssistantEvents.js"></script>
+	<script type="text/javascript" src="js/modules/DOMAssistantAJAX.js"></script>
+	<!--<script type="text/javascript" src="js/DOMAssistantCompressed.js"></script>-->
+	<script type="text/javascript" src="js/general.js"></script>
+	<script type="text/javascript">
+		DOMAssistant.DOMReady(function (){
+			var itemToTest = 0;
+			switch(itemToTest){
+				case 0:
+					// #container
+					try{
+						$("#empty").next().addClass("testing");
+						$("#empty").create("em", {
+							width : "200"
+						}, true, "ROB!");
+						$("#empty").addEvent("click", function (){
+							alert("Hejsan Robert");
+						});
+						$("#container").addClass("testing").replaceContent("apa");
+						$("#link-parent").addEvent("click", function (evt){
+							alert("link-parent");
+						});
+						$("#dn-link").addEvent("click", function (evt){
+							alert("Hej");
+							DOMAssistant.preventDefault(evt);
+							DOMAssistant.cancelBubble(evt);
+						});
+					}
+					catch(e){
+						alert(e);	
+					}	
+					break;
+				case 1:
+					// .item
+					$(".item").addClass("testing");
+					break;
+				case 2:
+					// #container.item
+					$("#container.item").addClass("testing");
+					break;
+				case 3:
+					// p.info.error
+					$("#container.item.test-2").addClass("testing");
+					break;
+				case 4:
+					// div p
+					$("div p").addClass("testing");
+					break;
+				case 5:
+					// div > p
+					$("div > p").addClass("testing");
+					break;
+				case 6:
+					// p + p
+					$("p + p").addClass("testing");
+					break;
+				case 7:
+					// div ~ p
+					$("h3 ~ ul").addClass("testing");
+					break;
+				case 8:
+					// [id]
+					$("div[id]").addClass("testing");
+					break;
+				case 9:
+					// [id=container]
+					$("div[id=pseudo-test]").addClass("testing");
+					break;
+				case 10:
+					// div:first-child
+					$("em:first-child").addClass("testing");
+					break;
+				case 11:
+					// div:last-child
+					$("em:last-child").addClass("testing");
+					break;
+				case 12:
+					// div:only-child
+					$("em:only-child").addClass("testing");
+					break;
+				case 13:
+					// div:empty
+					$("div:empty").addClass("testing");
+					break;
+				case 14:
+					// *:not(div), NOT IMPLEMENTED
+					$("div:not(div)").addClass("testing");
+					break;
+				case 15:
+					// div:nth-child(2)
+					$("#pseudo-test:nth-child(2)").addClass("test-again");
+					break;
+				case 16:
+					// div:nth-child(odd)
+					$("#pseudo-test:nth-child(odd)").addClass("test-again");
+					break;
+				case 17:
+					// div:nth-child(even)
+					$("#pseudo-test:nth-child(even)").addClass("test-again");
+					break;
+				case 18:
+					// div:nth-child(n5+3)
+					$("#pseudo-test:nth-child(5n+3)").addClass("test-again");
+					break;
+			}
+			
+			if(false){
+				//$("#container.item.test-2").addClass("testing");
+				//$("#container *[type=text]").addClass("test-again");
+				//$("p + p span.da-span").addClass("test-again");
+				//$("#peudo-test:nth-child(2)").addClass("test-again");
+				//$("#peudo-test:nth-child(odd)").addClass("test-again");
+				//$("#peudo-test:nth-child(5n+3)").addClass("test-again");
+				//$("#peudo-test-parent div > span").addClass("test-again");
+				//$("#peudo-test div ~ span").addClass("test-again");
+				//$("#container *[type=text][value=Yes]").addClass("test-again");
+				//$("#main-content[class=more]").addClass("test-again");
+				// $("div#container.item .inner").addEvent("click", function (){
+				// 				//alert("Hello");
+				// 			});
+			}
+		});
+		
+		
+		// var myNamespace = {
+		// 			
+		// 		};
+		// 		myNamespace.myObject = function (){
+		// 			var apa = "Gris";
+		// 			return {
+		// 				getApa : function (){
+		// 					alert(apa);
+		// 				}
+		// 			};
+		// 		}();
+		// 		alert(myNamespace.myObject.getApa());
+		
+		
+		
+	</script>
+	
+	<style type="text/css">
+		@import url("css/domassistant.css");
+		.testing{
+			/*background: red;
+						border: 7px dashed yellow;*/
+			display: block;
+			color: #000 !important;
+			background: yellow;
+			padding: 10px;
+			border: 1px solid red;			
+		}
+		.test-again{
+			display: block;
+			padding: 10px;
+			border: 1px solid red;
+		}
+	</style>
+	<!--[if lt IE 7]>
+		<link rel="stylesheet" href="css/ie.css" type="text/css">
+	<![endif]-->
+</head>
+
+<body>
+	
+	<div id="empty" style="width: 100px; height: 100px; border: 1px solid blue;">Hej</div>
+
+	<div id="link-parent">
+		<span id="dn-link" href="http://www.dn.se">DN</span>
+	</div>
+	
+	
+	<h6>
+		<em>Hej</em>
+	</h6>
+	<h6>
+		<em>Hej</em>
+		<em>Hej 2</em>
+		<em>Hej 3</em>
+	</h6>
+	
+	<div id="container" class="item test-2 test-3">
+		<p>P child to #container</p>
+		<div id="pseudo-test-parent">
+			<div id="pseudo-test" class="apa">
+				<!-- <span>Span 1</span>
+								<div>Div 1</div>
+								<span>Span 1</span> -->
+				<p>P 1</p>
+				<p>P 2</p>
+				<p>P 3</p>
+				<!-- <span>Span 2</span> -->
+				<p>P 4</p>
+				<p>P 5</p>
+				<p>P 6</p>
+				<p>P 7</p>
+				<p>P 8</p>
+				<p>P 9</p>
+				<p>P 10</p>
+			</div>
+		</div>	
+		<div id="inner-container" class="inner">
+			<div id="main-content" class="more">
+				<input id="apa" type="text" name="some_name" value="Yes" class="one"><br>
+				<input type="text" name="some_name" value=""><br>
+				<input type="text" name="some_name" value="" class="one"><br>
+				<input type="text" name="some_name" value=""><br>
+				<input type="button" name="some_name" value="Knapp"><br>
+				
+				<h1><a href="index.htm">ScriptTest</a></h1>
+				<h2 id="domass-demo-title">Test</h2>
+				<p id="first-paragraph" class="paragraph">When you click the link below, a short demo of some of the DOMAssistant methods will start. It will display what code is run (within this web page), and the result of that call. Note! This requires that you have JavaScript activated, since it is a demo of JavaScript calls.</p>
+				<p class="paragraph"><a id="start-demo" href="#demo">Start the demo</a></p>
+			</div>
+			
+			<div id="navigation">
+				<div id="navigation-inner">
+					<p><span>Hejsan</span><em>Current version <span class="next">is</span> 2.0, released September 19th 2007.</em></p>
+					<p><span>Hejsan</span><em>November 8th 2007 <span class="da-span">update</span>: <code>elmsByAttribute</code> update. <a href="Release-notes.txt">Release notes</a></em></p>
+					<h3>Information</h3>
+					<ul>
+						<li class="apa"><a href="index.htm">Introduction</a></li>
+						<li class="apa"><a href="compatibility.htm">Compatibility</a></li>
+						<li class="apa"><a href="demo.htm" class="selected">Demo</a></li>
+					</ul>
+				
+					<h3>Module documentation</h3>
+					<ul>
+						<li><a href="modules-domassistant.htm">DOMAssistant</a></li>
+						<li><a href="modules-domassistant-ajax.htm">DOMAssistantAJAX</a></li>
+						<li><a href="modules-domassistant-content.htm">DOMAssistantContent</a></li>
+						<li><a href="modules-domassistant-css.htm">DOMAssistantCSS</a></li>
+						<li><a href="modules-domassistant-events.htm">DOMAssistantEvents</a></li>						
+						<li><a href="modules-domassistant-load.htm">DOMAssistantLoad</a></li>
+						<li><a href="documentation/DOMAssistant-documentation.pdf">Complete documentation (PDF)</a></li>
+						<li><a href="documentation/DOMAssistant-diagram.pdf">Diagram with all modules and methods (PDF)</a></li>
+					</ul>
+	
+					<h3>Downloads</h3>
+					
+					<h4>Complete files with all modules</h4>
+					<ul>
+						<li><a href="js/DOMAssistantCompressed.js">Compressed (10 kb)</a></li>
+						<li><a href="js/DOMAssistantComplete.js">Uncompressed (16 kb)</a></li>
+					</ul>
+					
+					<h4>Module by module</h4>
+					<ul>
+						<li><a href="js/modules/DOMAssistant-modules.zip">All DOMAssistant modules ZIP file (5 kb)</a></li>
+						<li><a href="js/modules/DOMAssistant.js">DOMAssistant (4.2 kb)</a></li>
+						<li><a href="js/modules/DOMAssistantAJAX.js">DOMAssistantAJAX (1.4 kb)</a></li>
+						<li><a href="js/modules/DOMAssistantContent.js">DOMAssistantContent (3.4 kb)</a></li>
+						<li><a href="js/modules/DOMAssistantCSS.js">DOMAssistantCSS (2.5 kb)</a></li>
+						<li><a href="js/modules/DOMAssistantEvents.js">DOMAssistantEvents (2.2 kb)</a></li>
+						<li><a href="js/modules/DOMAssistantLoad.js">DOMAssistantLoad (2.1 kb)</a></li>
+					</ul>
+								
+					<h3>Comments/updates</h3>
+					<ul>
+						<li><a href="http://www.robertnyman.com/2007/01/25/domass-the-dom-assistant/">First release blog post with comments and information</a></li>
+						<li><a href="http://www.robertnyman.com/2007/09/20/releasing-domassistant-20-chainability-ajax-module-domready-xpath-and-more/">Version 2.0 release blog post with comments and information</a></li>
+					</ul>
+					
+					<h3>Sign up for updates</h3>
+					<p>Send an e-mail to domassistant [at] robertnyman [dot] com to verify your e-mail address and receive information about updates</p>
+				
+					<h3>Contact</h3>
+					<ul>
+						<li><a href="http://www.robertnyman.com/about">Contact the author</a></li>
+					</ul>
+				</div>	
+				
+			</div>		
+		</div>
+		
+		<div id="footer">
+			Created by Robert Nyman, <a href="http://www.robertnyman.com">http://www.robertnyman.com</a>
+		</div>
+		
+	</div>
+	
+	
+	
+</body>
+</html>

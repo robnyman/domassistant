@@ -1,0 +1,9 @@
+Update: 
+
+Added wildcard character for the attribute value for elmsByAttribute. Example: $("contact-form").elmsByAttribute("title", "*", "input");
+
+Updated files:
+
+DOMAssistant.js
+DOMAssistantComplete.js
+DOMAssistantCompressed.js
