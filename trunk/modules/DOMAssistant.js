@@ -228,18 +228,16 @@ var DOMAssistant = function () {
 								*/
 								
 								var attributeSelectors = rule.replace(/(\])(\[)/, "$1 $2").split(" ");
-								var attributeParent = (matchingElms.length > 0)? DOMAssistant : prevElm;
 								var preDefElms = (matchingElms.length > 0)? matchingElms : null;
 								var matchingAttributeElms;
-								try{
 								for (var p=0, pl=attributeSelectors.length; p<pl; p++) {
 									matchingAttributeElms = new HTMLArray();
 									attributeMatch = /(\w+)?\[(\w+)(\^|\$|\*)?=?(\w+)?\]/.exec(attributeSelectors[p]);
 									var attribute = RegExp.$2;
-									var attrVal = (RegExp.$4.length > 0)? RegExp.$4 : null;
+									var attrVal = (RegExp.$4.length > 0)? RegExp.$4 : "*";
 									var tag = (RegExp.$1.length > 0)? RegExp.$1 : null;
 									var substrMatchSelector = (RegExp.$3.length > 0)? RegExp.$3 : null;
-									matchingAttributeElms = attributeParent.elmsByAttribute(attribute, attrVal, tag, preDefElms, substrMatchSelector);
+									matchingAttributeElms = prevElm.elmsByAttribute(attribute, attrVal, tag, preDefElms, substrMatchSelector);
 									if (matchingAttributeElms.length === 0) {
 										break;
 									}
@@ -248,10 +246,6 @@ var DOMAssistant = function () {
 									}
 								}
 								matchingElms = matchingAttributeElms;
-								}
-								catch(e){
-									alert(e);
-								}
 							}
 							var pseudoMatch = /:(\w+[\w\-]*)(\(((odd|even)|\d+n?((\+|\-)\d+)?)\))?/.exec(rule);
 							if (pseudoMatch && matchingElms.length > 0) {
@@ -371,11 +365,24 @@ var DOMAssistant = function () {
 		},
 	
 		elmsByAttribute : function (attr, attrVal, tag, preDefElms, substrMatchSelector) {
-			if (!document.evaluate) {
-				DOMAssistant.elmsByAttribute = function (attr, attrVal, tag) {
+			if (document.evaluate) {
+				DOMAssistant.elmsByAttribute = function (attr, attrVal, tag, preDefElms, substrMatchSelector) {
 					var returnElms = new HTMLArray();
-					var attributeVal = (typeof attrVal === "undefined" || attrVal === "*")? "" : " = '" + attrVal + "'";
-					var xPathNodes = document.evaluate(".//" + (tag || "*") + "[@" + attr + attributeVal + "]", this, null, 0, null);
+					var attributeSelection = "@" + attr + ((typeof attrVal === "undefined" || attrVal === "*")? "" : " = '" + attrVal + "'");
+					if(typeof substrMatchSelector === "string"){
+						if(/\^/.test(substrMatchSelector)){
+							attributeSelection = "starts-with(@" + attr + ", '" + attrVal + "')";
+						}
+						else if(/\$/.test(substrMatchSelector)){
+							attributeSelection = "substring(@" + attr + ", (string-length(@" + attr + ") - " + (attrVal.length - 1) + "), 6) = '" + attrVal + "'";
+						}
+						else if(/\*/.test(substrMatchSelector)){
+							attributeSelection = "contains(concat(' ', @" + attr + ", ' '), '" + attrVal + "')";
+						}
+					}
+					//alert(".//" + (tag || "*") + "[" + attributeSelection + "]");
+					var xPathNodes = document.evaluate(".//" + (tag || "*") + "[" + attributeSelection + "]", this, null, 0, null);
+					//alert(xPathNodes);
 					var node = xPathNodes.iterateNext();
 					while(node) {
 						returnElms.push(node);
