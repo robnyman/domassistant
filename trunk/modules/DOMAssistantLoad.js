@@ -1,4 +1,4 @@
-// Developed by Robert Nyman, code: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant. Module inspiration by Dean Edwards, Matthias Miller, and John Resig: http://dean.edwards.name/weblog/2006/06/again/
+// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant. Module inspiration by Dean Edwards, Matthias Miller, and John Resig: http://dean.edwards.name/weblog/2006/06/again/
 /*extern DOMAssistant */
 DOMAssistant.DOMLoad = function () {
 	var DOMLoaded = false;

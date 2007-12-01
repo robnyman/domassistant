@@ -1,4 +1,4 @@
-// Developed by Robert Nyman, code: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
+// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
 var DOMAssistant = function () {
 	var methodsToAdd = [];
 	var baseMethodsToAdd = [
