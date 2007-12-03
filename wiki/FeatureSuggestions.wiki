@@ -1,4 +1,4 @@
-#summary Feature suggestions.
+#summary This document will contain suggestion for new DOMAssistant features
 
 =Feature suggestions=
 
