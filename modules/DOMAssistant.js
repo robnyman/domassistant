@@ -357,7 +357,6 @@ var DOMAssistant = function () {
 					elm.push(prevElm[o]);
 				}
 			}
-			//alert(elm);
 			return elm;
 		},
 	
