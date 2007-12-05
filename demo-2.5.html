@@ -4,17 +4,17 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 	<title>DOM Assistant demo - DOM Assistant, the modular lightweight JavaScript library</title>
-	<script type="text/javascript" src="../modules/DOMAssistant.js"></script>
-	<script type="text/javascript" src="../modules/DOMAssistantLoad.js"></script>
-	<script type="text/javascript" src="../modules/DOMAssistantCSS.js"></script>
-	<script type="text/javascript" src="../modules/DOMAssistantContent.js"></script>
-	<script type="text/javascript" src="../modules/DOMAssistantEvents.js"></script>
-	<script type="text/javascript" src="../modules/DOMAssistantAJAX.js"></script>
+	<script type="text/javascript" src="modules/DOMAssistant.js"></script>
+	<script type="text/javascript" src="modules/DOMAssistantLoad.js"></script>
+	<script type="text/javascript" src="modules/DOMAssistantCSS.js"></script>
+	<script type="text/javascript" src="modules/DOMAssistantContent.js"></script>
+	<script type="text/javascript" src="modules/DOMAssistantEvents.js"></script>
+	<script type="text/javascript" src="modules/DOMAssistantAJAX.js"></script>
 	<!--<script type="text/javascript" src="js/DOMAssistantCompressed.js"></script>-->
 	<script type="text/javascript" src="js/general.js"></script>
 	<script type="text/javascript">
 		DOMAssistant.DOMReady(function (){
-			var itemToTest = 25;
+			var itemToTest = 26;
 			switch(itemToTest){
 				case 0:
 					// #container
@@ -119,23 +119,11 @@
 				case 25:
 					// input:checked
 					$("input:checked").addClass("margin");
-					break;		
-			}
-			
-			if(false){
-				//$("#container.item.test-2").addClass("testing");
-				//$("#container *[type=text]").addClass("test-again");
-				//$("p + p span.da-span").addClass("test-again");
-				//$("#peudo-test:nth-child(2)").addClass("test-again");
-				//$("#peudo-test:nth-child(odd)").addClass("test-again");
-				//$("#peudo-test:nth-child(5n+3)").addClass("test-again");
-				//$("#peudo-test-parent div > span").addClass("test-again");
-				//$("#peudo-test div ~ span").addClass("test-again");
-				//$("#container *[type=text][value=Yes]").addClass("test-again");
-				//$("#main-content[class=more]").addClass("test-again");
-				// $("div#container.item .inner").addEvent("click", function (){
-				// 				//alert("Hello");
-				// 			});
+					break;
+				case 26:
+					// Multiple rules
+					$("p, a").addClass("testing");
+					break;			
 			}
 		});
 	</script>
@@ -202,6 +190,7 @@
 			</div>
 		</div>	
 		<div id="inner-container" class="inner">
+			<input id="gris" type="text" name="some_name" value="Yes" class="one"><br>
 			<div id="main-content" class="more">
 				<input id="apa" type="text" name="some_name" value="Yes" class="one"><br>
 				<input type="text" name="some_name" value=""><br>

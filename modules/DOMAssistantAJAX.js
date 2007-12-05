@@ -3,7 +3,7 @@
 DOMAssistant.AJAX = function () {
 	var XMLHttp = null;
 	var callbackFunction = null;
-	return{
+	return {
 		init: function () {
 			if (!XMLHttp) {
 				if (typeof XMLHttpRequest !== "undefined") {

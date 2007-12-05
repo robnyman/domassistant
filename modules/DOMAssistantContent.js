@@ -70,7 +70,7 @@ DOMAssistant.Content = function () {
 			return this;
 		}
 	};
-	return{
+	return {
 		init : function () {
 			DOMAssistant.addHTMLArrayPrototype("Content", this);
 			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {

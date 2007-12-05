@@ -45,7 +45,7 @@ var DOMAssistant = function () {
 		}
 	};
 	
-	return{
+	return {
 		init : function () {
 			this.applyMethod.call(window, "$", this.$);
 			window.DOMAssistant = this;
@@ -459,7 +459,7 @@ DOMAssistant.DOMLoad = function () {
 	/* Other web browsers */
 	window.onload = DOMHasLoaded;
 	
-	return{
+	return {
 		DOMReady : function () {
 			for (var i=0, il=arguments.length, func, callFunc; i<il; i++) {
 				func = arguments[i];
@@ -505,7 +505,7 @@ DOMAssistant.CSS = function () {
 			return hasStyle;
 		}
 	};
-	return{
+	return {
 		init : function () {
 			DOMAssistant.addHTMLArrayPrototype("CSS", this);
 			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {
@@ -574,7 +574,7 @@ DOMAssistant.Events = function () {
 			return this;
 		}
 	};
-	return{
+	return {
 		init : function () {
 			DOMAssistant.addHTMLArrayPrototype("Events", this);
 			DOMAssistant.preventDefault = this.preventDefault;
@@ -743,7 +743,7 @@ DOMAssistant.Content = function () {
 			return this;
 		}
 	};
-	return{
+	return {
 		init : function () {
 			DOMAssistant.addHTMLArrayPrototype("Content", this);
 			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {
@@ -824,7 +824,7 @@ DOMAssistant.Content.init();
 DOMAssistant.AJAX = function () {
 	var XMLHttp = null;
 	var callbackFunction = null;
-	return{
+	return {
 		init: function () {
 			if (!XMLHttp) {
 				if (typeof XMLHttpRequest !== "undefined") {
