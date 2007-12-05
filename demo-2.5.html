@@ -14,19 +14,19 @@
 	<script type="text/javascript" src="js/general.js"></script>
 	<script type="text/javascript">
 		DOMAssistant.DOMReady(function (){
-			var itemToTest = 0;
+			var itemToTest = 10;
 			switch(itemToTest){
 				case -1:
 					// #container
-					$("body div").addClass("testing");
+					$("*").addClass("testing");
 					break;
 				case 0:
 					// #container
-					$("#container").addClass("testing");
+					$("div#container").addClass("testing");
 					break;
 				case 1:
 					// .item
-					$("div.item").addClass("testing");
+					$(".item").addClass("testing");
 					break;
 				case 2:
 					// #container.item
@@ -62,7 +62,7 @@
 					break;
 				case 10:
 					// [type=text][value=Yes]
-					$("input[type=text][value=Yes]").addClass("testing");
+					$("div input[type=text][value=Yes]").addClass("testing");
 					break;
 				case 11:
 					// [id^=empt]
@@ -78,7 +78,7 @@
 					break;
 				case 14:
 					// div:first-child
-					$("em:first-child").addClass("testing");
+					$("em:first-child:empty").addClass("testing");
 					break;
 				case 15:
 					// div:last-child
@@ -94,7 +94,7 @@
 					break;
 				case 18:
 					// *:not(div), NOT IMPLEMENTED
-					$("div:not(div)").addClass("testing");
+					$("div:not([id^=pseudo-test])").addClass("testing");
 					break;
 				case 19:
 					// div:nth-child(2)
@@ -109,7 +109,7 @@
 					$("#pseudo-test:nth-child(even)").addClass("test-again");
 					break;
 				case 22:
-					// div:nth-child(n5+3)
+					// div:nth-child(5n+3)
 					$("#pseudo-test:nth-child(5n+3)").addClass("test-again");
 					break;
 				case 23:
@@ -173,8 +173,14 @@
 		<em>Hej 3</em>
 	</h6>
 	
+	<div class="item">
+		DIV with class="item"
+	</div>
+	
+	<div class="pish">P child to #container</div>
+	
 	<div id="container" class="item test-2 test-3">
-		<p>P child to #container</p>
+		<p class="pish">P child to #container</p>
 		<div id="pseudo-test-parent">
 			<div id="pseudo-test" class="test-again">
 				<!-- <span>Span 1</span>

@@ -1,0 +1,30 @@
+	/*
+		Find tag name, id character and id or an *
+		^(\w+)?(#[\w\-_]+|\*)?
+	
+		Find one or several class name
+		((\.[\w\-_]+)*)?
+	
+		Find one or several attributes, eventual substring match selector and attribute values
+		((\[(\w+)(\^|\$|\*)?=?([\w\-\_]+)?
+	
+		Find one or several attribute values:
+		((\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+)*)?
+	
+		Find the pseudo-class and its value:
+		(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|(\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+))\))?)*)?
+	
+			where:
+	
+			Digit value, eventual n value, eventual operator and operand values
+			\d+n?((\+|\-)\d+)?
+	
+		Find not value, in form of a tag name or attribute selector
+		\w+|(\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+)
+	*/
+	
+Complicated regexp:
+	var cssSelector = /^(\w+)?(#([\w\-_]+)|\*)?((\.([\w\-_]+))*)?((\[(\w+)(\^|\$|\*)?=?([\w\-\_]+)?\]+)*)?(:(\w+[\w\-]*)(\((((odd|even)|(\d+)(n?)((\+|\-)(\d+))?)|(\w+)|\[(\w+)(\^|\$|\*)?=?([\w\-\_]+)?\]+)\))?)?/.exec(rule);
+	
+Simplified regexp:
+	var cssSelector = /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|(\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+))\))?)*)?/.exec(rule);
