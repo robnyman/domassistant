@@ -14,15 +14,19 @@
 	<script type="text/javascript" src="js/general.js"></script>
 	<script type="text/javascript">
 		DOMAssistant.DOMReady(function (){
-			var itemToTest = 26;
+			var itemToTest = 0;
 			switch(itemToTest){
+				case -1:
+					// #container
+					$("body div").addClass("testing");
+					break;
 				case 0:
 					// #container
 					$("#container").addClass("testing");
 					break;
 				case 1:
 					// .item
-					$(".item").addClass("testing");
+					$("div.item").addClass("testing");
 					break;
 				case 2:
 					// #container.item
@@ -129,7 +133,7 @@
 	</script>
 	
 	<style type="text/css">
-		@import url("css/domassistant.css");
+		
 		.testing{
 			display: block;
 			color: #000 !important;
