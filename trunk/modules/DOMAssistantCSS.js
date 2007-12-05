@@ -35,7 +35,7 @@ DOMAssistant.CSS = function () {
 			return hasStyle;
 		}
 	};
-	return{
+	return {
 		init : function () {
 			DOMAssistant.addHTMLArrayPrototype("CSS", this);
 			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {

@@ -19,7 +19,7 @@ DOMAssistant.Events = function () {
 			return this;
 		}
 	};
-	return{
+	return {
 		init : function () {
 			DOMAssistant.addHTMLArrayPrototype("Events", this);
 			DOMAssistant.preventDefault = this.preventDefault;

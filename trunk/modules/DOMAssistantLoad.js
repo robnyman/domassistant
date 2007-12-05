@@ -51,7 +51,7 @@ DOMAssistant.DOMLoad = function () {
 	/* Other web browsers */
 	window.onload = DOMHasLoaded;
 	
-	return{
+	return {
 		DOMReady : function () {
 			for (var i=0, il=arguments.length, func, callFunc; i<il; i++) {
 				func = arguments[i];
