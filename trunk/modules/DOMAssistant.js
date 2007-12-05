@@ -181,48 +181,13 @@ var DOMAssistant = function () {
 					for (var i=0, il=cssSelectors.length; i<il; i++) {
 						matchingElms = new HTMLArray();
 						var rule = cssSelectors[i];
-						//var cssSelector = /^((\w+)?((#|\*|\.)([\w\-_]+))?)?(:(\w+[\w\-]*)(\(((odd|even)|\d+n?((\+|\-)\d+)?)\))?)?/.exec(rule);
-						var cssSelector = /^(\w+)?(#([\w\-_]+)|\*)?((\.([\w\-_]+))*)?(((\w+)?\[(\w+)(\^|\$|\*)?=?([\w\-\_]+)?\]+)*)?(:(\w+[\w\-]*)(\(((odd|even)|\d+n?((\+|\-)\d+)?)\))?)?/.exec(rule);
-						var splitRule = {
-							complete : cssSelector[0],
-							tag : cssSelector[1], // tag name
-							type : cssSelector[2], // # + id or *
-							id : cssSelector[3], // id
-							tag : cssSelector[4], // All classes, preceded by .
-							tag : cssSelector[6], // class name
-							tag : cssSelector[10], // attribute
-							tag : cssSelector[12], // attribute value
-							tag : cssSelector[0],
-							tag : cssSelector[0],
-							tag : cssSelector[0],							
-						};
-						
-						
-						/*
-							Find tag name, id character and id or a . and the class name:
-							^(\w+)?(#|\*|\.)?([\w\-_]+)?
-							
-							Find one or several attribute values:
-							(((\w+)?\[(\w+)(\^|\$|\*)?=?([\w\-\_]+)?\]+)*)?
-							
-							Find the pseudo-class and its value:
-							(:(\w+[\w\-]*)(\(((odd|even)|\d+n?((\+|\-)\d+)?)\))?)?
-							
-							
-						*/
-						
-						//alert(cssSelector.join("\n"));
-						alert("0: " + cssSelector[0] + "\n1: " + cssSelector[1] + "\n2: " + cssSelector[2] + "\n3: " + cssSelector[3] + "\n4: " + cssSelector[4] + "\n5: " + cssSelector[5] + "\n6: " + cssSelector[6] + "\n7: " + cssSelector[7] + "\n8: " + cssSelector[8] + "\n9: " + cssSelector[9] + "\n10: " + cssSelector[10] + "\n11: " + cssSelector[11] + "\n12: " + cssSelector[12]);
-						// (:\w+[\w\-]*)(\(((odd|even)|\d+n?((\+|\-)\d+)?)\))?
-						// (:\w+[\w\-]*)(\(((odd|even)|\d+n?((\+|\-)\d+)?)\))?
-						
 						childOrSiblingRef = /^(>|\+|~)$/.exec(rule);
 						if (childOrSiblingRef) {
 							nextTag = cssSelectors[i+1];
 							if (nextTag) {
 								nextRegExp = new RegExp("(^|\\s)" + nextTag + "(\\s|$)", "i");
 								refSeparator = childOrSiblingRef[0];
-									for (var j=0, jl=prevElm.length, children; j<jl; j++) {
+								for (var j=0, jl=prevElm.length, children; j<jl; j++) {
 									refPrevElm = prevElm[j];
 									if (/\+/.test(refSeparator)) {
 										nextSib = refPrevElm.nextSibling;
@@ -260,73 +225,60 @@ var DOMAssistant = function () {
 							}
 						}
 						else {
-							if (/^(\w+|\*)/.test(rule)) {
-								/^(\w+|\*)/.exec(rule);
-								matchingElms = prevElm.elmsByTag(RegExp.$1);
+							//var cssSelector = /^(\w+)?(#([\w\-_]+)|\*)?((\.([\w\-_]+))*)?((\[(\w+)(\^|\$|\*)?=?([\w\-\_]+)?\]+)*)?(:(\w+[\w\-]*)(\((((odd|even)|(\d+)(n?)((\+|\-)(\d+))?)|(\w+)|\[(\w+)(\^|\$|\*)?=?([\w\-\_]+)?\]+)\))?)?/.exec(rule);
+							var cssSelector = /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|(\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+))\))?)*)?/.exec(rule);
+							var splitRule = {
+								tag : (cssSelector[2] === "*")? "*" : cssSelector[1], // tag name								
+								id : (cssSelector[2] !== "*")?  cssSelector[2] : null, // id
+								allClasses : cssSelector[3], // All classes, preceded by a .
+								allAttr : cssSelector[5], // All attributes, with [ ]
+								psClass : cssSelector[10], // Pseudo-class
+								psVal : cssSelector[12], // Pseudo-class parentheses first value (digit, odd or even)
+							};
+							//alert(splitRule.allAttr);
+							var values = "";
+							for (var b=0; b<cssSelector.length; b++) {
+								values += b + ": " + cssSelector[b] + "\n";
+							};
+							//alert(values);
+						
+							if (splitRule.tag && !splitRule.id) {
+								matchingElms = prevElm.elmsByTag(splitRule.tag);
 							}
-							if (/#\w+/.test(rule)) {
-								var id = /\w*#(\w[\w\-]+)/.exec(rule)[1];
-								rule = rule.replace(/\w*#(\w+[\w\-\_]+)/, "");
-								var idElm = DOMAssistant.$(id);
+							if (splitRule.id) {
+								var idElm = DOMAssistant.$(splitRule.id.replace(/^#/, ""));
 								matchingElms = new HTMLArray();
 								if(idElm) {
 									matchingElms.push(idElm);
 								}
 							}
-							//var classMatch = /(\w+)?\[(\w+)(\^|\$|\*)?=?([\w\-\_]+)?\]/.exec(rule);
-							if ((matchingElms.length === 0 || (matchingElms.length > 0 && matchingElms[0])) && /\./.test(rule)) {
-								var classes = rule.split(".");
-								if (classes.length > 1) {
-									var tagForClass = (classes[0].length > 0)? classes[0] : null;
-									var firstClass = classes[1];
-									var regExp = new RegExp("(^|\\s)" + firstClass + "(\\s|$)");
-									if (matchingElms.length > 0) {
-										if (!regExp.test(matchingElms[0].className)) {
-											matchingElms = new HTMLArray();
-										}
-									}
-									else {
-										matchingElms = prevElm.elmsByClass(firstClass, tagForClass);
-									}
-									if (matchingElms.length > 0) {
-										if (classes.length > 2) {
-											var followingMatchingElms = new HTMLArray();
-											var match;
-											for (var n=2, nl=classes.length, innerRegExp; n<nl; n++) {
-												innerRegExp = new RegExp("(^|\\s)" + classes[n] + "(\\s|$)");
-												for (var o=0, ol=matchingElms.length, item; o<ol; o++) {
-													match = matchingElms[o];
-													if (innerRegExp.test(match.className)) {
-														followingMatchingElms.push(match);
-													}
-													else {
-														break;
-													}
-												}
-											}
-											matchingElms = followingMatchingElms;
-										}
+							if (splitRule.allClasses) {
+								splitRule.allClasses = splitRule.allClasses.replace(/^\./, "").split(".");
+								var classTag = (matchingElms.length > 0)? matchingElms : null;
+								matchingElms = new HTMLArray();
+								for (var n=0, nl=splitRule.allClasses.length, innerRegExp; n<nl; n++) {
+									matchingElms = prevElm.elmsByClass(splitRule.allClasses[n], classTag);
+									if (matchingElms.length === 0) {
+										break;
 									}
 								}
 							}
-							var attributeMatch = /(\w+)?\[(\w+)(\^|\$|\*)?=?([\w\-\_]+)?\]/.exec(rule);
-							if (attributeMatch) {
-								var attributeSelectors = rule.replace(/(\])(\[)/, "$1 $2").split(" ");
-								var preDefElms = (matchingElms.length > 0)? matchingElms : null;
+							if (splitRule.allAttr) {
+								splitRule.allAttr = splitRule.allAttr.replace(/(\])(\[)/, "$1 $2").split(" ");
+								var attrElms = (matchingElms.length > 0)? matchingElms : null;
+								matchingElms = new HTMLArray();
 								var matchingAttributeElms;
-								for (var p=0, pl=attributeSelectors.length; p<pl; p++) {
+								for (var p=0, pl=splitRule.allAttr.length, attributeMatch; p<pl; p++) {
 									matchingAttributeElms = new HTMLArray();
-									attributeMatch = /(\w+)?\[(\w+)(\^|\$|\*)?=?(\w+)?\]/.exec(attributeSelectors[p]);
-									var attribute = RegExp.$2;
-									var attrVal = (RegExp.$4.length > 0)? RegExp.$4 : "*";
-									var tag = (preDefElms)? preDefElms : (RegExp.$1.length > 0)? RegExp.$1 : null;
-									var substrMatchSelector = (RegExp.$3.length > 0)? RegExp.$3 : null;
+									attributeMatch = /(\w+)(\^|\$|\*)?=?([\w\-_]+)?/.exec(splitRule.allAttr[p]);
+									var attribute = attributeMatch[1];
+									var attrVal = attributeMatch[3] || "*";
+									var tag = (attrElms)? attrElms : null;
+									var substrMatchSelector = attributeMatch[2] || null;
+									//alert(attribute + "\n" + attrVal + "\n" + tag + "\n" + substrMatchSelector);
 									matchingAttributeElms = prevElm.elmsByAttribute(attribute, attrVal, tag, substrMatchSelector);
 									if (matchingAttributeElms.length === 0) {
 										break;
-									}
-									for (var q=0, ql=matchingAttributeElms.length, matchElm; q<ql; q++) {
-										matchingElms.push(matchingAttributeElms[q]);
 									}
 								}
 								matchingElms = matchingAttributeElms;
@@ -413,7 +365,7 @@ var DOMAssistant = function () {
 			if (document.evaluate) {
 				DOMAssistant.elmsByClass = function (className, tag) {
 					var returnElms = new HTMLArray();
-					var xPathNodes = document.evaluate(".//" + (tag || "*") + "[contains(concat(' ', @class, ' '), ' " + className + " ')]", this, null, 0, null);
+					var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag : "*") + "[contains(concat(' ', @class, ' '), ' " + className + " ')]", this, null, 0, null);
 					var node = xPathNodes.iterateNext();
 					while(node) {
 						returnElms.push(node);
@@ -425,7 +377,12 @@ var DOMAssistant = function () {
 			else {
 				DOMAssistant.elmsByClass = function (className, tag) {
 					var returnElms = new HTMLArray();
-					var elms = this.getElementsByTagName(tag || "*");			
+					if(tag && typeof tag === "object"){
+						elms = (tag.constructor === Array)? tag : [tag];
+					}
+					else {
+						elms = this.getElementsByTagName(tag || "*");
+					}
 					var regExp = new RegExp("(^|\\s)" + className + "(\\s|$)");
 					for (var i=0,elm,il=elms.length; i<il; i++) {
 						elm = elms[i];		
