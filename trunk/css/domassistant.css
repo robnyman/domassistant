@@ -85,7 +85,7 @@ img{
 	border: none;
 }
 
-input{
+input[type=text]{
 	width: 100%;
 	vertical-align: middle;
 }
