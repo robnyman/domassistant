@@ -145,7 +145,7 @@ var DOMAssistant = function () {
 				div:nth-child(even)
 				div:nth-child(n3+3)
 			*/
-			if (document.evaluate) {
+			if (!document.evaluate) {
 				DOMAssistant.cssSelection = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/, "$1").split(",");
 					var elm = new HTMLArray();
@@ -256,10 +256,15 @@ var DOMAssistant = function () {
 												}
 												pseudoSelection += " = " + nOperatorVal + " or ";
 											}
-											if (nOperatorVal > nthSelector) {
-												pseudoSelection += "(" + ((pseudoSelector[3])? " position()" : "") + " mod " + nthSelector + " = " + nOperatorVal + " and position() > " + (nOperatorVal + nthSelector - 1) + ")";
+											if (nthSelector < nOperatorVal) {
+												var nOperatorDiff = ((nOperatorVal - nthSelector) % 2 === 0)? 0 : 1;
+												pseudoSelection += ((pseudoSelector[3])? " position()" : "") + " mod " + nthSelector + " = " + nOperatorDiff + " and position() > " + nOperatorVal;
+											}
+											else if (nOperatorVal === nthSelector) {
+												pseudoSelection += ((pseudoSelector[3])? " position()" : "") + " mod " + nthSelector + " = 0";
 											}
 											else {
+												alert("else");
 												pseudoSelection += ((pseudoSelector[3])? " position()" : "") + " mod " + nthSelector + " = " + nOperatorVal;
 											}
 										}
