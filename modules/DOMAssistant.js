@@ -143,19 +143,22 @@ var DOMAssistant = function () {
 				div:nth-child(3)
 				div:nth-child(odd)
 				div:nth-child(even)
-				div:nth-child(n3+3)
+				div:nth-child(n5+3)
+				input:enabled
+				input:disabled
+				input:checked
+				p, a
 			*/
-			if (!document.evaluate) {
+			if (document.evaluate) {
 				DOMAssistant.cssSelection = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/, "$1").split(",");
 					var elm = new HTMLArray();
-					var cssSelectors, xPathExpression, cssSelector, splitRule, xPathExpression;
+					var cssSelectors, xPathExpression, cssSelector, splitRule, xPathExpression, nextTag, followingElm;
 					for (var i=0, il=cssRules.length; i<il; i++) {						
 						cssSelectors = cssRules[i].split(" ");
 						xPathExpression = ".";
 						for (var j=0, jl=cssSelectors.length; j<jl; j++) {
 							cssSelector = /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|(\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+))\))?)*)?(>|\+|~)?/.exec(cssSelectors[j]);
-							// 
 							splitRule = {
 								tag : (!cssSelector[1] || cssSelector[2] === "*")? "*" : cssSelector[1], // tag name								
 								id : (cssSelector[2] !== "*")?  cssSelector[2] : null, // id
@@ -176,13 +179,12 @@ var DOMAssistant = function () {
 										xPathExpression += "/child::";
 										break;
 									case "+":
-										xPathExpression += "/following-sibling::";
+										xPathExpression += "/following-sibling::*[1]/self::";
 										break;
 									case "~":
 										xPathExpression += "/following-sibling::";
 										break;
 								}
-								continue;
 							}
 							else {
 								xPathExpression += (j > 0 && /(>|\+|~)/.test(cssSelectors[j-1]))? splitRule.tag : ("//" + splitRule.tag);
@@ -301,7 +303,7 @@ var DOMAssistant = function () {
 							if (childOrSiblingRef) {
 								nextTag = cssSelectors[i+1];
 								if (nextTag) {
-									nextRegExp = new RegExp("(^|\\s)" + nextTag + "(\\s|$)", "i");
+									nextRegExp = new RegExp("(^|\\s)" + /^\w+/.exec(nextTag) + "(\\s|$)", "i");
 									refSeparator = childOrSiblingRef[0];
 									for (var j=0, jl=prevElm.length, children; j<jl; j++) {
 										refPrevElm = prevElm[j];
@@ -336,7 +338,7 @@ var DOMAssistant = function () {
 											}
 										}	
 									}
-									i = i + 1;
+									//i = i + 1;
 									prevElm = matchingElms;
 								}
 							}
@@ -356,8 +358,12 @@ var DOMAssistant = function () {
 									values += b + ": " + cssSelector[b] + "\n";
 								}
 								//alert(values);
-			
-								if (splitRule.tag && !splitRule.id) {
+								if (i > 0 && /(>|\+|~)/.test(cssSelectors[i - 1])) {
+									//alert("prev");
+									matchingElms = prevElm;
+									//alert(matchingElms[4].innerHTML);
+								}
+								else if (splitRule.tag && !splitRule.id) {
 									matchingElms = prevElm.elmsByTag(splitRule.tag);
 								}
 								if (splitRule.id) {
