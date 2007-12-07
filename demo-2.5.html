@@ -15,7 +15,7 @@
 	<script type="text/javascript">
 		DOMAssistant.DOMReady(function () {
 			$("disabled-element").disabled = true;
-			var itemToTest = 20;
+			var itemToTest = 22;
 			switch(itemToTest){
 				case -1:
 					// #container
@@ -23,11 +23,11 @@
 					break;
 				case 0:
 					// #container
-					$("div#container").addClass("testing");
+					$("#container").addClass("testing");
 					break;
 				case 1:
 					// .item
-					$(".item.test-2").addClass("testing");
+					$(".item").addClass("testing");
 					break;
 				case 2:
 					// #container.item
@@ -111,7 +111,7 @@
 					break;
 				case 22:
 					// div:nth-child(5n+3)
-					$("#pseudo-test:nth-child(10n-1)").addClass("test-again");
+					$("#pseudo-test:nth-child(2n+3)").addClass("test-again");
 					break;
 				case 23:
 					// input:enabled
@@ -128,10 +128,6 @@
 				case 26:
 					// Multiple rules
 					$("p, a").addClass("testing");
-					break;
-				case 22:
-					// div:contains(fantastic)
-					$("#pseudo-test:contains(P17)").addClass("test-again");
 					break;
 			}
 			/*try	{
@@ -175,12 +171,13 @@
 
 <body>
 	
-	<div id="empty" style="width: 100px; height: 100px; border: 1px solid blue;">Hej</div>
+	<div id="empty" style="width: 100px; height: 100px; border: 1px solid blue;"></div>
 
 	<div id="link-parent">
 		<a id="dn-link" href="http://www.dn.se">DN</a>
 	</div>
 	
+	<p>No DIV parent</p>
 	
 	<h6>
 		<em>Hej</em>
@@ -215,25 +212,25 @@
 				<p>P 8</p>
 				<p>P 9</p>
 				<p>P 10</p>
-				<p>P 11</p>
-				<p>P 12</p>
-				<p>P 13</p>
-				<p>P 14</p>
-				<p>P 15</p>
-				<p>P 16</p>
-				<p>P 17</p>
-				<p>P 18</p>
-				<p>P 19</p>
-				<p>P 20</p>
-				<p>P 21</p>
-				<p>P 21</p>
-				<p>P 23</p>
-				<p>P 24</p>
-				<p>P 25</p>
-				<p>P 26</p>
-				<p>P 27</p>
-				<p>P 28</p>
-				<p>P 29</p>
+				<!-- <p>P 11</p>
+												<p>P 12</p>
+												<p>P 13</p>
+												<p>P 14</p>
+												<p>P 15</p>
+												<p>P 16</p>
+												<p>P 17</p>
+												<p>P 18</p>
+												<p>P 19</p>
+												<p>P 20</p>
+												<p>P 21</p>
+												<p>P 21</p>
+												<p>P 23</p>
+												<p>P 24</p>
+												<p>P 25</p>
+												<p>P 26</p>
+												<p>P 27</p>
+												<p>P 28</p>
+												<p>P 29</p> -->
 			</div>
 		</div>	
 		<div id="inner-container" class="inner">
