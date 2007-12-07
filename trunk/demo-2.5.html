@@ -15,7 +15,7 @@
 	<script type="text/javascript">
 		DOMAssistant.DOMReady(function () {
 			$("disabled-element").disabled = true;
-			var itemToTest = 22;
+			var itemToTest = 6;
 			switch(itemToTest){
 				case -1:
 					// #container
@@ -47,7 +47,7 @@
 					break;
 				case 6:
 					// p + p
-					$("p + p").addClass("testing");
+					$("p + p[name=gris]").addClass("testing");
 					break;
 				case 7:
 					// div ~ p
@@ -111,7 +111,7 @@
 					break;
 				case 22:
 					// div:nth-child(5n+3)
-					$("#pseudo-test:nth-child(2n+3)").addClass("test-again");
+					$("#pseudo-test:nth-child(10n-1)").addClass("test-again");
 					break;
 				case 23:
 					// input:enabled
@@ -204,33 +204,33 @@
 				<p>P 1</p>
 				<p>P 2</p>
 				<p>P 3</p>
-				<!-- <span>Span 2</span> -->
+				<span>Span 2</span>
 				<p>P 4</p>
-				<p>P 5</p>
+				<p name="gris">P 5</p>
 				<p>P 6</p>
-				<p>P 7</p>
+				<p name="gris">P 7</p>
 				<p>P 8</p>
-				<p>P 9</p>
-				<p>P 10</p>
-				<!-- <p>P 11</p>
-												<p>P 12</p>
-												<p>P 13</p>
-												<p>P 14</p>
-												<p>P 15</p>
-												<p>P 16</p>
-												<p>P 17</p>
-												<p>P 18</p>
-												<p>P 19</p>
-												<p>P 20</p>
-												<p>P 21</p>
-												<p>P 21</p>
-												<p>P 23</p>
-												<p>P 24</p>
-												<p>P 25</p>
-												<p>P 26</p>
-												<p>P 27</p>
-												<p>P 28</p>
-												<p>P 29</p> -->
+				<!-- <p>P 9</p>
+								<p>P 10</p>
+								<p>P 11</p>
+								<p>P 12</p>
+								<p>P 13</p>
+								<p>P 14</p>
+								<p>P 15</p>
+								<p>P 16</p>
+								<p>P 17</p>
+								<p>P 18</p>
+								<p>P 19</p>
+								<p>P 20</p>
+								<p>P 21</p>
+								<p>P 22</p>
+								<p>P 23</p>
+								<p>P 24</p>
+								<p>P 25</p>
+								<p>P 26</p>
+								<p>P 27</p>
+								<p>P 28</p>
+								<p>P 29</p> -->
 			</div>
 		</div>	
 		<div id="inner-container" class="inner">
