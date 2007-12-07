@@ -1,10 +1,39 @@
 // Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
 /*extern DOMAssistant */
 DOMAssistant.AJAX = function () {
+	var baseMethodsToAdd = [
+		"load",
+		"replaceWithAJAXContent"
+	];
+	var HTMLArrayAJAXMethods = {
+		load : function (url) {
+			for (var i=0, il=this.length; i<il; i++) {
+				this.AJAX.load.call(this[i], url);
+			}
+			return this;
+		},
+		replaceWithAJAXContent : function (content) {
+			for (var i=0, il=this.length; i<il; i++) {
+				this.AJAX.replaceWithAJAXContent.call(this[i], content);
+			}
+			return this;
+		}
+	};
 	var XMLHttp = null;
 	var callbackFunction = null;
+	var loadElm = null;
+	var addToContent = false;
 	return {
-		init: function () {
+		init : function () {
+			DOMAssistant.addHTMLArrayPrototype("AJAX", this);
+			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {
+				current = baseMethodsToAdd[i];
+				DOMAssistant.addMethod([current, this[current]]);
+				DOMAssistant.addHTMLArrayPrototype(current, HTMLArrayAJAXMethods[current]);
+			}
+		},
+		
+		initRequest : function () {
 			if (!XMLHttp) {
 				if (typeof XMLHttpRequest !== "undefined") {
 					XMLHttp = new XMLHttpRequest();
@@ -32,7 +61,7 @@ DOMAssistant.AJAX = function () {
 		},
 	
 		get : function (url, callBack) {
-			if (this.init()) {
+			if (this.initRequest()) {
 				callbackFunction = callBack;
 				// This line needed to properly control the onreadystatechange event for Firefox
 				XMLHttp.onreadystatechange = function () {};
@@ -49,8 +78,13 @@ DOMAssistant.AJAX = function () {
 		},
 		
 		callFunction : function () {
-			if (callbackFunction && typeof callbackFunction === "function") {
-				callbackFunction(XMLHttp.responseText);
+			var response = XMLHttp.responseText;
+			if (loadElm) {
+				loadElm.replaceWithAJAXContent(response, addToContent);
+				loadElm = null;
+			}
+			else if (callbackFunction && typeof callbackFunction === "function") {
+				callbackFunction(response);
 			}
 		},
 	
@@ -59,6 +93,30 @@ DOMAssistant.AJAX = function () {
 			if (AJAXObj.getReadyState() === 4) {
 				AJAXObj.callFunction();
 			}
+		},
+		
+		setLoadElm : function (elm) {
+			loadElm = elm;
+		},
+		
+		setAddToContent : function (add) {
+			addToContent = add;
+		},
+		
+		load : function (url, add) {
+			DOMAssistant.AJAX.setLoadElm(this);
+			DOMAssistant.AJAX.setAddToContent(add || false);
+			DOMAssistant.AJAX.get(url);
+		},
+		
+		replaceWithAJAXContent : function (content, add) {
+			if (add) {
+				this.innerHTML += content;
+			}
+			else {
+				this.innerHTML = content;
+			}
 		}
 	};
 }();
+DOMAssistant.AJAX.init();
