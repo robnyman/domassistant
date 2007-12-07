@@ -28,3 +28,11 @@ Complicated regexp:
 	
 Simplified regexp:
 	var cssSelector = /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|(\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+))\))?)*)?/.exec(rule);
+
+
+tag : (!cssSelector[1] || cssSelector[2] === "*")? "*" : cssSelector[1], // tag name								
+id : (cssSelector[2] !== "*")?  cssSelector[2] : null, // id
+allClasses : cssSelector[3], // All classes, preceded by a .
+allAttr : cssSelector[5], // All attributes, with [ ]
+pseudoClass : cssSelector[10], // Pseudo-class
+pseudoValue : cssSelector[12] // Pseudo-class parentheses first value (digit, odd or even)
