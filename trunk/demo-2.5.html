@@ -13,17 +13,19 @@
 	<script type="text/javascript" src="modules/DOMAssistantAJAX.js"></script>
 	<!--<script type="text/javascript" src="js/DOMAssistantCompressed.js"></script>-->
 	<script type="text/javascript">
+		
 		DOMAssistant.DOMReady(function () {
+			//$("container").load("ajax.html");
 			$("disabled-element").disabled = true;
 			var itemToTest = 6;
 			switch(itemToTest){
 				case -1:
 					// #container
-					$("*").addClass("testing");
+					$("body * div").addClass("testing");
 					break;
 				case 0:
 					// #container
-					$("#container").addClass("testing");
+					$("div#container").addClass("testing");
 					break;
 				case 1:
 					// .item
@@ -43,11 +45,11 @@
 					break;
 				case 5:
 					// div > p
-					$("div > p").addClass("testing");
+					$("div > div").addClass("testing");
 					break;
 				case 6:
 					// p + p
-					$("p + p[name=gris]").addClass("testing");
+					$("#container p + p[name=gris]").addClass("testing");
 					break;
 				case 7:
 					// div ~ p
@@ -94,8 +96,9 @@
 					$("div:empty").addClass("testing");
 					break;
 				case 18:
-					// *:not(div), NOT IMPLEMENTED
-					$("div:not([id^=pseudo-test])").addClass("testing");
+					// *:not(div)
+					//$("*:not(p)").addClass("testing");
+					$("div:not([id*=mpt])").addClass("testing");
 					break;
 				case 19:
 					// div:nth-child(2)
@@ -111,7 +114,7 @@
 					break;
 				case 22:
 					// div:nth-child(5n+3)
-					$("#pseudo-test:nth-child(10n-1)").addClass("test-again");
+					$("#pseudo-test:nth-child(5n+3)").addClass("test-again");
 					break;
 				case 23:
 					// input:enabled
@@ -192,12 +195,12 @@
 		DIV with class="item"
 	</div>
 	
-	<div class="pish">P child to #container</div>
+	<p class="pish">P child to #container</p>
 	
 	<div id="container" class="item test-2 test-3">
 		<p class="pish">P child to #container</p>
 		<div id="pseudo-test-parent">
-			<div id="pseudo-test" class="test-again">
+			<div id="pseudo-test">
 				<!-- <span>Span 1</span>
 								<div>Div 1</div>
 								<span>Span 1</span> -->
@@ -210,7 +213,7 @@
 				<p>P 6</p>
 				<p name="gris">P 7</p>
 				<p>P 8</p>
-				<!-- <p>P 9</p>
+<!-- <p>P 9</p>
 								<p>P 10</p>
 								<p>P 11</p>
 								<p>P 12</p>
@@ -317,8 +320,6 @@
 		</div>
 		
 	</div>
-	
-	
 	
 </body>
 </html>
