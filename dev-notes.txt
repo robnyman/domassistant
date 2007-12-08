@@ -36,3 +36,39 @@ allClasses : cssSelector[3], // All classes, preceded by a .
 allAttr : cssSelector[5], // All attributes, with [ ]
 pseudoClass : cssSelector[10], // Pseudo-class
 pseudoValue : cssSelector[12] // Pseudo-class parentheses first value (digit, odd or even)
+
+var values = "";
+for (var b=0; b<cssSelector.length; b++) {
+	values += b + ": " + cssSelector[b] + "\n";
+}
+alert(values);
+
+/* 
+	#container
+	.item
+	#container.item
+	p.info.error
+	div p
+	div > p
+	div + p
+	div ~ p
+	[id]
+	[id=container]
+	[type=text][value=Yes]
+	[id^=empt]
+	[id$=parent]
+	[id*=mpt]
+	div:first-child
+	div:last-child
+	div:only-child
+	div:empty
+	div:not([id=container]
+	div:nth-child(3)
+	div:nth-child(odd)
+	div:nth-child(even)
+	div:nth-child(n5+3)
+	input:enabled
+	input:disabled
+	input:checked
+	p, a
+*/
