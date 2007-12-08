@@ -77,6 +77,14 @@ DOMAssistant.AJAX = function () {
 			return (XMLHttp && typeof XMLHttp.readyState !== "undefined")? XMLHttp.readyState : null;
 		},
 		
+		getStatus : function () {
+			return XMLHttp.status;
+		},
+		
+		getStatusText : function () {
+			return XMLHttp.statusText;
+		},
+		
 		callFunction : function () {
 			var response = XMLHttp.responseText;
 			if (loadElm) {
