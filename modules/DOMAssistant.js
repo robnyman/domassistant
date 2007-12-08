@@ -120,35 +120,6 @@ var DOMAssistant = function () {
 	    },
 	
 		cssSelection : function  (cssRule) {
-			
-			/* 
-				#container
-				.item
-				#container.item
-				p.info.error
-				div p
-				div > p
-				div + p
-				div ~ p
-				[id]
-				[id=container]
-				[type=text][value=Yes]
-				[id^=empt]
-				[id$=parent]
-				[id*=mpt]
-				div:first-child
-				div:last-child
-				div:only-child
-				div:empty
-				div:nth-child(3)
-				div:nth-child(odd)
-				div:nth-child(even)
-				div:nth-child(n5+3)
-				input:enabled
-				input:disabled
-				input:checked
-				p, a
-			*/
 			if (document.evaluate) {
 				DOMAssistant.cssSelection = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/, "$1").split(",");
@@ -158,7 +129,7 @@ var DOMAssistant = function () {
 						cssSelectors = cssRules[i].split(" ");
 						xPathExpression = ".";
 						for (var j=0, jl=cssSelectors.length; j<jl; j++) {
-							cssSelector = /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|(\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+))\))?)*)?(>|\+|~)?/.exec(cssSelectors[j]);
+							cssSelector = /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+))\))?)*)?(>|\+|~)?/.exec(cssSelectors[j]);
 							splitRule = {
 								tag : (!cssSelector[1] || cssSelector[2] === "*")? "*" : cssSelector[1],
 								id : (cssSelector[2] !== "*")?  cssSelector[2] : null,
@@ -166,13 +137,8 @@ var DOMAssistant = function () {
 								allAttr : cssSelector[5],
 								pseudoClass : cssSelector[10],
 								pseudoValue : cssSelector[12],
-								tagRelation : cssSelector[17]
+								tagRelation : cssSelector[19]
 							};
-							var values = "";
-							for (var b=0; b<cssSelector.length; b++) {
-								values += b + ": " + cssSelector[b] + "\n";
-							}
-							//alert(values);
 							if (splitRule.tagRelation) {
 								switch (splitRule.tagRelation) {
 									case ">":
@@ -189,7 +155,6 @@ var DOMAssistant = function () {
 							else {
 								xPathExpression += (j > 0 && /(>|\+|~)/.test(cssSelectors[j-1]))? splitRule.tag : ("//" + splitRule.tag);
 							}
-							//xPathExpression += splitRule.tag;
 							if (splitRule.id) {
 								xPathExpression += "[@id = '" + splitRule.id.replace(/^#/, "") + "']";
 							}
@@ -239,6 +204,28 @@ var DOMAssistant = function () {
 									case "checked":
 										xPathExpression += "[@checked='checked']"; // Doesn't work in Opera 9.24
 										break;
+									case "not":
+										var notSelector = pseudoValue.replace(/^(\w+)/, "self::$1");
+										notSelector = notSelector.replace(/\.([\w\-_]+)/g, "contains(concat(' ', @class, ' '), ' $1 ')");
+										notSelector = notSelector.replace(/\[(\w+)(\^|\$|\*)?=?([\w\-_]+)?\]/g, function (match, p1, p2, p3, p4) {
+											var regExpReturn = match;
+											switch (p2) {
+												case "^":
+													regExpReturn = "starts-with(@" + p1 + ", '" + p3 + "')";
+													break;
+												case "$":
+													regExpReturn = "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), 6) = '" + p3 + "'";
+													break;
+												case "*":
+													regExpReturn = "contains(concat(' ', @" + p1 + ", ' '), '" + p3 + "')";
+													break;
+												default :
+													regExpReturn = "@" + p1 + ((p3)? "='" + p3 + "'" : "");
+											}
+											return regExpReturn;
+										});
+										xPathExpression += "[not(" + notSelector + ")]";
+										break;
 									case "nth-child":
 										var pseudoSelection = "/child::*[position()";
 										if (/^\d+$/.test(pseudoValue)) {
@@ -266,7 +253,6 @@ var DOMAssistant = function () {
 												pseudoSelection += ((pseudoSelector[3])? " position()" : "") + " mod " + nthSelector + " = 0";
 											}
 											else {
-												alert("else");
 												pseudoSelection += ((pseudoSelector[3])? " position()" : "") + " mod " + nthSelector + " = " + nOperatorVal;
 											}
 										}
@@ -276,7 +262,7 @@ var DOMAssistant = function () {
 								}
 							}	
 						}
-						alert("xPathExpression: " + xPathExpression);
+						//alert("xPathExpression: " + xPathExpression);
 						var xPathNodes = document.evaluate(xPathExpression, document, null, 0, null);
 						var node = xPathNodes.iterateNext();
 						while(node) {
@@ -338,12 +324,11 @@ var DOMAssistant = function () {
 											}
 										}	
 									}
-									//i = i + 1;
 									prevElm = matchingElms;
 								}
 							}
 							else {
-								var cssSelector = /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|(\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+))\))?)*)?/.exec(rule);
+								var cssSelector = /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+))\))?)*)?(>|\+|~)?/.exec(rule);
 								var splitRule = {
 									tag : (!cssSelector[1] || cssSelector[2] === "*")? "*" : cssSelector[1],
 									id : (cssSelector[2] !== "*")?  cssSelector[2] : null,
@@ -352,16 +337,8 @@ var DOMAssistant = function () {
 									pseudoClass : cssSelector[10],
 									pseudoValue : cssSelector[12]
 								};
-					
-								var values = "";
-								for (var b=0; b<cssSelector.length; b++) {
-									values += b + ": " + cssSelector[b] + "\n";
-								}
-								//alert(values);
 								if (i > 0 && /(>|\+|~)/.test(cssSelectors[i - 1])) {
-									//alert("prev");
 									matchingElms = prevElm;
-									//alert(matchingElms[4].innerHTML);
 								}
 								else if (splitRule.tag && !splitRule.id) {
 									matchingElms = prevElm.elmsByTag(splitRule.tag);
@@ -396,7 +373,6 @@ var DOMAssistant = function () {
 										var attrVal = attributeMatch[3] || "*";
 										var tag = (attrElms)? attrElms : null;
 										var substrMatchSelector = attributeMatch[2] || null;
-										//alert(attribute + "\n" + attrVal + "\n" + tag + "\n" + substrMatchSelector);
 										matchingAttributeElms = prevElm.elmsByAttribute(attribute, attrVal, tag, substrMatchSelector);
 										if (matchingAttributeElms.length === 0) {
 											break;
@@ -409,12 +385,52 @@ var DOMAssistant = function () {
 									var pseudoValue = splitRule.pseudoValue;
 									var previousMatch = matchingElms;
 									matchingElms = new HTMLArray();
-									if (/^not$/.test(pseudoClass)) {
-						
+									if (/^:not$/.test(pseudoClass)) {
+										var notTag = /^(\w+)/.exec(pseudoValue);
+										var notClass = /\.([\w\-_]+)/.exec(pseudoValue);
+										var notAttr = /\[(\w+)(\^|\$|\*)?=?([\w\-_]+)?\]/.exec(pseudoValue);
+										var notRegExp = new RegExp("(^|\\s)" + ((notTag)? notTag[1] : (notClass)? notClass[1] : "") + "(\\s|$)", "i");
+										if (notAttr) {
+											var notMatchingAttr = ("(^|\\s)" + notAttr[1] + "(\\s|$)");
+											var notMatchingAttrVal = notAttr[3];
+											var substrNoMatchSelector = notAttr[2];
+											if (typeof substrNoMatchSelector === "string") {
+												switch (substrNoMatchSelector) {
+													case "^":
+														notMatchingAttr = ("^" + notMatchingAttrVal);
+														break;
+													case "$":
+														notMatchingAttr = (notMatchingAttrVal + "$");
+														break;
+													case "*":
+														notMatchingAttr = (notMatchingAttrVal);
+														break;	
+												}
+											}
+											notRegExp = new RegExp(notMatchingAttr, "i");
+										}
+										for (var r=0, rl=previousMatch.length, notElm, addElm; r<rl; r++) {
+											notElm = previousMatch[r];
+											addElm = null;
+											if (notTag && !notRegExp.test(notElm.nodeName)) {
+												addElm = notElm;
+											}		
+											else if (notClass && !notRegExp.test(notElm.className)) {
+												addElm = notElm;
+											}
+											else if (notAttr) {
+												if (!notElm.getAttribute(notAttr[1]) || !notRegExp.test(notElm.getAttribute(notAttr[1]))) {
+													addElm = notElm;
+												}
+											}
+											if (addElm) {
+												matchingElms.push(addElm);
+											}
+										}
 									}
 									else {
-										for (var r=0, rl=previousMatch.length, previous, switchMatch, firstLastOnly, childrenNodes, childNodes, firstChild, lastChild; r<rl; r++) {
-											previous = previousMatch[r];
+										for (var s=0, sl=previousMatch.length, previous, switchMatch, firstLastOnly, childrenNodes, childNodes, firstChild, lastChild; s<sl; s++) {
+											previous = previousMatch[s];
 											if (/enabled|disabled|checked/.test(pseudoClass)) {
 												if ((/enabled/.test(pseudoClass) && !previous.disabled) || (/disabled/.test(pseudoClass) && previous.disabled) || (/checked/.test(pseudoClass) && previous.checked)) {
 													matchingElms.push(previous);
@@ -428,8 +444,8 @@ var DOMAssistant = function () {
 												continue;
 											}
 											childNodes = [];
-											for (var s=0, sl=childrenNodes.length, currentChild; s<sl; s++) {
-												currentChild = childrenNodes[s];
+											for (var t=0, tl=childrenNodes.length, currentChild; t<tl; t++) {
+												currentChild = childrenNodes[t];
 												if (currentChild.nodeType === 1) {
 													childNodes.push(currentChild);
 												}
@@ -457,11 +473,11 @@ var DOMAssistant = function () {
 																iteratorStart = nOperatorVal - 1;
 															}
 														}
-														for (var t=iteratorStart, tl=childNodes.length; t<tl; t=t+iteratorAdd) {
-															if (t < 0) {
+														for (var u=iteratorStart, ul=childNodes.length; u<ul; u=u+iteratorAdd) {
+															if (u < 0) {
 																continue;
 															}
-															matchingElms.push(childNodes[t]);
+															matchingElms.push(childNodes[u]);
 														}
 													}
 												}
@@ -473,10 +489,10 @@ var DOMAssistant = function () {
 							}
 							prevElm = matchingElms;
 						}
-						for (var u=0, ul=prevElm.length; u<ul; u++) {
-							elm.push(prevElm[u]);
+						for (var v=0, vl=prevElm.length; v<vl; v++) {
+							elm.push(prevElm[v]);
 						}
-						alert(elm);
+						//alert(elm);
 					}
 					return elm;
 				};		
