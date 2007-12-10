@@ -61,6 +61,11 @@ alert(values);
 	div:first-child
 	div:last-child
 	div:only-child
+	div#container p:first-of-type
+	div#container p:last-of-type
+	p:only-of-type
+	div#container p:nth-of-type(7)
+	div#container p:nth-last-of-type(2)
 	div:empty
 	div:not([id=container]
 	div:nth-child(3)
