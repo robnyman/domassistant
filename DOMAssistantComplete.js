@@ -4,7 +4,8 @@ var DOMAssistant = function () {
 	var baseMethodsToAdd = [
 		"elmsByClass",
 		"elmsByAttribute",
-		"elmsByTag"
+		"elmsByTag",
+		"each"
 	];
 	var HTMLArray = function () {
 		// Constructor
@@ -42,8 +43,15 @@ var DOMAssistant = function () {
 				}
 			}
 			return elmsWithTag;
+		},
+		each : function (functionCall) {
+			for (var i=0, il=this.length; i<il; i++) {
+				functionCall.call(this[i]);
+			}
+			return this;
 		}
 	};
+	var isOpera = /Opera/i.test(navigator.userAgent); // Hopefully temporary till Opera fixes the XPath implementation
 	
 	return {
 		init : function () {
@@ -120,7 +128,7 @@ var DOMAssistant = function () {
 	    },
 	
 		cssSelection : function  (cssRule) {
-			if (document.evaluate) {
+			if (document.evaluate && !isOpera) {
 				DOMAssistant.cssSelection = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/, "$1").split(",");
 					var elm = new HTMLArray();
@@ -184,13 +192,22 @@ var DOMAssistant = function () {
 								var pseudoValue = splitRule.pseudoValue;
 								switch (splitRule.pseudoClass.replace(/^:/, "")) {
 									case "first-child":
-										xPathExpression += "[position() = 1]";
+									case "first-of-type":
+										xPathExpression += "[1]";
 										break;
 									case "last-child":
-										xPathExpression += "[position() = last()]";
+									case "last-of-type":
+										xPathExpression += "[last()]";
 										break;
 									case "only-child":
-										xPathExpression += "[count(preceding-sibling::*) = 0 and position() = last()]";
+									case "only-of-type":
+										xPathExpression += "[count(preceding-sibling::" + splitRule.tag + ") = 0 and position() = last()]";
+										break;		
+									case "nth-of-type":
+										xPathExpression += "[" + pseudoValue + "]";
+										break;
+									case "nth-last-of-type":
+										xPathExpression += "[last() - " + pseudoValue + "]";
 										break;
 									case "empty":
 										xPathExpression += "[count(child::*) = 0 and string-length(text()) = 0]";
@@ -203,28 +220,6 @@ var DOMAssistant = function () {
 										break;
 									case "checked":
 										xPathExpression += "[@checked='checked']"; // Doesn't work in Opera 9.24
-										break;
-									case "not":
-										var notSelector = pseudoValue.replace(/^(\w+)/, "self::$1");
-										notSelector = notSelector.replace(/\.([\w\-_]+)/g, "contains(concat(' ', @class, ' '), ' $1 ')");
-										notSelector = notSelector.replace(/\[(\w+)(\^|\$|\*)?=?([\w\-_]+)?\]/g, function (match, p1, p2, p3, p4) {
-											var regExpReturn = match;
-											switch (p2) {
-												case "^":
-													regExpReturn = "starts-with(@" + p1 + ", '" + p3 + "')";
-													break;
-												case "$":
-													regExpReturn = "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), 6) = '" + p3 + "'";
-													break;
-												case "*":
-													regExpReturn = "contains(concat(' ', @" + p1 + ", ' '), '" + p3 + "')";
-													break;
-												default :
-													regExpReturn = "@" + p1 + ((p3)? "='" + p3 + "'" : "");
-											}
-											return regExpReturn;
-										});
-										xPathExpression += "[not(" + notSelector + ")]";
 										break;
 									case "nth-child":
 										var pseudoSelection = "/child::*[position()";
@@ -259,6 +254,28 @@ var DOMAssistant = function () {
 										pseudoSelection += "]";
 										xPathExpression += pseudoSelection;
 										break;	
+									case "not":
+										var notSelector = pseudoValue.replace(/^(\w+)/, "self::$1");
+										notSelector = notSelector.replace(/\.([\w\-_]+)/g, "contains(concat(' ', @class, ' '), ' $1 ')");
+										notSelector = notSelector.replace(/\[(\w+)(\^|\$|\*)?=?([\w\-_]+)?\]/g, function (match, p1, p2, p3, p4) {
+											var regExpReturn = match;
+											switch (p2) {
+												case "^":
+													regExpReturn = "starts-with(@" + p1 + ", '" + p3 + "')";
+													break;
+												case "$":
+													regExpReturn = "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), 6) = '" + p3 + "'";
+													break;
+												case "*":
+													regExpReturn = "contains(concat(' ', @" + p1 + ", ' '), '" + p3 + "')";
+													break;
+												default :
+													regExpReturn = "@" + p1 + ((p3)? "='" + p3 + "'" : "");
+											}
+											return regExpReturn;
+										});
+										xPathExpression += "[not(" + notSelector + ")]";
+										break;
 								}
 							}	
 						}
@@ -278,6 +295,18 @@ var DOMAssistant = function () {
 					var cssRules = cssRule.replace(/\s*(,)\s*/, "$1").split(",");
 					var elm = new HTMLArray();
 					var cssSelectors, prevElm, matchingElms, childOrSiblingRef, nextTag, nextRegExp, refSeparator, refPrevElm, nextSib, refPrevElmFound;
+					function addToMatchingElms (item) {
+						var exists = false;
+						for (var b=0, bl=matchingElms.length; b<bl; b++) {
+							if (matchingElms[b] === item) {
+								exists = true;
+								break;
+							}
+						}
+						if (!exists) {
+							matchingElms.push(item);
+						}
+					}
 					for (var a=0, al=cssRules.length; a<al; a++) {
 						cssSelectors = cssRules[a].split(" ");
 						prevElm = new HTMLArray();
@@ -300,7 +329,7 @@ var DOMAssistant = function () {
 													nextSib = nextSib.nextSibling;
 												}
 												if (nextRegExp.test(nextSib.nodeName)) {
-													matchingElms.push(nextSib);
+													addToMatchingElms(nextSib);
 												}
 											}
 										}
@@ -317,9 +346,10 @@ var DOMAssistant = function () {
 												refChild = children[k];
 												if (refChild === refPrevElm) {
 													refPrevElmFound = true;
+													continue;
 												}
 												if (refPrevElmFound && refChild.nodeType === 1 && nextRegExp.test(refChild.nodeName)) {
-													matchingElms.push(refChild);
+													addToMatchingElms(refChild);
 												}
 											}
 										}	
@@ -347,7 +377,7 @@ var DOMAssistant = function () {
 									var idElm = DOMAssistant.$(splitRule.id.replace(/^#/, ""));
 									matchingElms = new HTMLArray();
 									if (idElm) {
-										matchingElms.push(idElm);
+										addToMatchingElms(idElm);
 									}
 								}
 								if (splitRule.allClasses) {
@@ -424,43 +454,51 @@ var DOMAssistant = function () {
 												}
 											}
 											if (addElm) {
-												matchingElms.push(addElm);
+												addToMatchingElms(addElm);
 											}
 										}
 									}
 									else {
-										for (var s=0, sl=previousMatch.length, previous, switchMatch, firstLastOnly, childrenNodes, childNodes, firstChild, lastChild; s<sl; s++) {
+										for (var s=0, sl=previousMatch.length, previous, switchMatch, firstLastOnly, nthOfType, childrenNodes, childNodes, elmType, nthPos; s<sl; s++) {
 											previous = previousMatch[s];
 											if (/enabled|disabled|checked/.test(pseudoClass)) {
 												if ((/enabled/.test(pseudoClass) && !previous.disabled) || (/disabled/.test(pseudoClass) && previous.disabled) || (/checked/.test(pseudoClass) && previous.checked)) {
-													matchingElms.push(previous);
+													addToMatchingElms(previous);
 												}
 												continue;
 											}
-											firstLastOnly = /(first|last|only)-child/.test(pseudoClass);
-											childrenNodes = (firstLastOnly)? previous.parentNode.childNodes : previous.childNodes;
+											firstLastOnly = /:(first|last|only)-(child|of-type)/.test(pseudoClass);
+											nthOfType = /nth-(last-)?of-type/.test(pseudoClass);
+											childrenNodes = (firstLastOnly || nthOfType)? previous.parentNode.childNodes : previous.childNodes;
 											if (/empty/.test(pseudoClass) && childrenNodes.length === 0) {
-												matchingElms.push(previous);
+												addToMatchingElms(previous);
 												continue;
 											}
 											childNodes = [];
+											elmType = new RegExp((("of-type")? ("(^|\\s)" + splitRule.tag + "(\\s|$)") : "."), "i");
 											for (var t=0, tl=childrenNodes.length, currentChild; t<tl; t++) {
 												currentChild = childrenNodes[t];
-												if (currentChild.nodeType === 1) {
+												if (currentChild.nodeType === 1 && elmType.test(currentChild.nodeName)) {
 													childNodes.push(currentChild);
 												}
 											}
 											if (childNodes.length > 0) {
 												if (firstLastOnly) {
-													if ((/first-child/.test(pseudoClass) && previous === childNodes[0]) || (/last-child/.test(pseudoClass) && previous === childNodes[childNodes.length - 1]) || (/only-child/.test(pseudoClass) && childNodes.length === 1)) {
-														matchingElms.push(previous);
+													if ((/first-(child|of-type)/.test(pseudoClass) && previous === childNodes[0]) || (/last-(child|of-type)/.test(pseudoClass) && previous === childNodes[childNodes.length - 1]) || (/only-(child|of-type)/.test(pseudoClass) && childNodes.length === 1)) {
+														addToMatchingElms(previous);
 													}
 													continue;
+												}
+												if (nthOfType) {
+													nthPos = (/last/i.test(pseudoClass))? ((childNodes.length-1) - pseudoValue) : (pseudoValue - 1);
+													if (childNodes[nthPos]) {
+														addToMatchingElms(childNodes[nthPos]);
+													}
 												}
 												if (/nth-child/.test(pseudoClass)) {
 													var pseudoSelector = /^(odd|even)|(\d+)n((\+|\-)(\d+))?$/.exec(pseudoValue);
 													if (/^\d+$/.test(pseudoValue)) {
-														matchingElms.push(childNodes[pseudoValue-1]);
+														addToMatchingElms(childNodes[pseudoValue-1]);
 													}
 													else if (pseudoSelector) {
 														var iteratorStart = (pseudoSelector[1] === "even")? 1 : 0;
@@ -477,7 +515,7 @@ var DOMAssistant = function () {
 															if (u < 0) {
 																continue;
 															}
-															matchingElms.push(childNodes[u]);
+															addToMatchingElms(childNodes[u]);
 														}
 													}
 												}
@@ -501,7 +539,7 @@ var DOMAssistant = function () {
 		},
 	
 		elmsByClass : function (className, tag) {
-			if (document.evaluate) {
+			if (document.evaluate && !isOpera) {
 				DOMAssistant.elmsByClass = function (className, tag) {
 					var returnElms = new HTMLArray();
 					var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag : "*") + "[contains(concat(' ', @class, ' '), ' " + className + " ')]", this, null, 0, null);
@@ -537,7 +575,7 @@ var DOMAssistant = function () {
 		},
 	
 		elmsByAttribute : function (attr, attrVal, tag, substrMatchSelector) {
-			if (document.evaluate) {
+			if (document.evaluate && !isOpera) {
 				DOMAssistant.elmsByAttribute = function (attr, attrVal, tag, substrMatchSelector) {
 					var returnElms = new HTMLArray();
 					var attribute = "@" + attr + ((typeof attrVal === "undefined" || attrVal === "*")? "" : " = '" + attrVal + "'");
@@ -604,7 +642,7 @@ var DOMAssistant = function () {
 		},
 	
 		elmsByTag : function (tag) {
-			if (document.evaluate) {
+			if (document.evaluate && !isOpera) {
 				DOMAssistant.elmsByTag = function (tag) {
 					var returnElms = new HTMLArray();
 					var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag : "*"), this, null, 0, null);
@@ -625,6 +663,11 @@ var DOMAssistant = function () {
 				return returnElms;
 			}
 			return DOMAssistant.elmsByTag.call(this, tag);
+		},
+		
+		each : function (functionCall) {
+			functionCall.call(this);
+			return this;
 		}
 	};	
 }();
@@ -1138,7 +1181,7 @@ DOMAssistant.DOMLoad = function () {
 		if (document.getElementById) {
 			document.write("<script id=\"ieScriptLoad\" defer src=\"//:\"><\/script>");
 		    document.getElementById("ieScriptLoad").onreadystatechange = function() {
-		        if (this.readyState == "complete") {
+		        if (this.readyState === "complete") {
 		            DOMHasLoaded();
 		        }
 		    };

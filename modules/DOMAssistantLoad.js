@@ -30,7 +30,7 @@ DOMAssistant.DOMLoad = function () {
 		if (document.getElementById) {
 			document.write("<script id=\"ieScriptLoad\" defer src=\"//:\"><\/script>");
 		    document.getElementById("ieScriptLoad").onreadystatechange = function() {
-		        if (this.readyState == "complete") {
+		        if (this.readyState === "complete") {
 		            DOMHasLoaded();
 		        }
 		    };

@@ -5,13 +5,8 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 	<title>DOM Assistant demo - DOM Assistant, the modular lightweight JavaScript library</title>
 	<link rel="stylesheet" href="css/domassistant.css" type="text/css">
-	<script type="text/javascript" src="modules/DOMAssistant.js"></script>
-	<script type="text/javascript" src="modules/DOMAssistantLoad.js"></script>
-	<script type="text/javascript" src="modules/DOMAssistantCSS.js"></script>
-	<script type="text/javascript" src="modules/DOMAssistantContent.js"></script>
-	<script type="text/javascript" src="modules/DOMAssistantEvents.js"></script>
-	<script type="text/javascript" src="modules/DOMAssistantAJAX.js"></script>
-	<!--<script type="text/javascript" src="DOMAssistantCompressed.js"></script>-->
+	
+	<script type="text/javascript" src="DOMAssistantMin.js"></script>
 	<script type="text/javascript">
 		
 		DOMAssistant.DOMReady(function () {
@@ -19,9 +14,42 @@
 			$("disabled-element").disabled = true;
 			var itemToTest = 6;
 			switch(itemToTest){
+				case -8:
+					// #container
+					$("* p").addClass("testing");
+					break;
+				case -7:
+					// #container
+					$("div#container p").addClass("testing").each(function  () {
+						this.addClass("test-again")
+						this.addEvent("click", function  () {
+							alert("Hej");
+						});
+					});
+					break;
+				case -6:
+					// #container
+					$("p:only-of-type").addClass("testing");
+					break;
+				case -5:
+					// #container
+					$("div#pseudo-test p:nth-last-of-type(2)").addClass("testing");
+					break;
+				case -4:
+					// #container
+					$("div#container p:first-of-type").addClass("testing");
+					break;
+				case -3:
+					// #container
+					$("div#container p:last-of-type").addClass("testing");
+					break;
+				case -2:
+					// #container
+					$("div#container p:nth-of-type(7)").addClass("testing");
+					break;
 				case -1:
 					// #container
-					$("body * div").addClass("testing");
+					$("*").addClass("testing");
 					break;
 				case 0:
 					// #container
@@ -130,22 +158,23 @@
 					break;
 				case 26:
 					// Multiple rules
-					$("p, a").addClass("testing");
+					$("p, em:first-child").addClass("testing");
 					break;
 			}
-			/*try	{
-				var xPathNodes = document.evaluate(".//input[contains(@checked, 'checked')]", document, null, 0, null);
-				var node = xPathNodes.iterateNext();
-				apa = [];
-				while(node) {
-					apa.push(node);
-					node = xPathNodes.iterateNext();
-				}
-				alert(apa);
+			try	{
+				//var xPathNodes = document.evaluate(".//input[contains(@checked, 'checked')]", document, null, 0, null);
+				/*var xPathNodes = document.evaluate(".//*[@id = 'container']//p/following-sibling::*[1]/self::p[@name='gris']", document, null, 0, null);
+								var node = xPathNodes.iterateNext();
+								apa = [];
+								while(node) {
+									apa.push(node);
+									node = xPathNodes.iterateNext();
+								}
+								alert("Result: " + apa);*/
 			}
 			catch(e) {
 				alert(e);
-			}*/
+			}
 		});
 	</script>
 	
@@ -161,7 +190,7 @@
 		.test-again{
 			display: block;
 			padding: 10px;
-			border: 1px solid yellow;
+			border: 10px solid green;
 		}
 		.margin{
 			margin: 50px 100px;
@@ -192,7 +221,7 @@
 	</h6>
 	
 	<div class="item">
-		DIV with class="item"
+		<p>DIV with class="item"</p>
 	</div>
 	
 	<p class="pish">P child to #container</p>
@@ -201,13 +230,13 @@
 		<p class="pish">P child to #container</p>
 		<div id="pseudo-test-parent">
 			<div id="pseudo-test">
-				<!-- <span>Span 1</span>
-								<div>Div 1</div>
-								<span>Span 1</span> -->
+				<span>Span 1</span>
+																				<div>Div 1</div>
+																				<span>Span 1</span>
 				<p>P 1</p>
 				<p>P 2</p>
 				<p>P 3</p>
-				<span>Span 2</span>
+				<!-- <span>Span 2</span> -->
 				<p>P 4</p>
 				<p name="gris">P 5</p>
 				<p>P 6</p>
@@ -234,6 +263,7 @@
 								<p>P 27</p>
 								<p>P 28</p>
 								<p>P 29</p> -->
+				<span>Monkey</span>
 			</div>
 		</div>	
 		<div id="inner-container" class="inner">
@@ -320,6 +350,7 @@
 		</div>
 		
 	</div>
+	
 	
 </body>
 </html>
