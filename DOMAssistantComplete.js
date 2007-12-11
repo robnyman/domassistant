@@ -674,10 +674,17 @@ var DOMAssistant = function () {
 DOMAssistant.init();
 DOMAssistant.AJAX = function () {
 	var baseMethodsToAdd = [
+		"get",
 		"load",
 		"replaceWithAJAXContent"
 	];
 	var HTMLArrayAJAXMethods = {
+		get : function (url, callBack) {
+			for (var i=0, il=this.length; i<il; i++) {
+				this.AJAX.get.call(this[i], url, callBack);
+			}
+			return this;
+		},
 		load : function (url) {
 			for (var i=0, il=this.length; i<il; i++) {
 				this.AJAX.load.call(this[i], url);
@@ -693,6 +700,8 @@ DOMAssistant.AJAX = function () {
 	};
 	var XMLHttp = null;
 	var callbackFunction = null;
+	var args = null;
+	var getElm = null;
 	var loadElm = null;
 	var addToContent = false;
 	return {
@@ -733,14 +742,15 @@ DOMAssistant.AJAX = function () {
 		},
 	
 		get : function (url, callBack) {
-			if (this.initRequest()) {
+			if (DOMAssistant.AJAX.initRequest()) {
 				callbackFunction = callBack;
+				getElm = this;
 				// This line needed to properly control the onreadystatechange event for Firefox
 				XMLHttp.onreadystatechange = function () {};
 				XMLHttp.abort();
 				XMLHttp.open("GET", url, true);
 				XMLHttp.setRequestHeader("AJAX", "true");
-				XMLHttp.onreadystatechange = this.contentReady;
+				XMLHttp.onreadystatechange = DOMAssistant.AJAX.contentReady;
 				XMLHttp.send(null);
 			}
 		},
@@ -763,8 +773,9 @@ DOMAssistant.AJAX = function () {
 				loadElm.replaceWithAJAXContent(response, addToContent);
 				loadElm = null;
 			}
-			else if (callbackFunction && typeof callbackFunction === "function") {
-				callbackFunction(response);
+			else if (callbackFunction && typeof callbackFunction === "function" && getElm) {
+				callbackFunction.call(getElm, response);
+				args = null;
 			}
 		},
 	

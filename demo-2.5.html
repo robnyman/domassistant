@@ -6,14 +6,24 @@
 	<title>DOM Assistant demo - DOM Assistant, the modular lightweight JavaScript library</title>
 	<link rel="stylesheet" href="css/domassistant.css" type="text/css">
 	
-	<script type="text/javascript" src="DOMAssistantCompressed.js"></script>
+	<script type="text/javascript" src="modules/DOMAssistant.js"></script>
+	<script type="text/javascript" src="modules/DOMAssistantCSS.js"></script>
+	<script type="text/javascript" src="modules/DOMAssistantContent.js"></script>
+	<script type="text/javascript" src="modules/DOMAssistantEvents.js"></script>
+	<script type="text/javascript" src="modules/DOMAssistantAJAX.js"></script>
+	<script type="text/javascript" src="modules/DOMAssistantLoad.js"></script>
+	<!--<script type="text/javascript" src="DOMAssistantCompressed.js"></script>-->
+	
 	<script type="text/javascript">
-		
+		function test (content) {
+			this.replaceContent(content);
+			this.addClass("testing");
+		}
 		DOMAssistant.DOMReady(function () {
-			//$("container").load("ajax.html");
+			$("container").get("ajax.html", test);
 			$("disabled-element").disabled = true;
 			var itemToTest = 6;
-			switch(itemToTest){
+			switch(itemToTest) {
 				case -8:
 					// #container
 					$("* p").addClass("testing");
