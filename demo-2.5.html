@@ -20,9 +20,9 @@
 			this.addClass("testing");
 		}
 		DOMAssistant.DOMReady(function () {
-			$("container").get("ajax.html", test);
+			//$("container").get("ajax.html", test);
 			$("disabled-element").disabled = true;
-			var itemToTest = 6;
+			var itemToTest = 1;
 			switch(itemToTest) {
 				case -8:
 					// #container
@@ -279,7 +279,7 @@
 		<div id="inner-container" class="inner">
 			<input id="gris" type="text" name="some_name" value="Yes" class="one"><br>
 			<div id="main-content" class="more">
-				<input id="apa" type="text" name="some_name" value="Yes" class="one"><br>
+				<input id="gris" type="text" name="some_name" value="Yes" class="one"><br>
 				<input type="text" name="some_name" value=""><br>
 				<input type="text" id="disabled-element" value="Disabled" class="one"><br>
 				<input type="text" name="some_name" value=""><br>

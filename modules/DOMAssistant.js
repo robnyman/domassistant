@@ -382,9 +382,9 @@ var DOMAssistant = function () {
 								}
 								if (splitRule.allClasses) {
 									splitRule.allClasses = splitRule.allClasses.replace(/^\./, "").split(".");
-									var classTag = (matchingElms.length > 0)? matchingElms : null;
+									classTag = (matchingElms.length > 0)? matchingElms : null;
 									matchingElms = new HTMLArray();
-									for (var n=0, nl=splitRule.allClasses.length, innerRegExp; n<nl; n++) {
+									for (var n=0, nl=splitRule.allClasses.length; n<nl; n++) {
 										matchingElms = prevElm.elmsByClass(splitRule.allClasses[n], classTag);
 										if (matchingElms.length === 0) {
 											break;
@@ -395,20 +395,20 @@ var DOMAssistant = function () {
 									splitRule.allAttr = splitRule.allAttr.replace(/(\])(\[)/, "$1 $2").split(" ");
 									var attrElms = (matchingElms.length > 0)? matchingElms : null;
 									matchingElms = new HTMLArray();
-									var matchingAttributeElms;
-									for (var p=0, pl=splitRule.allAttr.length, attributeMatch; p<pl; p++) {
+									for (var p=0, pl=splitRule.allAttr.length, matchingAttributeElms, attributeMatch, attribute, attrVal, tag, substrMatchSelector; p<pl; p++) {
 										matchingAttributeElms = new HTMLArray();
 										attributeMatch = /(\w+)(\^|\$|\*)?=?([\w\-_]+)?/.exec(splitRule.allAttr[p]);
-										var attribute = attributeMatch[1];
-										var attrVal = attributeMatch[3] || "*";
-										var tag = (attrElms)? attrElms : null;
-										var substrMatchSelector = attributeMatch[2] || null;
+										attribute = attributeMatch[1];
+										attrVal = attributeMatch[3] || "*";
+										tag = (attrElms)? attrElms : null;
+										substrMatchSelector = attributeMatch[2] || null;
 										matchingAttributeElms = prevElm.elmsByAttribute(attribute, attrVal, tag, substrMatchSelector);
 										if (matchingAttributeElms.length === 0) {
 											break;
 										}
 									}
-									matchingElms = matchingAttributeElms;
+									matchingElms = matchingAttributeElms = null;
+									attributeMatch = null;
 								}
 								if (splitRule.pseudoClass) {
 									var pseudoClass = splitRule.pseudoClass;
@@ -655,12 +655,14 @@ var DOMAssistant = function () {
 				};
 			}
 			else {			
-				var returnElms = new HTMLArray();
-				var elmsWithTag = this.getElementsByTagName(tag);
-				for (var i=0, il=elmsWithTag.length; i<il; i++) {
-					returnElms.push(elmsWithTag[i]);
-				}
-				return returnElms;
+				DOMAssistant.elmsByTag = function () {
+					var returnElms = new HTMLArray();
+					var elmsWithTag = this.getElementsByTagName(tag);
+					for (var i=0, il=elmsWithTag.length; i<il; i++) {
+						returnElms.push(elmsWithTag[i]);
+					}
+					return returnElms;
+				};
 			}
 			return DOMAssistant.elmsByTag.call(this, tag);
 		},
