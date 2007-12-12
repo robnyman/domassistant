@@ -22,7 +22,7 @@
 		DOMAssistant.DOMReady(function () {
 			//$("container").get("ajax.html", test);
 			$("disabled-element").disabled = true;
-			var itemToTest = 1;
+			var itemToTest = 5;
 			switch(itemToTest) {
 				case -8:
 					// #container
@@ -67,11 +67,11 @@
 					break;
 				case 1:
 					// .item
-					$(".item").addClass("testing");
+					$("*.item").addClass("testing");
 					break;
 				case 2:
 					// #container.item
-					$("#container.item").addClass("testing");
+					$("body .item").addClass("testing");
 					break;
 				case 3:
 					// p.info.error
