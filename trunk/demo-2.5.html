@@ -22,7 +22,7 @@
 		DOMAssistant.DOMReady(function () {
 			//$("container").get("ajax.html", test);
 			$("disabled-element").disabled = true;
-			var itemToTest = 5;
+			var itemToTest = 6;
 			switch(itemToTest) {
 				case -8:
 					// #container
@@ -67,7 +67,7 @@
 					break;
 				case 1:
 					// .item
-					$("*.item").addClass("testing");
+					$(".item").addClass("testing");
 					break;
 				case 2:
 					// #container.item
@@ -83,7 +83,7 @@
 					break;
 				case 5:
 					// div > p
-					$("div > div").addClass("testing");
+					$("div > p[id=first-paragraph]").addClass("testing");
 					break;
 				case 6:
 					// p + p
@@ -168,7 +168,7 @@
 					break;
 				case 26:
 					// Multiple rules
-					$("p, em:first-child").addClass("testing");
+					$("a, em:first-child").addClass("testing");
 					break;
 			}
 			try	{
@@ -240,9 +240,9 @@
 		<p class="pish">P child to #container</p>
 		<div id="pseudo-test-parent">
 			<div id="pseudo-test">
-				<span>Span 1</span>
-																				<div>Div 1</div>
-																				<span>Span 1</span>
+				<!-- <span>Span 1</span>
+																								<div>Div 1</div>
+																								<span>Span 1</span> -->
 				<p>P 1</p>
 				<p>P 2</p>
 				<p>P 3</p>
