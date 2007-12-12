@@ -294,7 +294,10 @@ var DOMAssistant = function () {
 				DOMAssistant.cssSelection = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/, "$1").split(",");
 					var elm = new HTMLArray();
-					var cssSelectors, prevElm, matchingElms, childOrSiblingRef, nextTag, nextRegExp, refSeparator, refPrevElm, nextSib, refPrevElmFound;
+					var prevElm = new HTMLArray();
+					prevElm.push(DOMAssistant.$(document));
+					var matchingElms = new HTMLArray();
+					var cssSelectors, childOrSiblingRef, nextTag, nextRegExp, refSeparator, refPrevElm, nextSib, refPrevElmFound;
 					function addToMatchingElms (item) {
 						var exists = false;
 						for (var b=0, bl=matchingElms.length; b<bl; b++) {
@@ -307,12 +310,40 @@ var DOMAssistant = function () {
 							matchingElms.push(item);
 						}
 					}
+					function addToPrevElm (item) {
+						//alert("add\n" + prevElm.length);
+						var exists = false;
+						for (var b=0, bl=prevElm.length; b<bl; b++) {
+							if (prevElm[b] === item) {
+								exists = true;
+								break;
+							}
+						}
+						if (!exists) {
+							prevElm.push(item);
+						}
+					}
+					function emptyMatchingElms () {
+						for (var c=(matchingElms.length-1); c>=0; c--) {
+							matchingElms[c] = null;
+						}
+						matchingElms = new HTMLArray();
+					}
+					function emptyPrevElmAndAddMatching () {
+						for (var c=(prevElm.length-1); c>=0; c--) {
+							prevElm[c] = null;
+						}
+						prevElm = new HTMLArray();
+						for (var d=0, dl=matchingElms.length; d<dl; d++) {
+							addToPrevElm(matchingElms[d]);
+						}
+					}
 					for (var a=0, al=cssRules.length; a<al; a++) {
 						cssSelectors = cssRules[a].split(" ");
-						prevElm = new HTMLArray();
-						prevElm.push(DOMAssistant.$(document));
 						for (var i=0, il=cssSelectors.length; i<il; i++) {
-							matchingElms = new HTMLArray();
+							//matchingElms = new HTMLArray();
+							//emptyMatchingElms();
+							//alert("prevElm: " + prevElm);
 							var rule = cssSelectors[i];
 							childOrSiblingRef = /^(>|\+|~)$/.exec(rule);
 							if (childOrSiblingRef) {
@@ -354,7 +385,7 @@ var DOMAssistant = function () {
 											}
 										}	
 									}
-									prevElm = matchingElms;
+									emptyPrevElmAndAddMatching();
 								}
 							}
 							else {
@@ -368,33 +399,35 @@ var DOMAssistant = function () {
 									pseudoValue : cssSelector[12]
 								};
 								if (i > 0 && /(>|\+|~)/.test(cssSelectors[i - 1])) {
+									emptyMatchingElms();
 									matchingElms = prevElm;
 								}
 								else if (splitRule.tag && !splitRule.id) {
+									emptyMatchingElms();
 									matchingElms = prevElm.elmsByTag(splitRule.tag);
 								}
 								if (splitRule.id) {
 									var idElm = DOMAssistant.$(splitRule.id.replace(/^#/, ""));
-									matchingElms = new HTMLArray();
+									emptyMatchingElms();
 									if (idElm) {
 										addToMatchingElms(idElm);
 									}
 								}
 								if (splitRule.allClasses) {
 									splitRule.allClasses = splitRule.allClasses.replace(/^\./, "").split(".");
-									classTag = (matchingElms.length > 0)? matchingElms : null;
-									matchingElms = new HTMLArray();
-									for (var n=0, nl=splitRule.allClasses.length; n<nl; n++) {
-										matchingElms = prevElm.elmsByClass(splitRule.allClasses[n], classTag);
-										if (matchingElms.length === 0) {
+									var classTag = (matchingElms.length > 0)? matchingElms : null;
+									for (var n=0, nl=splitRule.allClasses.length, matchingClassElms; n<nl; n++) {
+										matchingClassElms = prevElm.elmsByClass(splitRule.allClasses[n], classTag);
+										if (matchingClassElms.length === 0) {
 											break;
 										}
 									}
+									emptyMatchingElms();
+									matchingElms = matchingClassElms;									
 								}
 								if (splitRule.allAttr) {
 									splitRule.allAttr = splitRule.allAttr.replace(/(\])(\[)/, "$1 $2").split(" ");
 									var attrElms = (matchingElms.length > 0)? matchingElms : null;
-									matchingElms = new HTMLArray();
 									for (var p=0, pl=splitRule.allAttr.length, matchingAttributeElms, attributeMatch, attribute, attrVal, tag, substrMatchSelector; p<pl; p++) {
 										matchingAttributeElms = new HTMLArray();
 										attributeMatch = /(\w+)(\^|\$|\*)?=?([\w\-_]+)?/.exec(splitRule.allAttr[p]);
@@ -407,8 +440,8 @@ var DOMAssistant = function () {
 											break;
 										}
 									}
-									matchingElms = matchingAttributeElms = null;
-									attributeMatch = null;
+									emptyMatchingElms();
+									matchingElms = matchingAttributeElms;
 								}
 								if (splitRule.pseudoClass) {
 									var pseudoClass = splitRule.pseudoClass;
@@ -522,10 +555,11 @@ var DOMAssistant = function () {
 											}
 										}
 									}
-									prevElm = matchingElms;
+									emptyPrevElmAndAddMatching();
 								}
 							}
-							prevElm = matchingElms;
+							//alert(matchingElms);
+							emptyPrevElmAndAddMatching();
 						}
 						for (var v=0, vl=prevElm.length; v<vl; v++) {
 							elm.push(prevElm[v]);
