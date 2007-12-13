@@ -134,8 +134,17 @@ DOMAssistant.Content = function () {
 		},
 
 		replaceContent : function (newContent) {
-			for (var i=(this.childNodes.length - 1); i>=0; i--) {
-		    	this.childNodes[i].parentNode.removeChild(this.childNodes[i]);
+			for (var i=(this.childNodes.length - 1), child, attr; i>=0; i--) {
+				child = this.childNodes[i];
+				attr = child.attributes;
+				if (attr) {
+					for (var j=0, jl=attr.length; j<jl; j++) {
+						if (typeof child[attr[j].name] === "function") {
+							child[attr[j].name] = null;
+						}
+					}
+				}
+		    	child.parentNode.removeChild(child);
 		    }
 			this.addContent(newContent);
 			return this;
