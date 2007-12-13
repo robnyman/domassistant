@@ -890,6 +890,20 @@ DOMAssistant.AJAX = function () {
 		},
 		
 		replaceWithAJAXContent : function (content, add) {
+			var elms = this.elmsByTag("*");
+			elms.push(this);
+			var attr;
+			for (var i=0, il=elms.length, elm; i<il; i++) {
+				elm = elms[i];
+				attr = elm.attributes;
+				if (attr) {
+					for (var j=0, jl=attr.length; j<jl; j++) {
+						if (typeof elm[attr[j].name] === "function") {
+							elm[attr[j].name] = null;
+						}
+					}
+				}	
+			}
 			if (add) {
 				this.innerHTML += content;
 			}
@@ -1119,8 +1133,17 @@ DOMAssistant.Content = function () {
 		},
 
 		replaceContent : function (newContent) {
-			for (var i=(this.childNodes.length - 1); i>=0; i--) {
-		    	this.childNodes[i].parentNode.removeChild(this.childNodes[i]);
+			for (var i=(this.childNodes.length - 1), child, attr; i>=0; i--) {
+				child = this.childNodes[i];
+				attr = child.attributes;
+				if (attr) {
+					for (var j=0, jl=attr.length; j<jl; j++) {
+						if (typeof child[attr[j].name] === "function") {
+							child[attr[j].name] = null;
+						}
+					}
+				}
+		    	child.parentNode.removeChild(child);
 		    }
 			this.addContent(newContent);
 			return this;
