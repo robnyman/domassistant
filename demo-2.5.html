@@ -21,6 +21,7 @@
 		}
 		DOMAssistant.DOMReady(function () {
 			//$("container").get("ajax.html", test);
+			$("container").replaceContent("En liten apa");//load("ajax.html");
 			$("disabled-element").disabled = true;
 			var itemToTest = 6;
 			switch(itemToTest) {
@@ -236,14 +237,14 @@
 	
 	<p class="pish">P child to #container</p>
 	
-	<div id="container" class="item test-2 test-3">
+	<div id="container" class="item test-2 test-3" onclick="alert('apa');">
 		<p class="pish">P child to #container</p>
 		<div id="pseudo-test-parent">
 			<div id="pseudo-test">
 				<!-- <span>Span 1</span>
 																								<div>Div 1</div>
 																								<span>Span 1</span> -->
-				<p>P 1</p>
+				<p onclick="alert('Gris');">P 1</p>
 				<p>P 2</p>
 				<p>P 3</p>
 				<!-- <span>Span 2</span> -->
