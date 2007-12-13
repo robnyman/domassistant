@@ -1,0 +1,22 @@
+pre{
+	overflow-x: auto;
+	overflow-y: visible;
+}
+
+#navigation ul{
+	bottom: -2px;
+}
+
+#content-areas, #content-areas-inner{
+	zoom: 1;
+}
+
+#get-your-copy{
+	width: 146px;
+	height: 147px;
+	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/get-your-copy.png',sizingMethod='crop');
+}
+
+#get-your-copy img{
+	display: none;
+}

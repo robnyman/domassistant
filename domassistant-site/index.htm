@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/DTD/strict.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>DOM Assistant, the modular lightweight JavaScript library</title>
+	<style type="text/css">
+		@import url("css/domassistant.css");
+	</style>
+	<!--[if lt IE 7]>
+		<link rel="stylesheet" href="css/ie.css" type="text/css">
+	<![endif]-->
+	<link rel="Shortcut icon" href="http://www.robertnyman.com/favicon.png">
+</head>
+
+<body>
+	
+	<div id="container">
+			<div id="header">
+				<div id="header-content">
+					<h1><a href="index.htm"><span></span>DOMAssistant</a></h1>
+					<div id="navigation">
+						<ul>
+							<li><a href="index.htm" class="selected">Home</a>/</li>
+							<li><a href="documentation.htm">Documentation</a>/</li>
+							<li><a href="download.htm">Download</a>/</li>
+							<li><a href="modularity.htm">Modularity</a>/</li>
+							<li><a href="compatibility.htm">Compatibility</a>/</li>
+							<li class="last"><a href="contact.htm">Contact</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			
+			<div id="main-content">				
+				<div id="content">					
+					<div id="content-areas">
+						<div id="content-areas-inner">
+							
+							<div class="content-block">
+								<h2>What is DOMAssistant?</h2>
+								<p>The idea of DOMAssistant is to provide a simpler and more consistent way to script against the Document Object Model (DOM) in web browsers. The idea is that everything starts with the element/-s in question, selected through <code>id</code> or CSS selectors, and then perform various methods on it, such as adding or removing classes, events etc.</p>
+
+								<p>Example operations look like this:</p>
+
+	<pre><code>// Get element's child elements with a "type" attribute with value "text"
+	$("#container input[type=text]");
+
+	// Apply click events to all navigation links
+	$("#navigation ul li a").addEvent("click", functionToCall);
+
+	// Make an AJAX call and put the result in the element
+	$("#news-list").load("updated-news.php");
+	</code></pre>
+							</div>
+						
+							<div id="download" class="content-block focused-block">
+								<h2>Download DOMAssistant</h2>
+								<dl>
+									<dt>
+										<a href="http://code.google.com/p/domassistant/">DOMAssistant 2.5, compressed</a><br>
+										(21kb, 6kb <a href="http://en.wikipedia.org/wiki/Gzip" class="small">Gzipped</a>)
+									</dt>
+									<dd>Intended for production usage.</dd>
+									<dt>
+										<a href="http://code.google.com/p/domassistant/">DOMAssistant 2.5, complete</a><br>
+										(44kb)
+									</dt>
+									<dd>Intended for test and development usage.</dd>
+								</dl>
+							</div>
+						
+							<div class="content-block last-content-block">
+								<h2>DOMAssistant is modular</h2>
+								<p>DOMAssistant is completely modular, in that sense that it is only dependent on one single core JavaScript file, <code>DOMAssistant.js</code>. All other modules are optional, and you can choose to only use the ones you find necessary in your application. The reasoning behind this is to make the file size usage as small as possible, while at the same time addressing any potential bandwidth issues.</p>
+							</div>
+							
+						</div>
+					</div>
+					<div id="get-your-copy">
+						<a href="http://code.google.com/p/domassistant/"><img src="images/get-your-copy.png" alt="Get your copy"></a>
+					</div>
+				</div>
+			</div>
+			
+			<div id="footer">
+				<div id="footer-content">
+					<i>Created by Robert Nyman, <a href="http://www.robertnyman.com">http://www.robertnyman.com</a>. DOMAssistant is released under a <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License v3</a>.</i>
+				</div>
+			</div>
+					
+	</div>
+	
+</body>
+</html>
