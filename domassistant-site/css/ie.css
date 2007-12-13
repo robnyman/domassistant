@@ -1,6 +1,13 @@
 pre{
+	width: 98%;
+	padding: 2%;
 	overflow-x: auto;
 	overflow-y: visible;
+}
+
+#header h1{
+	width: 233px;
+	height: 27px;
 }
 
 #navigation ul{
@@ -9,6 +16,10 @@ pre{
 
 #content-areas, #content-areas-inner{
 	zoom: 1;
+}
+
+.content-block{
+	height: 440px;
 }
 
 #get-your-copy{

@@ -13,7 +13,7 @@
 	<link rel="Shortcut icon" href="http://www.robertnyman.com/favicon.png">
 </head>
 
-<body id="start-page">
+<body>
 	
 	<div id="container">
 			<div id="header">
@@ -21,8 +21,8 @@
 					<h1><a href="index.htm"><span></span>DOMAssistant</a></h1>
 					<div id="navigation">
 						<ul>
-							<li><a href="index.htm" class="selected">Home</a>/</li>
-							<li><a href="documentation.html">Documentation</a>/</li>
+							<li><a href="index.htm">Home</a>/</li>
+							<li><a href="documentation.html" class="selected">Documentation</a>/</li>
 							<li><a href="download.html">Download</a>/</li>
 							<li><a href="compatibility.html">Compatibility</a>/</li>
 							<li class="last"><a href="contact.html">Contact</a></li>
@@ -37,22 +37,30 @@
 						<div id="content-areas-inner">
 							
 							<div class="content-block">
-								<h1>What is DOMAssistant?</h1>
-								<p>The idea of DOMAssistant is to provide a simpler and more consistent way to script against the Document Object Model (DOM) in web browsers. The idea is that everything starts with the element/-s in question, selected through <code>id</code> or CSS selectors, and then perform various methods on it, such as adding or removing classes, events etc.</p>
-								<p>Example code:</p>
+								<h1>Documentation</h1>
+								<p>DOMAssistant contains of 6 individual modules, where only the core DOMAssistant module is required. Any other module can be used without any relational dependency to each other. All modules are available as separate downloads, in the <a href="http://code.google.com/p/domassistant/">DOMAssistantCompressed.js file</a> (for production) or in the <a href="http://code.google.com/p/domassistant/">DOMAssistantComplete.js file</a> (for learning and development).</p>
+								<p>Within this Documentation section, you will find every available method documented together with some example code. The parameters they accept and their return value is specified in respective module page.</p>
+							</div>
+							
+							<div class="content-block">
+								<h2>DOMAssistant modules</h2>
+								<ul>
+									<li><a href="documentation/DOMAssistant-module.html">DOMAssistant</a></li>
+									<li><a href="">DOMAssistant.AJAX</a></li>
+									<li><a href="">DOMAssistant.Content</a></li>
+									<li><a href="">DOMAssistant.CSS</a></li>
+									<li><a href="">DOMAssistant.Events</a></li>
+									<li><a href="">DOMAssistant.Load</a></li>
+								</ul>
+								<h3>CSS selectors</h3>
 								<p>
-									<code>$("#container input[type=text]");</code>
-								</p>
-								<p>
-									<code>$("#navigation a").addEvent("click", myFunc);</code>
-								</p>
-								<p>
-									<code>$("#news-list").load("updated-news.php");</code>
+									<a href="documentation/css-selectors.html">CSS selector support</a>
 								</p>
 							</div>
 						
-							<div id="download" class="content-block focused-block">
+							<div id="download" class="content-block last-content-block focused-block">
 								<h2>Download DOMAssistant</h2>
+								<h3>All modules in one file</h3>	
 								<dl>
 									<dt>
 										<a href="http://code.google.com/p/domassistant/">DOMAssistant 2.5, compressed</a><br>
@@ -64,13 +72,16 @@
 										<a href="http://code.google.com/p/domassistant/">DOMAssistant 2.5, complete</a><br>
 										(44kb)
 									</dt>
-									<dd>Intended for learning and development usage.</dd>
 								</dl>
-							</div>
-						
-							<div class="content-block last-content-block">
-								<h2>DOMAssistant is modular</h2>
-								<p>DOMAssistant is completely modular, in that sense that it is only dependent on one single core JavaScript file, <code>DOMAssistant.js</code>. All other modules are optional, and you can choose to only use the ones you find necessary in your application. The reasoning behind this is to make the file size usage as small as possible, while at the same time addressing any potential bandwidth issues.</p>
+								<h3>Individual modules</h3>	
+								<dl>	
+									<dt><a href="">DOMAssistant</a></dt>
+									<dt><a href="">DOMAssistant.AJAX</a></dt>
+									<dt><a href="">DOMAssistant.Content</a></dt>
+									<dt><a href="">DOMAssistant.CSS</a></dt>
+									<dt><a href="">DOMAssistant.Events</a></dt>
+									<dt><a href="">DOMAssistant.Load</a></dt>
+								</dl>
 							</div>
 							
 						</div>
