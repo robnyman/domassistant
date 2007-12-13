@@ -63,6 +63,10 @@ h3{
 	margin: 1em 0;
 }
 
+h4{
+	margin: 2em 0 1em;
+}
+
 form label{
 	cursor: pointer;
 }
