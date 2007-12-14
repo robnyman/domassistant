@@ -87,6 +87,30 @@ pre{
 	overflow: auto;
 }
 
+table{
+	width: 200%;
+}
+
+td{
+	width: 60%;
+	padding: 0.2em 0 0.2em 0;
+}
+
+th{
+	text-align: left;
+	vertical-align: top;
+	padding: 0.2em 1em 0.2em 0;
+}
+
+thead th{
+	font-size: 1.1em;
+	border-bottom: 1px solid #2b2b2b;
+}
+
+tr.first-row td, tr.first-row th{
+	padding-top: 1em;
+}
+
 .code{
 	background: #eee;
 	padding: 1em;
@@ -215,6 +239,15 @@ pre{
 
 .last-content-block{
 	margin-right: 0;
+}
+
+.nav-bullet-lists ul, .focused-block ul{
+	list-style: none;
+	margin-left: 0;
+}
+
+.nav-bullet-lists li, .focused-block li{
+	margin-bottom: 0.25em;
 }
 
 /* Download box */
