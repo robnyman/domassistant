@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/DTD/strict.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>DOM Assistant, the modular lightweight JavaScript library</title>
+	<style type="text/css">
+		@import url("../css/domassistant.css");
+	</style>
+	<!--[if lt IE 7]>
+		<link rel="stylesheet" href="../css/ie.css" type="text/css">
+	<![endif]-->
+	<link rel="Shortcut icon" href="http://www.robertnyman.com/favicon.png">
+</head>
+
+<body>
+	
+	<div id="container">
+			<div id="header">
+				<div id="header-content">
+					<h1><a href="../index.html"><span></span>DOMAssistant</a></h1>
+					<div id="navigation">
+						<ul>
+							<li><a href="../index.html">Home</a>/</li>
+							<li><a href="../documentation.html" class="selected">Documentation</a>/</li>
+							<li><a href="../download.html">Download</a>/</li>
+							<li><a href="../compatibility.html">Compatibility</a>/</li>
+							<li class="last"><a href="../contact.html">Contact</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			
+			<div id="main-content">				
+				<div id="content">					
+					<div id="content-areas">
+						<div id="content-areas-inner">
+							
+							<div class="content-block">
+								<h1>DOMAssistant.Content module</h1>
+								<p>The DOMAssistantContent module offers various methods for adding and removing content and elements to the page.</p>
+
+								<h4 id="prev"><code>prev()</code></h4>
+								<p>Gets a reference to the previous HTML element, automatically bypassing any text nodes that might in between.</p>
+								<h5>Parameters</h5>
+								<p>None.</p>
+								
+								<h5>Return value</h5>
+								<p>Element's previous sibling element.</p>
+
+								<h5>Example calls</h5>
+								<p class="code">
+									<code>
+										$("container").prev();
+									</code>
+								</p>
+
+								<h4 id="next"><code>next()</code></h4>
+								<p>Gets a reference to the next HTML element, automatically bypassing any text nodes that might in between.</p>
+								<h5>Parameters</h5>
+								<p>None.</p>
+								
+								<h5>Return value</h5>
+								<p>Element's next sibling element.</p>
+
+								<h5>Example calls</h5>
+								<p class="code">
+									<code>
+										$("container").next();
+									</code>
+								</p>
+
+								<h4 id="create"><code>create(name, attr, append, content)</code></h4>
+								<p>Creates an element, and optionally sets attributes on it, appends it to the current element and adds content to it.</p>
+								<h5>Parameters</h5>
+								<dl>
+									<dt>name</dt>
+									<dd>Tag name for the new element. Required.</dd>
+									<dt>attr</dt>
+									<dd>An object containing attributes and their values. Optional.</dd>
+									<dt>append</dt>
+									<dd>Boolean if the new element should be appended right away. Optional.</dd>
+									<dt>content</dt>
+									<dd>A string or HTML object that will become the content of the newly created element. Optional.</dd>
+								</dl>
+								
+								<h5>Return value</h5>
+								<p>Element created by the method.</p>
+
+								<h5>Example calls</h5>
+								<p class="code">
+									<code>
+										$("container").create("div");
+									</code>
+								</p>
+								<p class="code">
+									<code>
+										$("container").create("div", {<br>
+											id : "my-div",<br>
+											className : "my-class"<br>
+										});
+									</code>
+								</p>		
+								<p class="code">
+									<code>
+										$("container").create("div", null, false, "Hello!");
+									</code>
+								</p>
+								<p class="code">
+									<code>
+										$("container").create("div", {<br>
+											id : "my-div",<br>
+											className : "my-class"<br>
+										}, true, "Hi there!");
+									</code>
+								</p>
+
+								<h4 id="setattributes"><code>setAttributes(attr)</code></h4>
+								<p>Sets attributes on the current element.</p>
+								<h5>Parameters</h5>
+								<dl>
+									<dt>attr</dt>
+									<dd>An object containing attributes and their values. Required.</dd>
+								</dl>
+								
+								<h5>Return value</h5>
+								<p>Element which called the method.</p>
+
+								<h5>Example calls</h5>
+								<p class="code">
+									<code>
+										$("container").setAttributes({<br>
+											id : "my-div",<br>
+											className : "my-class"<br>
+										});
+									</code>
+								</p>
+
+								<h4 id="addcontent"><code>addContent(content)</code></h4>
+								<p>Adds content to the current element.</p>
+								<h5>Parameters</h5>
+								<dl>
+									<dt>content</dt>
+									<dd>Can either be a string, which will then be applied using <code>innerHTML</code>, or an HTML object that will be applied using <code>appendChild</code>.</dd>
+								</dl>
+								
+								<h5>Return value</h5>
+								<p>Element which called the method.</p>
+								<h5>Example calls</h5>
+								<p class="code">
+									<code>
+										$("container").addContent("&lt;p&gt;A new paragraph&lt;/p&gt;");
+									</code>
+								</p>
+								<p class="code">
+									<code>
+										$("container").addContent(document.createElement("p"));
+									</code>
+								</p>
+
+								<h4 id="replacecontent"><code>replaceContent(newContent)</code></h4>
+								<p>Replaces the content of the current element with new content.</p>
+								<h5>Parameters</h5>
+								<dl>
+									<dt>newContent</dt>
+									<dd>Can either be a string, which will then be applied using <code>innerHTML</code>, or a HTML object that will be applied using <code>appendChild</code>.</dd>
+								</dl>
+
+								<h5>Return value</h5>
+								<p>Element which called the method.</p>
+								<h5>Example calls</h5>
+								<p class="code">
+									<code>
+										$("container").replaceContent("&lt;p&gt;A new paragraph&lt;/p&gt;");
+									</code>
+								</p>
+								<p class="code">
+									<code>		
+										$("container").replaceContent(document.createElement("p"));
+									</code>
+								</p>
+
+								<h4 id="remove"><code>remove()</code></h4>
+								<p>Removes the current element.</p>
+								<h5>Parameters</h5>
+								<p>None.</p>
+
+								<h5>Return value</h5>
+								<p>Null.</p>
+								<h5>Example calls</h5>
+								<p class="code">
+									<code>
+										$("container").remove();
+									</code>
+								</p>
+							</div>
+							
+							<div class="content-block nav-bullet-lists">
+								<h2>DOMAssistant.Content methods</h2>
+								<ul>
+									<li><a href="#prev">prev</a></li>
+									<li><a href="#next">next</a></li>
+									<li><a href="#create">create</a></li>
+									<li><a href="#setattributes">setAttributes</a></li>
+									<li><a href="#addcontent">addContent</a></li>
+									<li><a href="#replacecontent">replaceContent</a></li>
+									<li><a href="#remove">remove</a></li>
+								</ul>
+								
+								<h3>DOMAssistant modules</h3>
+								<ul>
+									<li><a href="DOMAssistantCore-module.html">DOMAssistant Core</a></li>
+									<li><a href="DOMAssistantAJAX-module.html">DOMAssistant.AJAX</a></li>
+									<li><a href="DOMAssistantContent-module.html">DOMAssistant.Content</a></li>
+									<li><a href="DOMAssistantCSS-module.html">DOMAssistant.CSS</a></li>
+									<li><a href="DOMAssistantEvents-module.html">DOMAssistant.Events</a></li>
+									<li><a href="DOMAssistantLoad-module.html">DOMAssistant.Load</a></li>
+								</ul>
+								<h3>CSS selectors</h3>
+								<p>
+									<a href="css-selectors.html">Supported CSS selectors (CSS 1, CSS 2, CSS 3)</a>
+								</p>
+							</div>
+						
+							<div id="download" class="content-block last-content-block focused-block">
+								<h2>Download DOMAssistant</h2>
+								<h3>All modules in one file</h3>	
+								<dl>
+									<dt>
+										<a href="http://code.google.com/p/domassistant/">DOMAssistant 2.5, compressed</a><br>
+										(21kb, 6kb <a href="http://en.wikipedia.org/wiki/Gzip" class="small">Gzipped</a>)
+									</dt>
+									<dd>Intended for production usage.</dd>
+
+									<dt>
+										<a href="http://code.google.com/p/domassistant/">DOMAssistant 2.5, complete</a><br>
+										(44kb)
+									</dt>
+									<dd>Intended for learning and development usage.</dd>
+								</dl>
+								<h3>Individual modules</h3>	
+								<ul>	
+									<li><a href="/">DOMAssistant</a></li>
+									<li><a href="DOMAssistantAJAX-module.html">DOMAssistant.AJAX</a></li>
+									<li><a href="DOMAssistantContent-module.html">DOMAssistant.Content</a></li>
+									<li><a href="DOMAssistantCSS-module.html">DOMAssistant.CSS</a></li>
+									<li><a href="DOMAssistantEvents-module.html">DOMAssistant.Events</a></li>
+									<li><a href="DOMAssistantLoad-module.html">DOMAssistant.Load</a></li>
+								</ul>
+							</div>
+							
+						</div>
+					</div>
+					<div id="get-your-copy">
+						<a href="http://code.google.com/p/domassistant/"><img src="../images/get-your-copy.png" alt="Get your copy"></a>
+
+					</div>
+				</div>
+			</div>
+			
+			<div id="footer">
+				<div id="footer-content">
+					<i>Created by Robert Nyman, <a href="http://www.robertnyman.com">http://www.robertnyman.com</a>. DOMAssistant is released under a <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License v3</a>.</i>
+
+				</div>
+			</div>
+					
+	</div>
+	
+</body>
+</html>

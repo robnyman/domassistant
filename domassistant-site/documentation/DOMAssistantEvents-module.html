@@ -37,106 +37,97 @@
 						<div id="content-areas-inner">
 							
 							<div class="content-block">
-								<h1>DOMAssistant.AJAX module</h1>
-								<p>The DOMAssistantAJAX module offers basic AJAX interaction for retrieving data from a URL and then passing on the returned content to any function, or load the content into an element.</p>
+								<h1>DOMAssistant.Events module</h1>
+								<p>The DOMAssistantEvents module offers various methods for adding and removing handlers for one or several events on an element. It also contains functionality for stopping default actions and bubbling of events.</p>
 
-								<h4 id="get"><code>get(url, callBack)</code></h4>
-								<p>Makes a request to the specified URL and calls the set callBack function. The first parameter of the then called callBack function will be the <code>responseText</code> of the AJAX call. If this method is called on an element, the callBack function context will be the element, i.e. the keyword <code>this</code> will refer to the element which called the <code>get</code> method in the first place.</p>
+								<h4 id="addevent"><code>addEvent(evt, func)</code></h4>
+								<p>Adds an event handler to the current element. Multiple event handlers are supported, and the receiving funtion will have an event object reference and a <code>this</code> reference to the element it occurred on, no matter what web browser. For accessibility reasons, please make sure to only apply click events to elements that can handle them without JavaScript enabled.</p>
 								<h5>Parameters</h5>
 								<dl>
-									<dt>url</dt>
-									<dd>URL to make an AJAX call to. Required.</dd>
-									<dt>callBack</dt>
-									<dd>Function name or anonymous function to call when the AJAX request is complete. Optional.</dd>
+									<dt>evt</dt>
+									<dd>Event to apply, specified as a string, without the "on" prefix.</dd>
+									<dt>func</dt>
+									<dd>Function to handle the event, specified as a function reference (without parentheses) or an anonymous function.</dd>
 								</dl>
+								<h5>Return value</h5>
+								<p>Element which called the method.</p>
 
+								<h5>Example calls</h5>
+								<p class="code">
+									<code>
+										$("container").addEvent("click", getListing);
+									</code>
+								</p>
+								<p class="code">
+									<code>
+										$("container").addEvent("click", function (){<br>
+											alert("Hello darling!");<br>
+										});
+									</code>
+								</p>
+
+								<h4 id="removeevent"><code>removeEvent(evt, func)</code></h4>
+								<p>Removes an event handler from the current element. Works only for function references, and not anonymous functions.</p>
+								<h5>Parameters</h5>
+								<dl>
+									<dt>evt</dt>
+									<dd>Event to remove, specified as a string, without the "on" prefix.</dd>
+									<dt>func</dt>
+									<dd>Function to stop from handling the event, specified as a function reference (without parentheses).</dd>
+								</dl>
+								<h5>Return value</h5>
+								<p>Element which called the method.</p>
+
+								<h5>Example calls</h5>
+								<p class="code">
+									<code>
+										$("container").removeEvent("click", getListing);
+									</code>	
+								</p>
+
+								<h4 id="preventdefault"><code>preventDefault(evt)</code></h4>
+								<p>Prevents the default action of an event. Can be called from any function, and is not a method of any element.</p>
+								<h5>Parameters</h5>
+								<dl>
+									<dt>evt</dt>
+									<dd>Event to prevent the default action of.</dd>
+								</dl>
 								<h5>Return value</h5>
 								<p>None.</p>
 
 								<h5>Example calls</h5>
 								<p class="code">
-									<code>$("news").get("news.php", insertNews);</code>
+									<code>
+										DOMAssistant.preventDefault(eventReference);
+									</code>	
 								</p>
-								<p class="code">
-									<code>DOMAssistant.AJAX.get("my-url.aspx", callbackFunctionName);</code>
-								</p>
-								
-								<h4 id="load"><code>load(url, add)</code></h4>
-								<p>Makes a request to the specified URL and loads the returned content into the element which the method is called on.</p>
+
+								<h4 id="cancelbubble"><code>cancelBubble(evt)</code></h4>
+								<p>Cancels the bubbling of an event. Can be called from any function, and is not a method of any element.</p>
 								<h5>Parameters</h5>
 								<dl>
-									<dt>url</dt>
-									<dd>URL to make an AJAX call to. Required.</dd>
-									<dt>add</dt>
-									<dd>A boolean, if the retrieved content shall be appended to the already existing content, as opposed to replacing it. Optional.</dd>
+									<dt>evt</dt>
+									<dd>Event to cancel the bubbling of.</dd>
 								</dl>
-
 								<h5>Return value</h5>
 								<p>None.</p>
 
 								<h5>Example calls</h5>
 								<p class="code">
-									<code>$("directions").load("maps.php");</code>
-								</p>
-								<p class="code">
-									<code>$("contacts", true).load("staff.aspx");</code>
-								</p>
-								
-								<h4 id="getReadyState"><code>getReadyState()</code></h4>
-								<p>Helper function to check the current <code>readyState</code> of the XMLHttpRequest.</p>
-								<h5>Parameters</h5>
-								<p>None</p>
-
-								<h5>Return value</h5>
-								<p>Integer.</p>
-								<ul>
-									<li>0 = uninitialized</li>
-									<li>1 = loading</li>
-									<li>2 = loaded</li>
-									<li>3 = interactive</li>
-									<li>4 = complete</li>
-								</ul>
-
-								<h5>Example calls</h5>
-								<p class="code">
-									<code>DOMAssistant.AJAX.getReadyState();</code>
+									<code>
+										DOMAssistant.cancelBubble(eventReference);
+									</code>
 								</p>
 								
-								<h4 id="getStatus"><code>getStatus()</code></h4>
-								<p>Helper function to check the current <code>status</code> of the XMLHttpRequest.</p>
-								<h5>Parameters</h5>
-								<p>None</p>
-
-								<h5>Return value</h5>
-								<p>Integer. Examples are 200 for Ok and 404 for not found.</p>
-
-								<h5>Example calls</h5>
-								<p class="code">
-									<code>DOMAssistant.AJAX.getStatus();</code>
-								</p>
-								
-								<h4 id="getStatusText"><code>getStatusText()</code></h4>
-								<p>Helper function to check the current <code>readyState</code> of the XMLHttpRequest.</p>
-								<h5>Parameters</h5>
-								<p>None</p>
-
-								<h5>Return value</h5>
-								<p>String. The text accompanying the status code.</p>
-
-								<h5>Example calls</h5>
-								<p class="code">
-									<code>DOMAssistant.AJAX.getStatusText();</code>
-								</p>
 							</div>
 							
 							<div class="content-block nav-bullet-lists">
-								<h2>DOMAssistant.AJAX methods</h2>
+								<h2>DOMAssistant.Events methods</h2>
 								<ul>
-									<li><a href="#get">get</a></li>
-									<li><a href="#load">load</a></li>
-									<li><a href="#getReadyState">getReadyState</a></li>
-									<li><a href="#getStatus">getStatus</a></li>
-									<li><a href="#getStatusText">getStatusText</a></li>
+									<li><a href="#addevent">addEvent</a></li>
+									<li><a href="#removeevent">removeEvent</a></li>
+									<li><a href="#preventdefault">preventDefault</a></li>
+									<li><a href="#cancelbubble">cancelBubble</a></li>
 								</ul>
 								
 								<h3>DOMAssistant modules</h3>

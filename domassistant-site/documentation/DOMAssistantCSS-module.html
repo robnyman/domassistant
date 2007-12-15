@@ -37,106 +37,86 @@
 						<div id="content-areas-inner">
 							
 							<div class="content-block">
-								<h1>DOMAssistant.AJAX module</h1>
-								<p>The DOMAssistantAJAX module offers basic AJAX interaction for retrieving data from a URL and then passing on the returned content to any function, or load the content into an element.</p>
+								<h1>DOMAssistant.CSS module</h1>
+								<p>The DOMAssistantCSS module offers various methods for adding and removing CSS classes, checking if an element has a certain class and getting the rendered style for a specific property on an element.</p>
 
-								<h4 id="get"><code>get(url, callBack)</code></h4>
-								<p>Makes a request to the specified URL and calls the set callBack function. The first parameter of the then called callBack function will be the <code>responseText</code> of the AJAX call. If this method is called on an element, the callBack function context will be the element, i.e. the keyword <code>this</code> will refer to the element which called the <code>get</code> method in the first place.</p>
+								<h4 id="addclass"><code>addClass(className)</code></h4>
+								<p>Adds a class name to the current element, unless it already exists.</p>
 								<h5>Parameters</h5>
 								<dl>
-									<dt>url</dt>
-									<dd>URL to make an AJAX call to. Required.</dd>
-									<dt>callBack</dt>
-									<dd>Function name or anonymous function to call when the AJAX request is complete. Optional.</dd>
+									<dt>className</dt>
+									<dd>Desired class name to be added. Required.</dd>
 								</dl>
-
 								<h5>Return value</h5>
-								<p>None.</p>
+								<p>Element which called the method.</p>
 
 								<h5>Example calls</h5>
 								<p class="code">
-									<code>$("news").get("news.php", insertNews);</code>
+									<code>
+										$("container").addClass("selected");
+									</code>
 								</p>
-								<p class="code">
-									<code>DOMAssistant.AJAX.get("my-url.aspx", callbackFunctionName);</code>
-								</p>
-								
-								<h4 id="load"><code>load(url, add)</code></h4>
-								<p>Makes a request to the specified URL and loads the returned content into the element which the method is called on.</p>
+
+								<h4 id="removeclass"><code>removeClass(className)</code></h4>
+								<p>Removes a class name from the current element.</p>
 								<h5>Parameters</h5>
 								<dl>
-									<dt>url</dt>
-									<dd>URL to make an AJAX call to. Required.</dd>
-									<dt>add</dt>
-									<dd>A boolean, if the retrieved content shall be appended to the already existing content, as opposed to replacing it. Optional.</dd>
+									<dt>className</dt>
+									<dd>Desired class name to remove. Required.</dd>
 								</dl>
-
 								<h5>Return value</h5>
-								<p>None.</p>
+								<p>Element which called the method.</p>
 
 								<h5>Example calls</h5>
 								<p class="code">
-									<code>$("directions").load("maps.php");</code>
+									<code>
+										$("container").removeClass("selected");
+									</code>
 								</p>
+
+								<h4 id="hasclass"><code>hasClass(className)</code></h4>
+								<p>Checks whether the current element has a certain class name.</p>
+								<h5>Parameters</h5>
+								<dl>
+									<dt>className</dt>
+									<dd>Class name to check if it exists on the current element. Required.</dd>
+								</dl>
+								<h5>Return value</h5>
+								<p>Boolean. Whether the element has the requested class or not.</p>
+
+								<h5>Example calls</h5>
 								<p class="code">
-									<code>$("contacts", true).load("staff.aspx");</code>
+									<code>
+										$("container").hasClass("selected");
+									</code>
+								</p>
+
+								<h4 id="getstyle"><code>getStyle(cssRule)</code></h4>
+								<p>Gets the rendered style for a certain CSS property on the current element, no matter if it was applied inline or from an external stylesheet. Note: make sure to look for the specific property instead of general ones. I.e. <code>background-color</code> instead of <code>backgrund</code> etc.</p>
+								<h5>Parameters</h5>
+								<dl>
+									<dt>cssRule</dt>
+									<dd>CSS property to check value of. Use CSS syntax for the property, i.e. <code>background-color</code> instead of <code>backgroundColor</code>. Required.</dd>
+								</dl>
+								<h5>Return value</h5>
+								<p>String. The value of the requested style.</p>
+
+								<h5>Example calls</h5>
+								<p class="code">
+									<code>
+										$("container").getStyle("background-color");
+									</code>
 								</p>
 								
-								<h4 id="getReadyState"><code>getReadyState()</code></h4>
-								<p>Helper function to check the current <code>readyState</code> of the XMLHttpRequest.</p>
-								<h5>Parameters</h5>
-								<p>None</p>
-
-								<h5>Return value</h5>
-								<p>Integer.</p>
-								<ul>
-									<li>0 = uninitialized</li>
-									<li>1 = loading</li>
-									<li>2 = loaded</li>
-									<li>3 = interactive</li>
-									<li>4 = complete</li>
-								</ul>
-
-								<h5>Example calls</h5>
-								<p class="code">
-									<code>DOMAssistant.AJAX.getReadyState();</code>
-								</p>
-								
-								<h4 id="getStatus"><code>getStatus()</code></h4>
-								<p>Helper function to check the current <code>status</code> of the XMLHttpRequest.</p>
-								<h5>Parameters</h5>
-								<p>None</p>
-
-								<h5>Return value</h5>
-								<p>Integer. Examples are 200 for Ok and 404 for not found.</p>
-
-								<h5>Example calls</h5>
-								<p class="code">
-									<code>DOMAssistant.AJAX.getStatus();</code>
-								</p>
-								
-								<h4 id="getStatusText"><code>getStatusText()</code></h4>
-								<p>Helper function to check the current <code>readyState</code> of the XMLHttpRequest.</p>
-								<h5>Parameters</h5>
-								<p>None</p>
-
-								<h5>Return value</h5>
-								<p>String. The text accompanying the status code.</p>
-
-								<h5>Example calls</h5>
-								<p class="code">
-									<code>DOMAssistant.AJAX.getStatusText();</code>
-								</p>
 							</div>
 							
 							<div class="content-block nav-bullet-lists">
-								<h2>DOMAssistant.AJAX methods</h2>
+								<h2>DOMAssistant.CSS methods</h2>
 								<ul>
-									<li><a href="#get">get</a></li>
-									<li><a href="#load">load</a></li>
-									<li><a href="#getReadyState">getReadyState</a></li>
-									<li><a href="#getStatus">getStatus</a></li>
-									<li><a href="#getStatusText">getStatusText</a></li>
+									<li><a href="#addclass">addClass</a></li>
+									<li><a href="#removeclass">removeClass</a></li>
+									<li><a href="#hasclass">hasClass</a></li>
+									<li><a href="#getstyle">getStyle</a></li>
 								</ul>
 								
 								<h3>DOMAssistant modules</h3>
