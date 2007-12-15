@@ -1,0 +1,5 @@
+Version 2.5:
+=============
+- Added CSS selector support
+- Added elmsByTag and each methods for DOMAssistant Core module
+- Added load, getReadyState, getStatus and getStatusText for DOMAssistantAJAX module
