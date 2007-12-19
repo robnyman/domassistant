@@ -19,6 +19,7 @@ pre{
 }
 
 .content-block{
+	overflow: visible;
 	height: 440px;
 }
 
