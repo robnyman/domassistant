@@ -4,6 +4,7 @@ DOMAssistant.CSS = function () {
 	var baseMethodsToAdd = [
 		"addClass",
 		"removeClass",
+		"replaceClass",
 		"hasClass",
 		"getStyle"
 	];
@@ -17,6 +18,12 @@ DOMAssistant.CSS = function () {
 		removeClass : function (className) {
 			for (var i=0, il=this.length; i<il; i++) {
 				this.CSS.removeClass.call(this[i], className);
+			}
+			return this;
+		},
+		replaceClass : function (className, newClass) {
+			for (var i=0, il=this.length; i<il; i++) {
+				this.CSS.replaceClass.call(this[i], className, newClass);
 			}
 			return this;
 		},
@@ -57,6 +64,18 @@ DOMAssistant.CSS = function () {
 			var classToRemove = new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i");
 			this.className = this.className.replace(classToRemove, function (match) {
 				var retVal = "";
+				if (new RegExp("^\\s+.*\\s+$").test(match)) {
+					retVal = match.replace(/(\s+).+/, "$1");
+				}
+				return retVal;
+			}).replace(/^\s+|\s+$/g, "");
+			return this;
+		},
+		
+		replaceClass : function (className, newClass) {
+			var classToRemove = new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i");
+			this.className = this.className.replace(classToRemove, function (match, p1, p2) {
+				var retVal = p1 + newClass + p2;
 				if (new RegExp("^\\s+.*\\s+$").test(match)) {
 					retVal = match.replace(/(\s+).+/, "$1");
 				}
