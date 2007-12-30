@@ -15,8 +15,29 @@
 			this.addClass("testing");
 		}
 		DOMAssistant.DOMReady(function () {
+			//$("container").replaceClass("item", "testing");
+			$("container").addEvent("click", function (evt) {
+				alert(this + "\n" + evt + "\n" + evt.eventTarget);
+				//$(this).preventDefault(evt);
+				//$(this).cancelBubble(evt);
+				//return false;
+			});
+			
+			$("dn-link").addEvent("click", function (evt) {
+				alert(this + "\n" + evt + "\n" + evt.eventTarget);
+				return false;
+			});
+			
+			try {
+				$("#link-parent").create("p", null, true, "Da MAN!").addClass("testing");
+			}
+			catch (e) {
+				alert(e);
+			}	
+			
+			
 			//$("container").get("ajax.html", test);
-			$("container").replaceContent("En liten apa");//load("ajax.html");
+			//$("container").replaceContent("En liten apa");//load("ajax.html");
 			$("disabled-element").disabled = true;
 			var itemToTest = 6;
 			switch(itemToTest) {
@@ -207,7 +228,7 @@
 	<![endif]-->
 </head>
 
-<body>
+<body onclick="alert('Body')">
 	
 	<div id="empty" style="width: 100px; height: 100px; border: 1px solid blue;"></div>
 
@@ -232,7 +253,7 @@
 	
 	<p class="pish">P child to #container</p>
 	
-	<div id="container" class="item test-2 test-3" onclick="alert('apa');">
+	<div id="container" class="item test-2 test-3 test-again">
 		<p class="pish">P child to #container</p>
 		<div id="pseudo-test-parent">
 			<div id="pseudo-test">
