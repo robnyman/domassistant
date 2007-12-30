@@ -14,6 +14,7 @@ DOMAssistant.Content = function () {
 	var HTMLArrayContentMethods = {
 		prev : function () {
 			var previousElms = createHTMLArray();
+			previousElms.setPrevious(this);
 			var elm;
 			for (var i=0, il=this.length; i<il; i++) {
 				elm = this.Content.prev.call(this[i]);
@@ -25,6 +26,7 @@ DOMAssistant.Content = function () {
 		},
 		next : function () {
 			var nextElms = createHTMLArray();
+			nextElms.setPrevious(this);
 			var elm;
 			for (var i=0, il=this.length; i<il; i++) {
 				elm = this.Content.next.call(this[i]);
@@ -36,6 +38,7 @@ DOMAssistant.Content = function () {
 		},
 		create : function (name, attr, append, content) {
 			var newElms = createHTMLArray();
+			newElms.setPrevious(this);
 			var elm;
 			for (var i=0, il=this.length; i<il; i++) {
 				elm = this.Content.create.call(this[i], name, attr, append, content);
