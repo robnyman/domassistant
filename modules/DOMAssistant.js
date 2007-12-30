@@ -5,14 +5,17 @@ var DOMAssistant = function () {
 		"elmsByClass",
 		"elmsByAttribute",
 		"elmsByTag",
-		"each"
+		"each",
+		"end",
+		"setPrevious"
 	];
-	var HTMLArray = function () {
+	var HTMLArray = function (prevSet) {
 		// Constructor
 	};
 	var HTMLArrayBaseMethods = {
 		elmsByClass : function (className, tag) {
 			var elmsWithClass = new HTMLArray();
+			elmsWithClass.setPrevious(this);
 			var elms;
 			for (var i=0, il=this.length; i<il; i++) {
 				elms = this.DOM.elmsByClass.call(this[i], className, tag);
@@ -24,6 +27,7 @@ var DOMAssistant = function () {
 		},
 		elmsByAttribute : function (attr, attrVal, tag, substrMatchSelector) {
 			var elmsWithAttr = new HTMLArray();
+			elmsWithAttr.setPrevious(this);
 			var elms;
 			for (var i=0, il=this.length; i<il; i++) {
 				elms = this.DOM.elmsByAttribute.call(this[i], attr, attrVal, tag, substrMatchSelector);
@@ -35,6 +39,7 @@ var DOMAssistant = function () {
 		},
 		elmsByTag : function (tag) {
 			var elmsWithTag = new HTMLArray();
+			elmsWithTag.setPrevious(this);
 			var elms;
 			for (var i=0, il=this.length; i<il; i++) {
 				elms = this.DOM.elmsByTag.call(this[i], tag);
@@ -49,6 +54,12 @@ var DOMAssistant = function () {
 				functionCall.call(this[i]);
 			}
 			return this;
+		},
+		end : function () {
+			return this.previousSet;
+		},
+		setPrevious : function (prevSet) {
+			this.previousSet = prevSet;
 		}
 	};
 	var isOpera = /Opera/i.test(navigator.userAgent); // Hopefully temporary till Opera fixes the XPath implementation
