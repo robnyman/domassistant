@@ -5,14 +5,17 @@ var DOMAssistant = function () {
 		"elmsByClass",
 		"elmsByAttribute",
 		"elmsByTag",
-		"each"
+		"each",
+		"end",
+		"setPrevious"
 	];
-	var HTMLArray = function () {
+	var HTMLArray = function (prevSet) {
 		// Constructor
 	};
 	var HTMLArrayBaseMethods = {
 		elmsByClass : function (className, tag) {
 			var elmsWithClass = new HTMLArray();
+			elmsWithClass.setPrevious(this);
 			var elms;
 			for (var i=0, il=this.length; i<il; i++) {
 				elms = this.DOM.elmsByClass.call(this[i], className, tag);
@@ -24,6 +27,7 @@ var DOMAssistant = function () {
 		},
 		elmsByAttribute : function (attr, attrVal, tag, substrMatchSelector) {
 			var elmsWithAttr = new HTMLArray();
+			elmsWithAttr.setPrevious(this);
 			var elms;
 			for (var i=0, il=this.length; i<il; i++) {
 				elms = this.DOM.elmsByAttribute.call(this[i], attr, attrVal, tag, substrMatchSelector);
@@ -35,6 +39,7 @@ var DOMAssistant = function () {
 		},
 		elmsByTag : function (tag) {
 			var elmsWithTag = new HTMLArray();
+			elmsWithTag.setPrevious(this);
 			var elms;
 			for (var i=0, il=this.length; i<il; i++) {
 				elms = this.DOM.elmsByTag.call(this[i], tag);
@@ -49,6 +54,12 @@ var DOMAssistant = function () {
 				functionCall.call(this[i]);
 			}
 			return this;
+		},
+		end : function () {
+			return this.previousSet;
+		},
+		setPrevious : function (prevSet) {
+			this.previousSet = prevSet;
 		}
 	};
 	var isOpera = /Opera/i.test(navigator.userAgent); // Hopefully temporary till Opera fixes the XPath implementation
@@ -914,91 +925,6 @@ DOMAssistant.AJAX = function () {
 	};
 }();
 DOMAssistant.AJAX.init();
-DOMAssistant.CSS = function () {
-	var baseMethodsToAdd = [
-		"addClass",
-		"removeClass",
-		"hasClass",
-		"getStyle"
-	];
-	var HTMLArrayCSSMethods = {
-		addClass : function (className) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.CSS.addClass.call(this[i], className);
-			}
-			return this;
-		},
-		removeClass : function (className) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.CSS.removeClass.call(this[i], className);
-			}
-			return this;
-		},
-		hasClass : function (className) {
-			var hasClass = [];
-			for (var i=0, il=this.length; i<il; i++) {
-				hasClass.push(this.CSS.hasClass.call(this[i], className));
-			}
-			return hasClass;
-		},
-		getStyle : function (cssRule) {
-			var hasStyle = [];
-			for (var i=0, il=this.length; i<il; i++) {
-				hasStyle.push(this.CSS.getStyle.call(this[i], cssRule));
-			}
-			return hasStyle;
-		}
-	};
-	return {
-		init : function () {
-			DOMAssistant.addHTMLArrayPrototype("CSS", this);
-			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {
-				current = baseMethodsToAdd[i];
-				DOMAssistant.addMethod([current, this[current]]);
-				DOMAssistant.addHTMLArrayPrototype(current, HTMLArrayCSSMethods[current]);
-			}
-		},
-
-		addClass : function (className) {
-			var currentClass = this.className;
-			if (!new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i").test(currentClass)) {
-				this.className = currentClass + ((currentClass.length > 0)? " " : "") + className;
-			}
-			return this;
-		},
-
-		removeClass : function (className) {
-			var classToRemove = new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i");
-			this.className = this.className.replace(classToRemove, function (match) {
-				var retVal = "";
-				if (new RegExp("^\\s+.*\\s+$").test(match)) {
-					retVal = match.replace(/(\s+).+/, "$1");
-				}
-				return retVal;
-			}).replace(/^\s+|\s+$/g, "");
-			return this;
-		},
-
-		hasClass : function (className) {
-			return new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i").test(this.className);
-		},
-
-		getStyle : function (cssRule) {
-			var cssVal = "";
-			if (document.defaultView && document.defaultView.getComputedStyle) {
-				cssVal = document.defaultView.getComputedStyle(this, "").getPropertyValue(cssRule);
-			}
-			else if (this.currentStyle) {
-				cssVal = cssRule.replace(/\-(\w)/g, function (match, p1) {
-					return p1.toUpperCase();
-				});
-				cssVal = this.currentStyle[cssVal];
-			}
-			return cssVal;
-		}
-	};
-}();
-DOMAssistant.CSS.init();
 DOMAssistant.Content = function () {
 	var baseMethodsToAdd = [
 		"prev",
@@ -1013,6 +939,7 @@ DOMAssistant.Content = function () {
 	var HTMLArrayContentMethods = {
 		prev : function () {
 			var previousElms = createHTMLArray();
+			previousElms.setPrevious(this);
 			var elm;
 			for (var i=0, il=this.length; i<il; i++) {
 				elm = this.Content.prev.call(this[i]);
@@ -1024,6 +951,7 @@ DOMAssistant.Content = function () {
 		},
 		next : function () {
 			var nextElms = createHTMLArray();
+			nextElms.setPrevious(this);
 			var elm;
 			for (var i=0, il=this.length; i<il; i++) {
 				elm = this.Content.next.call(this[i]);
@@ -1035,6 +963,7 @@ DOMAssistant.Content = function () {
 		},
 		create : function (name, attr, append, content) {
 			var newElms = createHTMLArray();
+			newElms.setPrevious(this);
 			var elm;
 			for (var i=0, il=this.length; i<il; i++) {
 				elm = this.Content.create.call(this[i], name, attr, append, content);
@@ -1156,10 +1085,116 @@ DOMAssistant.Content = function () {
 	};
 }();
 DOMAssistant.Content.init();
+DOMAssistant.CSS = function () {
+	var baseMethodsToAdd = [
+		"addClass",
+		"removeClass",
+		"replaceClass",
+		"hasClass",
+		"getStyle"
+	];
+	var HTMLArrayCSSMethods = {
+		addClass : function (className) {
+			for (var i=0, il=this.length; i<il; i++) {
+				this.CSS.addClass.call(this[i], className);
+			}
+			return this;
+		},
+		removeClass : function (className) {
+			for (var i=0, il=this.length; i<il; i++) {
+				this.CSS.removeClass.call(this[i], className);
+			}
+			return this;
+		},
+		replaceClass : function (className, newClass) {
+			for (var i=0, il=this.length; i<il; i++) {
+				this.CSS.replaceClass.call(this[i], className, newClass);
+			}
+			return this;
+		},
+		hasClass : function (className) {
+			var hasClass = [];
+			for (var i=0, il=this.length; i<il; i++) {
+				hasClass.push(this.CSS.hasClass.call(this[i], className));
+			}
+			return hasClass;
+		},
+		getStyle : function (cssRule) {
+			var hasStyle = [];
+			for (var i=0, il=this.length; i<il; i++) {
+				hasStyle.push(this.CSS.getStyle.call(this[i], cssRule));
+			}
+			return hasStyle;
+		}
+	};
+	return {
+		init : function () {
+			DOMAssistant.addHTMLArrayPrototype("CSS", this);
+			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {
+				current = baseMethodsToAdd[i];
+				DOMAssistant.addMethod([current, this[current]]);
+				DOMAssistant.addHTMLArrayPrototype(current, HTMLArrayCSSMethods[current]);
+			}
+		},
+
+		addClass : function (className) {
+			var currentClass = this.className;
+			if (!new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i").test(currentClass)) {
+				this.className = currentClass + ((currentClass.length > 0)? " " : "") + className;
+			}
+			return this;
+		},
+
+		removeClass : function (className) {
+			var classToRemove = new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i");
+			this.className = this.className.replace(classToRemove, function (match) {
+				var retVal = "";
+				if (new RegExp("^\\s+.*\\s+$").test(match)) {
+					retVal = match.replace(/(\s+).+/, "$1");
+				}
+				return retVal;
+			}).replace(/^\s+|\s+$/g, "");
+			return this;
+		},
+		
+		replaceClass : function (className, newClass) {
+			var classToRemove = new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i");
+			this.className = this.className.replace(classToRemove, function (match, p1, p2) {
+				var retVal = p1 + newClass + p2;
+				if (new RegExp("^\\s+.*\\s+$").test(match)) {
+					retVal = match.replace(/(\s+).+/, "$1");
+				}
+				return retVal;
+			}).replace(/^\s+|\s+$/g, "");
+			return this;
+		},
+
+		hasClass : function (className) {
+			return new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i").test(this.className);
+		},
+
+		getStyle : function (cssRule) {
+			var cssVal = "";
+			if (document.defaultView && document.defaultView.getComputedStyle) {
+				cssVal = document.defaultView.getComputedStyle(this, "").getPropertyValue(cssRule);
+			}
+			else if (this.currentStyle) {
+				cssVal = cssRule.replace(/\-(\w)/g, function (match, p1) {
+					return p1.toUpperCase();
+				});
+				cssVal = this.currentStyle[cssVal];
+			}
+			return cssVal;
+		}
+	};
+}();
+DOMAssistant.CSS.init();
 DOMAssistant.Events = function () {
 	var baseMethodsToAdd = [
 		"addEvent",
-		"removeEvent"
+		"removeEvent",
+		"preventDefault",
+		"cancelBubble"
 	];
 	var HTMLArrayEventMethods = {
 		addEvent : function (evt, func) {
@@ -1171,6 +1206,18 @@ DOMAssistant.Events = function () {
 		removeEvent : function (evt, func) {
 			for (var i=0, il=this.length; i<il; i++) {
 				this.Events.removeEvent.call(this[i], evt, func);
+			}
+			return this;
+		},
+		preventDefault : function (evt) {
+			for (var i=0, il=this.length; i<il; i++) {
+				this.Events.preventDefault.call(this[i], evt);
+			}
+			return this;
+		},
+		cancelBubble : function (evt) {
+			for (var i=0, il=this.length; i<il; i++) {
+				this.Events.cancelBubble.call(this[i], evt);
 			}
 			return this;
 		}
@@ -1188,60 +1235,48 @@ DOMAssistant.Events = function () {
 		},
 
 		addEvent : function (evt, func) {
-			if (this.addEventListener) {
-				DOMAssistant.Events.addEvent = function (evt, func) {
-					this.addEventListener(evt, func, false);
-					return this;
-				};
+			if (!this.events) {
+				this.events = {};
 			}
-			else{
-				DOMAssistant.Events.addEvent = function (evt, func) {
-					if (!this.events) {
-						this.events = {};
-					}
-					if (!this.events[evt]) {
-						this.events[evt] = [];
-					}							
-					this.events[evt].push(func);
-					this["on" + evt] = DOMAssistant.Events.handleEvent;
-					if (typeof this.window === "object") {
-						this.window["on" + evt] = DOMAssistant.Events.handleEvent;
-					}
-					return this;
-				};
+			if (!this.events[evt]) {
+				this.events[evt] = [];
+			}							
+			this.events[evt].push(func);
+			this["on" + evt] = DOMAssistant.Events.handleEvent;
+			if (typeof this.window === "object") {
+				this.window["on" + evt] = DOMAssistant.Events.handleEvent;
 			}
-			return DOMAssistant.Events.addEvent.call(this, evt, func);
+			return this;
 		},
 
 		handleEvent : function (evt) {
 			var currentEvt = evt || event;
+			var currentTarget = currentEvt.target || currentEvt.srcElement || document;
+			while (currentTarget.nodeType !== 1 && currentTarget.parentNode) {
+				currentTarget = currentTarget.parentNode;
+			}			
+			currentEvt.eventTarget = currentTarget;
 			var eventType = currentEvt.type;
 			var eventColl = this.events[eventType];
-			for (var i=0; i<eventColl.length; i++) {
-				eventColl[i].call(this, currentEvt);
+			var eventCollLength = eventColl.length;
+			var eventReturn;
+			for (var i=0; i<eventCollLength; i++) {
+				eventReturn = eventColl[i].call(this, currentEvt);
+				if (i === (eventCollLength - 1)) {
+					return eventReturn;
+				}
 			}
 		},
 
 		removeEvent : function (evt, func) {
-			if (this.removeEventListener) {
-				DOMAssistant.Events.removeEvent = function (evt, func) {
-					this.removeEventListener(evt, func, false);
-					return this;
-				};
+			var eventColl = this.events[evt];
+			for (var i=0; i<eventColl.length; i++) {
+				if (eventColl[i] === func) {
+					delete eventColl[i];
+					eventColl.splice(i, 1);
+				}
 			}
-			else if (this.events) {
-				DOMAssistant.Events.removeEvent = function (evt, func) {
-					var eventColl = this.events[evt];
-					for (var i=0; i<eventColl.length; i++) {
-						if (eventColl[i] === func) {
-							delete eventColl[i];
-							eventColl.splice(i, 1);
-						}
-					}
-					return this;
-				};
-			}
-			return DOMAssistant.Events.removeEvent.call(this, evt, func);
+			return this;
 		},
 
 		preventDefault : function (evt) {
