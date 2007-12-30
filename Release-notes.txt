@@ -1,3 +1,13 @@
+Version 2.5.5:
+=============
+- Better event handling
+	- Supporting return false
+	- eventTarget for a reference to where the event occurred
+	- Easier syntax for preventDefault and cancelBubble: $(this).preventDefault(evt)
+- replaceClass(className, newClass) method added
+- end() method added
+
+
 Version 2.5:
 =============
 - Added CSS selector support
