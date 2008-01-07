@@ -6,8 +6,14 @@
 	<title>DOM Assistant demo - DOM Assistant, the modular lightweight JavaScript library</title>
 	<link rel="stylesheet" href="css/domassistant.css" type="text/css">
 	
+	<script type="text/javascript" src="../trunk/modules/DOMAssistant.js"></script>
+	<script type="text/javascript" src="../trunk/modules/DOMAssistantLoad.js"></script>
+	<script type="text/javascript" src="../trunk/modules/DOMAssistantAJAX.js"></script>
+	<script type="text/javascript" src="../trunk/modules/DOMAssistantCSS.js"></script>
+	<script type="text/javascript" src="../trunk/modules/DOMAssistantContent.js"></script>
+	<script type="text/javascript" src="../trunk/modules/DOMAssistantEvents.js"></script>
 	
-	<script type="text/javascript" src="../trunk/DOMAssistantCompressed.js"></script>
+	<!-- <script type="text/javascript" src="../trunk/DOMAssistantCompressed.js"></script>-->
 	
 	<script type="text/javascript">
 		function test (content) {
@@ -23,13 +29,16 @@
 				//return false;
 			});
 			
-			$("dn-link").addEvent("click", function (evt) {
-				alert(this + "\n" + evt + "\n" + evt.eventTarget);
-				return false;
-			});
+			apa = $('#fm1 p:not([id=cfm])')
+			alert(apa.join("\n"));
+			
+			// $("dn-link").addEvent("click", function (evt) {
+			// 				alert(this + "\n" + evt + "\n" + evt.eventTarget);
+			// 				return false;
+			// 			});
 			
 			try {
-				$("#link-parent").create("p", null, true, "Da MAN!").addClass("testing");
+				//$("#link-parent").create("p", null, true, "Da MAN!").addClass("testing");
 			}
 			catch (e) {
 				alert(e);
@@ -39,7 +48,7 @@
 			//$("container").get("ajax.html", test);
 			//$("container").replaceContent("En liten apa");//load("ajax.html");
 			$("disabled-element").disabled = true;
-			var itemToTest = 6;
+			var itemToTest = 18;
 			switch(itemToTest) {
 				case -8:
 					// #container
@@ -228,7 +237,13 @@
 	<![endif]-->
 </head>
 
-<body onclick="alert('Body')">
+<body>
+	
+	<form id="fm1">
+	  <p>First P</p>
+	  <p>Second P</p>
+	  <p id="cfm">CFM P</p>
+	</form>
 	
 	<div id="empty" style="width: 100px; height: 100px; border: 1px solid blue;"></div>
 
