@@ -148,7 +148,7 @@ var DOMAssistant = function () {
 						cssSelectors = cssRules[i].split(" ");
 						xPathExpression = ".";
 						for (var j=0, jl=cssSelectors.length; j<jl; j++) {
-							cssSelector = /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+))\))?)*)?(>|\+|~)?/.exec(cssSelectors[j]);
+							cssSelector = /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[#?\w+(\^|\$|\*)?=?[\w\-\_]+?\]+))\))?)*)?(>|\+|~)?/.exec(cssSelectors[j]);
 							splitRule = {
 								tag : (!cssSelector[1] || cssSelector[2] === "*")? "*" : cssSelector[1],
 								id : (cssSelector[2] !== "*")?  cssSelector[2] : null,
@@ -272,6 +272,7 @@ var DOMAssistant = function () {
 										xPathExpression += pseudoSelection;
 										break;	
 									case "not":
+										pseudoValue = pseudoValue.replace(/^\[#([\w\-\_]+)\]$/, "[id=$1]");
 										var notSelector = pseudoValue.replace(/^(\w+)/, "self::$1");
 										notSelector = notSelector.replace(/\.([\w\-_]+)/g, "contains(concat(' ', @class, ' '), ' $1 ')");
 										notSelector = notSelector.replace(/\[(\w+)(\^|\$|\*)?=?([\w\-_]+)?\]/g, function (match, p1, p2, p3, p4) {
@@ -408,7 +409,7 @@ var DOMAssistant = function () {
 								}
 							}
 							else {
-								var cssSelector = /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+))\))?)*)?/.exec(rule);
+								var cssSelector = /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[#?\w+(\^|\$|\*)?=?[\w\-\_]+?\]+))\))?)*)?/.exec(rule);
 								var splitRule = {
 									tag : (!cssSelector[1] || cssSelector[2] === "*")? "*" : cssSelector[1],
 									id : (cssSelector[2] !== "*")?  cssSelector[2] : null,
@@ -469,6 +470,7 @@ var DOMAssistant = function () {
 									var previousMatch = matchingElms;
 									matchingElms = new HTMLArray();
 									if (/^:not$/.test(pseudoClass)) {
+										pseudoValue = pseudoValue.replace(/^\[#([\w\-\_]+)\]$/, "[id=$1]");
 										var notTag = /^(\w+)/.exec(pseudoValue);
 										var notClass = /\.([\w\-_]+)/.exec(pseudoValue);
 										var notAttr = /\[(\w+)(\^|\$|\*)?=?([\w\-_]+)?\]/.exec(pseudoValue);
@@ -480,17 +482,17 @@ var DOMAssistant = function () {
 											if (typeof substrNoMatchSelector === "string") {
 												switch (substrNoMatchSelector) {
 													case "^":
-														notMatchingAttr = ("^" + notMatchingAttrVal);
+														notMatchingAttrVal = ("^" + notMatchingAttrVal);
 														break;
 													case "$":
-														notMatchingAttr = (notMatchingAttrVal + "$");
+														notMatchingAttrVal = (notMatchingAttrVal + "$");
 														break;
 													case "*":
-														notMatchingAttr = (notMatchingAttrVal);
+														notMatchingAttrVal = (notMatchingAttrVal);
 														break;	
 												}
 											}
-											notRegExp = new RegExp(notMatchingAttr, "i");
+											notRegExp = new RegExp(notMatchingAttrVal, "i");
 										}
 										for (var r=0, rl=previousMatch.length, notElm, addElm; r<rl; r++) {
 											notElm = previousMatch[r];

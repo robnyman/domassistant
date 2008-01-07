@@ -6,6 +6,7 @@ Version 2.5.5:
 	- Easier syntax for preventDefault and cancelBubble: $(this).preventDefault(evt)
 - replaceClass(className, newClass) method added
 - end() method added
+- Fixed :not pseudo-selector bug in Internet Explorer and Opera
 
 
 Version 2.5:
