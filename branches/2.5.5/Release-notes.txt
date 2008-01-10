@@ -1,0 +1,17 @@
+Version 2.5.5:
+=============
+- Better event handling
+	- Supporting return false
+	- eventTarget for a reference to where the event occurred
+	- Easier syntax for preventDefault and cancelBubble: $(this).preventDefault(evt)
+- replaceClass(className, newClass) method added
+- end() method added
+- Added post method to the AJAX object
+- Fixed :not pseudo-selector bug in Internet Explorer and Opera
+
+
+Version 2.5:
+=============
+- Added CSS selector support
+- Added elmsByTag and each methods for DOMAssistant Core module
+- Added load, getReadyState, getStatus and getStatusText for DOMAssistantAJAX module
