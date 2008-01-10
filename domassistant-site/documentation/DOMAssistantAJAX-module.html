@@ -41,7 +41,7 @@
 								<p>The DOMAssistantAJAX module offers basic AJAX interaction for retrieving data from a URL and then passing on the returned content to any function, or load the content into an element.</p>
 
 								<h4 id="get"><code>get(url, callBack)</code></h4>
-								<p>Makes a request to the specified URL and calls the set callBack function. The first parameter of the then called callBack function will be the <code>responseText</code> of the AJAX call. If this method is called on an element, the callBack function context will be the element, i.e. the keyword <code>this</code> will refer to the element which called the <code>get</code> method in the first place.</p>
+								<p>Makes a GET request to the specified URL and calls the set callBack function. The first parameter of the then called callBack function will be the <code>responseText</code> of the AJAX call. If this method is called on an element, the callBack function context will be the element, i.e. the keyword <code>this</code> will refer to the element which called the <code>get</code> method in the first place.</p>
 								<h5>Parameters</h5>
 								<dl>
 									<dt>url</dt>
@@ -59,6 +59,27 @@
 								</p>
 								<p class="code">
 									<code>DOMAssistant.AJAX.get("my-url.aspx", callbackFunctionName);</code>
+								</p>
+								
+								<h4 id="post"><code>post(url, callBack)</code></h4>
+								<p>Makes a POST request to the specified URL and calls the set callBack function. The first parameter of the then called callBack function will be the <code>responseText</code> of the AJAX call. If this method is called on an element, the callBack function context will be the element, i.e. the keyword <code>this</code> will refer to the element which called the <code>get</code> method in the first place.</p>
+								<h5>Parameters</h5>
+								<dl>
+									<dt>url</dt>
+									<dd>URL to make an AJAX call to. Required.</dd>
+									<dt>callBack</dt>
+									<dd>Function name or anonymous function to call when the AJAX request is complete. Optional.</dd>
+								</dl>
+
+								<h5>Return value</h5>
+								<p>None.</p>
+
+								<h5>Example calls</h5>
+								<p class="code">
+									<code>$("news").post("news.php", insertNews);</code>
+								</p>
+								<p class="code">
+									<code>DOMAssistant.AJAX.post("my-url.aspx", callbackFunctionName);</code>
 								</p>
 								
 								<h4 id="load"><code>load(url, add)</code></h4>
