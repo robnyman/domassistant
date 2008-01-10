@@ -773,10 +773,12 @@ var DOMAssistant = function () {
 		}
 	};	
 }();
-DOMAssistant.init();
+DOMAssistant.init();// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
+/*extern DOMAssistant */
 DOMAssistant.AJAX = function () {
 	var baseMethodsToAdd = [
 		"get",
+		"post",
 		"load",
 		"replaceWithAJAXContent"
 	];
@@ -784,6 +786,12 @@ DOMAssistant.AJAX = function () {
 		get : function (url, callBack) {
 			for (var i=0, il=this.length; i<il; i++) {
 				this.AJAX.get.call(this[i], url, callBack);
+			}
+			return this;
+		},
+		post : function (url, callBack) {
+			for (var i=0, il=this.length; i<il; i++) {
+				this.AJAX.post.call(this[i], url, callBack);
 			}
 			return this;
 		},
@@ -844,17 +852,35 @@ DOMAssistant.AJAX = function () {
 		},
 	
 		get : function (url, callBack) {
+			return DOMAssistant.AJAX.makeCall.call(this, url, callBack, "GET");
+		},
+		
+		post : function (url, callBack) {
+			return DOMAssistant.AJAX.makeCall.call(this, url, callBack, "POST");
+		},
+		
+		makeCall : function  (url, callBack, method) {
 			if (DOMAssistant.AJAX.initRequest()) {
 				callbackFunction = callBack;
 				getElm = this;
 				// This line needed to properly control the onreadystatechange event for Firefox
 				XMLHttp.onreadystatechange = function () {};
 				XMLHttp.abort();
-				XMLHttp.open("GET", url, true);
+				XMLHttp.open(method, url, true);
 				XMLHttp.setRequestHeader("AJAX", "true");
+				
+				var params = url.split("?");
+				var contentLength = (params[1])? params[1].length : 0;				
+				if (method === "POST") {
+					XMLHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+					XMLHttp.setRequestHeader("Content-length", contentLength);
+					XMLHttp.setRequestHeader("Connection", "close");
+				}
+				
 				XMLHttp.onreadystatechange = DOMAssistant.AJAX.contentReady;
 				XMLHttp.send(null);
 			}
+			return this;
 		},
 		
 		getReadyState : function () {
@@ -926,7 +952,8 @@ DOMAssistant.AJAX = function () {
 		}
 	};
 }();
-DOMAssistant.AJAX.init();
+DOMAssistant.AJAX.init();// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
+/*extern DOMAssistant */
 DOMAssistant.CSS = function () {
 	var baseMethodsToAdd = [
 		"addClass",
@@ -1030,7 +1057,8 @@ DOMAssistant.CSS = function () {
 		}
 	};
 }();
-DOMAssistant.CSS.init();
+DOMAssistant.CSS.init();// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
+/*extern DOMAssistant */
 DOMAssistant.Content = function () {
 	var baseMethodsToAdd = [
 		"prev",
@@ -1190,7 +1218,8 @@ DOMAssistant.Content = function () {
 		}
 	};
 }();
-DOMAssistant.Content.init();
+DOMAssistant.Content.init();// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
+/*extern DOMAssistant */
 DOMAssistant.Events = function () {
 	var baseMethodsToAdd = [
 		"addEvent",
@@ -1310,7 +1339,8 @@ DOMAssistant.Events = function () {
 		}
 	};
 }();
-DOMAssistant.Events.init();
+DOMAssistant.Events.init();// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant. Module inspiration by Dean Edwards, Matthias Miller, and John Resig: http://dean.edwards.name/weblog/2006/06/again/
+/*extern DOMAssistant */
 DOMAssistant.DOMLoad = function () {
 	var DOMLoaded = false;
 	var DOMLoadTimer = null;
