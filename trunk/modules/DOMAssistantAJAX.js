@@ -3,6 +3,7 @@
 DOMAssistant.AJAX = function () {
 	var baseMethodsToAdd = [
 		"get",
+		"post",
 		"load",
 		"replaceWithAJAXContent"
 	];
@@ -10,6 +11,12 @@ DOMAssistant.AJAX = function () {
 		get : function (url, callBack) {
 			for (var i=0, il=this.length; i<il; i++) {
 				this.AJAX.get.call(this[i], url, callBack);
+			}
+			return this;
+		},
+		post : function (url, callBack) {
+			for (var i=0, il=this.length; i<il; i++) {
+				this.AJAX.post.call(this[i], url, callBack);
 			}
 			return this;
 		},
@@ -70,17 +77,35 @@ DOMAssistant.AJAX = function () {
 		},
 	
 		get : function (url, callBack) {
+			return DOMAssistant.AJAX.makeCall.call(this, url, callBack, "GET");
+		},
+		
+		post : function (url, callBack) {
+			return DOMAssistant.AJAX.makeCall.call(this, url, callBack, "POST");
+		},
+		
+		makeCall : function  (url, callBack, method) {
 			if (DOMAssistant.AJAX.initRequest()) {
 				callbackFunction = callBack;
 				getElm = this;
 				// This line needed to properly control the onreadystatechange event for Firefox
 				XMLHttp.onreadystatechange = function () {};
 				XMLHttp.abort();
-				XMLHttp.open("GET", url, true);
+				XMLHttp.open(method, url, true);
 				XMLHttp.setRequestHeader("AJAX", "true");
+				
+				var params = url.split("?");
+				var contentLength = (params[1])? params[1].length : 0;				
+				if (method === "POST") {
+					XMLHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+					XMLHttp.setRequestHeader("Content-length", contentLength);
+					XMLHttp.setRequestHeader("Connection", "close");
+				}
+				
 				XMLHttp.onreadystatechange = DOMAssistant.AJAX.contentReady;
 				XMLHttp.send(null);
 			}
+			return this;
 		},
 		
 		getReadyState : function () {
