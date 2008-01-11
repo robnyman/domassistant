@@ -92,18 +92,20 @@ DOMAssistant.AJAX = function () {
 				XMLHttp.onreadystatechange = function () {};
 				XMLHttp.abort();
 				XMLHttp.open(method, url, true);
-				XMLHttp.setRequestHeader("AJAX", "true");
-				
-				var params = url.split("?");
-				var contentLength = (params[1])? params[1].length : 0;				
+				XMLHttp.setRequestHeader("AJAX", "true");				
+				var sendVal = null;
 				if (method === "POST") {
+					var params = url.split("?");
+					var paramVal = params[1];
+					var contentLength = (paramVal)? paramVal.length : 0;
+					sendVal = paramVal;
 					XMLHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 					XMLHttp.setRequestHeader("Content-length", contentLength);
 					XMLHttp.setRequestHeader("Connection", "close");
 				}
 				
 				XMLHttp.onreadystatechange = DOMAssistant.AJAX.contentReady;
-				XMLHttp.send(null);
+				XMLHttp.send(sendVal);
 			}
 			return this;
 		},

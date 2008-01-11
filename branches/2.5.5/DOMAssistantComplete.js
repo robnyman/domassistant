@@ -773,8 +773,7 @@ var DOMAssistant = function () {
 		}
 	};	
 }();
-DOMAssistant.init();// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
-/*extern DOMAssistant */
+DOMAssistant.init();
 DOMAssistant.AJAX = function () {
 	var baseMethodsToAdd = [
 		"get",
@@ -867,18 +866,20 @@ DOMAssistant.AJAX = function () {
 				XMLHttp.onreadystatechange = function () {};
 				XMLHttp.abort();
 				XMLHttp.open(method, url, true);
-				XMLHttp.setRequestHeader("AJAX", "true");
-				
-				var params = url.split("?");
-				var contentLength = (params[1])? params[1].length : 0;				
+				XMLHttp.setRequestHeader("AJAX", "true");				
+				var sendVal = null;
 				if (method === "POST") {
+					var params = url.split("?");
+					var paramVal = params[1];
+					var contentLength = (paramVal)? paramVal.length : 0;
+					sendVal = paramVal;
 					XMLHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 					XMLHttp.setRequestHeader("Content-length", contentLength);
 					XMLHttp.setRequestHeader("Connection", "close");
 				}
 				
 				XMLHttp.onreadystatechange = DOMAssistant.AJAX.contentReady;
-				XMLHttp.send(null);
+				XMLHttp.send(sendVal);
 			}
 			return this;
 		},
@@ -952,8 +953,7 @@ DOMAssistant.AJAX = function () {
 		}
 	};
 }();
-DOMAssistant.AJAX.init();// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
-/*extern DOMAssistant */
+DOMAssistant.AJAX.init();
 DOMAssistant.CSS = function () {
 	var baseMethodsToAdd = [
 		"addClass",
@@ -1057,8 +1057,7 @@ DOMAssistant.CSS = function () {
 		}
 	};
 }();
-DOMAssistant.CSS.init();// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
-/*extern DOMAssistant */
+DOMAssistant.CSS.init();
 DOMAssistant.Content = function () {
 	var baseMethodsToAdd = [
 		"prev",
@@ -1218,8 +1217,7 @@ DOMAssistant.Content = function () {
 		}
 	};
 }();
-DOMAssistant.Content.init();// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
-/*extern DOMAssistant */
+DOMAssistant.Content.init();
 DOMAssistant.Events = function () {
 	var baseMethodsToAdd = [
 		"addEvent",
@@ -1339,8 +1337,7 @@ DOMAssistant.Events = function () {
 		}
 	};
 }();
-DOMAssistant.Events.init();// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant. Module inspiration by Dean Edwards, Matthias Miller, and John Resig: http://dean.edwards.name/weblog/2006/06/again/
-/*extern DOMAssistant */
+DOMAssistant.Events.init();
 DOMAssistant.DOMLoad = function () {
 	var DOMLoaded = false;
 	var DOMLoadTimer = null;
