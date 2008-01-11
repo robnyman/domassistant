@@ -91,11 +91,12 @@ DOMAssistant.AJAX = function () {
 				// This line needed to properly control the onreadystatechange event for Firefox
 				XMLHttp.onreadystatechange = function () {};
 				XMLHttp.abort();
-				XMLHttp.open(method, url, true);
+				var params = url.split("?");
+				var callURL = params[0];
+				XMLHttp.open(method, callURL, true);
 				XMLHttp.setRequestHeader("AJAX", "true");				
 				var sendVal = null;
 				if (method === "POST") {
-					var params = url.split("?");
 					var paramVal = params[1];
 					var contentLength = (paramVal)? paramVal.length : 0;
 					sendVal = paramVal;
@@ -103,7 +104,6 @@ DOMAssistant.AJAX = function () {
 					XMLHttp.setRequestHeader("Content-length", contentLength);
 					XMLHttp.setRequestHeader("Connection", "close");
 				}
-				
 				XMLHttp.onreadystatechange = DOMAssistant.AJAX.contentReady;
 				XMLHttp.send(sendVal);
 			}
