@@ -92,7 +92,7 @@ DOMAssistant.AJAX = function () {
 				XMLHttp.onreadystatechange = function () {};
 				XMLHttp.abort();
 				var params = url.split("?");
-				var callURL = params[0];
+				var callURL = (method === "POST")? params[0] : url;
 				XMLHttp.open(method, callURL, true);
 				XMLHttp.setRequestHeader("AJAX", "true");				
 				var sendVal = null;
