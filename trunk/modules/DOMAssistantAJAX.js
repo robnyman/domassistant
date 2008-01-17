@@ -156,24 +156,22 @@ DOMAssistant.AJAX = function () {
 		},
 		
 		replaceWithAJAXContent : function (content, add) {
-			var elms = this.elmsByTag("*");
-			elms.push(this);
-			var attr;
-			for (var i=0, il=elms.length, elm; i<il; i++) {
-				elm = elms[i];
-				attr = elm.attributes;
-				if (attr) {
-					for (var j=0, jl=attr.length; j<jl; j++) {
-						if (typeof elm[attr[j].name] === "function") {
-							elm[attr[j].name] = null;
-						}
-					}
-				}	
-			}
 			if (add) {
 				this.innerHTML += content;
 			}
 			else {
+				var elms = this.elmsByTag("*");
+				for (var i=0, il=elms.length, elm, attr; i<il; i++) {
+					elm = elms[i];
+					attr = elm.attributes;
+					if (attr) {
+						for (var j=0, jl=attr.length; j<jl; j++) {
+							if (typeof elm[attr[j].name] === "function") {
+								elm[attr[j].name] = null;
+							}
+						}
+					}	
+				}
 				this.innerHTML = content;
 			}
 		}
