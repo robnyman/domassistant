@@ -1,3 +1,5 @@
+Removed unnecessary attribute removal in the replaceWithAJAXContent method for the AJAX module.
+
 Version 2.5.7:
 =============
 - Fixing URL stripping issue with GET calls in the AJAX module
