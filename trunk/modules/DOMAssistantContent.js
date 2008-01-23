@@ -149,7 +149,7 @@ DOMAssistant.Content = function () {
 				}
 		    	child.parentNode.removeChild(child);
 		    }
-			this.addContent(newContent);
+			$(this).addContent(newContent);
 			return this;
 		},
 

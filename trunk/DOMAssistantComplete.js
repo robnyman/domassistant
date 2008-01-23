@@ -1205,7 +1205,7 @@ DOMAssistant.Content = function () {
 				}
 		    	child.parentNode.removeChild(child);
 		    }
-			this.addContent(newContent);
+			$(this).addContent(newContent);
 			return this;
 		},
 
@@ -1262,16 +1262,24 @@ DOMAssistant.Events = function () {
 		},
 
 		addEvent : function (evt, func) {
-			if (!this.events) {
-				this.events = {};
+			var XULEvent = (/^DOM/.test(evt));
+			if (XULEvent) {
+				if (this.addEventListener) {
+					this.addEventListener(evt, func, false);
+				}
 			}
-			if (!this.events[evt]) {
-				this.events[evt] = [];
-			}							
-			this.events[evt].push(func);
-			this["on" + evt] = DOMAssistant.Events.handleEvent;
-			if (typeof this.window === "object") {
-				this.window["on" + evt] = DOMAssistant.Events.handleEvent;
+			else {
+				if (!this.events) {
+					this.events = {};
+				}
+				if (!this.events[evt]) {
+					this.events[evt] = [];
+				}							
+				this.events[evt].push(func);
+				this["on" + evt] = DOMAssistant.Events.handleEvent;
+				if (typeof this.window === "object") {
+					this.window["on" + evt] = DOMAssistant.Events.handleEvent;
+				}
 			}
 			return this;
 		},
