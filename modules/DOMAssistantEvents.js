@@ -1,5 +1,5 @@
 // Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
-/*extern DOMAssistant */
+/*extern DOMAssistant, $ */
 DOMAssistant.Events = function () {
 	var baseMethodsToAdd = [
 		"addEvent",
@@ -46,16 +46,24 @@ DOMAssistant.Events = function () {
 		},
 
 		addEvent : function (evt, func) {
-			if (!this.events) {
-				this.events = {};
+			var XULEvent = (/^DOM/.test(evt));
+			if (XULEvent) {
+				if (this.addEventListener) {
+					this.addEventListener(evt, func, false);
+				}
 			}
-			if (!this.events[evt]) {
-				this.events[evt] = [];
-			}							
-			this.events[evt].push(func);
-			this["on" + evt] = DOMAssistant.Events.handleEvent;
-			if (typeof this.window === "object") {
-				this.window["on" + evt] = DOMAssistant.Events.handleEvent;
+			else {
+				if (!this.events) {
+					this.events = {};
+				}
+				if (!this.events[evt]) {
+					this.events[evt] = [];
+				}							
+				this.events[evt].push(func);
+				this["on" + evt] = DOMAssistant.Events.handleEvent;
+				if (typeof this.window === "object") {
+					this.window["on" + evt] = DOMAssistant.Events.handleEvent;
+				}
 			}
 			return this;
 		},
