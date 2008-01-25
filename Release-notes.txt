@@ -1,7 +1,8 @@
 Next version:
 =============
+- Fix for replaceContent method on a collection.
+- Fix for addContent method on a collection.
 - Removed unnecessary attribute removal in the replaceWithAJAXContent method for the AJAX module.
-- Fix for replace content method on a collection.
 - Added support for XUL events (DOMMouseScroll etc) with the addEvent method.
 
 Version 2.5.7:
