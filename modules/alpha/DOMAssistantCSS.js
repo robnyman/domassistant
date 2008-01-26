@@ -18,7 +18,6 @@ DOMAssistant.CSS = function () {
 		},
 
 		addClass : function (className) {
-			alert(this.nodeName + "\n" + className);
 			var currentClass = this.className;
 			if (!new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i").test(currentClass)) {
 				this.className = currentClass + ((currentClass.length > 0)? " " : "") + className;
