@@ -1,4 +1,5 @@
 // Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
+/*extern HTMLDocument, HTMLElement */
 var DOMAssistant = function () {
 	var baseMethodsToAdd = [
 		"elmsByClass",
@@ -41,11 +42,21 @@ var DOMAssistant = function () {
 		
 		addHTMLArrayPrototype : function (name, method) {
 			HTMLArray.prototype[name] = function () {
-				alert(this.length);
+				var elmsToReturn = new HTMLArray();
+				elmsToReturn.previousSet = this;
+				var elms;
 				for (var i=0, il=this.length; i<il; i++) {
-					method.apply(this[i], arguments);
-				};
-				return this;
+					elms = method.apply(this[i], arguments);
+					if (elms.constructor === Array) {
+						for (var j=0, jl=elms.length; j<jl; j++) {
+							elmsToReturn.push(elms[j]);
+						}
+					}
+					else {
+						elmsToReturn.push(elms);
+					}	
+				}
+				return elmsToReturn;
 			};
 		},
 	
@@ -84,7 +95,7 @@ var DOMAssistant = function () {
 	    },
 	
 		cssSelection : function  (cssRule) {
-			if (false && document.evaluate && !isOpera) {
+			if (true && document.evaluate && !isOpera) {
 				DOMAssistant.cssSelection = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/, "$1").split(",");
 					var elm = new HTMLArray();
@@ -373,7 +384,7 @@ var DOMAssistant = function () {
 									matchingElms = prevElm.elmsByTag(splitRule.tag);
 								}
 								if (splitRule.id) {
-									var idElm = DOMAssistant.$(splitRule.id.replace(/^#/, ""));
+									var idElm = document.getElementById(splitRule.id.replace(/^#/, ""));
 									emptyMatchingElms();
 									if (idElm) {
 										addToMatchingElms(idElm);
