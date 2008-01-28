@@ -397,7 +397,6 @@ var DOMAssistant = function () {
 									pseudoClass : cssSelector[10],
 									pseudoValue : cssSelector[12]
 								};
-								var values = "";
 								if (i > 0 && /(>|\+|~)/.test(cssSelectors[i - 1])) {
 									emptyMatchingElms();
 									matchingElms = prevElm;
@@ -406,7 +405,6 @@ var DOMAssistant = function () {
 									emptyMatchingElms();
 									matchingElms = prevElm.elmsByTag(splitRule.tag);
 								}
-								//continue;
 								if (splitRule.id) {
 									var idElm = document.getElementById(splitRule.id.replace(/^#/, ""));
 									emptyMatchingElms();
@@ -416,7 +414,8 @@ var DOMAssistant = function () {
 								}
 								if (splitRule.allClasses) {
 									splitRule.allClasses = splitRule.allClasses.replace(/^\./, "").split(".");
-									var classTag = (matchingElms.length > 0)? matchingElms : null;
+									var hasTag = (splitRule.tag !== "*" && matchingElms.length > 0);
+									var classTag = (hasTag)? matchingElms : null;
 									for (var n=0, nl=splitRule.allClasses.length, matchingClassElms; n<nl; n++) {
 										matchingClassElms = prevElm.elmsByClass(splitRule.allClasses[n], classTag);
 										if (matchingClassElms.length === 0) {
@@ -424,7 +423,14 @@ var DOMAssistant = function () {
 										}
 									}
 									emptyMatchingElms();
-									matchingElms = matchingClassElms;									
+									if (hasTag) {
+										matchingElms = matchingClassElms;
+									}
+									else {
+										for (var n=0, nl=matchingClassElms.length; n<nl; n++) {
+											addToMatchingElms(matchingClassElms[n]);
+										}
+									}
 								}
 								if (splitRule.allAttr) {
 									splitRule.allAttr = splitRule.allAttr.replace(/(\])(\[)/, "$1 $2").split(" ");
