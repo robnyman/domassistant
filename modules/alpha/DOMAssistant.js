@@ -272,7 +272,7 @@ var DOMAssistant = function () {
 			}
 			else {				
 				DOMAssistant.cssSelection = function (cssRule) {
-					var cssRules = cssRule.replace(/\s*(,)\s*/, "$1").split(",");
+					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
 					var elm = new HTMLArray();
 					var prevElm = new HTMLArray();
 					var matchingElms = new HTMLArray();
@@ -397,13 +397,21 @@ var DOMAssistant = function () {
 									pseudoClass : cssSelector[10],
 									pseudoValue : cssSelector[12]
 								};
-								if (i > 0 && /(>|\+|~)/.test(cssSelectors[i - 1])) {
-									emptyMatchingElms();
+								if (a > 0 && /(>|\+|~)/.test(cssSelectors[a - 1])) {
+									//emptyMatchingElms();
 									matchingElms = prevElm;
 								}
 								else if (splitRule.tag && !splitRule.id) {
 									emptyMatchingElms();
-									matchingElms = prevElm.elmsByTag(splitRule.tag);
+									elmsWithTag = prevElm.elmsByTag(splitRule.tag);
+									if (prevElm.length === 1) {
+										matchingElms = elmsWithTag;
+									}
+									else {
+										for (var n=0, nl=elmsWithTag.length; n<nl; n++) {
+											addToMatchingElms(elmsWithTag[n]);
+										}
+									}
 								}
 								if (splitRule.id) {
 									var idElm = document.getElementById(splitRule.id.replace(/^#/, ""));
