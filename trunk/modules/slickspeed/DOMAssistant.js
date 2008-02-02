@@ -289,6 +289,24 @@ var DOMAssistant = function () {
 					var cssSelectorRegExp = /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[#?\w+(\^|\$|\*)?=?[\w\-\_]+\]+))\))?)*)?/;
 					var ruleIdReplace = /^[^#]*(#)/;
 					var matchedObjects;
+					function clearAdded() {
+						for (var n=0, nl=prevElm.length, classMatch; n<nl; n++) {
+							prevElm[n].added = false;
+						}
+					}
+					function getAttr(elm, attr) {
+						if(isIE) {
+							switch (attr) {
+								case "id":
+									return elm.id;
+								case "for":
+									return elm.htmlFor;
+								case "class":
+									return elm.className;
+							}
+						}
+						return elm.getAttribute(attr, 2);
+					}
 					for (var a=0, al=cssRules.length; a<al; a++) {
 						try{
 						currentRule = cssRules[a].replace(ruleIdReplace, "$1");
@@ -306,26 +324,8 @@ var DOMAssistant = function () {
 						}
 						cssSelectors = currentRule.split(" ");
 						//emptyPrevElm();
-						prevElm = new HTMLArray();
-						prevElm.push(DOMAssistant.$(document)[0]);
-						function clearAdded() {
-							for (var n=0, nl=prevElm.length, classMatch; n<nl; n++) {
-								prevElm[n].added = false;
-							}
-						}
-						function getAttr(elm, attr) {
-							if(isIE) {
-								switch (attr) {
-									case "id":
-										return elm.id;
-									case "for":
-										return elm.htmlFor;
-									case "class":
-										return elm.className;
-								}
-							}
-							return elm.getAttribute(attr, 2);
-						}
+						prevElm = [];
+						prevElm.push(document);
 						
 						for (var i=0, il=cssSelectors.length; i<il; i++) {
 							var rule = cssSelectors[i];
@@ -368,12 +368,14 @@ var DOMAssistant = function () {
 													nextSib = nextSib.nextSibling;
 												}
 												while (nextSib) {
-													if (nextRegExp.test(nextSib.nodeName)) {
+													if (!nextSib.added && nextRegExp.test(nextSib.nodeName)) {
+														nextSib.added = true;
 														matchingElms.push(nextSib);
 													}
 													nextSib = nextSib.nextSibling;
 												}
-											}	
+											}
+											clearAdded();
 										}
 									}
 								}
