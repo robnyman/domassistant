@@ -290,8 +290,13 @@ var DOMAssistant = function () {
 					var ruleIdReplace = /^[^#]*(#)/;
 					var matchedObjects;
 					function clearAdded() {
-						for (var n=0, nl=prevElm.length, classMatch; n<nl; n++) {
+						for (var n=0, nl=prevElm.length; n<nl; n++) {
 							prevElm[n].added = false;
+						}
+					}
+					function clearChildElms () {
+						for (var n=0, nl=prevParents.length; n<nl; n++) {
+							prevParents[n].childElms = null;
 						}
 					}
 					function getAttr(elm, attr) {
@@ -474,7 +479,8 @@ var DOMAssistant = function () {
 									var pseudoClass = splitRule.pseudoClass;
 									var pseudoValue = splitRule.pseudoValue;
 									var previousMatch = matchingElms;
-									matchingElms = new HTMLArray();
+									matchingElms = [];
+									var prevParents = [];
 									if (/^:not$/.test(pseudoClass)) {
 										pseudoValue = pseudoValue.replace(/^\[#([\w\-\_]+)\]$/, "[id=$1]");
 										var notTag = /^(\w+)/.exec(pseudoValue);
@@ -520,109 +526,259 @@ var DOMAssistant = function () {
 										}
 									}
 									else {
-										for (var s=0, sl=previousMatch.length, previous, prevParent, parentTagsByType, switchMatch, firstLastOnly, nthOfType, childrenNodes, childNodes, elmType, nthPos; s<sl; s++) {
-											previous = previousMatch[s];
-											prevParent = previous.parentNode;
-											if (/(first|last|only)-(child|of-type)/.test(pseudoClass)) {
-												if (/(first|last|only)-child/.test(pseudoClass)) {
-													firstChild = prevParent.firstChild;
-													while (firstChild.nodeType !== 1 && firstChild.nextSibling) {
-														firstChild = firstChild.nextSibling;
-													}
-													lastChild = prevParent.lastChild;
-													while (lastChild.nodeType !== 1 && lastChild.previousSibling) {
-														lastChild = lastChild.previousSibling;
-													}
+										if (/first-child/.test(pseudoClass)) {
+											for (var s=0, sl=previousMatch.length, previous, prevParent, firstChild; s<sl; s++) {
+												previous = previousMatch[s];
+												prevParent = previous.parentNode;
+												firstChild = prevParent.firstChild;
+												while (firstChild.nodeType !== 1 && firstChild.nextSibling) {
+													firstChild = firstChild.nextSibling;
 												}
-												else {
-													parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
-													firstChild = parentTagsByType[0];
-													lastChild = parentTagsByType[parentTagsByType.length - 1];
-												}
-												if (/first/.test(pseudoClass)) {
-													if (firstChild === previous) {
-														addToMatchingElms(previous);
-													}
-													continue;
-												}
-												else if (/last/.test(pseudoClass)) {
-													if (lastChild === previous) {
-														addToMatchingElms(previous);
-													}
-													continue;
-												}
-												else if (/only/.test(pseudoClass)) {
-													if (firstChild === previous && lastChild === previous) {
-														addToMatchingElms(previous);
-													}
-													continue;
+												if (firstChild === previous) {
+													matchingElms.push(previous);
 												}
 											}
-											else if (/empty/.test(pseudoClass) && childrenNodes.length === 0) {
-												addToMatchingElms(previous);
-												continue;
-											}
-											else if (/nth-child/.test(pseudoClass) && /^n$/.test(pseudoValue)) {
-												addToMatchingElms(previous);
-												continue;
-											}
-											else if (/enabled|disabled|checked/.test(pseudoClass)) {
-												if ((/enabled/.test(pseudoClass) && !previous.disabled) || (/disabled/.test(pseudoClass) && previous.disabled) || (/checked/.test(pseudoClass) && previous.checked)) {
-													addToMatchingElms(previous);
-												}
-												continue;
-											}
-											else if (/contains/.test(pseudoClass)) {
-												if (new RegExp("^|\\s" + pseudoValue + "\\s|$").test(previous.innerHTML)) {
-													addToMatchingElms(previous);
-												}
-												continue;
-											}
-											else {
-												childrenNodes = previous.childNodes;
-												childNodes = [];
-												elmType = new RegExp((("of-type")? ("(^|\\s)" + splitRule.tag + "(\\s|$)") : "."), "i");
-												for (var t=0, tl=childrenNodes.length, currentChild; t<tl; t++) {
-													currentChild = childrenNodes[t];
-													if (currentChild.nodeType === 1 && elmType.test(currentChild.nodeName)) {
-														childNodes.push(currentChild);
-													}
-												}
-												if (childNodes.length > 0) {
-													nthOfType = /nth-(last-)?of-type/.test(pseudoClass);
-													if (/nth-child/.test(pseudoClass)) {
-														var pseudoSelector = /^(odd|even)|(\d+)n((\+|\-)(\d+))?$/.exec(pseudoValue);
-														if (/^\d+$/.test(pseudoValue)) {
-															addToMatchingElms(childNodes[pseudoValue-1]);
-														}
-														else if (pseudoSelector) {
-															var nRepeat = parseInt(pseudoSelector[2], 10);
-															var iteratorStart = (pseudoSelector[1] === "even")? 1 : 0;
-															var iteratorAdd = 2;
-															if (nRepeat > 0) {
-																iteratorAdd = nRepeat;
-																var nOperatorVal = (pseudoSelector[4])? parseInt((pseudoSelector[4] + pseudoSelector[5]), 10) : 0;
-																//if (nOperatorVal !== 0) {
-																	iteratorStart = nOperatorVal - 1;
-																//}
-															}
-															for (var u=iteratorStart, ul=childNodes.length; u<ul; u=u+iteratorAdd) {
-																if (u < 0) {
-																	continue;
-																}
-																addToMatchingElms(childNodes[u]);
-															}
-														}
-													}
-													else if (nthOfType) {
-														nthPos = (/last/i.test(pseudoClass))? ((childNodes.length-1) - pseudoValue) : (pseudoValue - 1);
-														if (childNodes[nthPos]) {
-															addToMatchingElms(childNodes[nthPos]);
-														}
-													}
-												}
-											}
+											prevElm = matchingElms;
 										}
+										else if (/last-child/.test(pseudoClass)) {
+											for (var s=0, sl=previousMatch.length, previous, prevParent, lastChild; s<sl; s++) {
+												previous = previousMatch[s];
+												prevParent = previous.parentNode;
+												lastChild = prevParent.lastChild;
+												while (lastChild.nodeType !== 1 && lastChild.previousSibling) {
+													lastChild = lastChild.previousSibling;
+												}
+												if (lastChild === previous) {
+													matchingElms.push(previous);
+												}
+											}
+											prevElm = matchingElms;
+										}
+										else if (/only-child/.test(pseudoClass)) {
+											for (var s=0, sl=previousMatch.length, previous, prevParent, firstChild, lastChild; s<sl; s++) {
+												previous = previousMatch[s];
+												prevParent = previous.parentNode;
+												firstChild = prevParent.firstChild;
+												while (firstChild.nodeType !== 1 && firstChild.nextSibling) {
+													firstChild = firstChild.nextSibling;
+												}
+												lastChild = prevParent.lastChild;
+												while (lastChild.nodeType !== 1 && lastChild.previousSibling) {
+													lastChild = lastChild.previousSibling;
+												}
+												if (firstChild === previous && lastChild === previous) {
+													matchingElms.push(previous);
+												}
+											}
+											prevElm = matchingElms;
+										}
+										else if (/nth-child/.test(pseudoClass)) {
+											if (/^\d+$/.test(pseudoValue)) {
+												var nthChild = parseInt(pseudoValue, 10);
+												for (var s=0, sl=previousMatch.length, previous, prevParent, matchingChild; s<sl; s++) {
+													childCounter = 0;
+													previous = previousMatch[s];
+													prevParent = previous.parentNode;
+													matchingChild = prevParent.firstChild;
+													if(matchingChild.nodeType === 1) {
+														childCounter = childCounter + 1;
+													}
+													while (childCounter < nthChild && matchingChild.nextSibling) {
+														matchingChild = matchingChild.nextSibling;
+														if (matchingChild.nodeType === 1) {
+															childCounter = childCounter + 1;
+														}
+													}
+														
+													if (childCounter === nthChild && matchingChild && !matchingChild.added && (matchingChild.nodeName === previous.nodeName)) {
+														matchingChild.added = true;
+														matchingElms.push(previous);
+													}
+												}
+												clearAdded();
+											}
+											else if (/^n$/.test(pseudoValue)) {
+												for (var s=0, sl=previousMatch.length, previous; s<sl; s++) {
+													matchingElms.push(previousMatch[s]);
+												}
+											}
+											else{
+												var pseudoSelector = /^(odd|even)|(\d+)n((\+|\-)(\d+))?$/.exec(pseudoValue);
+												var nRepeat = parseInt(pseudoSelector[2], 10);
+												var iteratorStart = (pseudoSelector[1] === "even")? 1 : 0;
+												var iteratorAdd = 2;
+												if (nRepeat > 0) {
+													iteratorAdd = nRepeat;
+													var nOperatorVal = (pseudoSelector[4])? parseInt((pseudoSelector[4] + pseudoSelector[5]), 10) : 0;
+													//if (nOperatorVal !== 0) {
+														iteratorStart = nOperatorVal - 1;
+													//}
+												}
+												for (var s=0, sl=previousMatch.length, previous, prevParent, matchingChild; s<sl; s++) {
+													previous = previousMatch[s];
+													prevParent = previous.parentNode;
+													if (!prevParent.childElms) {
+														childrenNodes = prevParent.childNodes;
+														childNodes = [];
+														var childElm = prevParent.firstChild;
+														if (childElm.nodeType === 1) {
+															childNodes.push(childElm);
+														}
+														while (childElm && childElm.nextSibling) {
+															childElm = childElm.nextSibling;
+															if (childElm.nodeType === 1) {
+																childNodes.push(childElm);
+															}
+														}
+														prevParent.childElms = childNodes;
+														prevParents.push(prevParent);
+													}
+													else {
+														childNodes = prevParent.childElms;
+													}
+													
+													for (var u=iteratorStart, ul=childNodes.length; u<ul; u=u+iteratorAdd) {
+														if (u < 0) {
+															continue;
+														}
+														if (!childNodes[u].added && childNodes[u].nodeName === previous.nodeName) {
+															childNodes[u].added = true;
+															matchingElms.push(previous);
+														}
+													}
+												}
+												clearAdded();
+												clearChildElms();
+											}
+											prevElm = matchingElms;
+										}
+										else if (/first-of-type/.test(pseudoClass)) {
+											for (var s=0, sl=previousMatch.length, previous, prevParent, firstChild, parentTagsByType; s<sl; s++) {
+												previous = previousMatch[s];
+												prevParent = previous.parentNode;
+												parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
+												firstChild = parentTagsByType[0];
+												if (firstChild === previous) {
+													matchingElms.push(previous);
+												}
+											}
+											prevElm = matchingElms;
+										}
+										else if (/last-of-type/.test(pseudoClass)) {
+											for (var s=0, sl=previousMatch.length, previous, prevParent, lastChild, parentTagsByType; s<sl; s++) {
+												previous = previousMatch[s];
+												prevParent = previous.parentNode;
+												parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
+												lastChild = parentTagsByType[parentTagsByType.length - 1];
+												if (lastChild === previous) {
+													matchingElms.push(previous);
+												}
+											}
+											prevElm = matchingElms;
+										}
+										else if (/only-of-type/.test(pseudoClass)) {
+											for (var s=0, sl=previousMatch.length, previous, prevParent, firstChild, lastChild, parentTagsByType; s<sl; s++) {
+												previous = previousMatch[s];
+												prevParent = previous.parentNode;
+												parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
+												firstChild = parentTagsByType[0];
+												lastChild = parentTagsByType[parentTagsByType.length - 1];
+												if (firstChild === previous && lastChild === previous) {
+													matchingElms.push(previous);
+												}
+											}
+											prevElm = matchingElms;
+										}
+										else if (/empty/.test(pseudoClass)) {
+											for (var s=0, sl=previousMatch.length, previous, prevParent, childrenNodes; s<sl; s++) {
+												previous = previousMatch[s];
+												prevParent = previous.parentNode;
+												childrenNodes = prevParent.childNodes;
+												if (childrenNodes.length === 0) {
+													matchingElms.push(previous);
+												}
+											}
+											prevElm = matchingElms;
+										}
+										else if (/enabled/.test(pseudoClass)) {
+											for (var s=0, sl=previousMatch.length, previous; s<sl; s++) {
+												previous = previousMatch[s];
+												if (!previous.disabled) {
+													matchingElms.push(previous);
+												}
+											}
+											prevElm = matchingElms;
+										}
+										else if (/disabled/.test(pseudoClass)) {
+											for (var s=0, sl=previousMatch.length, previous; s<sl; s++) {
+												previous = previousMatch[s];
+												if (previous.disabled) {
+													matchingElms.push(previous);
+												}
+											}
+											prevElm = matchingElms;
+										}
+										else if (/checked/.test(pseudoClass)) {
+											for (var s=0, sl=previousMatch.length, previous; s<sl; s++) {
+												previous = previousMatch[s];
+												if (previous.checked) {
+													matchingElms.push(previous);
+												}
+											}
+											prevElm = matchingElms;
+										}
+										else if (/contains/.test(pseudoClass)) {
+											for (var s=0, sl=previousMatch.length, previous; s<sl; s++) {
+												previous = previousMatch[s];
+												if (!previous.added) {
+													if (new RegExp("(^|\\s)" + pseudoValue + "(\\s|$)").test(previous.innerHTML)) {
+														previous.added = true;
+														matchingElms.push(previous);
+													}
+												}
+											}
+											clearAdded();
+											prevElm = matchingElms;
+										}
+										else {
+											for (var s=0, sl=previousMatch.length, previous, prevParent, parentTagsByType, switchMatch, firstLastOnly, nthOfType, childrenNodes, childNodes, elmType, nthPos; s<sl; s++) {
+												if (false) {
+													if (childNodes.length > 0) {
+														nthOfType = /nth-(last-)?of-type/.test(pseudoClass);
+														if (/nth-child/.test(pseudoClass)) {
+															var pseudoSelector = /^(odd|even)|(\d+)n((\+|\-)(\d+))?$/.exec(pseudoValue);
+															if (/^\d+$/.test(pseudoValue)) {
+																addToMatchingElms(childNodes[pseudoValue-1]);
+															}
+															else if (pseudoSelector) {
+																var nRepeat = parseInt(pseudoSelector[2], 10);
+																var iteratorStart = (pseudoSelector[1] === "even")? 1 : 0;
+																var iteratorAdd = 2;
+																if (nRepeat > 0) {
+																	iteratorAdd = nRepeat;
+																	var nOperatorVal = (pseudoSelector[4])? parseInt((pseudoSelector[4] + pseudoSelector[5]), 10) : 0;
+																	//if (nOperatorVal !== 0) {
+																		iteratorStart = nOperatorVal - 1;
+																	//}
+																}
+																for (var u=iteratorStart, ul=childNodes.length; u<ul; u=u+iteratorAdd) {
+																	if (u < 0) {
+																		continue;
+																	}
+																	addToMatchingElms(childNodes[u]);
+																}
+															}
+														}
+														else if (nthOfType) {
+															nthPos = (/last/i.test(pseudoClass))? ((childNodes.length-1) - pseudoValue) : (pseudoValue - 1);
+															if (childNodes[nthPos]) {
+																addToMatchingElms(childNodes[nthPos]);
+															}
+														}
+													}
+												}
+											}
+										}	
 									}
 								}
 								//emptyPrevElmAndAddMatching();
