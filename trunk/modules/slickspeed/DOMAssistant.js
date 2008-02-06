@@ -82,9 +82,7 @@ var DOMAssistant = function () {
 						elm.push(arguments[i]);
 					}
 				}
-				//alert(elm.elmsByClass);
 			}
-			//alert(elm);
 			return elm;
 	    },
 	
@@ -328,7 +326,6 @@ var DOMAssistant = function () {
 							}
 						}
 						cssSelectors = currentRule.split(" ");
-						//emptyPrevElm();
 						prevElm = [];
 						prevElm.push(document);
 						
@@ -343,7 +340,6 @@ var DOMAssistant = function () {
 										nextRegExp = new RegExp("(^|\\s)" + nextTag + "(\\s|$)", "i");
 										refSeparator = childOrSiblingRef[0];
 										if (refSeparator === ">") {
-											//alert(prevElm.length);
 											for (var j=0, jl=prevElm.length, children; j<jl; j++) {
 												children = prevElm[j].childNodes;
 												for (var k=0, kl=children.length; k<kl; k++) {
@@ -412,7 +408,6 @@ var DOMAssistant = function () {
 											}
 										}
 									}
-									//alert(matchingElms.length);
 									prevElm = matchingElms;
 									clearAdded();
 								}
@@ -420,16 +415,21 @@ var DOMAssistant = function () {
 								if (splitRule.allClasses) {
 									splitRule.allClasses = splitRule.allClasses.replace(/^\./, "").split(".");
 									var matchingClassElms = [];
-									for (var m=0, ml=splitRule.allClasses.length, classToMatch, classMatch; m<ml; m++) {
-										classToMatch = new RegExp("(^|\\s)" + splitRule.allClasses[m].replace(/\./, "") + "(\\s|$)");
-										for (var n=0, nl=matchingElms.length; n<nl; n++) {
-											if (!matchingElms[n].added) {
-												if (classToMatch.test(matchingElms[n].className)) {
-													//return alert(classMatch + "\nClass: " + prevElm[n].className);
-													matchingElms[n].added = true;
-													matchingClassElms.push(matchingElms[n]);
+									for (var n=0, nl=matchingElms.length, addElm, elmClass; n<nl; n++) {
+										if (!matchingElms[n].added) {
+											addElm = false;
+											elmClass = matchingElms[n].className;
+											for (var m=0, ml=splitRule.allClasses.length, classToMatch, classMatch; m<ml; m++) {
+												classToMatch = new RegExp("(^|\\s)" + splitRule.allClasses[m].replace(/\./, "") + "(\\s|$)");
+												addElm = classToMatch.test(elmClass);
+												if (!addElm){
+													break;
 												}
 											}
+										}
+										if (addElm) {
+											matchingElms[n].added = true;
+											matchingClassElms.push(matchingElms[n]);
 										}
 									}
 									clearAdded();
@@ -440,34 +440,41 @@ var DOMAssistant = function () {
 									splitRule.allAttr = splitRule.allAttr.replace(/(\])(\[)/, "$1 $2").split(" ");
 									var matchingAttributeElms = [];
 									var attributeMatchRegExp = /(\w+)(\^|\$|\*)?=?([\w\-_]+)?/;
-									for (var p=0, pl=splitRule.allAttr.length, matchingAttributeElms, attributeMatch, attribute, attrVal, tag, substrMatchSelector; p<pl; p++) {
-										attributeMatch = attributeMatchRegExp.exec(splitRule.allAttr[p]);
-										attributeValue = attributeMatch[3] || null;
-										attrVal = (attributeValue)? ("^" + attributeValue + "$") : null;
-										substrMatchSelector = attributeMatch[2] || null;
-										if (typeof substrMatchSelector === "string") {
-											switch (substrMatchSelector) {
-												case "^":
-													attrVal = ("^" + attributeValue);
-													break;
-												case "$":
-													attrVal = (attributeValue + "$");
-													break;
-												case "*":
-													attrVal = (attributeValue);
-													break;	
-											}
-										}
-										var attributeRegExp = (attrVal)? new RegExp(attrVal) : null;
-										for (var n=0, nl=matchingElms.length, current, currentAttr; n<nl; n++) {
-											current = matchingElms[n];
-											if (!current.added) {
+									for (var n=0, nl=matchingElms.length, current, currentAttr, addAttrElm; n<nl; n++) {
+										current = matchingElms[n];
+										if (!current.added) {
+											for (var p=0, pl=splitRule.allAttr.length, matchingAttributeElms, attributeMatch, attribute, attrVal, tag, substrMatchSelector; p<pl; p++) {
+												addAttrElm = false;
+												attributeMatch = attributeMatchRegExp.exec(splitRule.allAttr[p]);
+												attributeValue = attributeMatch[3] || null;
+												attrVal = (attributeValue)? ("^" + attributeValue + "$") : null;
+												substrMatchSelector = attributeMatch[2] || null;
+												if (typeof substrMatchSelector === "string") {
+													switch (substrMatchSelector) {
+														case "^":
+															attrVal = ("^" + attributeValue);
+															break;
+														case "$":
+															attrVal = (attributeValue + "$");
+															break;
+														case "*":
+															attrVal = (attributeValue);
+															break;	
+													}
+												}
+												var attributeRegExp = (attrVal)? new RegExp(attrVal) : null;
 									        	currentAttr = getAttr(current, attributeMatch[1]);
 										        if (typeof currentAttr === "string" && currentAttr.length > 0) {
 													if (!attributeRegExp || typeof attributeRegExp === "undefined" || (attributeRegExp && attributeRegExp.test(currentAttr))) {
-														matchingAttributeElms.push(current);
+														addAttrElm = true;
 										            }
 										        }
+												if (!addAttrElm) {
+													continue;
+												} 
+											}
+											if (addAttrElm) {
+												matchingAttributeElms.push(current);
 											}
 										}
 									}
@@ -866,13 +873,11 @@ var DOMAssistant = function () {
 			}
 			else {
 				DOMAssistant.elmsByAttribute = function (attr, attrVal, tag, substrMatchSelector) {
-					//alert(this.nodeName);
 					var returnElms = new HTMLArray();
 					if (window.ActiveXObject && document.all) {
 						attr = attr.replace(/class/, "className");
 					}
 					var attribute = (typeof attrVal === "undefined")? null : ("(^|\\s)" + attrVal + "(\\s|$)");
-					//alert(attr);
 					if (typeof substrMatchSelector === "string") {
 						switch (substrMatchSelector) {
 							case "^":
