@@ -70,7 +70,7 @@ var DOMAssistant = function () {
 		$ : function () {
 			var elm = new HTMLArray();
 			if (document.getElementById) {
-				var arg = arguments[0];
+				var arg = arguments[0].replace(/^[^#]*(#)/, "$1");
 				if (/^#[\w\-\_]+$/.test(arg)) {
 					elm.push(document.getElementById(arg.substr(1)));
 				}
@@ -87,11 +87,12 @@ var DOMAssistant = function () {
 	    },
 	
 		cssSelection : function  (cssRule) {
-			if (false && document.evaluate && !isOpera) {
+			if (document.evaluate && !isOpera) {
 				DOMAssistant.cssSelection = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
 					var elm = new HTMLArray();
 					var currentRule, identical, cssSelectors, xPathExpression, cssSelector, splitRule, nextTag, followingElm;
+					var cssSelectorRegExp =  /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[#?\w+(\^|\$|\*)?=?[\w\-\_]+\]+))\))?)*)?(>|\+|~)?/;
 					for (var i=0, il=cssRules.length; i<il; i++) {
 						currentRule = cssRules[i];
 						if (i > 0) {
@@ -109,7 +110,7 @@ var DOMAssistant = function () {
 						cssSelectors = currentRule.split(" ");
 						xPathExpression = ".";
 						for (var j=0, jl=cssSelectors.length; j<jl; j++) {
-							cssSelector = /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[#?\w+(\^|\$|\*)?=?[\w\-\_]+\]+))\))?)*)?(>|\+|~)?/.exec(cssSelectors[j]);
+							cssSelector = cssSelectorRegExp.exec(cssSelectors[j]);
 							splitRule = {
 								tag : (!cssSelector[1] || cssSelector[2] === "*")? "*" : cssSelector[1],
 								id : (cssSelector[2] !== "*")?  cssSelector[2] : null,
@@ -203,15 +204,18 @@ var DOMAssistant = function () {
 										xPathExpression += "[@checked='checked']"; // Doesn't work in Opera 9.24
 										break;
 									case "nth-child":
-										var pseudoSelection = "/child::*[position()";
+										var pseudoSelection = "[position()";
 										if (/^\d+$/.test(pseudoValue)) {
 											pseudoSelection += " = " + pseudoValue;
 										}
-										else if (/^odd|even$/.test(pseudoValue)) {
-											pseudoSelection += " mod 2 = " + ((pseudoValue === "odd")? 1 : 0);
+										else if (/^odd$/.test(pseudoValue)) {
+											pseudoSelection += " mod 2 = 1";
+										}
+										else if (/^even$/.test(pseudoValue)) {
+											pseudoSelection += " mod 2 = 0";
 										}
 										else if (/^n$/.test(pseudoValue)) {
-											pseudoSelection = "/child::*";
+											pseudoSelection = "";
 										}
 										else{
 											var pseudoSelector = /^(\d+)n((\+|\-)(\d+))?$/.exec(pseudoValue);
@@ -282,10 +286,9 @@ var DOMAssistant = function () {
 					var elm = new HTMLArray();
 					var prevElm = new HTMLArray();
 					var matchingElms = new HTMLArray();
-					var currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, refSeparator, refPrevElm, nextSib, refPrevElmFound;
+					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, refSeparator, refPrevElm, nextSib, refPrevElmFound, current, previous, prevParent, addElm, firstChild, lastChild, parentTagsByType, matchingChild, childrenNodes, childNodes;
 					var childOrSiblingRefRegExp = /^(>|\+|~)$/;
 					var cssSelectorRegExp = /^(\w+)?(#[\w\-_]+|\*)?((\.[\w\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[#?\w+(\^|\$|\*)?=?[\w\-\_]+\]+))\))?)*)?/;
-					var ruleIdReplace = /^[^#]*(#)/;
 					var matchedObjects;
 					function clearAdded() {
 						for (var n=0, nl=prevElm.length; n<nl; n++) {
@@ -311,12 +314,11 @@ var DOMAssistant = function () {
 						return elm.getAttribute(attr, 2);
 					}
 					for (var a=0, al=cssRules.length; a<al; a++) {
-						try{
-						currentRule = cssRules[a].replace(ruleIdReplace, "$1");
+						currentRule = cssRules[a];
 						if (a > 0) {
 							identical = false;
-							for (var x=0, xl=a; x<xl; x++) {
-								if (cssRules[a] === cssRules[x]) {
+							for (var b=0, bl=a; b<bl; b++) {
+								if (cssRules[a] === cssRules[b]) {
 									identical = true;
 									break;
 								}
@@ -350,8 +352,8 @@ var DOMAssistant = function () {
 											}	
 										}
 										else if (refSeparator === "+") {
-											for (var j=0, jl=prevElm.length, nextSib; j<jl; j++) {
-												nextSib = prevElm[j].nextSibling;
+											for (var l=0, ll=prevElm.length; l<ll; l++) {
+												nextSib = prevElm[l].nextSibling;
 												while (nextSib && nextSib.nodeType !== 1) {
 													nextSib = nextSib.nextSibling;
 												}
@@ -363,8 +365,8 @@ var DOMAssistant = function () {
 											}	
 										}
 										else if (refSeparator === "~") {
-											for (var j=0, jl=prevElm.length, nextSib; j<jl; j++) {
-												nextSib = prevElm[j].nextSibling;
+											for (var m=0, ml=prevElm.length; m<ml; m++) {
+												nextSib = prevElm[m].nextSibling;
 												while (nextSib && nextSib.nodeType !== 1) {
 													nextSib = nextSib.nextSibling;
 												}
@@ -415,12 +417,13 @@ var DOMAssistant = function () {
 								if (splitRule.allClasses) {
 									splitRule.allClasses = splitRule.allClasses.replace(/^\./, "").split(".");
 									var matchingClassElms = [];
-									for (var n=0, nl=matchingElms.length, addElm, elmClass; n<nl; n++) {
-										if (!matchingElms[n].added) {
+									for (var p=0, pl=matchingElms.length, elmClass; p<pl; p++) {
+										current = matchingElms[p];
+										if (!current.added) {
 											addElm = false;
-											elmClass = matchingElms[n].className;
-											for (var m=0, ml=splitRule.allClasses.length, classToMatch, classMatch; m<ml; m++) {
-												classToMatch = new RegExp("(^|\\s)" + splitRule.allClasses[m].replace(/\./, "") + "(\\s|$)");
+											elmClass = current.className;
+											for (var q=0, ql=splitRule.allClasses.length, classToMatch, classMatch; q<ql; q++) {
+												classToMatch = new RegExp("(^|\\s)" + splitRule.allClasses[q].replace(/\./, "") + "(\\s|$)");
 												addElm = classToMatch.test(elmClass);
 												if (!addElm){
 													break;
@@ -428,8 +431,8 @@ var DOMAssistant = function () {
 											}
 										}
 										if (addElm) {
-											matchingElms[n].added = true;
-											matchingClassElms.push(matchingElms[n]);
+											current.added = true;
+											matchingClassElms.push(current);
 										}
 									}
 									clearAdded();
@@ -440,12 +443,12 @@ var DOMAssistant = function () {
 									splitRule.allAttr = splitRule.allAttr.replace(/(\])(\[)/, "$1 $2").split(" ");
 									var matchingAttributeElms = [];
 									var attributeMatchRegExp = /(\w+)(\^|\$|\*)?=?([\w\-_]+)?/;
-									for (var n=0, nl=matchingElms.length, current, currentAttr, addAttrElm; n<nl; n++) {
-										current = matchingElms[n];
+									for (var r=0, rl=matchingElms.length, currentAttr, attributeValue; r<rl; r++) {
+										current = matchingElms[r];
 										if (!current.added) {
-											for (var p=0, pl=splitRule.allAttr.length, matchingAttributeElms, attributeMatch, attribute, attrVal, tag, substrMatchSelector; p<pl; p++) {
-												addAttrElm = false;
-												attributeMatch = attributeMatchRegExp.exec(splitRule.allAttr[p]);
+											for (var s=0, sl=splitRule.allAttr.length, attributeMatch, attribute, attrVal, tag, substrMatchSelector; s<sl; s++) {
+												addElm = false;
+												attributeMatch = attributeMatchRegExp.exec(splitRule.allAttr[s]);
 												attributeValue = attributeMatch[3] || null;
 												attrVal = (attributeValue)? ("^" + attributeValue + "$") : null;
 												substrMatchSelector = attributeMatch[2] || null;
@@ -466,14 +469,14 @@ var DOMAssistant = function () {
 									        	currentAttr = getAttr(current, attributeMatch[1]);
 										        if (typeof currentAttr === "string" && currentAttr.length > 0) {
 													if (!attributeRegExp || typeof attributeRegExp === "undefined" || (attributeRegExp && attributeRegExp.test(currentAttr))) {
-														addAttrElm = true;
+														addElm = true;
 										            }
 										        }
-												if (!addAttrElm) {
+												if (!addElm) {
 													continue;
 												} 
 											}
-											if (addAttrElm) {
+											if (addElm) {
 												matchingAttributeElms.push(current);
 											}
 										}
@@ -487,7 +490,7 @@ var DOMAssistant = function () {
 									var pseudoValue = splitRule.pseudoValue;
 									var previousMatch = matchingElms;
 									matchingElms = [];
-									var prevParents = [];
+									prevParents = [];
 									if (/^:not$/.test(pseudoClass)) {
 										pseudoValue = pseudoValue.replace(/^\[#([\w\-\_]+)\]$/, "[id=$1]");
 										var notTag = /^(\w+)/.exec(pseudoValue);
@@ -495,26 +498,26 @@ var DOMAssistant = function () {
 										var notAttr = /\[(\w+)(\^|\$|\*)?=?([\w\-_]+)?\]/.exec(pseudoValue);
 										var notRegExp = new RegExp("(^|\\s)" + ((notTag)? notTag[1] : (notClass)? notClass[1] : "") + "(\\s|$)", "i");
 										if (notAttr) {
-											var notMatchingAttr = ("(^|\\s)" + notAttr[1] + "(\\s|$)");
-											var notMatchingAttrVal = notAttr[3];
+											var notAttribute = notAttr[3];
+											var notMatchingAttrVal = "^" + notAttr[3] + "$";
 											var substrNoMatchSelector = notAttr[2];
 											if (typeof substrNoMatchSelector === "string") {
 												switch (substrNoMatchSelector) {
 													case "^":
-														notMatchingAttrVal = ("^" + notMatchingAttrVal);
+														notMatchingAttrVal = ("^" + notAttribute);
 														break;
 													case "$":
-														notMatchingAttrVal = (notMatchingAttrVal + "$");
+														notMatchingAttrVal = (notAttribute + "$");
 														break;
 													case "*":
-														notMatchingAttrVal = (notMatchingAttrVal);
+														notMatchingAttrVal = (notAttribute);
 														break;	
 												}
 											}
 											notRegExp = new RegExp(notMatchingAttrVal, "i");
 										}
-										for (var r=0, rl=previousMatch.length, notElm, addElm; r<rl; r++) {
-											notElm = previousMatch[r];
+										for (var t=0, tl=previousMatch.length, notElm; t<tl; t++) {
+											notElm = previousMatch[t];
 											addElm = null;
 											if (notTag && !notRegExp.test(notElm.nodeName)) {
 												addElm = notElm;
@@ -523,19 +526,21 @@ var DOMAssistant = function () {
 												addElm = notElm;
 											}
 											else if (notAttr) {
-												if (!notElm.getAttribute(notAttr[1]) || !notRegExp.test(notElm.getAttribute(notAttr[1]))) {
+												if (!getAttr(notElm, notAttr[1]) || !notRegExp.test(getAttr(notElm, notAttr[1]))) {
 													addElm = notElm;
 												}
 											}
-											if (addElm) {
-												addToMatchingElms(addElm);
+											if (addElm && !addElm.added) {
+												addElm.added = true;
+												matchingElms.push(addElm);
 											}
 										}
+										prevElm = matchingElms;
 									}
 									else {
 										if (/first-child/.test(pseudoClass)) {
-											for (var s=0, sl=previousMatch.length, previous, prevParent, firstChild; s<sl; s++) {
-												previous = previousMatch[s];
+											for (var u=0, ul=previousMatch.length; u<ul; u++) {
+												previous = previousMatch[u];
 												prevParent = previous.parentNode;
 												firstChild = prevParent.firstChild;
 												while (firstChild.nodeType !== 1 && firstChild.nextSibling) {
@@ -548,8 +553,8 @@ var DOMAssistant = function () {
 											prevElm = matchingElms;
 										}
 										else if (/last-child/.test(pseudoClass)) {
-											for (var s=0, sl=previousMatch.length, previous, prevParent, lastChild; s<sl; s++) {
-												previous = previousMatch[s];
+											for (var v=0, vl=previousMatch.length; v<vl; v++) {
+												previous = previousMatch[v];
 												prevParent = previous.parentNode;
 												lastChild = prevParent.lastChild;
 												while (lastChild.nodeType !== 1 && lastChild.previousSibling) {
@@ -562,8 +567,8 @@ var DOMAssistant = function () {
 											prevElm = matchingElms;
 										}
 										else if (/only-child/.test(pseudoClass)) {
-											for (var s=0, sl=previousMatch.length, previous, prevParent, firstChild, lastChild; s<sl; s++) {
-												previous = previousMatch[s];
+											for (var w=0, wl=previousMatch.length; w<wl; w++) {
+												previous = previousMatch[w];
 												prevParent = previous.parentNode;
 												firstChild = prevParent.firstChild;
 												while (firstChild.nodeType !== 1 && firstChild.nextSibling) {
@@ -582,9 +587,9 @@ var DOMAssistant = function () {
 										else if (/nth-child/.test(pseudoClass)) {
 											if (/^\d+$/.test(pseudoValue)) {
 												var nthChild = parseInt(pseudoValue, 10);
-												for (var s=0, sl=previousMatch.length, previous, prevParent, matchingChild; s<sl; s++) {
+												for (var x=0, xl=previousMatch.length, childCounter; x<xl; x++) {
 													childCounter = 0;
-													previous = previousMatch[s];
+													previous = previousMatch[x];
 													prevParent = previous.parentNode;
 													matchingChild = prevParent.firstChild;
 													if(matchingChild.nodeType === 1) {
@@ -605,8 +610,8 @@ var DOMAssistant = function () {
 												clearAdded();
 											}
 											else if (/^n$/.test(pseudoValue)) {
-												for (var s=0, sl=previousMatch.length, previous; s<sl; s++) {
-													matchingElms.push(previousMatch[s]);
+												for (var y=0, yl=previousMatch.length; y<yl; y++) {
+													matchingElms.push(previousMatch[y]);
 												}
 											}
 											else{
@@ -617,12 +622,10 @@ var DOMAssistant = function () {
 												if (nRepeat > 0) {
 													iteratorAdd = nRepeat;
 													var nOperatorVal = (pseudoSelector[4])? parseInt((pseudoSelector[4] + pseudoSelector[5]), 10) : 0;
-													//if (nOperatorVal !== 0) {
-														iteratorStart = nOperatorVal - 1;
-													//}
+													iteratorStart = nOperatorVal - 1;
 												}
-												for (var s=0, sl=previousMatch.length, previous, prevParent, matchingChild; s<sl; s++) {
-													previous = previousMatch[s];
+												for (var z=0, zl=previousMatch.length; z<zl; z++) {
+													previous = previousMatch[z];
 													prevParent = previous.parentNode;
 													if (!prevParent.childElms) {
 														childrenNodes = prevParent.childNodes;
@@ -643,13 +646,13 @@ var DOMAssistant = function () {
 													else {
 														childNodes = prevParent.childElms;
 													}
-													
-													for (var u=iteratorStart, ul=childNodes.length; u<ul; u=u+iteratorAdd) {
-														if (u < 0) {
+													for (var zz=iteratorStart, zzl=childNodes.length; zz<zzl; zz=zz+iteratorAdd) {
+														if (zz < 0) {
 															continue;
 														}
-														if (!childNodes[u].added && childNodes[u].nodeName === previous.nodeName) {
-															childNodes[u].added = true;
+														current = childNodes[zz];
+														if (!current.added && current.nodeName === previous.nodeName) {
+															current.added = true;
 															matchingElms.push(previous);
 														}
 													}
@@ -660,8 +663,8 @@ var DOMAssistant = function () {
 											prevElm = matchingElms;
 										}
 										else if (/first-of-type/.test(pseudoClass)) {
-											for (var s=0, sl=previousMatch.length, previous, prevParent, firstChild, parentTagsByType; s<sl; s++) {
-												previous = previousMatch[s];
+											for (var zFirst=0, zFirstL=previousMatch.length; zFirst<zFirstL; zFirst++) {
+												previous = previousMatch[zFirst];
 												prevParent = previous.parentNode;
 												parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
 												firstChild = parentTagsByType[0];
@@ -672,8 +675,8 @@ var DOMAssistant = function () {
 											prevElm = matchingElms;
 										}
 										else if (/last-of-type/.test(pseudoClass)) {
-											for (var s=0, sl=previousMatch.length, previous, prevParent, lastChild, parentTagsByType; s<sl; s++) {
-												previous = previousMatch[s];
+											for (var zLast=0, zLastL=previousMatch.length; zLast<zLastL; zLast++) {
+												previous = previousMatch[zLast];
 												prevParent = previous.parentNode;
 												parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
 												lastChild = parentTagsByType[parentTagsByType.length - 1];
@@ -684,8 +687,8 @@ var DOMAssistant = function () {
 											prevElm = matchingElms;
 										}
 										else if (/only-of-type/.test(pseudoClass)) {
-											for (var s=0, sl=previousMatch.length, previous, prevParent, firstChild, lastChild, parentTagsByType; s<sl; s++) {
-												previous = previousMatch[s];
+											for (var zOnly=0, zOnlyL=previousMatch.length; zOnly<zOnlyL; zOnly++) {
+												previous = previousMatch[zOnly];
 												prevParent = previous.parentNode;
 												parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
 												firstChild = parentTagsByType[0];
@@ -697,8 +700,8 @@ var DOMAssistant = function () {
 											prevElm = matchingElms;
 										}
 										else if (/empty/.test(pseudoClass)) {
-											for (var s=0, sl=previousMatch.length, previous, prevParent, childrenNodes; s<sl; s++) {
-												previous = previousMatch[s];
+											for (var zEmpty=0, zEmptyL=previousMatch.length; zEmpty<zEmptyL; zEmpty++) {
+												previous = previousMatch[zEmpty];
 												prevParent = previous.parentNode;
 												childrenNodes = prevParent.childNodes;
 												if (childrenNodes.length === 0) {
@@ -708,8 +711,8 @@ var DOMAssistant = function () {
 											prevElm = matchingElms;
 										}
 										else if (/enabled/.test(pseudoClass)) {
-											for (var s=0, sl=previousMatch.length, previous; s<sl; s++) {
-												previous = previousMatch[s];
+											for (var zEnabled=0, zEnabledL=previousMatch.length; zEnabled<zEnabledL; zEnabled++) {
+												previous = previousMatch[zEnabled];
 												if (!previous.disabled) {
 													matchingElms.push(previous);
 												}
@@ -717,8 +720,8 @@ var DOMAssistant = function () {
 											prevElm = matchingElms;
 										}
 										else if (/disabled/.test(pseudoClass)) {
-											for (var s=0, sl=previousMatch.length, previous; s<sl; s++) {
-												previous = previousMatch[s];
+											for (var zDisabled=0, zDisabledL=previousMatch.length; zDisabled<zDisabledL; zDisabled++) {
+												previous = previousMatch[zDisabled];
 												if (previous.disabled) {
 													matchingElms.push(previous);
 												}
@@ -726,8 +729,8 @@ var DOMAssistant = function () {
 											prevElm = matchingElms;
 										}
 										else if (/checked/.test(pseudoClass)) {
-											for (var s=0, sl=previousMatch.length, previous; s<sl; s++) {
-												previous = previousMatch[s];
+											for (var zChecked=0, zCheckedL=previousMatch.length; zChecked<zCheckedL; zChecked++) {
+												previous = previousMatch[zChecked];
 												if (previous.checked) {
 													matchingElms.push(previous);
 												}
@@ -735,8 +738,8 @@ var DOMAssistant = function () {
 											prevElm = matchingElms;
 										}
 										else if (/contains/.test(pseudoClass)) {
-											for (var s=0, sl=previousMatch.length, previous; s<sl; s++) {
-												previous = previousMatch[s];
+											for (var zContains=0, zContainsL=previousMatch.length; zContains<zContainsL; zContains++) {
+												previous = previousMatch[zContains];
 												if (!previous.added) {
 													if (new RegExp("(^|\\s)" + pseudoValue + "(\\s|$)").test(previous.innerHTML)) {
 														previous.added = true;
@@ -747,59 +750,12 @@ var DOMAssistant = function () {
 											clearAdded();
 											prevElm = matchingElms;
 										}
-										else {
-											for (var s=0, sl=previousMatch.length, previous, prevParent, parentTagsByType, switchMatch, firstLastOnly, nthOfType, childrenNodes, childNodes, elmType, nthPos; s<sl; s++) {
-												if (false) {
-													if (childNodes.length > 0) {
-														nthOfType = /nth-(last-)?of-type/.test(pseudoClass);
-														if (/nth-child/.test(pseudoClass)) {
-															var pseudoSelector = /^(odd|even)|(\d+)n((\+|\-)(\d+))?$/.exec(pseudoValue);
-															if (/^\d+$/.test(pseudoValue)) {
-																addToMatchingElms(childNodes[pseudoValue-1]);
-															}
-															else if (pseudoSelector) {
-																var nRepeat = parseInt(pseudoSelector[2], 10);
-																var iteratorStart = (pseudoSelector[1] === "even")? 1 : 0;
-																var iteratorAdd = 2;
-																if (nRepeat > 0) {
-																	iteratorAdd = nRepeat;
-																	var nOperatorVal = (pseudoSelector[4])? parseInt((pseudoSelector[4] + pseudoSelector[5]), 10) : 0;
-																	//if (nOperatorVal !== 0) {
-																		iteratorStart = nOperatorVal - 1;
-																	//}
-																}
-																for (var u=iteratorStart, ul=childNodes.length; u<ul; u=u+iteratorAdd) {
-																	if (u < 0) {
-																		continue;
-																	}
-																	addToMatchingElms(childNodes[u]);
-																}
-															}
-														}
-														else if (nthOfType) {
-															nthPos = (/last/i.test(pseudoClass))? ((childNodes.length-1) - pseudoValue) : (pseudoValue - 1);
-															if (childNodes[nthPos]) {
-																addToMatchingElms(childNodes[nthPos]);
-															}
-														}
-													}
-												}
-											}
-										}	
 									}
 								}
-								//emptyPrevElmAndAddMatching();
 							}
 						}
-						for (var v=0, vl=prevElm.length; v<vl; v++) {
-							elm.push(prevElm[v]);
-						}
-						}
-						catch(e){
-							var apa = "";
-							for (var i in e)
-								apa += i + ": " + e[i] + "\n";
-							alert(apa);
+						for (var iPrevElm=0, iPrevElmL=prevElm.length; iPrevElm<iPrevElmL; iPrevElm++) {
+							elm.push(prevElm[iPrevElm]);
 						}
 					}
 					return elm;
