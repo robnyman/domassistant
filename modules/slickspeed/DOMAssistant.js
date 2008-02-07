@@ -204,20 +204,20 @@ var DOMAssistant = function () {
 										xPathExpression += "[@checked='checked']"; // Doesn't work in Opera 9.24
 										break;
 									case "nth-child":
-										var pseudoSelection = "[position()";
+										var pseudoSelection = "[";
 										if (/^\d+$/.test(pseudoValue)) {
-											pseudoSelection += " = " + pseudoValue;
-										}
-										else if (/^odd$/.test(pseudoValue)) {
-											pseudoSelection += " mod 2 = 1";
-										}
-										else if (/^even$/.test(pseudoValue)) {
-											pseudoSelection += " mod 2 = 0";
+											pseudoSelection += "position() = " + pseudoValue;
 										}
 										else if (/^n$/.test(pseudoValue)) {
 											pseudoSelection = "";
 										}
 										else{
+											if (/^odd$/.test(pseudoValue)) {
+												pseudoValue = "2n+1";
+											}
+											else if (/^even$/.test(pseudoValue)) {
+												pseudoValue = "2n+0";
+											}
 											var pseudoSelector = /^(\d+)n((\+|\-)(\d+))?$/.exec(pseudoValue);
 											var nthSelector = parseInt(pseudoSelector[1], 10);
 											var nOperatorVal = 0;
@@ -226,17 +226,18 @@ var DOMAssistant = function () {
 												if (nOperatorVal < 0) {
 													nOperatorVal = nthSelector + nOperatorVal;
 												}
-												pseudoSelection += " = " + nOperatorVal + " or ";
+												//pseudoSelection += "position() = " + nOperatorVal + " or ";
 											}
+											pseudoSelection += "(count(./preceding-sibling::*) + 1)"
 											if (nthSelector < nOperatorVal) {
 												var nOperatorDiff = ((nOperatorVal - nthSelector) % 2 === 0)? 0 : 1;
-												pseudoSelection += ((pseudoSelector[3])? " position()" : "") + " mod " + nthSelector + " = " + nOperatorDiff + " and position() > " + nOperatorVal;
+												pseudoSelection += " mod " + nthSelector + " = " + nOperatorDiff + " and position() > " + nOperatorVal;
 											}
 											else if (nOperatorVal === nthSelector) {
-												pseudoSelection += ((pseudoSelector[3])? " position()" : "") + " mod " + nthSelector + " = 0";
+												pseudoSelection += " mod " + nthSelector + " = 0";
 											}
 											else {
-												pseudoSelection += ((pseudoSelector[3])? " position()" : "") + " mod " + nthSelector + " = " + nOperatorVal;
+												pseudoSelection += " mod " + nthSelector + " = " + nOperatorVal;
 											}
 										}
 										if (!/^n$/.test(pseudoValue)) {
