@@ -7,32 +7,6 @@ DOMAssistant.Events = function () {
 		"preventDefault",
 		"cancelBubble"
 	];
-	var HTMLArrayEventMethods = {
-		addEvent : function (evt, func) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.Events.addEvent.call(this[i], evt, func);
-			}
-			return this;
-		},
-		removeEvent : function (evt, func) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.Events.removeEvent.call(this[i], evt, func);
-			}
-			return this;
-		},
-		preventDefault : function (evt) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.Events.preventDefault.call(this[i], evt);
-			}
-			return this;
-		},
-		cancelBubble : function (evt) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.Events.cancelBubble.call(this[i], evt);
-			}
-			return this;
-		}
-	};
 	return {
 		init : function () {
 			DOMAssistant.addHTMLArrayPrototype("Events", this);
@@ -40,8 +14,7 @@ DOMAssistant.Events = function () {
 			DOMAssistant.cancelBubble = this.cancelBubble;
 			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {
 				current = baseMethodsToAdd[i];
-				DOMAssistant.addMethod([current, this[current]]);
-				DOMAssistant.addHTMLArrayPrototype(current, HTMLArrayEventMethods[current]);
+				DOMAssistant.addMethods(current, this[current]);
 			}
 		},
 

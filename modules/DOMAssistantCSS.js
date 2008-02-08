@@ -8,47 +8,12 @@ DOMAssistant.CSS = function () {
 		"hasClass",
 		"getStyle"
 	];
-	var HTMLArrayCSSMethods = {
-		addClass : function (className) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.CSS.addClass.call(this[i], className);
-			}
-			return this;
-		},
-		removeClass : function (className) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.CSS.removeClass.call(this[i], className);
-			}
-			return this;
-		},
-		replaceClass : function (className, newClass) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.CSS.replaceClass.call(this[i], className, newClass);
-			}
-			return this;
-		},
-		hasClass : function (className) {
-			var hasClass = [];
-			for (var i=0, il=this.length; i<il; i++) {
-				hasClass.push(this.CSS.hasClass.call(this[i], className));
-			}
-			return hasClass;
-		},
-		getStyle : function (cssRule) {
-			var hasStyle = [];
-			for (var i=0, il=this.length; i<il; i++) {
-				hasStyle.push(this.CSS.getStyle.call(this[i], cssRule));
-			}
-			return hasStyle;
-		}
-	};
 	return {
 		init : function () {
 			DOMAssistant.addHTMLArrayPrototype("CSS", this);
 			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {
 				current = baseMethodsToAdd[i];
-				DOMAssistant.addMethod([current, this[current]]);
-				DOMAssistant.addHTMLArrayPrototype(current, HTMLArrayCSSMethods[current]);
+				DOMAssistant.addMethods(current, this[current]);
 			}
 		},
 

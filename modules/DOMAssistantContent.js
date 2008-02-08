@@ -10,76 +10,12 @@ DOMAssistant.Content = function () {
 		"replaceContent",
 		"remove"
 	];
-	var createHTMLArray = DOMAssistant.createHTMLArray;
-	var HTMLArrayContentMethods = {
-		prev : function () {
-			var previousElms = createHTMLArray();
-			previousElms.setPrevious(this);
-			var elm;
-			for (var i=0, il=this.length; i<il; i++) {
-				elm = this.Content.prev.call(this[i]);
-				if (elm) {
-					previousElms.push(elm);
-				}
-			}
-			return previousElms;
-		},
-		next : function () {
-			var nextElms = createHTMLArray();
-			nextElms.setPrevious(this);
-			var elm;
-			for (var i=0, il=this.length; i<il; i++) {
-				elm = this.Content.next.call(this[i]);
-				if (elm) {
-					nextElms.push(elm);
-				}
-			}
-			return nextElms;
-		},
-		create : function (name, attr, append, content) {
-			var newElms = createHTMLArray();
-			newElms.setPrevious(this);
-			var elm;
-			for (var i=0, il=this.length; i<il; i++) {
-				elm = this.Content.create.call(this[i], name, attr, append, content);
-				if (elm) {
-					newElms.push(elm);
-				}
-			}
-			return newElms;
-		},
-		setAttributes : function (attr) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.Content.setAttributes.call(this[i], attr);
-			}
-			return this;
-		},
-		addContent : function (content) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.Content.addContent.call(this[i], content);
-			}
-			return this;
-		},
-		replaceContent : function (newContent) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.Content.replaceContent.call(this[i], newContent);
-			}
-			return this;
-		},
-		remove : function () {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.Content.remove.call(this[i]);
-			}
-			return this;
-		}
-	};
 	return {
 		init : function () {
 			DOMAssistant.addHTMLArrayPrototype("Content", this);
 			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {
 				current = baseMethodsToAdd[i];
-				DOMAssistant.addMethod([current, this[current]]);
-				DOMAssistant.addHTMLArrayPrototype(current, HTMLArrayContentMethods[current]);
+				DOMAssistant.addMethods(current, this[current]);
 			}
 		},
 
