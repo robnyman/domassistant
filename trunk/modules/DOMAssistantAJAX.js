@@ -7,32 +7,6 @@ DOMAssistant.AJAX = function () {
 		"load",
 		"replaceWithAJAXContent"
 	];
-	var HTMLArrayAJAXMethods = {
-		get : function (url, callBack) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.AJAX.get.call(this[i], url, callBack);
-			}
-			return this;
-		},
-		post : function (url, callBack) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.AJAX.post.call(this[i], url, callBack);
-			}
-			return this;
-		},
-		load : function (url) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.AJAX.load.call(this[i], url);
-			}
-			return this;
-		},
-		replaceWithAJAXContent : function (content) {
-			for (var i=0, il=this.length; i<il; i++) {
-				this.AJAX.replaceWithAJAXContent.call(this[i], content);
-			}
-			return this;
-		}
-	};
 	var XMLHttp = null;
 	var callbackFunction = null;
 	var args = null;
@@ -44,8 +18,7 @@ DOMAssistant.AJAX = function () {
 			DOMAssistant.addHTMLArrayPrototype("AJAX", this);
 			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {
 				current = baseMethodsToAdd[i];
-				DOMAssistant.addMethod([current, this[current]]);
-				DOMAssistant.addHTMLArrayPrototype(current, HTMLArrayAJAXMethods[current]);
+				DOMAssistant.addMethods(current, this[current]);
 			}
 		},
 		

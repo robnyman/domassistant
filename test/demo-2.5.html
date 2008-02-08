@@ -20,9 +20,19 @@
 		function test (content) {
 			this.replaceContent(content);
 			this.addClass("testing");
-			alert(DOMAssistant.AJAX.getStatus());
 		}
 		DOMAssistant.DOMReady(function () {
+			try	{
+				var apa = $("#container").elmsByClass("one").addClass("testing");
+				return alert("apa: " + apa.length);
+				$(document).elmsByClass("item").replaceContent("apa");
+				$(document).addEvent("DOMMouseScroll", function () {
+					alert("Hej");
+				});
+			}
+			catch (e) {
+				alert(e);
+			}
 			$("#container").post("ajax.html?apa=true", test);
 			//$("container").replaceClass("item", "testing");
 			$("container").addEvent("click", function (evt) {
