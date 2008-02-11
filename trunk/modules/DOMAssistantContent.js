@@ -68,7 +68,7 @@ DOMAssistant.Content = function () {
 				}
 		    	child.parentNode.removeChild(child);
 		    }
-			$(this).addContent(newContent);
+			DOMAssistant.$(this).addContent(newContent);
 			return this;
 		},
 
