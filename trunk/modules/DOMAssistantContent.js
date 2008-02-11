@@ -1,24 +1,7 @@
 // Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
 /*extern DOMAssistant */
 DOMAssistant.Content = function () {
-	var baseMethodsToAdd = [
-		"prev",
-		"next",
-		"create",
-		"setAttributes",
-		"addContent",
-		"replaceContent",
-		"remove"
-	];
 	return {
-		init : function () {
-			DOMAssistant.addHTMLArrayPrototype("Content", this);
-			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {
-				current = baseMethodsToAdd[i];
-				DOMAssistant.addMethods(current, this[current]);
-			}
-		},
-
 		prev : function () {
 			var prevSib = this.previousSibling;
 			while(prevSib && prevSib.nodeType !== 1) {
@@ -95,4 +78,4 @@ DOMAssistant.Content = function () {
 		}
 	};
 }();
-DOMAssistant.Content.init();
+DOMAssistant.attach(DOMAssistant.Content);

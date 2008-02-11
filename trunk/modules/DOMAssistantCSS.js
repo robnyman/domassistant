@@ -1,22 +1,10 @@
 // Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
 /*extern DOMAssistant */
 DOMAssistant.CSS = function () {
-	var baseMethodsToAdd = [
-		"addClass",
-		"removeClass",
-		"replaceClass",
-		"hasClass",
-		"getStyle"
-	];
 	return {
-		init : function () {
-			DOMAssistant.addHTMLArrayPrototype("CSS", this);
-			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {
-				current = baseMethodsToAdd[i];
-				DOMAssistant.addMethods(current, this[current]);
-			}
-		},
-
+		monkey : false,
+		pig : [],
+		apa : "apa",
 		addClass : function (className) {
 			var currentClass = this.className;
 			if (!new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i").test(currentClass)) {
@@ -68,4 +56,4 @@ DOMAssistant.CSS = function () {
 		}
 	};
 }();
-DOMAssistant.CSS.init();
+DOMAssistant.attach(DOMAssistant.CSS);
