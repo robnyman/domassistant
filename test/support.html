@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/DTD/strict.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>DOM Assistant demo - DOM Assistant, the modular lightweight JavaScript library</title>
+	<link rel="stylesheet" href="css/domassistant.css" type="text/css">
+	
+	<script type="text/javascript" src="../trunk/modules/DOMAssistant.js"></script>
+	<script type="text/javascript" src="../trunk/modules/DOMAssistantAJAX.js"></script>
+	<script type="text/javascript" src="../trunk/modules/DOMAssistantContent.js"></script>
+	<script type="text/javascript" src="../trunk/modules/DOMAssistantCSS.js"></script>
+	<script type="text/javascript" src="../trunk/modules/DOMAssistantEvents.js"></script>
+	<script type="text/javascript" src="../trunk/modules/DOMAssistantLoad.js"></script>
+
+	<!--<script type="text/javascript" src="../trunk/DOMAssistantComplete.js"></script>-->
+	<!--<script type="text/javascript" src="../trunk/DOMAssistantCompressed.js"></script>-->
+	
+	<script type="text/javascript">
+		DOMAssistant.DOMReady(function () {
+			$("tr").each(function () {
+				this.addEvent("mouseover", f);
+				this.addEvent("mouseout", fa);
+				this.addEvent("click", function  () {
+					alert(this.innerHTML);
+				});
+			});
+		});
+		function f() {
+			$(this).addClass("trhover");
+		}
+		function fa() {
+			$(this).removeClass("trhover");
+		}
+		
+		function init_topicIntSwitch(){
+			alert($('.topicInt'));
+		 $('.topicInt').each(function () {
+		  try{
+		  	//alert("1: " + this);
+		alert(this);
+			alert($('#topicIntSwitch option[selected=selected]').length);
+			  if (this.id != $('#topicIntSwitch option[selected="selected"]')[0].value) {
+			   this.style.display = 'none'; // hide all fields, except the one that is selected by default
+			  }
+		  }
+		  catch(e){
+		  	alert(e);
+		  }
+		 });
+		
+		 $('#topicIntSwitch').addEvent('change', function (){
+		  $('.topicInt').each(function () {
+		   this.style.display = 'none';
+		   alert(this.style.display);
+		  }); 
+		  $('#'+this.value).each(function () {
+		   this.style.display = 'block';
+		   alert(this.style.display);
+		  }); 
+		 });
+		}
+
+		DOMAssistant.DOMReady(init_topicIntSwitch);
+		
+		
+		
+	</script>
+	<style type="text/css" media="screen">
+		.trhover{
+			background: #ccc;
+		}
+	</style>
+</head>
+
+<body>
+	
+	<div id="container">
+		<table>
+			<tr>
+				<td>Row 1</td>
+			</tr>
+			<tr>
+				<td>Row 2</td>
+			</tr>
+			<tr>
+				<td>Row 3</td>
+			</tr>
+			<tr>
+				<td>Row 4</td>
+			</tr>
+			<tr>
+				<td>Row 5</td>
+			</tr>
+		</table>
+	</div>
+	
+	<p><select id="topicIntSwitch">
+	   <option value="topicInt_1">Lorem</option>
+	   <option value="topicInt_2" selected="selected">Ipsum</option>
+	   <option value="topicInt_3">Dolor</option>
+	  </select></p>
+
+	  <div class="topicInt" id="topicInt_1">
+	   <ul class="navListInformative">
+	    <li><label class="sideItem"><input type="checkbox" class="input_checkbox" />Lorem</label></li>
+	    <li><label class="sideItem"><input type="checkbox" class="input_checkbox" />Lorem</label></li>
+	    <li><label class="sideItem"><input type="checkbox" class="input_checkbox" />Lorem</label></li>
+	   </ul>
+	  </div>
+
+	  <div class="topicInt" id="topicInt_2">
+	   <ul class="navListInformative">
+	    <li><label class="sideItem"><input type="checkbox" class="input_checkbox" />Ipsum</label></li>
+	    <li><label class="sideItem"><input type="checkbox" class="input_checkbox" />Ipsum</label></li>
+	    <li><label class="sideItem"><input type="checkbox" class="input_checkbox" />Ipsum</label></li>
+	    <li><label class="sideItem"><input type="checkbox" class="input_checkbox" />Ipsum</label></li>
+	   </ul>
+	  </div>
+
+	  <div class="topicInt" id="topicInt_3">
+	   <ul class="navListInformative">
+	    <li><label class="sideItem"><input type="checkbox" class="input_checkbox" />Dolor</label></li>
+	    <li><label class="sideItem"><input type="checkbox" class="input_checkbox" />Dolor</label></li>
+	   </ul>
+	  </div>
+	
+	
+	
+</body>
+</html>
