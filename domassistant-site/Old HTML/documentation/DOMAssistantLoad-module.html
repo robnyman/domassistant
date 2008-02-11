@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/DTD/strict.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>DOMAssistantLoad module - Documentation - DOMAssistant, the modular lightweight JavaScript library, with CSS selectors and AJAX, with CSS selectors and AJAX</title>
+	<style type="text/css">
+		@import url("../css/domassistant.css");
+	</style>
+	<!--[if lt IE 7]>
+		<link rel="stylesheet" href="../css/ie.css" type="text/css">
+	<![endif]-->
+	<link rel="Shortcut icon" href="http://www.robertnyman.com/favicon.png">
+</head>
+
+<body>
+	
+	<div id="container">
+			<div id="header">
+				<div id="header-content">
+					<h1><a href="/"><span></span>DOMAssistant</a></h1>
+					<div id="navigation">
+						<ul>
+							<li><a href="/">Home</a>/</li>
+							<li><a href="/documentation" class="selected">Documentation</a>/</li>
+							<li><a href="/download">Download</a>/</li>
+							<li><a href="/compatibility">Compatibility</a>/</li>
+							<li><a href="/contact">Contact</a>/</li>
+							<li class="last"><a href="/discussion-support">Discussion &amp; Support</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			
+			<div id="main-content">				
+				<div id="content">					
+					<div id="content-areas">
+						<div id="content-areas-inner">
+							
+							<div class="content-block">
+								<h1>DOMAssistantLoad Module</h1>
+								<p>The DOMAssistantLoad module offers a way to call a number of functions as soon as the DOM has loaded, as opposed to waiting for all images and other external files to completely load. It was inspired and influenced by Dean Edwards, Matthias Miller, and John Resig: <a href="http://dean.edwards.name/weblog/2006/06/again/">window.onload (again)</a>.</p>
+
+								<h4 id="DOMReady"><code>DOMReady()</code></h4>
+								<p>From any file, just call the DOMReady method with desired functions and they will be executed as soon as the DOM has loaded.</p>
+								<h5>Parameters</h5>
+								<p>Send in any number of function references, anonymous functions or strings with function names and parentheses.</p>
+								<h5>Return value</h5>
+								<p>None.</p>
+
+								<h5>Example calls</h5>
+								<p class="code">
+									<code>
+										DOMAssistant.DOMReady(myFunc);
+									</code>
+								</p>
+								<p class="code">
+									<code>
+										DOMAssistant.DOMReady("myFunc('Some text')");
+									</code>
+								</p>
+								<p class="code">
+									<code>
+										DOMAssistant.DOMReady(myFunc, "anotherFunction()");
+									</code>
+								</p>
+								<p class="code">
+									<code>
+										DOMAssistant.DOMReady(myFunc, function(){<br>
+											// Perform some magic<br>
+										});
+									</code>
+								</p>
+								
+							</div>
+							
+							<div class="content-block nav-bullet-lists">
+								<h2>DOMAssistantLoad methods</h2>
+								<ul>
+									<li><a href="#DOMReady">DOMReady</a></li>
+								</ul>
+								
+								<h3>DOMAssistant modules</h3>
+								<ul>
+									<li><a href="DOMAssistantCore-module.html">DOMAssistant Core</a></li>
+									<li><a href="DOMAssistantAJAX-module.html">DOMAssistantAJAX</a></li>
+									<li><a href="DOMAssistantContent-module.html">DOMAssistantContent</a></li>
+									<li><a href="DOMAssistantCSS-module.html">DOMAssistantCSS</a></li>
+									<li><a href="DOMAssistantEvents-module.html">DOMAssistantEvents</a></li>
+									<li><a href="DOMAssistantLoad-module.html">DOMAssistantLoad</a></li>
+								</ul>
+								<h3>CSS selectors</h3>
+								<p>
+									<a href="css-selectors.html">Supported CSS selectors (CSS 1, CSS 2, CSS 3)</a>
+								</p>
+							</div>
+						
+							<div id="download" class="content-block last-content-block focused-block">
+								<h2>Download DOMAssistant</h2>
+								<h3>All modules in one file</h3>	
+								<dl>
+									<dt>
+										<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCompressed.2.5.7.js">DOMAssistant 2.5.7, compressed</a><br>
+										(22kb, 7kb <a href="http://en.wikipedia.org/wiki/Gzip" class="small">Gzipped</a>)
+									</dt>
+									<dd>Intended for production usage.</dd>
+
+									<dt>
+										<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantComplete.2.5.7.js">DOMAssistant 2.5.7, complete</a><br>
+										(43kb)
+									</dt>
+									<dd>Intended for learning and development usage.</dd>
+								</dl>
+								<h3>Individual modules</h3>
+								<ul>	
+									<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistant.2.5.7.js">DOMAssistant Core</a></li>
+									<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantAJAX.2.5.7.js">DOMAssistantAJAX</a></li>
+									<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantContent.2.5.7.js">DOMAssistantContent</a></li>
+									<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCSS.2.5.7.js">DOMAssistantCSS</a></li>
+									<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantEvents.2.5.7.js">DOMAssistantEvents</a></li>
+									<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantLoad.2.5.7.js">DOMAssistantLoad</a></li>
+								</ul>
+							</div>
+							
+						</div>
+					</div>
+					<div id="get-your-copy">
+						<a href="http://code.google.com/p/domassistant/"><img src="../images/get-your-copy.png" alt="Get your copy"></a>
+
+					</div>
+				</div>
+			</div>
+			
+			<div id="footer">
+				<div id="footer-content">
+					<i>Created by Robert Nyman, <a href="http://www.robertnyman.com">http://www.robertnyman.com</a>. DOMAssistant is released under a <a href="http://www.opensource.org/licenses/mit-license.php">MIT License</a>.</i>
+
+				</div>
+			</div>
+					
+	</div>
+	
+</body>
+</html>
