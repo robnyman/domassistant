@@ -64,7 +64,8 @@ h3{
 }
 
 h4{
-	margin: 2em 0 1em;
+	margin: 0 0 1em;
+	padding-top: 1.5em;
 }
 
 form label{
@@ -169,14 +170,14 @@ tr.first-row td, tr.first-row th{
 }
 
 #navigation a{
-	color: #228820;
-	text-decoration: none;
+	color: #484256;
 	padding: 0 6px 0 3px;
 }
 
 #navigation a.selected{
 	color: #000;
-	text-decoration: underline;
+	font-size: 1.2em;
+	font-weight: bold;
 }
 
 #navigation a:hover{
@@ -194,47 +195,73 @@ tr.first-row td, tr.first-row th{
 #content{
 	position: relative;
 	width: 975px;
-	background: url(../images/content-page-bg.png) repeat-y;
+	/*background: url(../images/content-page-bg.png) repeat-y;*/
 	margin: 0 auto;
 }
 
 #content-areas{
+	/*border: 1px solid #000;*/
 	overflow: hidden;
-	background: url(../images/content-page-start-bg.png) no-repeat;
+	min-height: 400px;
+	background: #fff url(../images/sidebar-bg.jpg) no-repeat right top;
+	/*background: url(../images/content-page-start-bg.png) no-repeat;*/
+}
+
+#main-content-area{
+	float: left;
+	width: 596px;
+	background: #fff;
+	padding: 18px;
+	overflow: hidden;
+}
+
+#sidebar{
+	float: right;
+	width: 287px;
+	color: #fff;
+	padding: 18px;
+	overflow: hidden;
+}
+
+#sidebar a{
+	color: #fff;
 }
 
 #content-areas-inner{
 	overflow: hidden;
-	background: url(../images/content-page-end-bg.png) no-repeat left bottom;
+	/*background: url(../images/content-page-end-bg.png) no-repeat left bottom;*/
 }
 
 #start-page #content{
-	background: url(../images/content-bg.png) repeat-y;
+	/*background: url(../images/content-bg.png) repeat-y;*/
 }
 
 #start-page #content-areas{
-	background: url(../images/content-start-bg.png) no-repeat;
+	/*background: url(../images/content-start-bg.png) no-repeat;*/
 }
 
 #start-page #content-areas-inner{
-	background: url(../images/content-end-bg.png) no-repeat left bottom;
+	/*background: url(../images/content-end-bg.png) no-repeat left bottom;*/
 }
 
 #content-areas h1, #content-areas h2{
-	text-align: center;
+	/*text-align: center;*/
 }
 
 .content-block{
 	float: left;
 	width: 287px;
 	min-height: 440px;
+	color: #fff;
+	background: #484256;
 	margin-right: 3px;
 	padding: 18px;
 	overflow: hidden;
 }
 
 .focused-block, .focused-block a{
-	color: #fff;
+	color: #484256;
+	background: #fff;
 }
 
 .last-content-block{
@@ -270,10 +297,6 @@ tr.first-row td, tr.first-row th{
 	position: absolute;
 	left: 845px;
 	bottom: -60px;
-}
-
-#start-page #get-your-copy{
-	left: 545px;
 }
 
 #get-your-copy a:hover{
