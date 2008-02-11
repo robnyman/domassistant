@@ -1,12 +1,6 @@
 // Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
 /*extern DOMAssistant */
 DOMAssistant.AJAX = function () {
-	var baseMethodsToAdd = [
-		"get",
-		"post",
-		"load",
-		"replaceWithAJAXContent"
-	];
 	var XMLHttp = null;
 	var callbackFunction = null;
 	var args = null;
@@ -14,13 +8,12 @@ DOMAssistant.AJAX = function () {
 	var loadElm = null;
 	var addToContent = false;
 	return {
-		init : function () {
-			DOMAssistant.addHTMLArrayPrototype("AJAX", this);
-			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {
-				current = baseMethodsToAdd[i];
-				DOMAssistant.addMethods(current, this[current]);
-			}
-		},
+		publicMethods : [
+			"get",
+			"post",
+			"load",
+			"replaceWithAJAXContent"
+		],
 		
 		initRequest : function () {
 			if (!XMLHttp) {
@@ -150,4 +143,4 @@ DOMAssistant.AJAX = function () {
 		}
 	};
 }();
-DOMAssistant.AJAX.init();
+DOMAssistant.attach(DOMAssistant.AJAX);

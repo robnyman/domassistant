@@ -1,34 +1,30 @@
 // Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
 /*extern HTMLDocument, HTMLElement */
 var DOMAssistant = function () {
-	var baseMethodsToAdd = [
-		"elmsByClass",
-		"elmsByAttribute",
-		"elmsByTag",
-		"each",
-		"end",
-		"setPrevious"
-	];
 	var HTMLArray = function (prevSet) {
 		// Constructor
 	};
-	var isIE = window.ActiveXObject && document.all;
+	var isIE = document.all && !/Opera/i.test(navigator.userAgent);
 	var isOpera = /Opera/i.test(navigator.userAgent); // Hopefully temporary till Opera fixes the XPath implementation
 	return {
+		publicMethods : [
+			"elmsByClass",
+			"elmsByAttribute",
+			"elmsByTag",
+			"each",
+			"end",
+			"setPrevious"
+		],
 		elmDoc : (typeof HTMLDocument === "function" || typeof HTMLDocument === "object")? HTMLDocument.prototype : document,
 		elmBase : (typeof HTMLElement === "function" || typeof HTMLElement === "object")? HTMLElement.prototype : document.all,
-		init : function () {
+		initCore : function () {
 			this.applyMethod.call(window, "$", this.$);
 			window.DOMAssistant = this;
 			if (isIE) {
 				HTMLArray = Array;
 			}
 			HTMLArray.prototype = [];
-			HTMLArray.prototype.DOM = this;
-			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {
-				current = baseMethodsToAdd[i];
-				this.addMethods(current, this[current]);
-			}
+			this.attach(this);
 		},
 		
 		addMethods : function (name, method) {
@@ -48,7 +44,7 @@ var DOMAssistant = function () {
 				var elms;
 				for (var i=0, il=this.length; i<il; i++) {
 					elms = method.apply(this[i], arguments);
-					if (elms.constructor === Array) {
+					if (elms!==null && elms.constructor === Array) {
 						for (var j=0, jl=elms.length; j<jl; j++) {
 							elmsToReturn.push(elms[j]);
 						}
@@ -66,16 +62,41 @@ var DOMAssistant = function () {
 				this[method] = func;
 			}
 		},
+		
+		attach : function (plugin) {
+			var publicMethods = plugin.publicMethods;
+			if (typeof publicMethods === "undefined") {
+				var pluginMethod;
+				for (var method in plugin) {
+					pluginMethod = plugin[method];
+					if (typeof pluginMethod !== "undefined") {
+						this.addMethods(method, pluginMethod);
+					}
+				}
+			}
+			else if (publicMethods.constructor === Array) {
+				for (var i=0, il=publicMethods.length, current; i<il; i++) {
+					current = publicMethods[i];
+					this.addMethods(current, plugin[current]);
+				}
+			}
+			if (typeof plugin.init === "function") {
+				plugin.init();
+			}
+		},
 	
 		$ : function () {
 			var elm = new HTMLArray();
 			if (document.getElementById) {
-				var arg = arguments[0].replace(/^[^#]*(#)/, "$1");
-				if (/^#[\w\-\_]+$/.test(arg)) {
-					elm.push(document.getElementById(arg.substr(1)));
-				}
-				else if (typeof arg === "string") {
-					elm = DOMAssistant.cssSelection(arg);
+				var arg = arguments[0];
+				if (typeof arg === "string") {
+					arg = arg.replace(/^[^#]*(#)/, "$1");
+					if (/^#[\w\-\_]+$/.test(arg)) {
+						elm.push(document.getElementById(arg.substr(1)));
+					}
+					else {
+						elm = DOMAssistant.cssSelection(arg);
+					}
 				}
 				else if (typeof arg === "object") {
 					for (var i=0, il=arguments.length; i<il; i++) {
@@ -228,7 +249,7 @@ var DOMAssistant = function () {
 												}
 												//pseudoSelection += "position() = " + nOperatorVal + " or ";
 											}
-											pseudoSelection += "(count(./preceding-sibling::*) + 1)"
+											pseudoSelection += "(count(./preceding-sibling::*) + 1)";
 											if (nthSelector < nOperatorVal) {
 												var nOperatorDiff = ((nOperatorVal - nthSelector) % 2 === 0)? 0 : 1;
 												pseudoSelection += " mod " + nthSelector + " = " + nOperatorDiff + " and position() > " + nOperatorVal;
@@ -426,7 +447,7 @@ var DOMAssistant = function () {
 											for (var q=0, ql=splitRule.allClasses.length, classToMatch, classMatch; q<ql; q++) {
 												classToMatch = new RegExp("(^|\\s)" + splitRule.allClasses[q].replace(/\./, "") + "(\\s|$)");
 												addElm = classToMatch.test(elmClass);
-												if (!addElm){
+												if (!addElm) {
 													break;
 												}
 											}
@@ -903,4 +924,4 @@ var DOMAssistant = function () {
 		}
 	};	
 }();
-DOMAssistant.init();
+DOMAssistant.initCore();

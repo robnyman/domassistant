@@ -1,21 +1,17 @@
 // Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
 /*extern DOMAssistant, $ */
 DOMAssistant.Events = function () {
-	var baseMethodsToAdd = [
-		"addEvent",
-		"removeEvent",
-		"preventDefault",
-		"cancelBubble"
-	];
 	return {
+		publicMethods : [
+			"addEvent",
+			"removeEvent",
+			"preventDefault",
+			"cancelBubble"
+		],
+		
 		init : function () {
-			DOMAssistant.addHTMLArrayPrototype("Events", this);
 			DOMAssistant.preventDefault = this.preventDefault;
 			DOMAssistant.cancelBubble = this.cancelBubble;
-			for (var i=0, il=baseMethodsToAdd.length, current; i<il; i++) {
-				current = baseMethodsToAdd[i];
-				DOMAssistant.addMethods(current, this[current]);
-			}
 		},
 
 		addEvent : function (evt, func) {
@@ -100,4 +96,4 @@ DOMAssistant.Events = function () {
 		}
 	};
 }();
-DOMAssistant.Events.init();
+DOMAssistant.attach(DOMAssistant.Events);
