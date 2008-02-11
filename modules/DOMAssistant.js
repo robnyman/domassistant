@@ -22,7 +22,9 @@ var DOMAssistant = function () {
 			}
 			HTMLArray.prototype = [];
 			HTMLArray.prototype.each = function (functionCall) {
-				functionCall.call(this);
+				for (var i=0, il=this.length; i<il; i++) {
+					functionCall.call(this[i]);
+				}
 				return this;
 			};
 			HTMLArray.prototype.end = function () {
