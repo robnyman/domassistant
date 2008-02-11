@@ -2,9 +2,6 @@
 /*extern DOMAssistant */
 DOMAssistant.CSS = function () {
 	return {
-		monkey : false,
-		pig : [],
-		apa : "apa",
 		addClass : function (className) {
 			var currentClass = this.className;
 			if (!new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i").test(currentClass)) {
