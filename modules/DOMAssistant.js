@@ -10,10 +10,7 @@ var DOMAssistant = function () {
 		publicMethods : [
 			"elmsByClass",
 			"elmsByAttribute",
-			"elmsByTag",
-			"each",
-			"end",
-			"setPrevious"
+			"elmsByTag"
 		],
 		elmDoc : (typeof HTMLDocument === "function" || typeof HTMLDocument === "object")? HTMLDocument.prototype : document,
 		elmBase : (typeof HTMLElement === "function" || typeof HTMLElement === "object")? HTMLElement.prototype : document.all,
@@ -24,6 +21,13 @@ var DOMAssistant = function () {
 				HTMLArray = Array;
 			}
 			HTMLArray.prototype = [];
+			HTMLArray.prototype.each = function (functionCall) {
+				functionCall.call(this);
+				return this;
+			};
+			HTMLArray.prototype.end = function () {
+				return this.previousSet;
+			};
 			this.attach(this);
 		},
 		
@@ -68,9 +72,8 @@ var DOMAssistant = function () {
 			if (typeof publicMethods === "undefined") {
 				var pluginMethod;
 				for (var method in plugin) {
-					pluginMethod = plugin[method];
-					if (typeof pluginMethod !== "undefined") {
-						this.addMethods(method, pluginMethod);
+					if (typeof plugin[method] !== "undefined") {
+						this.addMethods(method, plugin[method]);
 					}
 				}
 			}
@@ -92,15 +95,23 @@ var DOMAssistant = function () {
 				if (typeof arg === "string") {
 					arg = arg.replace(/^[^#]*(#)/, "$1");
 					if (/^#[\w\-\_]+$/.test(arg)) {
-						elm.push(document.getElementById(arg.substr(1)));
+						var idMatch = document.getElementById(arg.substr(1));
+						if (idMatch) {
+							elm = idMatch;
+						}
 					}
 					else {
 						elm = DOMAssistant.cssSelection(arg);
 					}
 				}
 				else if (typeof arg === "object") {
-					for (var i=0, il=arguments.length; i<il; i++) {
-						elm.push(arguments[i]);
+					if (arguments.length === 1) {
+						elm = arg;
+					}
+					else {
+						for (var i=0, il=arguments.length; i<il; i++) {
+							elm.push(arguments[i]);
+						}
 					}
 				}
 			}
@@ -916,11 +927,6 @@ var DOMAssistant = function () {
 				};
 			}
 			return DOMAssistant.elmsByTag.call(this, tag);
-		},
-		
-		each : function (functionCall) {
-			functionCall.call(this);
-			return this;
 		}
 	};	
 }();
