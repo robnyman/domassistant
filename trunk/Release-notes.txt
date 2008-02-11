@@ -1,5 +1,7 @@
-Next version:
+Version 2.6:
 =============
+- Major CSS selector performance improvement (# now mandatory in ID look-ups).
+- New plug-in structure added with attach method.
 - Fix for replaceContent method on a collection.
 - Fix for addContent method on a collection.
 - Removed unnecessary attribute removal in the replaceWithAJAXContent method for the AJAX module.
