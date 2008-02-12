@@ -6,14 +6,13 @@ var DOMAssistant = function () {
 	};
 	var isIE = document.all && !/Opera/i.test(navigator.userAgent);
 	var isOpera = /Opera/i.test(navigator.userAgent); // Hopefully temporary till Opera fixes the XPath implementation
+	var allMethods = [];
 	return {
 		publicMethods : [
 			"elmsByClass",
 			"elmsByAttribute",
 			"elmsByTag"
 		],
-		elmDoc : (typeof HTMLDocument === "function" || typeof HTMLDocument === "object")? HTMLDocument.prototype : document,
-		elmBase : (typeof HTMLElement === "function" || typeof HTMLElement === "object")? HTMLElement.prototype : document.all,
 		initCore : function () {
 			this.applyMethod.call(window, "$", this.$);
 			window.DOMAssistant = this;
@@ -34,35 +33,16 @@ var DOMAssistant = function () {
 		},
 		
 		addMethods : function (name, method) {
-			this.elmDoc[name] = method;
-			this.elmBase[name] = method;
+			allMethods.push([name, method]);
 			this.addHTMLArrayPrototype(name, method);
 		},
 		
-		createHTMLArray : function() {
-			return new HTMLArray();
+		addMethodsToElm : function (elm) {
+			for (var i=0, il=allMethods.length; i<il; i++) {
+				this.applyMethod.call(elm, allMethods[i][0], allMethods[i][1]);
+			}
 		},
 		
-		addHTMLArrayPrototype : function (name, method) {
-			HTMLArray.prototype[name] = function () {
-				var elmsToReturn = new HTMLArray();
-				elmsToReturn.previousSet = this;
-				var elms;
-				for (var i=0, il=this.length; i<il; i++) {
-					elms = method.apply(this[i], arguments);
-					if (elms!==null && elms.constructor === Array) {
-						for (var j=0, jl=elms.length; j<jl; j++) {
-							elmsToReturn.push(elms[j]);
-						}
-					}
-					else {
-						elmsToReturn.push(elms);
-					}	
-				}
-				return elmsToReturn;
-			};
-		},
-	
 		applyMethod : function (method, func) {
 			if (typeof this[method] !== "function") {
 				this[method] = func;
@@ -89,6 +69,30 @@ var DOMAssistant = function () {
 				plugin.init();
 			}
 		},
+		
+		createHTMLArray : function() {
+			return new HTMLArray();
+		},
+		
+		addHTMLArrayPrototype : function (name, method) {
+			HTMLArray.prototype[name] = function () {
+				var elmsToReturn = new HTMLArray();
+				elmsToReturn.previousSet = this;
+				var elms;
+				for (var i=0, il=this.length; i<il; i++) {
+					elms = method.apply(this[i], arguments);
+					if (elms!==null && elms.constructor === Array) {
+						for (var j=0, jl=elms.length; j<jl; j++) {
+							elmsToReturn.push(elms[j]);
+						}
+					}
+					else {
+						elmsToReturn.push(elms);
+					}	
+				}
+				return elmsToReturn;
+			};
+		},
 	
 		$ : function () {
 			var elm = new HTMLArray();
@@ -100,6 +104,7 @@ var DOMAssistant = function () {
 						var idMatch = document.getElementById(arg.substr(1));
 						if (idMatch) {
 							elm = idMatch;
+							DOMAssistant.addMethodsToElm(elm);
 						}
 					}
 					else {
@@ -109,6 +114,7 @@ var DOMAssistant = function () {
 				else if (typeof arg === "object") {
 					if (arguments.length === 1) {
 						elm = arg;
+						DOMAssistant.addMethodsToElm(elm);
 					}
 					else {
 						for (var i=0, il=arguments.length; i<il; i++) {
