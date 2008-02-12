@@ -108,7 +108,7 @@
 
 							<h5>Example calls</h5>
 							<p class="code">
-								<code>DOMAssistantAJAX.getReadyState();</code>
+								<code>DOMAssistant.AJAX.getReadyState();</code>
 							</p>
 							
 							<h4 id="getStatus"><code>getStatus()</code></h4>
@@ -121,7 +121,7 @@
 
 							<h5>Example calls</h5>
 							<p class="code">
-								<code>DOMAssistantAJAX.getStatus();</code>
+								<code>DOMAssistant.AJAX.getStatus();</code>
 							</p>
 							
 							<h4 id="getStatusText"><code>getStatusText()</code></h4>
@@ -134,7 +134,7 @@
 
 							<h5>Example calls</h5>
 							<p class="code">
-								<code>DOMAssistantAJAX.getStatusText();</code>
+								<code>DOMAssistant.AJAX.getStatusText();</code>
 							</p>						
 						</div>
 						
