@@ -54,6 +54,7 @@
 
 			<?php include "../footer.php" ?>
 	</div>
+	<?php include "../stats.php" ?>
 	
 </body>
 </html>

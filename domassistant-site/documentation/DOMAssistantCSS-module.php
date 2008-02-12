@@ -123,6 +123,7 @@
 			</div>
 					
 	</div>
+	<?php include "../stats.php" ?>
 	
 </body>
 </html>
