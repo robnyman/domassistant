@@ -939,12 +939,7 @@ var DOMAssistant = function () {
 }();
 DOMAssistant.initCore();
 DOMAssistant.AJAX = function () {
-	var XMLHttp = null;
-	var callbackFunction = null;
-	var args = null;
-	var getElm = null;
-	var loadElm = null;
-	var addToContent = false;
+	var globalXMLHttp = null;
 	return {
 		publicMethods : [
 			"get",
@@ -954,25 +949,24 @@ DOMAssistant.AJAX = function () {
 		],
 		
 		initRequest : function () {
-			if (!XMLHttp) {
-				if (typeof XMLHttpRequest !== "undefined") {
-					XMLHttp = new XMLHttpRequest();
+			var XMLHttp = null;
+			if (typeof XMLHttpRequest !== "undefined") {
+				XMLHttp = new XMLHttpRequest();
+			}
+			else if (typeof window.ActiveXObject !== "undefined") {
+				try{
+					XMLHttp = new window.ActiveXObject("Msxml2.XMLHTTP.4.0");
 				}
-				else if (typeof window.ActiveXObject !== "undefined") {
+				catch(e) {
 					try{
-						XMLHttp = new window.ActiveXObject("Msxml2.XMLHTTP.4.0");
+						XMLHttp = new window.ActiveXObject("MSXML2.XMLHTTP");
 					}
-					catch(e) {
+					catch(e2) {
 						try{
-							XMLHttp = new window.ActiveXObject("MSXML2.XMLHTTP");
+							XMLHttp = new window.ActiveXObject("Microsoft.XMLHTTP");
 						}
-						catch(e2) {
-							try{
-								XMLHttp = new window.ActiveXObject("Microsoft.XMLHTTP");
-							}
-							catch(e3) {
-								XMLHttp = null;
-							}
+						catch(e3) {
+							XMLHttp = null;
 						}
 					}
 				}
@@ -980,83 +974,48 @@ DOMAssistant.AJAX = function () {
 			return XMLHttp;
 		},
 	
-		get : function (url, callBack) {
-			return DOMAssistant.AJAX.makeCall.call(this, url, callBack, "GET");
+		get : function (url, callBack, addToContent) {
+			return DOMAssistant.AJAX.makeCall.call(this, url, callBack, "GET", addToContent);
 		},
 		
 		post : function (url, callBack) {
 			return DOMAssistant.AJAX.makeCall.call(this, url, callBack, "POST");
 		},
 		
-		makeCall : function  (url, callBack, method) {
-			if (DOMAssistant.AJAX.initRequest()) {
-				callbackFunction = callBack;
-				getElm = this;
-				// This line needed to properly control the onreadystatechange event for Firefox
-				XMLHttp.onreadystatechange = function () {};
-				XMLHttp.abort();
-				var params = url.split("?");
-				var callURL = (method === "POST")? params[0] : url;
-				XMLHttp.open(method, callURL, true);
-				XMLHttp.setRequestHeader("AJAX", "true");				
-				var sendVal = null;
-				if (method === "POST") {
-					var paramVal = params[1];
-					var contentLength = (paramVal)? paramVal.length : 0;
-					sendVal = paramVal;
-					XMLHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-					XMLHttp.setRequestHeader("Content-length", contentLength);
-					XMLHttp.setRequestHeader("Connection", "close");
-				}
-				XMLHttp.onreadystatechange = DOMAssistant.AJAX.contentReady;
-				XMLHttp.send(sendVal);
+		load : function (url, add) {
+			DOMAssistant.AJAX.get.call(this, url, DOMAssistant.AJAX.replaceWithAJAXContent, (add || false));
+		},
+		
+		makeCall : function  (url, callBack, method, addToContent) {
+			var XMLHttp = DOMAssistant.AJAX.initRequest();
+			if (XMLHttp) {
+				globalXMLHttp = XMLHttp;
+				var ajaxCall = function (elm) {
+					var params = url.split("?");
+					var callURL = (method === "POST")? params[0] : url;
+					XMLHttp.open(method, callURL, true);
+					XMLHttp.setRequestHeader("AJAX", "true");				
+					var sendVal = null;
+					if (method === "POST") {
+						var paramVal = params[1];
+						var contentLength = (paramVal)? paramVal.length : 0;
+						sendVal = paramVal;
+						XMLHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+						XMLHttp.setRequestHeader("Content-length", contentLength);
+						XMLHttp.setRequestHeader("Connection", "close");
+					}
+					if (typeof callBack === "function") {
+						XMLHttp.onreadystatechange = function () {
+							//alert(XMLHttp.readyState + "\n\n" + callBack);
+							if(XMLHttp.readyState === 4) {
+								callBack.call(elm, XMLHttp.responseText, addToContent);
+							}
+						}
+					}
+					XMLHttp.send(sendVal);
+				}(this);				
 			}
 			return this;
-		},
-		
-		getReadyState : function () {
-			return (XMLHttp && typeof XMLHttp.readyState !== "undefined")? XMLHttp.readyState : null;
-		},
-		
-		getStatus : function () {
-			return XMLHttp.status;
-		},
-		
-		getStatusText : function () {
-			return XMLHttp.statusText;
-		},
-		
-		callFunction : function () {
-			var response = XMLHttp.responseText;
-			if (loadElm) {
-				loadElm.replaceWithAJAXContent(response, addToContent);
-				loadElm = null;
-			}
-			else if (callbackFunction && typeof callbackFunction === "function" && getElm) {
-				callbackFunction.call(getElm, response);
-				args = null;
-			}
-		},
-	
-		contentReady : function () {
-			var AJAXObj = DOMAssistant.AJAX;
-			if (AJAXObj.getReadyState() === 4) {
-				AJAXObj.callFunction();
-			}
-		},
-		
-		setLoadElm : function (elm) {
-			loadElm = elm;
-		},
-		
-		setAddToContent : function (add) {
-			addToContent = add;
-		},
-		
-		load : function (url, add) {
-			DOMAssistant.AJAX.setLoadElm(this);
-			DOMAssistant.AJAX.setAddToContent(add || false);
-			DOMAssistant.AJAX.get(url);
 		},
 		
 		replaceWithAJAXContent : function (content, add) {
@@ -1078,6 +1037,26 @@ DOMAssistant.AJAX = function () {
 				}
 				this.innerHTML = content;
 			}
+		},
+		
+		getReadyState : function () {
+			return (globalXMLHttp && typeof globalXMLHttp.readyState !== "undefined")? globalXMLHttp.readyState : null;
+		},
+		
+		getStatus : function () {
+			var status = -1;
+			if (globalXMLHttp && typeof globalXMLHttp.readyState !== "undefined" && globalXMLHttp.readyState === 4) {
+				status = globalXMLHttp.status;
+			}
+			return status;
+		},
+		
+		getStatusText : function () {
+			var statusText = "";
+			if (globalXMLHttp && typeof globalXMLHttp.readyState !== "undefined" && globalXMLHttp.readyState === 4) {
+				statusText = globalXMLHttp.statusText;
+			}
+			return statusText;
 		}
 	};
 }();
