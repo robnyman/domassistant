@@ -142,6 +142,7 @@
 							<h3>DOMAssistantAJAX methods</h3>
 							<ul>
 								<li><a href="#get">get</a></li>
+								<li><a href="#post">post</a></li>
 								<li><a href="#load">load</a></li>
 								<li><a href="#getReadyState">getReadyState</a></li>
 								<li><a href="#getStatus">getStatus</a></li>
