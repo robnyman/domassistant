@@ -5,7 +5,6 @@ var DOMAssistant = function () {
 		// Constructor
 	};
 	var isIE = document.all && !/Opera/i.test(navigator.userAgent);
-	var isOpera = /Opera/i.test(navigator.userAgent); // Hopefully temporary till Opera fixes the XPath implementation
 	var allMethods = [];
 	return {
 		publicMethods : [
@@ -103,8 +102,7 @@ var DOMAssistant = function () {
 					if (/^#[\w\-\_]+$/.test(arg)) {
 						var idMatch = document.getElementById(arg.substr(1));
 						if (idMatch) {
-							elm = idMatch;
-							DOMAssistant.addMethodsToElm(elm);
+							elm.push(idMatch);
 						}
 					}
 					else {
@@ -126,8 +124,26 @@ var DOMAssistant = function () {
 			return elm;
 	    },
 	
+		$$ : function (id) {
+			var elm = document.getElementById(id);
+			if (elm) {
+				DOMAssistant.addMethodsToElm(elm);
+			}
+			return elm;
+		},
+	
 		cssSelection : function  (cssRule) {
-			if (document.evaluate && !isOpera) {
+			if (document.querySelectorAll) {
+				DOMAssistant.cssSelection = function (cssRule) {
+					var elm = new HTMLArray();
+					var results = document.querySelectorAll(cssRule);
+					for (var i=0, il=results.length; i<il; i++) {
+						elm.push(results[i]);
+					}
+					return elm;
+				};
+			}
+			else if (document.evaluate) {
 				DOMAssistant.cssSelection = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
 					var elm = new HTMLArray();
@@ -806,14 +822,22 @@ var DOMAssistant = function () {
 		},
 	
 		elmsByClass : function (className, tag) {
-			if (false && document.evaluate && !isOpera) {
+			if (document.evaluate) {
 				DOMAssistant.elmsByClass = function (className, tag) {
 					var returnElms = new HTMLArray();
-					var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag : "*") + "[contains(concat(' ', @class, ' '), ' " + className + " ')]", this, null, 0, null);
-					var node = xPathNodes.iterateNext();
-					while(node) {
-						returnElms.push(node);
-						node = xPathNodes.iterateNext();
+					if (this.getElementsByClassName && !tag) {
+						var results = this.getElementsByClassName(className);
+						for (var i=0, il=results.length; i<il; i++) {
+							returnElms.push(results[i]);
+						}
+					}
+					else {
+						var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag : "*") + "[contains(concat(' ', @class, ' '), ' " + className + " ')]", this, null, 0, null);
+						var node = xPathNodes.iterateNext();
+						while(node) {
+							returnElms.push(node);
+							node = xPathNodes.iterateNext();
+						}
 					}
 					return returnElms;
 				};
@@ -842,7 +866,7 @@ var DOMAssistant = function () {
 		},
 	
 		elmsByAttribute : function (attr, attrVal, tag, substrMatchSelector) {
-			if (document.evaluate && !isOpera) {
+			if (document.evaluate) {
 				DOMAssistant.elmsByAttribute = function (attr, attrVal, tag, substrMatchSelector) {
 					var returnElms = new HTMLArray();
 					var attribute = "@" + attr + ((typeof attrVal === "undefined" || attrVal === "*")? "" : " = '" + attrVal + "'");
@@ -912,7 +936,7 @@ var DOMAssistant = function () {
 		},
 	
 		elmsByTag : function (tag) {
-			if (false && document.evaluate && !isOpera) {
+			if (document.evaluate) {
 				DOMAssistant.elmsByTag = function (tag) {
 					var returnElms = new HTMLArray();
 					var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag : "*"), this, null, 0, null);

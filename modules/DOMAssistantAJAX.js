@@ -2,6 +2,9 @@
 /*extern DOMAssistant */
 DOMAssistant.AJAX = function () {
 	var globalXMLHttp = null;
+	var readyState = 0;
+	var status = -1;
+	var statusText = "";
 	return {
 		publicMethods : [
 			"get",
@@ -71,8 +74,13 @@ DOMAssistant.AJAX = function () {
 							//alert(XMLHttp.readyState + "\n\n" + callBack);
 							if(XMLHttp.readyState === 4) {
 								callBack.call(elm, XMLHttp.responseText, addToContent);
+								readyState = 4;
+								status = XMLHttp.status;
+								statusText = XMLHttp.statusText;
+								globalXMLHttp = null;
+								XMLHttp = null;
 							}
-						}
+						};
 					}
 					XMLHttp.send(sendVal);
 				}(this);				
@@ -102,22 +110,14 @@ DOMAssistant.AJAX = function () {
 		},
 		
 		getReadyState : function () {
-			return (globalXMLHttp && typeof globalXMLHttp.readyState !== "undefined")? globalXMLHttp.readyState : null;
+			return (globalXMLHttp && typeof globalXMLHttp.readyState !== "undefined")? globalXMLHttp.readyState : readyState;
 		},
 		
 		getStatus : function () {
-			var status = -1;
-			if (globalXMLHttp && typeof globalXMLHttp.readyState !== "undefined" && globalXMLHttp.readyState === 4) {
-				status = globalXMLHttp.status;
-			}
 			return status;
 		},
 		
 		getStatusText : function () {
-			var statusText = "";
-			if (globalXMLHttp && typeof globalXMLHttp.readyState !== "undefined" && globalXMLHttp.readyState === 4) {
-				statusText = globalXMLHttp.statusText;
-			}
 			return statusText;
 		}
 	};
