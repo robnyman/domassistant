@@ -13,6 +13,7 @@ var DOMAssistant = function () {
 		],
 		initCore : function () {
 			this.applyMethod.call(window, "$", this.$);
+			this.applyMethod.call(window, "$$", this.$$);
 			window.DOMAssistant = this;
 			if (isIE) {
 				HTMLArray = Array;
