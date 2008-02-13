@@ -11,11 +11,12 @@
 					<div id="navigation">
 						<ul>
 							<li><a href="/">Home</a>/</li>
-							<li><a href="/documentation">Documentation</a>/</li>
 							<li><a href="/download" class="selected">Download</a>/</li>
-							<li><a href="/compatibility">Compatibility</a>/</li>
-							<li><a href="/contact">Contact</a>/</li>
-							<li class="last"><a href="/discussion-support">Discussion &amp; Support</a></li>
+							<li><a href="/documentation">Documentation</a>/</li>
+							<li><a href="/plugins">Plugins</a>/</li>
+							<li><a href="/discussion-support">Discussion &amp; Support</a>/</li>
+							<li><a href="/about">About</a>/</li>
+							<li class="last"><a href="/blog">Blog</a></li>
 						</ul>
 					</div>
 				</div>

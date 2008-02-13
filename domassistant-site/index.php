@@ -11,11 +11,12 @@
 					<div id="navigation">
 						<ul>
 							<li><a href="/" class="selected">Home</a>/</li>
-							<li><a href="/documentation">Documentation</a>/</li>
 							<li><a href="/download">Download</a>/</li>
-							<li><a href="/compatibility">Compatibility</a>/</li>
-							<li><a href="/contact">Contact</a>/</li>
-							<li class="last"><a href="/discussion-support">Discussion &amp; Support</a></li>
+							<li><a href="/documentation">Documentation</a>/</li>
+							<li><a href="/plugins">Plugins</a>/</li>
+							<li><a href="/discussion-support">Discussion &amp; Support</a>/</li>
+							<li><a href="/about">About</a>/</li>
+							<li class="last"><a href="/blog">Blog</a></li>
 						</ul>
 					</div>
 				</div>
@@ -29,15 +30,17 @@
 							<h1>What is DOMAssistant?</h1>
 							<p>The idea of DOMAssistant is to provide a simpler and more consistent way to script against the Document Object Model (DOM) in web browsers. The idea is that everything starts with the element(s) in question, selected through <code>id</code> or CSS selectors, and then perform various methods on it, such as adding or removing classes, events etc.</p>
 							<p>Example code:</p>
-							<p>
-								<code>$("#container input[type=text]");</code>
-							</p>
-							<p>
-								<code>$("#navigation a").addEvent("click", myFunc);</code>
-							</p>
-							<p>
-								<code>$("#news-list").load("updated-news.php");</code>
-							</p>
+							<div class="code">
+								<p>
+									<code>$("#container input[type=text]");</code>
+								</p>
+								<p>
+									<code>$("#navigation a").addEvent("click", myFunc);</code>
+								</p>
+								<p>
+									<code>$("#news-list").load("updated-news.php");</code>
+								</p>
+							</div>
 							
 							<h2>DOMAssistant is Modular</h2>
 							<p>DOMAssistant is completely modular, in the sense that it is only dependent on one single core JavaScript file, <code>DOMAssistant.js</code>. All other modules are optional, and you can choose to only use the ones you find necessary in your application. The reasoning behind this is to make the file size as small as possible, while at the same time addressing any potential bandwidth issues.</p>							

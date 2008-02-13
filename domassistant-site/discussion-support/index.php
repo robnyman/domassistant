@@ -11,11 +11,12 @@
 					<div id="navigation">
 						<ul>
 							<li><a href="/">Home</a>/</li>
-							<li><a href="/documentation">Documentation</a>/</li>
 							<li><a href="/download">Download</a>/</li>
-							<li><a href="/compatibility">Compatibility</a>/</li>
-							<li><a href="/contact">Contact</a>/</li>
-							<li class="last"><a href="/contact" class="selected">Discussion &amp; Support</a></li>
+							<li><a href="/documentation">Documentation</a>/</li>
+							<li><a href="/plugins">Plugins</a>/</li>
+							<li><a href="/discussion-support" class="selected">Discussion &amp; Support</a>/</li>
+							<li><a href="/about">About</a>/</li>
+							<li class="last"><a href="/blog">Blog</a></li>
 						</ul>
 					</div>
 				</div>
@@ -26,7 +27,7 @@
 					<div id="content-areas">
 
 						<div id="main-content-area">
-							<h1>DOMAssistant Discussion &amp; Support</h1>
+							<h1>Discussion &amp; Support</h1>
 							<p>You can join the <a href="http://groups.google.com/group/domassistant">DOMAssistant Discussion Group</a> to discuss features or get support for any potential problems you might encounter. There you can get updates through e-mail, an RSS feed or right there in the web site itself.</p>
 							
 							<p>If you have encountered a bug with DOMAssistant, please report it at <a href="http://code.google.com/p/domassistant/issues/list">Issues</a>. Please attach the code which isn't working, what web browser(s) it doesn't work in and what platform(s) you have tested.</p>
