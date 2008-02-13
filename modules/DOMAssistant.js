@@ -1,5 +1,4 @@
 // Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
-/*extern HTMLDocument, HTMLElement */
 var DOMAssistant = function () {
 	var HTMLArray = function (prevSet) {
 		// Constructor
@@ -222,28 +221,25 @@ var DOMAssistant = function () {
 								var pseudoValue = splitRule.pseudoValue;
 								switch (splitRule.pseudoClass.replace(/^:/, "")) {
 									case "first-child":
-										xPathExpression += "[1 and not(preceding-sibling::*)]";
+										xPathExpression += "[count(preceding-sibling::*) = 0]";
 										break;
 									case "first-of-type":
-										xPathExpression += "[1]";
+										xPathExpression += "[count(preceding-sibling::" + splitRule.tag + ") = 0]";
 										break;
 									case "last-child":
-										xPathExpression += "[last() and not(following-sibling::*)]";
+										xPathExpression += "[count(following-sibling::*) = 0]";
 										break;
 									case "last-of-type":
-										xPathExpression += "[last()]";
+										xPathExpression += "[count(following-sibling::" + splitRule.tag + ") = 0]";
 										break;
 									case "only-child":
-										xPathExpression += "[1 and not(preceding-sibling::*) and not(following-sibling::*)]";
+										xPathExpression += "[count(preceding-sibling::*) = 0 and count(following-sibling::*) = 0]";
 										break;
 									case "only-of-type":
-										xPathExpression += "[count(preceding-sibling::" + splitRule.tag + ") = 0 and position() = last()]";
+										xPathExpression += "[count(preceding-sibling::" + splitRule.tag + ") = 0 and count(following-sibling::" + splitRule.tag + ") = 0]";
 										break;		
 									case "nth-of-type":
 										xPathExpression += "[" + pseudoValue + "]";
-										break;
-									case "nth-last-of-type":
-										xPathExpression += "[last() - " + pseudoValue + "]";
 										break;
 									case "empty":
 										xPathExpression += "[count(child::*) = 0 and string-length(text()) = 0]";
@@ -733,15 +729,22 @@ var DOMAssistant = function () {
 											prevElm = matchingElms;
 										}
 										else if (/last-of-type/.test(pseudoClass)) {
-											for (var zLast=0, zLastL=previousMatch.length; zLast<zLastL; zLast++) {
+											for (var zLast=0, zLastL=previousMatch.length, lastElement; zLast<zLastL; zLast++) {
 												previous = previousMatch[zLast];
-												prevParent = previous.parentNode;
-												parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
-												lastChild = parentTagsByType[parentTagsByType.length - 1];
-												if (lastChild === previous) {
-													matchingElms.push(previous);
+												if (!previous.added) {
+													prevParent = previous.parentNode;
+													parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
+													lastChild = parentTagsByType[parentTagsByType.length - 1];
+													while (lastChild.parentNode !== prevParent) {
+														lastChild = lastChild.parentNode;
+													}
+													if (lastChild === previous) {
+														previous.added = true;
+														matchingElms.push(previous);
+													}
 												}
 											}
+											clearAdded();
 											prevElm = matchingElms;
 										}
 										else if (/only-of-type/.test(pseudoClass)) {
@@ -749,10 +752,33 @@ var DOMAssistant = function () {
 												previous = previousMatch[zOnly];
 												prevParent = previous.parentNode;
 												parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
-												firstChild = parentTagsByType[0];
-												lastChild = parentTagsByType[parentTagsByType.length - 1];
-												if (firstChild === previous && lastChild === previous) {
+												if (parentTagsByType.length === 1) {
 													matchingElms.push(previous);
+												}
+											}
+											prevElm = matchingElms;
+										}
+										else if (/nth-of-type/.test(pseudoClass)) {
+											var nthIndex = parseInt(pseudoValue, 10);
+											for (var zNth=0, zNthL=previousMatch.length; zNth<zNthL; zNth++) {
+												previous = previousMatch[zNth];
+												prevParent = previous.parentNode;
+												childNodes = [];
+												parentTagsByType = prevParent.childNodes;
+												if (parentTagsByType.length >= nthIndex) {
+													for (var zInnerNth=0, zInnerNthL=parentTagsByType.length, childNode; zInnerNth<zInnerNthL; zInnerNth++) {
+														if (zInnerNth === nthIndex) {
+															break;
+														}
+														childNode = parentTagsByType[zInnerNth];
+														if (childNode.nodeName === previous.nodeName) {
+															childNodes.push(childNode);
+														}
+													}
+													current = childNodes[childNodes.length - 1];
+													if (current && current === previous) {
+														matchingElms.push(previous);
+													}
 												}
 											}
 											prevElm = matchingElms;
