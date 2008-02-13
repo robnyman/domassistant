@@ -1,7 +1,9 @@
 Version 2.6:
 =============
-- Major CSS selector performance improvement (# now mandatory in ID look-ups).
+- Major CSS selector performance improvement, and using querySelectorAll and native getElementsByClassName where it's available.
 - New plug-in structure added with attach method.
+- Support for multiple simultanoeus AJAX calls
+- New $$ method for native selection of element by id
 - Fix for replaceContent method on a collection.
 - Fix for addContent method on a collection.
 - Removed unnecessary attribute removal in the replaceWithAJAXContent method for the AJAX module.
