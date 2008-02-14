@@ -100,7 +100,7 @@ var DOMAssistant = function () {
 				if (typeof arg === "string") {
 					arg = arg.replace(/^[^#]*(#)/, "$1");
 					if (/^#[\w\-\_]+$/.test(arg)) {
-						var idMatch = document.getElementById(arg.substr(1));
+						var idMatch = DOMAssistant.$$(arg.substr(1), false);
 						if (idMatch) {
 							elm.push(idMatch);
 						}
@@ -111,12 +111,11 @@ var DOMAssistant = function () {
 				}
 				else if (typeof arg === "object") {
 					if (arguments.length === 1) {
-						elm = arg;
-						DOMAssistant.addMethodsToElm(elm);
+						elm = DOMAssistant.$$(arg);
 					}
 					else {
-						for (var i=0, il=arguments.length; i<il; i++) {
-							elm.push(arguments[i]);
+						for (var j=0, jl=arguments.length; j<jl; j++) {
+							elm.push(arguments[j]);
 						}
 					}
 				}
@@ -124,9 +123,20 @@ var DOMAssistant = function () {
 			return elm;
 	    },
 	
-		$$ : function (id) {
-			var elm = document.getElementById(id);
-			if (elm) {
+		$$ : function (id, addMethods) {
+			var elm = (typeof id === "object")? id : document.getElementById(id);
+			var applyMethods = addMethods || true;
+			if (typeof id === "string" && elm && elm.id !== id) {
+				elm = null;
+				for (var i=0, il=document.all.length, item; i<il; i++) {
+					item = document.all[i];
+					if (item.id === id) {
+						elm = item;
+						break;
+					}
+				}
+			}
+			if (elm && applyMethods) {
 				DOMAssistant.addMethodsToElm(elm);
 			}
 			return elm;
