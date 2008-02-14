@@ -14,6 +14,9 @@ ob_start('xml2html');
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 	<title><?php bloginfo('name'); ?> <?php if ( is_single() ) { ?> &raquo; Blog Archive <?php } ?> <?php wp_title(); ?></title>
 	<link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>" type="text/css" media="screen">
+	<!--[if lt IE 7]>
+		<link rel="stylesheet" href="/blog/wp-content/themes/default/css/ie.css" type="text/css">
+	<![endif]-->
 	<link rel="alternate" type="application/rss+xml" title="<?php bloginfo('name'); ?> RSS Feed" href="<?php bloginfo('rss2_url'); ?>">
 	<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>">
 	<?php wp_head(); ?>
