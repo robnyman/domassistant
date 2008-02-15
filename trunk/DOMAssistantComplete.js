@@ -32,13 +32,17 @@ var DOMAssistant = function () {
 		},
 		
 		addMethods : function (name, method) {
-			allMethods.push([name, method]);
-			this.addHTMLArrayPrototype(name, method);
+			if (typeof allMethods[name] === "undefined") {
+				allMethods[name] = method;
+				this.addHTMLArrayPrototype(name, method);
+			}
 		},
 		
 		addMethodsToElm : function (elm) {
-			for (var i=0, il=allMethods.length; i<il; i++) {
-				this.applyMethod.call(elm, allMethods[i][0], allMethods[i][1]);
+			for (var method in allMethods) {
+				if (typeof allMethods[method] !== "undefined") {
+					this.applyMethod.call(elm, method, allMethods[method]);
+				}
 			}
 		},
 		
@@ -80,7 +84,8 @@ var DOMAssistant = function () {
 				var elms;
 				for (var i=0, il=this.length; i<il; i++) {
 					elms = method.apply(this[i], arguments);
-					if (elms!==null && elms.constructor === Array) {
+					//alert(elms);
+					if (typeof elms !== "undefined" && elms !== null && elms.constructor === Array) {
 						for (var j=0, jl=elms.length; j<jl; j++) {
 							elmsToReturn.push(elms[j]);
 						}
