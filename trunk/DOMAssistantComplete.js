@@ -4,8 +4,8 @@ var DOMAssistant = function () {
 		// Constructor
 	};
 	var isIE = document.all && !/Opera/i.test(navigator.userAgent);
-	var allMethods = [];
 	return {
+		allMethods : [],
 		publicMethods : [
 			"elmsByClass",
 			"elmsByAttribute",
@@ -32,16 +32,16 @@ var DOMAssistant = function () {
 		},
 		
 		addMethods : function (name, method) {
-			if (typeof allMethods[name] === "undefined") {
-				allMethods[name] = method;
+			if (typeof this.allMethods[name] === "undefined") {
+				this.allMethods[name] = method;
 				this.addHTMLArrayPrototype(name, method);
 			}
 		},
 		
 		addMethodsToElm : function (elm) {
-			for (var method in allMethods) {
-				if (typeof allMethods[method] !== "undefined") {
-					this.applyMethod.call(elm, method, allMethods[method]);
+			for (var method in this.allMethods) {
+				if (typeof this.allMethods[method] !== "undefined") {
+					this.applyMethod.call(elm, method, this.allMethods[method]);
 				}
 			}
 		},
@@ -57,7 +57,7 @@ var DOMAssistant = function () {
 			if (typeof publicMethods === "undefined") {
 				var pluginMethod;
 				for (var method in plugin) {
-					if (typeof plugin[method] !== "undefined") {
+					if (method !== "init" && typeof plugin[method] !== "undefined") {
 						this.addMethods(method, plugin[method]);
 					}
 				}
