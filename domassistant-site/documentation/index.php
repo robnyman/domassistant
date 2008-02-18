@@ -30,6 +30,9 @@
 							<h1>Documentation</h1>
 							<p>DOMAssistant consists of 6 individual modules, where only the core DOMAssistant module is required. Any other module can be used without any relational dependency to each other. All modules are available as separate downloads, in the <a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCompressed.2.5.7.js">DOMAssistantCompressed.js file</a> (for production) or in the <a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantComplete.2.5.7.js">DOMAssistantComplete.js file</a> (for learning and development).</p>
 							<p>Within this Documentation section, you will find every available method documented together with some example code. The parameters they accept and their return values are specified on each module's page.</p>						
+							
+							<h2>Downloadable documentation</h2>
+							<p>You can also <a href="domassistant-documentation.pdf">download the documentation as a PDF (144kb)</a>.</p>
 						</div>
 						
 						<div id="sidebar">
