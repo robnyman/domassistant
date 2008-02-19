@@ -610,6 +610,7 @@ var DOMAssistant = function () {
 												matchingElms.push(addElm);
 											}
 										}
+										clearAdded();
 										prevElm = matchingElms;
 									}
 									else {
