@@ -45,14 +45,13 @@ DOMAssistant.Content = function () {
 		},
 
 		addContent : function (content) {
-			var retVal = this;
 			if (typeof content === "string") {
 				this.innerHTML += content;
 			}
-			else{		
-				retVal = this.appendChild(content);
+			else{
+				this.appendChild(content);
 			}
-			return retVal;
+			return this;
 		},
 
 		replaceContent : function (newContent) {
