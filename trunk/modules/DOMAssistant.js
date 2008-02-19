@@ -84,7 +84,6 @@ var DOMAssistant = function () {
 				var elms;
 				for (var i=0, il=this.length; i<il; i++) {
 					elms = method.apply(this[i], arguments);
-					//alert(elms);
 					if (typeof elms !== "undefined" && elms !== null && elms.constructor === Array) {
 						for (var j=0, jl=elms.length; j<jl; j++) {
 							elmsToReturn.push(elms[j]);
@@ -294,7 +293,6 @@ var DOMAssistant = function () {
 												if (nOperatorVal < 0) {
 													nOperatorVal = nthSelector + nOperatorVal;
 												}
-												//pseudoSelection += "position() = " + nOperatorVal + " or ";
 											}
 											pseudoSelection += "(count(./preceding-sibling::*) + 1)";
 											if (nthSelector < nOperatorVal) {
@@ -485,15 +483,18 @@ var DOMAssistant = function () {
 								
 								if (splitRule.allClasses) {
 									splitRule.allClasses = splitRule.allClasses.replace(/^\./, "").split(".");
+									var regExpClassNames = [];
+									for (var qp=0, qpl=splitRule.allClasses.length, classToMatch, classMatch; qp<qpl; qp++) {
+										regExpClassNames.push(new RegExp("(^|\\s)" + splitRule.allClasses[qp] + "(\\s|$)"));
+									}
 									var matchingClassElms = [];
 									for (var p=0, pl=matchingElms.length, elmClass; p<pl; p++) {
 										current = matchingElms[p];
 										if (!current.added) {
 											addElm = false;
 											elmClass = current.className;
-											for (var q=0, ql=splitRule.allClasses.length, classToMatch, classMatch; q<ql; q++) {
-												classToMatch = new RegExp("(^|\\s)" + splitRule.allClasses[q].replace(/\./, "") + "(\\s|$)");
-												addElm = classToMatch.test(elmClass);
+											for (var q=0, ql=regExpClassNames.length; q<ql; q++) {
+												addElm = regExpClassNames[q].test(elmClass);
 												if (!addElm) {
 													break;
 												}
@@ -510,42 +511,47 @@ var DOMAssistant = function () {
 								}
 								if (splitRule.allAttr) {
 									splitRule.allAttr = splitRule.allAttr.replace(/(\])(\[)/, "$1 $2").split(" ");
-									var matchingAttributeElms = [];
+									var regExpAttributes = [];
 									var attributeMatchRegExp = /(\w+)(\^|\$|\*)?=?([\w\-_]+)?/;
-									for (var r=0, rl=matchingElms.length, currentAttr, attributeValue; r<rl; r++) {
+									for (var sp=0, spl=splitRule.allAttr.length, attributeMatch, attribute, attributeValue, attrVal, tag, substrMatchSelector; sp<spl; sp++) {
+										attributeMatch = attributeMatchRegExp.exec(splitRule.allAttr[sp]);
+										attributeValue = attributeMatch[3] || null;
+										attrVal = (attributeValue)? ("^" + attributeValue + "$") : null;
+										substrMatchSelector = attributeMatch[2] || null;
+										if (typeof substrMatchSelector === "string") {
+											switch (substrMatchSelector) {
+												case "^":
+													attrVal = ("^" + attributeValue);
+													break;
+												case "$":
+													attrVal = (attributeValue + "$");
+													break;
+												case "*":
+													attrVal = (attributeValue);
+													break;	
+											}
+										}
+										regExpAttributes.push([((attrVal)? new RegExp(attrVal) : null), attributeMatch[1]]);
+									}
+									var matchingAttributeElms = [];
+									for (var r=0, rl=matchingElms.length, currentAttr; r<rl; r++) {
 										current = matchingElms[r];
 										if (!current.added) {
-											for (var s=0, sl=splitRule.allAttr.length, attributeMatch, attribute, attrVal, tag, substrMatchSelector; s<sl; s++) {
+											for (var s=0, sl=regExpAttributes.length, attributeRegExp; s<sl; s++) {
 												addElm = false;
-												attributeMatch = attributeMatchRegExp.exec(splitRule.allAttr[s]);
-												attributeValue = attributeMatch[3] || null;
-												attrVal = (attributeValue)? ("^" + attributeValue + "$") : null;
-												substrMatchSelector = attributeMatch[2] || null;
-												if (typeof substrMatchSelector === "string") {
-													switch (substrMatchSelector) {
-														case "^":
-															attrVal = ("^" + attributeValue);
-															break;
-														case "$":
-															attrVal = (attributeValue + "$");
-															break;
-														case "*":
-															attrVal = (attributeValue);
-															break;	
-													}
-												}
-												var attributeRegExp = (attrVal)? new RegExp(attrVal) : null;
-									        	currentAttr = getAttr(current, attributeMatch[1]);
+												attributeRegExp = regExpAttributes[s][0];
+									        	currentAttr = getAttr(current, regExpAttributes[s][1]);
 										        if (typeof currentAttr === "string" && currentAttr.length > 0) {
 													if (!attributeRegExp || typeof attributeRegExp === "undefined" || (attributeRegExp && attributeRegExp.test(currentAttr))) {
 														addElm = true;
 										            }
 										        }
 												if (!addElm) {
-													continue;
+													break;
 												} 
 											}
 											if (addElm) {
+												current.added = true;
 												matchingAttributeElms.push(current);
 											}
 										}
