@@ -29,16 +29,15 @@
 							<h1>DOMAssistant Core Module</h1>
 							<p>The DOMAssistant Core module is required and it lays the groundwork for all DOMAssistant functionality. It consists of core functionality and a few important methods to work with.</p>
 
-							<h4 id="dollar"><code>$(cssSelector/elementReference)</code></h4>
-							<p>The $ method is used to get a reference to one or several elements. It supports one or more strings containing the id of the element(s) you want a reference to, or getting an already established element reference. If it gets an element reference, it will return that same reference, but with the difference that it has applied all extra methods to it.</p>
-							<p>You can also send in a CSS selector where there's support for CSS 1, CS 2 and CSS 3 for getting element references. Read more about the <a href="css-selectors.html">supported CSS selectors</a>.</p>
+							<h2 id="dollar"><code>$(cssSelector/elementReference)</code></h2>
+							<p>The $ method is used to get a reference to one or several elements. It supports a <a href="/documentation/css-selectors.php">CSS selector</a> as a string, an already established element reference. It will return the matching element(s) with all the extra DOMAssistant methods applied. A call of any of those methods will fail silently, if the <code>$</code> method returned an empty array.</p>
 							
-							<h5>Parameters</h5>
-							<p>Send in one or several strings with the <code>id</code> of the element(s) you're looking, a single element reference or a CSS selector.</p>
-							<h5>Return value</h5>
-							<p>Returns an element reference when one single argument is sent to the method, being the id or direct reference to an already existing element. Returns an array of element references if multiple ids, element references or a CSS selector is sent in.</p>
+							<h3>Parameters</h3>
+							<p>Send in a CSS selector or an object reference.</p>
+							<h3>Return value</h3>
+							<p>Always return an array of matching elements for a CSS selector. If one single object is sent in, it return that same reference, and if several object references are sent in, it will return an array of those.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>$("#container input[type=text]");</code>
 							</p>
@@ -50,7 +49,7 @@
 							</p>
 							<p class="code">
 								<code>		
-									$("#container", "#navigation", "#content");
+									$("#container", "#navigation .important-item", "#content");
 								</code>
 							</p>
 							<p class="code">
@@ -58,36 +57,53 @@
 									$(document.body);
 								</code>
 							</p>
+							
+							<h2 id="double-dollar"><code>$$(elementId)</code></h2>
+							<p>The $$ method is used to get a quick reference to one element, just like <code>document.getElementById</code>. It will return a direct reference to the found DOM element, with all the DOMAssistant methods applied to it.</p>
+							<p>Contrary to the <code>$</code> method, if the <code>$$</code> method didn't return any match, it will throw an error if you try to call any method on it.</p>
+							
+							<h3>Parameters</h3>
+							<p>Send in the id of the element you're looking for.</p>
+							<h3>Return value</h3>
+							<p>Returns a DOM reference.</p>
 
-							<h4 id="elmsByClass"><code>elmsByClass(className, tag)</code></h4>
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>$$("container");</code>
+							</p>
+							<p class="code">
+								<code>$$("navigation");</code>
+							</p>
+
+							<h2 id="elmsByClass"><code>elmsByClass(className, tag)</code></h2>
 							<p>For getting elements based on their <code>className</code>. The method has a required parameter which is the desired <code>className</code>, and one optional if you want to limit the search to a certain tag.</p>
 
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 						 	<dl>
 								<dt>className</dt>
 								<dd>Class name to search for. Required.</dd>
 								<dt>tag</dt>
 								<dd>Only search elements that have this tag name. Optional.</dd>
 							</dl>
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>All calls return an array of element references.</p>
 
-							 <h5>Example calls</h5>
+							 <h3>Example calls</h3>
 							<p class="code">
 								<code>
-									$("container").elmsByClass("mandatory");
+									$("#container").elmsByClass("mandatory");
 								</code>
 							</p>
 							<p class="code">
 								<code>
-									$("container").elmsByClass("external-link", "a");
+									$$("container").elmsByClass("external-link", "a");
 								</code>
 							</p>
 							
-							<h4 id="elmsByAttribute"><code>elmsByAttribute(attr, attrVal, tag)</code></h4>
+							<h2 id="elmsByAttribute"><code>elmsByAttribute(attr, attrVal, tag)</code></h2>
 							<p>For getting elements based on if they have a certain attribute. You can also specify if that attribute should have a speific value and if you want to limit the search to a certain tag. Only the first parameter specifying the attribute is required.</p>
 
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 						 	<dl>
 								<dt>attr</dt>
 								<dd>Attribute name to look for. Required.</dd>
@@ -96,56 +112,56 @@
 								<dt>tag</dt>
 								<dd>Only search elements that have this tag name. Optional.</dd>
 							</dl>
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>All calls return an array of element references.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>
-									$("container").elmsByAttribute("href");
+									$("#container").elmsByAttribute("href");
 								</code>
 							</p>		
 							<p class="code">
 								<code>
-									$("container").elmsByAttribute("name", "subscription");
+									$$("container").elmsByAttribute("name", "subscription");
 								</code>
 							</p>		
 							<p class="code">
 								<code>
-									$("container").elmsByAttribute("type", "text", "input");
+									$$("container").elmsByAttribute("type", "text", "input");
 								</code>
 							</p>
 							
-							<h4 id="elmsByTag"><code>elmsByTag(tag)</code></h4>
+							<h2 id="elmsByTag"><code>elmsByTag(tag)</code></h2>
 							<p>For getting elements based on their <code>tag</code>, i.e. what element it is. The method has one required parameter which is the name of the desired <code>tag</code>.</p>
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>All calls return an array of element references.</p>
 
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 						 	<dl>
 								<dt>tag</dt>
 								<dd>Tag name to search for. Required.</dd>
 							</dl>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>
-									$("container").elmsByTag("input");
+									$$("container").elmsByTag("input");
 								</code>
 							</p>
 							
-							<h4 id="each"><code>each(functionRef)</code></h4>
+							<h2 id="each"><code>each(functionRef)</code></h2>
 							<p>For running a function on each of the items in a returned array element reference collection.</p>
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>All calls return either a single element reference or an array of element references.</p>
 
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 						 	<dl>
 								<dt>functionRef</dt>
 								<dd>Function which will be called for each item in the array of elements it's called on. Can be an anonymous function or a function reference.</dd>
 							</dl>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>
 									$("#navigation a").each(function () {<br>
@@ -159,6 +175,7 @@
 							<h3>DOMAssistant Core methods</h3>
 							<ul>
 								<li><a href="#dollar">$</a></li>
+								<li><a href="#double-dollar">$$</a></li>
 								<li><a href="#elmsByClass">elmsByClass</a></li>
 								<li><a href="#elmsByAttribute">elmsByAttribute</a></li>
 								<li><a href="#elmsByTag">elmsByTag</a></li>

@@ -5,29 +5,42 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 	<title>DOM Assistant demo - DOM Assistant, the modular lightweight JavaScript library</title>
 	<link rel="stylesheet" href="css/domassistant.css" type="text/css">
-	
-	<script type="text/javascript" src="../trunk/modules/DOMAssistant.js"></script>
-	<script type="text/javascript" src="../trunk/modules/DOMAssistantAJAX.js"></script>
-	<script type="text/javascript" src="../trunk/modules/DOMAssistantContent.js"></script>
-	<script type="text/javascript" src="../trunk/modules/DOMAssistantCSS.js"></script>
-	<script type="text/javascript" src="../trunk/modules/DOMAssistantEvents.js"></script>
-	<script type="text/javascript" src="../trunk/modules/DOMAssistantLoad.js"></script>
-	
-	
+	<script type="text/javascript" src="../trunk/DOMAssistantCompressed.js"></script>
 	<!--<script type="text/javascript" src="../trunk/DOMAssistantComplete.js"></script>-->
-	<!--<script type="text/javascript" src="../trunk/DOMAssistantCompressed.js"></script>-->
 	
 	<script type="text/javascript">
 		//alert(typeof document.getElementsByClassName);
+		DOMAssistant.plug = function () {
+			return {
+				addEvent : function (apa, apa2) {
+					this.innerHTML = apa;
+					return this;
+				}
+			};
+		}();
+		DOMAssistant.attach(DOMAssistant.plug);
+		
+		
 		DOMAssistant.DOMReady(function () {
-			$("td").each(function () {
+			/*$("td").each(function () {
 				$(this).load("ajax.html");
-			});
-			//$("#container").get("ajax.html", func);
-			//$$("container").get("ajax.html", func);
+			});*/
+			try {
+				//$("#container").addEvent("click", func).addClass("trhover");
+				//alert(DOMAssistant.allMethods["elmsByClass"]);
+				//$("#container").init();
+				//$("#container").get("ajax.html", func);
+				//$$("container").get("ajax.html", func);
+				alert(($('#test p:not([id=x])')).length);
+				alert(($('#test p')).length);
+			}
+			catch (e) {
+				alert(e);
+			}
 		});
 		function func (response) {
-			this.innerHTML = response;
+			alert("Apa");
+			//this.innerHTML = response;
 			//setTimeout("alert(DOMAssistant.AJAX.getReadyState())", 500);
 		}
 	</script>
@@ -39,6 +52,15 @@
 </head>
 
 <body>
+	
+	
+	<div id="test">
+		<p>line 1</p>
+		<p>line 2</p>
+		<p>line 3</p>
+		<p>line 4</p>
+		<p id="x">line 5</p>
+	</div>
 	
 	<div id="container">
 		<table>

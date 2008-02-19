@@ -63,6 +63,10 @@ h2 a:hover{
 	text-decoration: underline;
 }
 
+h2{
+	margin: 1em 0 0.5em;
+}
+
 h3{
 	margin: 1em 0;
 }
