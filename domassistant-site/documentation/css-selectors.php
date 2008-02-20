@@ -75,11 +75,11 @@
 								<dd>Get any <code>P</code> element which is the only <code>P</code> element child of its parent element.</dd>
 								<dt><code>p:nth-of-type(7)</code></dt>
 								<dd>Get the <code>P</code> element which is the 7th <code>P</code> element child of its parent element.</dd>
-								<dt><code>div#container p:nth-last-of-type(2)</code></dt>
-								<dd>Get the <code>P</code> element which is the last <code>P</code> element child of its parent element -2, e.g. the third <code>P</code> element if the parent element has 5 <code>P</code> element children.</dd>
+								<dt><code>div#container p:nth-last-of-type()</code></dt>
+								<dd>Get the last <code>P</code> element child of its parent element.</dd>
 								<dt><code>div:empty</code></dt>
 								<dd>Get any <code>DIV</code> element which is completely empty (including text nodes).</dd>
-								<dt><code>div:not([id=container]</code></dt>
+								<dt><code>div:not([id=container])</code></dt>
 								<dd>Get any <code>DIV</code> element where its <code>ID</code> attribute is <em>not</em> "container".</dd>
 								<dt><code>div:nth-child(3)</code></dt>
 								<dd>Get any <code>DIV</code> element which is the third child element of its parent element.</dd>
@@ -97,25 +97,13 @@
 								<dd>Get any <code>INPUT</code> element which is checked.</dd>
 								<dt><code>p, a</code></dt>
 								<dd>Get all <code>P</code> elements and all <code>A</code> elements.</dd>
-							</dl>
-							
-							<h3 id="non-supported-css-selectors">Non-supported CSS selectors</h3>
-							<p>These CSS selectors aren't supported, plainly because there doesn't seem to be any demand form them in real life. Also note that any selector not matching a DOM element is not supported.</p>
-							<dl>
-								<dt><code>div[class~=org]</code></dt>
-								<dd>Get any <code>DIV</code> element where its <code>CLASS</code> attribute is a list of space-separated values, and one of them is "org".</dd>
-								<dt><code>div[lang|=en]</code></dt>
-								<dd>Get any <code>DIV</code> element where its <code>LANG</code> attribute is a list of hyphen-separated values, and it begins with "en".</dd>
-								<dt><code>E:root</code></dt>
-								<dd>Gets the root element of the document. In an HTML document this is the <code>HTML</code> element.</dd>
-							</dl>						
+							</dl>					
 						</div>
 						
 						<div id="sidebar">
 							<h3>CSS selectors</h3>
 							<ul>
 								<li><a href="#implemented-css-selectors">Implemented CSS selectors</a></li>
-								<li><a href="#non-supported-css-selectors">Non-supported CSS selectors</a></li>
 							</ul>
 							<?php include "domassistant-module-nav.php" ?>	
 						</div>
