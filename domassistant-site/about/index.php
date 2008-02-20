@@ -36,9 +36,9 @@
 								<dt>Lim Cheng Hong</dt>
 								<dd>Cheng Hong currently resides and works in Singapore as a Senior	Consultant for a software firm. User interface is his passion, and he swears by accessible, usable and standards-based designs.</dd>
 								<dt><a href="http://kodfabrik.se/blog/">Pelle Wessman</a></dt>
-								<dd>Pelle is a freelancing Web Developer from Eslöv in Skåne, southern Sweden. He's working with Javascript, PHP, MySQL, HTML, CSS etc depending on the current assignment. He is a strong follower of standards and semantics and really likes initiatives like Microformats.</dd>
+								<dd>Pelle is a freelancing Web Developer from Esl&ouml;v in Sk&aring;ne, southern Sweden. He's working with Javascript, PHP, MySQL, HTML, CSS etc depending on the current assignment. He is a strong follower of standards and semantics and really likes initiatives like Microformats.</dd>
 								<dt><a href="http://www.456bereastreet.com/">Roger Johansson</a></dt>
-								<dd>Roger is working as a Front-end Web Developer at NetRelations in Göteborg, Sweden. He has a strong passion for web standards and accessibility, and have been blogging about those topics for almost five years now at <a href="http://www.456bereastreet.com/">456 Berea Street.</a></dd>
+								<dd>Roger is working as a Front-end Web Developer at NetRelations in G&ouml;teborg, Sweden. He has a strong passion for web standards and accessibility, and has been blogging about those topics for almost five years now at <a href="http://www.456bereastreet.com/">456 Berea Street.</a></dd>
 								<dt><a href="http://www.oktavilla.se/oktavilla/gustaf_forsslund">Gustaf Forsslund (in Swedish)</a></dt>
 								<dd>Gustaf is based in Stockholm, Sweden, and works as an Interface and Web Developer at the 								Swedish design company Oktavilla (where he is also a partner and co-founder). He is passionate about modern web design practices like unobtrusiveness, semantics and graceful degradation, and has always been balancing on the sharp edge between client and server side programming, but is now definitely on the client side.</dd>
 								<dt>Carsten Witt</dt>
