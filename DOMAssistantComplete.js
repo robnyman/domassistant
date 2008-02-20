@@ -204,7 +204,7 @@ var DOMAssistant = function () {
 								}
 							}
 							else {
-								xPathExpression += (j > 0 && /(>|\+|~)/.test(cssSelectors[j-1]))? splitRule.tag : ("//" + splitRule.tag);
+								xPathExpression += (j > 0 && /(>|\+|~)/.test(cssSelectors[j-1]))? splitRule.tag : ("/descendant::" + splitRule.tag);
 							}
 							if (splitRule.id) {
 								xPathExpression += "[@id = '" + splitRule.id.replace(/^#/, "") + "']";
