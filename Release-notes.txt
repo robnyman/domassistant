@@ -6,6 +6,7 @@ Version 2.6:
 - Support for multiple simultaneous AJAX calls.
 - Fix for addContent method on a collection.
 - Fix for replaceContent method on a collection.
+- Fix for id bug in Internet Explorer and Opera, where it matched elements with that name as well.
 - Removed unnecessary attribute removal in the replaceWithAJAXContent method for the AJAX module.
 - Added support for XUL events (DOMMouseScroll etc) with the addEvent method.
 
