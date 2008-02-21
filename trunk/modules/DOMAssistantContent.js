@@ -7,7 +7,7 @@ DOMAssistant.Content = function () {
 			while(prevSib && prevSib.nodeType !== 1) {
 				prevSib = prevSib.previousSibling;
 			}
-			return prevSib;
+			return DOMAssistant.$(prevSib);
 		},
 
 		next : function () {
@@ -15,7 +15,7 @@ DOMAssistant.Content = function () {
 			while(nextSib && nextSib.nodeType !== 1) {
 				nextSib = nextSib.nextSibling;
 			}
-			return nextSib;
+			return DOMAssistant.$(nextSib);
 		},
 
 		create : function (name, attr, append, content) {
