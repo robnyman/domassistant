@@ -1,3 +1,7 @@
+Version 2.6.1:
+=============
+- Fix for what's returned from the prev and next methods, so it has the correct methods applied
+
 Version 2.6:
 =============
 - Major CSS selector performance improvement, and using querySelectorAll and native getElementsByClassName where it's available.
