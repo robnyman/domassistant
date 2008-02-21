@@ -28,7 +28,6 @@
 						<div id="main-content-area">
 							<h1>Supported CSS Selectors <br>(CSS 1, CSS 2, CSS 3)</h1>
 							<p>With the DOMAssistant Core module and its <code>$</code> method comes support for using CSS selectors to get a reference to one or multiple elements. There is support for any major CSS element selector in CSS 1, CSS 2 and CSS 3, with the exact same syntax as you would use in a CSS file.</p>
-							<p>Note: if you pass in just a string with no spaces or special characters, e.g. <code>$("div")</code>, it will not interpret as if you want all the elements of that certain tag. Instead it defaults to looking for elements with that specific id. Although a fairly uncommon request to get all elements of a certain tag in the entire document, if you want that, write <code>$(document).elmsByTag("div")</code> instead.</p>
 							<p>For an in-depth explanation of the CSS selectors and examples of how us them, please read <a href="http://www.456bereastreet.com/archive/200509/css_21_selectors_part_1/">CSS 2.1 selectors</a> and <a href="http://www.456bereastreet.com/archive/200601/css_3_selectors_explained/">CSS 3 selectors explained</a>.</p>
 						
 							<h3 id="implemented-css-selectors">Implemented CSS selectors</h3>								

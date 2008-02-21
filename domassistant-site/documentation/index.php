@@ -32,7 +32,7 @@
 							<p>Within this Documentation section, you will find every available method documented together with some example code. The parameters they accept and their return values are specified on each module's page.</p>						
 							
 							<h2>Downloadable documentation</h2>
-							<p>You can also <a href="domassistant-documentation.pdf">download the documentation as a PDF (144kb)</a>.</p>
+							<p>You can also <a href="domassistant-documentation.pdf">download the documentation as a PDF (151kb)</a>.</p>
 						</div>
 						
 						<div id="sidebar">
