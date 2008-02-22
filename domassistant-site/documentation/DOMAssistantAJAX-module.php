@@ -47,7 +47,7 @@
 								<code>$("news").get("news.php", insertNews);</code>
 							</p>
 							<p class="code">
-								<code>DOMAssistantAJAX.get("my-url.aspx", callbackFunctionName);</code>
+								<code>DOMAssistant.AJAX.get("my-url.aspx", callbackFunctionName);</code>
 							</p>
 							
 							<h4 id="post"><code>post(url, callBack)</code></h4>
@@ -68,7 +68,7 @@
 								<code>$("news").post("news.php?value=true", insertNews);</code>
 							</p>
 							<p class="code">
-								<code>DOMAssistantAJAX.post("my-url.aspx?number=10", callbackFunctionName);</code>
+								<code>DOMAssistant.AJAX.post("my-url.aspx?number=10", callbackFunctionName);</code>
 							</p>
 							
 							<h4 id="load"><code>load(url, add)</code></h4>
