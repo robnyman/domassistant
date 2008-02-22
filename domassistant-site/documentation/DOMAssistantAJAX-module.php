@@ -89,7 +89,7 @@
 								<code>$("directions").load("maps.php");</code>
 							</p>
 							<p class="code">
-								<code>$("contacts", true).load("staff.aspx");</code>
+								<code>$("contacts").load("staff.aspx", true);</code>
 							</p>
 							
 							<h4 id="getReadyState"><code>getReadyState()</code></h4>
