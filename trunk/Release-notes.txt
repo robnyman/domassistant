@@ -1,6 +1,8 @@
 Version 2.6.1:
 =============
-- Fix for what's returned from the prev and next methods, so it has the correct methods applied
+- Accuracy fixes for ~ selector and contains in Internet Explorer.
+- Performance fixes for nth-child selector variants and contains in Internet Explorer.
+- Fix for what's returned from the prev and next methods, so it has the correct methods applied.
 
 Version 2.6:
 =============
