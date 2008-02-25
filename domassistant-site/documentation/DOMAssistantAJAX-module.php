@@ -51,7 +51,7 @@
 							</p>
 							
 							<h4 id="post"><code>post(url, callBack)</code></h4>
-							<p>Makes a POST request to the specified URL and calls the set callBack function. The first parameter of the then called callBack function will be the <code>responseText</code> of the AJAX call. If this method is called on an element, the callBack function context will be the element, i.e. the keyword <code>this</code> will refer to the element which called the <code>get</code> method in the first place.</p>
+							<p>Makes a POST request to the specified URL and calls the set callBack function. The first parameter of the then called callBack function will be the <code>responseText</code> of the AJAX call. If this method is called on an element, the callBack function context will be the element, i.e. the keyword <code>this</code> will refer to the element which called the <code>post</code> method in the first place.</p>
 							<h5>Parameters</h5>
 							<dl>
 								<dt>url</dt>
@@ -126,7 +126,7 @@
 							</p>
 							
 							<h4 id="getStatusText"><code>getStatusText()</code></h4>
-							<p>Helper method to check the current <code>readyState</code> of the XMLHttpRequest.</p>
+							<p>Helper method to check the current <code>status</code> text of the XMLHttpRequest.</p>
 							<h5>Parameters</h5>
 							<p>None</p>
 

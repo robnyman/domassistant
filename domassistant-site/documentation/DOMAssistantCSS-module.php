@@ -81,7 +81,7 @@
 							</p>
 
 							<h4 id="getstyle"><code>getStyle(cssRule)</code></h4>
-							<p>Gets the rendered style for a certain CSS property on the current element, no matter if it was applied inline or from an external stylesheet. Note: make sure to look for the specific property instead of general ones. I.e. <code>background-color</code> instead of <code>backgrund</code> etc.</p>
+							<p>Gets the rendered style for a certain CSS property on the current element, no matter if it was applied inline or from an external stylesheet. Note: make sure to look for the specific property instead of general ones. I.e. <code>background-color</code> instead of <code>background</code> etc.</p>
 							<h5>Parameters</h5>
 							<dl>
 								<dt>cssRule</dt>
