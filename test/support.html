@@ -2,11 +2,22 @@
 
 <html lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>DOM Assistant demo - DOM Assistant, the modular lightweight JavaScript library</title>
 	<link rel="stylesheet" href="css/domassistant.css" type="text/css">
 	
-	<script type="text/javascript" src="../trunk/DOMAssistantCompressed.js"></script>
+	
+	<script type="text/javascript" src="../trunk/modules/DOMAssistant.js"></script>
+	<script type="text/javascript" src="../trunk/modules/DOMAssistantAJAX.js"></script>
+	<script type="text/javascript" src="../trunk/modules/DOMAssistantContent.js"></script>
+	<script type="text/javascript" src="../trunk/modules/DOMAssistantCSS.js"></script>
+	<script type="text/javascript" src="../trunk/modules/DOMAssistantEvents.js"></script>
+	<script type="text/javascript" src="../trunk/modules/DOMAssistantLoad.js"></script>
+	
+	<!--<script type="text/javascript" src="../trunk/DOMAssistantComplete.js"></script>-->
+	<!--<script type="text/javascript" src="../trunk/DOMAssistantCompressed.js"></script>-->
+	
+	
 	
 	<script type="text/javascript">
 		//alert(typeof document.getElementsByClassName);
@@ -27,6 +38,17 @@
 				alert(e);
 			}
 			
+			//alert($("div#aaa.ccc"));
+			//$("div#aaa.ccc").style.background = "red";
+			
+			
+			$('div.我 p:first-child)').each( function()
+			{ this.style.backgroundColor = 'blue'; });
+			$('#中文 #大').each( function() { this.style.backgroundColor = 'red'; });
+			$('#中文.我 .小[title=他]').each( function() { this.style.backgroundColor =
+			'green'; });
+			$$('妖').style.backgroundColor = 'yellow';
+			
 			
 			//$("td").addContent($("td").create("h1", null, true)).addContent("Hej");
 			//$("#container").get("ajax.html", func);
@@ -45,6 +67,15 @@
 </head>
 
 <body>
+	
+	<div id="aaa" class="bbb">Test</div>
+	
+	<div id="中文" class="我">
+	       <p>段落1</p>
+	       <p id="大">段落2</p>
+	       <p class="小" title="他">段落3</p>
+	       <p id="妖">段落4</p>
+	  </div>
 	
 	<div id="container">
 		<table>
