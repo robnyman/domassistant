@@ -71,7 +71,6 @@ DOMAssistant.AJAX = function () {
 					}
 					if (typeof callBack === "function") {
 						XMLHttp.onreadystatechange = function () {
-							//alert(XMLHttp.readyState + "\n\n" + callBack);
 							if(XMLHttp.readyState === 4) {
 								callBack.call(elm, XMLHttp.responseText, addToContent);
 								readyState = 4;
