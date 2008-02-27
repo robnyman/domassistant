@@ -1422,10 +1422,16 @@ DOMAssistant.DOMLoad = function () {
 	
 	return {
 		DOMReady : function () {
+			if (DOMLoaded) {
+				functionsToCall = [];
+			}
 			for (var i=0, il=arguments.length, func, callFunc; i<il; i++) {
 				func = arguments[i];
 				callFunc = (typeof func === "function")? func : new Function(func);
 				functionsToCall.push(callFunc);
+			}
+			if (DOMLoaded) {
+				execFunctions();
 			}
 		}
 	};
