@@ -1,9 +1,9 @@
-// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
+// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant, version 2.6.1
 var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
 	};
-	var isIE = document.all && !/Opera/i.test(navigator.userAgent);
+	var isIE = /*@cc_on!@*/false;
 	return {
 		allMethods : [],
 		publicMethods : [
