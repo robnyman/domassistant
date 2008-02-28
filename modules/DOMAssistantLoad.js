@@ -16,6 +16,7 @@ DOMAssistant.DOMLoad = function () {
 				// Optional: handle error here
 			}
 		}
+		functionsToCall = [];
 	};
 	var DOMHasLoaded = function () {
 		if (DOMLoaded) {
@@ -53,9 +54,6 @@ DOMAssistant.DOMLoad = function () {
 	
 	return {
 		DOMReady : function () {
-			if (DOMLoaded) {
-				functionsToCall = [];
-			}
 			for (var i=0, il=arguments.length, func, callFunc; i<il; i++) {
 				func = arguments[i];
 				callFunc = (typeof func === "function")? func : new Function(func);
