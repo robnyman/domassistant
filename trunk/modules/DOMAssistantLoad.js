@@ -4,16 +4,16 @@ DOMAssistant.DOMLoad = function () {
 	var DOMLoaded = false;
 	var DOMLoadTimer = null;
 	var functionsToCall = [];
+	var errorHandling = null;
 	var execFunctions = function () {
-		if (DOMLoaded) {
-			clearInterval(DOMLoadTimer);
-		}
 		for (var i=0, il=functionsToCall.length; i<il; i++) {
 			try{
 				functionsToCall[i]();
 			}
 			catch(e) {
-				// Optional: handle error here
+				if (errorHandling && typeof errorHandling === "function") {
+					errorHandling(e);
+				}
 			}
 		}
 		functionsToCall = [];
@@ -27,7 +27,7 @@ DOMAssistant.DOMLoad = function () {
 	};
 	/* Internet Explorer */
 	/*@cc_on @*/
-	/*@if (@_win32)
+	/*@if (@_win32 || @_win64)
 		if (document.getElementById) {
 			document.write("<script id=\"ieScriptLoad\" defer src=\"//:\"><\/script>");
 		    document.getElementById("ieScriptLoad").onreadystatechange = function() {
@@ -41,11 +41,12 @@ DOMAssistant.DOMLoad = function () {
 	if (document.addEventListener) {
 		document.addEventListener("DOMContentLoaded", DOMHasLoaded, false);
 	}
-	/* Safari */
-	if (navigator.userAgent.search(/WebKit/i) !== -1) {
+	/* Safari, iCab, Konqueror */
+	if (/KHTML|WebKit|iCab/i.test(navigator.userAgent)) {
 	    DOMLoadTimer = setInterval(function () {
-			if (document.readyState.search(/loaded|complete/i) !== -1) {
-				var loaded = new DOMHasLoaded();
+			if (/loaded|complete/i.test(document.readyState)) {
+				DOMHasLoaded();
+				clearInterval(DOMLoadTimer);
 			}
 		}, 10);
 	}
@@ -62,6 +63,10 @@ DOMAssistant.DOMLoad = function () {
 			if (DOMLoaded) {
 				execFunctions();
 			}
+		},
+		
+		setErrorHandling : function (funcRef) {
+			errorHandling = funcRef;
 		}
 	};
 }();
