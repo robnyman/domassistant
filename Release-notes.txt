@@ -1,5 +1,7 @@
 Version 2.6.1:
 =============
+- Unicode support added, implying support for basically any source document language.
+- Method setErrorHandling added for the DOMLoad module.
 - Accuracy fixes for ~ selector and contains in Internet Explorer.
 - Performance fixes for nth-child selector variants and contains in Internet Explorer.
 - Fix for what's returned from the prev and next methods, so it has the correct methods applied.
