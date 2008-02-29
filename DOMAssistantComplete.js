@@ -1270,7 +1270,10 @@ DOMAssistant.Content = function () {
 	};
 }();
 DOMAssistant.attach(DOMAssistant.Content);
+// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
+/*extern DOMAssistant, $ */
 DOMAssistant.Events = function () {
+	var uniqueHandlerId = 1;
 	return {
 		publicMethods : [
 			"addEvent",
@@ -1294,16 +1297,31 @@ DOMAssistant.Events = function () {
 				}
 			}
 			else {
-				if (!this.events) {
-					this.events = {};
+				if (!this.uniqueHandlerId) {
+					this.uniqueHandlerId = uniqueHandlerId++;
 				}
-				if (!this.events[evt]) {
-					this.events[evt] = [];
-				}							
-				this.events[evt].push(func);
-				this["on" + evt] = DOMAssistant.Events.handleEvent;
-				if (typeof this.window === "object") {
-					this.window["on" + evt] = DOMAssistant.Events.handleEvent;
+				var alreadyExists = false;
+				if (func.attachedElements && func.attachedElements[this.uniqueHandlerId]) {
+					alreadyExists = true;
+				}
+				if (!alreadyExists) {
+					if (!this.events) {
+						this.events = {};
+					}
+					if (!this.events[evt]) {
+						this.events[evt] = [];
+						var existingEvent = this["on" + evt];
+						if (existingEvent) {
+							this.events[evt].push(existingEvent);
+					    }
+					}							
+					this.events[evt].push(func);
+					this["on" + evt] = DOMAssistant.Events.handleEvent;
+					if (typeof this.window === "object") {
+						this.window["on" + evt] = DOMAssistant.Events.handleEvent;
+					}
+					func.attachedElements = {};
+					func.attachedElements[this.uniqueHandlerId] = true;
 				}
 			}
 			return this;
@@ -1336,6 +1354,7 @@ DOMAssistant.Events = function () {
 					eventColl.splice(i, 1);
 				}
 			}
+			func.attachedElements[this.uniqueHandlerId] = null;
 			return this;
 		},
 
@@ -1373,6 +1392,7 @@ DOMAssistant.DOMLoad = function () {
 	var DOMLoaded = false;
 	var DOMLoadTimer = null;
 	var functionsToCall = [];
+	var addedStrings = {};
 	var errorHandling = null;
 	var execFunctions = function () {
 		for (var i=0, il=functionsToCall.length; i<il; i++) {
@@ -1424,10 +1444,16 @@ DOMAssistant.DOMLoad = function () {
 	
 	return {
 		DOMReady : function () {
-			for (var i=0, il=arguments.length, func, callFunc; i<il; i++) {
-				func = arguments[i];
-				callFunc = (typeof func === "function")? func : new Function(func);
-				functionsToCall.push(callFunc);
+			for (var i=0, il=arguments.length, funcRef; i<il; i++) {
+				funcRef = arguments[i];
+				if (!funcRef.DOMReady && !addedStrings[funcRef]) {
+					if (typeof funcRef === "string") {
+						addedStrings[funcRef] = true;
+						funcRef = new Function(funcRef);
+					}
+					funcRef.DOMReady = true;
+					functionsToCall.push(funcRef);
+				}
 			}
 			if (DOMLoaded) {
 				execFunctions();
