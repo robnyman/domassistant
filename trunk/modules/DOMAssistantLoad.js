@@ -4,6 +4,7 @@ DOMAssistant.DOMLoad = function () {
 	var DOMLoaded = false;
 	var DOMLoadTimer = null;
 	var functionsToCall = [];
+	var addedStrings = {};
 	var errorHandling = null;
 	var execFunctions = function () {
 		for (var i=0, il=functionsToCall.length; i<il; i++) {
@@ -55,10 +56,16 @@ DOMAssistant.DOMLoad = function () {
 	
 	return {
 		DOMReady : function () {
-			for (var i=0, il=arguments.length, func, callFunc; i<il; i++) {
-				func = arguments[i];
-				callFunc = (typeof func === "function")? func : new Function(func);
-				functionsToCall.push(callFunc);
+			for (var i=0, il=arguments.length, funcRef; i<il; i++) {
+				funcRef = arguments[i];
+				if (!funcRef.DOMReady && !addedStrings[funcRef]) {
+					if (typeof funcRef === "string") {
+						addedStrings[funcRef] = true;
+						funcRef = new Function(funcRef);
+					}
+					funcRef.DOMReady = true;
+					functionsToCall.push(funcRef);
+				}
 			}
 			if (DOMLoaded) {
 				execFunctions();
