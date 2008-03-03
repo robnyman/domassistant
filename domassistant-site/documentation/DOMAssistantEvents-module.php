@@ -29,7 +29,7 @@
 							<h1>DOMAssistantEvents Module</h1>
 							<p>The DOMAssistantEvents module offers various methods for adding and removing handlers for one or several events on an element. It also contains functionality for stopping default actions and bubbling of events.</p>
 
-							<h4 id="addevent"><code>addEvent(evt, func)</code></h4>
+							<h4 id="addEvent"><code>addEvent(evt, func)</code></h4>
 							<p>Adds an event handler to the current element. Multiple event handlers are supported, and the receiving funtion will have an event object reference and a <code>this</code> reference to the element it occurred on, no matter what web browser. For accessibility reasons, please make sure to only apply click events to elements that can handle them without JavaScript enabled.</p>
 							<h5>Parameters</h5>
 							<dl>
@@ -55,7 +55,7 @@
 								</code>
 							</p>
 
-							<h4 id="removeevent"><code>removeEvent(evt, func)</code></h4>
+							<h4 id="removeEvent"><code>removeEvent(evt, func)</code></h4>
 							<p>Removes an event handler from the current element. Works only for function references, and not anonymous functions.</p>
 							<h5>Parameters</h5>
 							<dl>
@@ -74,7 +74,7 @@
 								</code>	
 							</p>
 
-							<h4 id="preventdefault"><code>preventDefault(evt)</code></h4>
+							<h4 id="preventDefault"><code>preventDefault(evt)</code></h4>
 							<p>Prevents the default action of an event. Can be called from any function, and is not a method of any element.</p>
 							<h5>Parameters</h5>
 							<dl>
@@ -91,7 +91,7 @@
 								</code>	
 							</p>
 
-							<h4 id="cancelbubble"><code>cancelBubble(evt)</code></h4>
+							<h4 id="cancelBubble"><code>cancelBubble(evt)</code></h4>
 							<p>Cancels the bubbling of an event. Can be called from any function, and is not a method of any element.</p>
 							<h5>Parameters</h5>
 							<dl>
@@ -112,10 +112,10 @@
 						<div id="sidebar">
 							<h3>DOMAssistantEvents methods</h3>
 							<ul>
-								<li><a href="#addevent">addEvent</a></li>
-								<li><a href="#removeevent">removeEvent</a></li>
-								<li><a href="#preventdefault">preventDefault</a></li>
-								<li><a href="#cancelbubble">cancelBubble</a></li>
+								<li><a href="#addEvent">addEvent</a></li>
+								<li><a href="#removeEvent">removeEvent</a></li>
+								<li><a href="#preventDefault">preventDefault</a></li>
+								<li><a href="#cancelBubble">cancelBubble</a></li>
 							</ul>
 							<?php include "domassistant-module-nav.php" ?>
 						</div>

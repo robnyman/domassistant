@@ -29,7 +29,7 @@
 							<h1>DOMAssistantCSS Module</h1>
 							<p>The DOMAssistantCSS module offers various methods for adding and removing CSS classes, checking if an element has a certain class and getting the rendered style for a specific property on an element.</p>
 
-							<h4 id="addclass"><code>addClass(className)</code></h4>
+							<h4 id="addClass"><code>addClass(className)</code></h4>
 							<p>Adds a class name to the current element, unless it already exists.</p>
 							<h5>Parameters</h5>
 							<dl>
@@ -46,7 +46,7 @@
 								</code>
 							</p>
 
-							<h4 id="removeclass"><code>removeClass(className)</code></h4>
+							<h4 id="removeClass"><code>removeClass(className)</code></h4>
 							<p>Removes a class name from the current element.</p>
 							<h5>Parameters</h5>
 							<dl>
@@ -63,7 +63,7 @@
 								</code>
 							</p>
 
-							<h4 id="hasclass"><code>hasClass(className)</code></h4>
+							<h4 id="hasClass"><code>hasClass(className)</code></h4>
 							<p>Checks whether the current element has a certain class name.</p>
 							<h5>Parameters</h5>
 							<dl>
@@ -80,7 +80,7 @@
 								</code>
 							</p>
 
-							<h4 id="getstyle"><code>getStyle(cssRule)</code></h4>
+							<h4 id="getStyle"><code>getStyle(cssRule)</code></h4>
 							<p>Gets the rendered style for a certain CSS property on the current element, no matter if it was applied inline or from an external stylesheet. Note: make sure to look for the specific property instead of general ones. I.e. <code>background-color</code> instead of <code>background</code> etc.</p>
 							<h5>Parameters</h5>
 							<dl>
@@ -101,10 +101,10 @@
 						<div id="sidebar">
 							<h3>DOMAssistantCSS methods</h3>
 							<ul>
-								<li><a href="#addclass">addClass</a></li>
-								<li><a href="#removeclass">removeClass</a></li>
-								<li><a href="#hasclass">hasClass</a></li>
-								<li><a href="#getstyle">getStyle</a></li>
+								<li><a href="#addClass">addClass</a></li>
+								<li><a href="#removeClass">removeClass</a></li>
+								<li><a href="#hasClass">hasClass</a></li>
+								<li><a href="#getStyle">getStyle</a></li>
 							</ul>
 							<?php include "domassistant-module-nav.php" ?>
 						</div>

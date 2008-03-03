@@ -104,7 +104,7 @@
 								</code>
 							</p>
 
-							<h4 id="setattributes"><code>setAttributes(attr)</code></h4>
+							<h4 id="setAttributes"><code>setAttributes(attr)</code></h4>
 							<p>Sets attributes on the current element.</p>
 							<h5>Parameters</h5>
 							<dl>
@@ -125,7 +125,7 @@
 								</code>
 							</p>
 
-							<h4 id="addcontent"><code>addContent(content)</code></h4>
+							<h4 id="addContent"><code>addContent(content)</code></h4>
 							<p>Adds content to the current element.</p>
 							<h5>Parameters</h5>
 							<dl>
@@ -147,7 +147,7 @@
 								</code>
 							</p>
 
-							<h4 id="replacecontent"><code>replaceContent(newContent)</code></h4>
+							<h4 id="replaceContent"><code>replaceContent(newContent)</code></h4>
 							<p>Replaces the content of the current element with new content.</p>
 							<h5>Parameters</h5>
 							<dl>
@@ -190,9 +190,9 @@
 								<li><a href="#prev">prev</a></li>
 								<li><a href="#next">next</a></li>
 								<li><a href="#create">create</a></li>
-								<li><a href="#setattributes">setAttributes</a></li>
-								<li><a href="#addcontent">addContent</a></li>
-								<li><a href="#replacecontent">replaceContent</a></li>
+								<li><a href="#setAttributes">setAttributes</a></li>
+								<li><a href="#addContent">addContent</a></li>
+								<li><a href="#replaceContent">replaceContent</a></li>
 								<li><a href="#remove">remove</a></li>
 							</ul>
 							<?php include "domassistant-module-nav.php" ?>
