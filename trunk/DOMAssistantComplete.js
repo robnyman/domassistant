@@ -3,7 +3,7 @@ var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
 	};
-	var isIE = false;
+	var isIE = /*@cc_on!@*/false;
 	return {
 		allMethods : [],
 		publicMethods : [
