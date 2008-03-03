@@ -3,7 +3,7 @@ var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
 	};
-	var isIE = /*@cc_on!@*/false;
+	var isIE = false;
 	return {
 		allMethods : [],
 		publicMethods : [
@@ -469,7 +469,10 @@ var DOMAssistant = function () {
 									tagRelation : cssSelector[20]
 								};
 								if (splitRule.id) {
-									matchingElms.push(document.getElementById(splitRule.id.replace(/#/, "")));
+									var DOMElm = document.getElementById(splitRule.id.replace(/#/, ""));
+									if (DOMElm) {
+										matchingElms.push(DOMElm);
+									}
 									prevElm = matchingElms;
 								}
 								else if (splitRule.tag && !prevElm.skipTag) {
