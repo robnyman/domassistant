@@ -383,7 +383,7 @@ var DOMAssistant = function () {
 						}
 					}
 					function getAttr(elm, attr) {
-						if(isIE) {
+						if (isIE) {
 							switch (attr) {
 								case "id":
 									return elm.id;
@@ -692,7 +692,7 @@ var DOMAssistant = function () {
 													previous = previousMatch[x];
 													prevParent = previous.parentNode;
 													matchingChild = prevParent.firstChild;
-													if(matchingChild.nodeType === 1) {
+													if (matchingChild.nodeType === 1) {
 														childCounter = childCounter + 1;
 													}
 													while (childCounter < nthChild && matchingChild.nextSibling) {
