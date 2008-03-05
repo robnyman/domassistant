@@ -29,14 +29,14 @@
 							<h1>DOMAssistantLoad Module</h1>
 							<p>The DOMAssistantLoad module offers a way to call a number of functions as soon as the DOM has loaded, as opposed to waiting for all images and other external files to completely load. It was inspired and influenced by Dean Edwards, Matthias Miller, and John Resig: <a href="http://dean.edwards.name/weblog/2006/06/again/">window.onload (again)</a>.</p>
 
-							<h4 id="DOMReady"><code>DOMReady()</code></h4>
+							<h2 id="DOMReady"><code>DOMReady()</code></h2>
 							<p>From any file, just call the DOMReady method with desired functions and they will be executed as soon as the DOM has loaded.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<p>Send in any number of function references, anonymous functions or strings with function names and parentheses.</p>
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>None.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>
 									DOMAssistant.DOMReady(myFunc);

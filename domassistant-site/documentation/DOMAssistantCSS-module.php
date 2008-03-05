@@ -29,68 +29,91 @@
 							<h1>DOMAssistantCSS Module</h1>
 							<p>The DOMAssistantCSS module offers various methods for adding and removing CSS classes, checking if an element has a certain class and getting the rendered style for a specific property on an element.</p>
 
-							<h4 id="addClass"><code>addClass(className)</code></h4>
+							<h2 id="addClass"><code>addClass(className)</code></h2>
 							<p>Adds a class name to the current element, unless it already exists.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<dl>
 								<dt>className</dt>
 								<dd>Desired class name to be added. Required.</dd>
 							</dl>
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>Element which called the method.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>
 									$("container").addClass("selected");
 								</code>
 							</p>
 
-							<h4 id="removeClass"><code>removeClass(className)</code></h4>
+							<h2 id="removeClass"><code>removeClass(className)</code></h2>
 							<p>Removes a class name from the current element.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<dl>
 								<dt>className</dt>
 								<dd>Desired class name to remove. Required.</dd>
 							</dl>
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>Element which called the method.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>
 									$("container").removeClass("selected");
 								</code>
 							</p>
 
-							<h4 id="hasClass"><code>hasClass(className)</code></h4>
+							<h2 id="hasClass"><code>hasClass(className)</code></h2>
 							<p>Checks whether the current element has a certain class name.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<dl>
 								<dt>className</dt>
 								<dd>Class name to check if it exists on the current element. Required.</dd>
 							</dl>
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>Boolean. Whether the element has the requested class or not.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>
 									$("container").hasClass("selected");
 								</code>
 							</p>
+							
+							<!--<h2 id="setStyle"><code>setStyle(style, value)</code></h2>
+							<p>Sets one or several styles inline of an element. Note: it uses CSS syntax instead of JavaScript property syntax. I.e. background-color instead of backgroundColor etc.</p>
+							<h3>Parameters</h3>
+							<dl>
+								<dt>style</dt>
+								<dd>CSS property to set. Can be a string, and is then used in conjunction with the value, or as an object with several style values. Required.</dd>
+								<dt>value</dt>
+								<dd>The value of the desired style, if the style parameter is a string. Optional.</dd>
+							</dl>
+							<h3>Return value</h3>
+							<p>Element which called the method.</p>
 
-							<h4 id="getStyle"><code>getStyle(cssRule)</code></h4>
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									$("#container").setStyle("border", "10px solid red");
+								</code>
+							</p>
+<pre class="code"><code>$("#container").setStyle({
+	background : "#ffffa2",
+	color : "#f00"
+});</code></pre>-->
+
+							<h2 id="getStyle"><code>getStyle(cssRule)</code></h2>
 							<p>Gets the rendered style for a certain CSS property on the current element, no matter if it was applied inline or from an external stylesheet. Note: make sure to look for the specific property instead of general ones. I.e. <code>background-color</code> instead of <code>background</code> etc.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<dl>
 								<dt>cssRule</dt>
 								<dd>CSS property to check value of. Use CSS syntax for the property, i.e. <code>background-color</code> instead of <code>backgroundColor</code>. Required.</dd>
 							</dl>
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>String. The value of the requested style.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>
 									$("container").getStyle("background-color");
@@ -104,6 +127,7 @@
 								<li><a href="#addClass">addClass</a></li>
 								<li><a href="#removeClass">removeClass</a></li>
 								<li><a href="#hasClass">hasClass</a></li>
+								<!--<li><a href="#setStyle">setStyle</a></li>-->
 								<li><a href="#getStyle">getStyle</a></li>
 							</ul>
 							<?php include "domassistant-module-nav.php" ?>

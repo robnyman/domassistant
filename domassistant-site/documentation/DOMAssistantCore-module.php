@@ -74,6 +74,29 @@
 							<p class="code">
 								<code>$$("navigation");</code>
 							</p>
+							
+							<!--<h2 id="cssSelect"><code>cssSelect(cssSelector)</code></h2>
+							<p>Intended to be used on existing object references, to use a CSS selector to find children element(s) of the current object.</p>
+
+							<h3>Parameters</h3>
+						 	<dl>
+								<dt>cssSelector</dt>
+								<dd>Used to select elements. Required.</dd>
+							</dl>
+							<h3>Return value</h3>
+							<p>All calls return an array of element references.</p>
+
+							 <h3>Example calls</h3>
+							<p class="code">
+								<code>
+									$(document).cssSelect(".mandatory");
+								</code>
+							</p>
+							<p class="code">
+								<code>
+									$$(DOMElementReference).cssSelect(".important[type=test]");
+								</code>
+							</p>-->
 
 							<h2 id="elmsByClass"><code>elmsByClass(className, tag)</code></h2>
 							<p>For getting elements based on their <code>className</code>. The method has a required parameter which is the desired <code>className</code>, and one optional if you want to limit the search to a certain tag.</p>
@@ -176,6 +199,7 @@
 							<ul>
 								<li><a href="#dollar">$</a></li>
 								<li><a href="#double-dollar">$$</a></li>
+								<!--<li><a href="#cssSelect">cssSelect</a></li>-->
 								<li><a href="#elmsByClass">elmsByClass</a></li>
 								<li><a href="#elmsByAttribute">elmsByAttribute</a></li>
 								<li><a href="#elmsByTag">elmsByTag</a></li>

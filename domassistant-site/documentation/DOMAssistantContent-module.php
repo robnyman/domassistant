@@ -29,39 +29,39 @@
 							<h1>DOMAssistantContent Module</h1>
 							<p>The DOMAssistantContent module offers various methods for adding and removing content and elements to the page.</p>
 
-							<h4 id="prev"><code>prev()</code></h4>
+							<h2 id="prev"><code>prev()</code></h2>
 							<p>Gets a reference to the previous HTML element, automatically bypassing any text nodes that might in between.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<p>None.</p>
 							
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>Element's previous sibling element.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>
 									$("container").prev();
 								</code>
 							</p>
 
-							<h4 id="next"><code>next()</code></h4>
+							<h2 id="next"><code>next()</code></h2>
 							<p>Gets a reference to the next HTML element, automatically bypassing any text nodes that might in between.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<p>None.</p>
 							
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>Element's next sibling element.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>
 									$("container").next();
 								</code>
 							</p>
 
-							<h4 id="create"><code>create(name, attr, append, content)</code></h4>
+							<h2 id="create"><code>create(name, attr, append, content)</code></h2>
 							<p>Creates an element, and optionally sets attributes on it, appends it to the current element and adds content to it.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<dl>
 								<dt>name</dt>
 								<dd>Tag name for the new element. Required.</dd>
@@ -73,10 +73,10 @@
 								<dd>A string or HTML object that will become the content of the newly created element. Optional.</dd>
 							</dl>
 							
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>Element created by the method.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>
 									$("container").create("div");
@@ -104,18 +104,18 @@
 								</code>
 							</p>
 
-							<h4 id="setAttributes"><code>setAttributes(attr)</code></h4>
+							<h2 id="setAttributes"><code>setAttributes(attr)</code></h2>
 							<p>Sets attributes on the current element.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<dl>
 								<dt>attr</dt>
 								<dd>An object containing attributes and their values. Required.</dd>
 							</dl>
 							
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>Element which called the method.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>
 									$("container").setAttributes({<br>
@@ -125,17 +125,17 @@
 								</code>
 							</p>
 
-							<h4 id="addContent"><code>addContent(content)</code></h4>
+							<h2 id="addContent"><code>addContent(content)</code></h2>
 							<p>Adds content to the current element.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<dl>
 								<dt>content</dt>
 								<dd>Can either be a string, which will then be applied using <code>innerHTML</code>, or an HTML object that will be applied using <code>appendChild</code>.</dd>
 							</dl>
 							
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>Element which called the method.</p>
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>
 									$("container").addContent("&lt;p&gt;A new paragraph&lt;/p&gt;");
@@ -147,17 +147,17 @@
 								</code>
 							</p>
 
-							<h4 id="replaceContent"><code>replaceContent(newContent)</code></h4>
+							<h2 id="replaceContent"><code>replaceContent(newContent)</code></h2>
 							<p>Replaces the content of the current element with new content.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<dl>
 								<dt>newContent</dt>
 								<dd>Can either be a string, which will then be applied using <code>innerHTML</code>, or a HTML object that will be applied using <code>appendChild</code>.</dd>
 							</dl>
 
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>Element which called the method.</p>
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>
 									$("container").replaceContent("&lt;p&gt;A new paragraph&lt;/p&gt;");
@@ -169,14 +169,14 @@
 								</code>
 							</p>
 
-							<h4 id="remove"><code>remove()</code></h4>
+							<h2 id="remove"><code>remove()</code></h2>
 							<p>Removes the current element.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<p>None.</p>
 
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>Null.</p>
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>
 									$("container").remove();

@@ -29,9 +29,9 @@
 							<h1>DOMAssistantAJAX Module</h1>
 							<p>The DOMAssistantAJAX module offers basic AJAX interaction for retrieving data from a URL and then passing on the returned content to any function, or load the content into an element.</p>
 
-							<h4 id="get"><code>get(url, callBack)</code></h4>
+							<h2 id="get"><code>get(url, callBack)</code></h2>
 							<p>Makes a GET request to the specified URL and calls the set callBack function. The first parameter of the then called callBack function will be the <code>responseText</code> of the AJAX call. If this method is called on an element, the callBack function context will be the element, i.e. the keyword <code>this</code> will refer to the element which called the <code>get</code> method in the first place.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<dl>
 								<dt>url</dt>
 								<dd>URL to make an AJAX call to. Required.</dd>
@@ -39,10 +39,10 @@
 								<dd>Function name or anonymous function to call when the AJAX request is complete. Optional.</dd>
 							</dl>
 
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>None.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>$("news").get("news.php", insertNews);</code>
 							</p>
@@ -50,9 +50,9 @@
 								<code>DOMAssistant.AJAX.get("my-url.aspx", callbackFunctionName);</code>
 							</p>
 							
-							<h4 id="post"><code>post(url, callBack)</code></h4>
+							<h2 id="post"><code>post(url, callBack)</code></h2>
 							<p>Makes a POST request to the specified URL and calls the set callBack function. The first parameter of the then called callBack function will be the <code>responseText</code> of the AJAX call. If this method is called on an element, the callBack function context will be the element, i.e. the keyword <code>this</code> will refer to the element which called the <code>post</code> method in the first place.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<dl>
 								<dt>url</dt>
 								<dd>URL to make an AJAX call to. Required.</dd>
@@ -60,10 +60,10 @@
 								<dd>Function name or anonymous function to call when the AJAX request is complete. Optional.</dd>
 							</dl>
 
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>None.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>$("news").post("news.php?value=true", insertNews);</code>
 							</p>
@@ -71,9 +71,9 @@
 								<code>DOMAssistant.AJAX.post("my-url.aspx?number=10", callbackFunctionName);</code>
 							</p>
 							
-							<h4 id="load"><code>load(url, add)</code></h4>
+							<h2 id="load"><code>load(url, add)</code></h2>
 							<p>Makes a request to the specified URL and loads the returned content into the element which the method is called on.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<dl>
 								<dt>url</dt>
 								<dd>URL to make an AJAX call to. Required.</dd>
@@ -81,10 +81,10 @@
 								<dd>A boolean, if the retrieved content shall be appended to the already existing content, as opposed to replacing it. Optional.</dd>
 							</dl>
 
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>None.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>$("directions").load("maps.php");</code>
 							</p>
@@ -92,12 +92,12 @@
 								<code>$("contacts").load("staff.aspx", true);</code>
 							</p>
 							
-							<h4 id="getReadyState"><code>getReadyState()</code></h4>
+							<h2 id="getReadyState"><code>getReadyState()</code></h2>
 							<p>Helper method to check the current <code>readyState</code> of the XMLHttpRequest.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<p>None</p>
 
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>Integer.</p>
 							<ul>
 								<li>0 = uninitialized</li>
@@ -107,33 +107,33 @@
 								<li>4 = complete</li>
 							</ul>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>DOMAssistant.AJAX.getReadyState();</code>
 							</p>
 							
-							<h4 id="getStatus"><code>getStatus()</code></h4>
+							<h2 id="getStatus"><code>getStatus()</code></h2>
 							<p>Helper method to check the current <code>status</code> of the XMLHttpRequest.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<p>None</p>
 
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>Integer. Examples are 200 for Ok and 404 for not found.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>DOMAssistant.AJAX.getStatus();</code>
 							</p>
 							
-							<h4 id="getStatusText"><code>getStatusText()</code></h4>
+							<h2 id="getStatusText"><code>getStatusText()</code></h2>
 							<p>Helper method to check the current <code>status</code> text of the XMLHttpRequest.</p>
-							<h5>Parameters</h5>
+							<h3>Parameters</h3>
 							<p>None</p>
 
-							<h5>Return value</h5>
+							<h3>Return value</h3>
 							<p>String. The text accompanying the status code.</p>
 
-							<h5>Example calls</h5>
+							<h3>Example calls</h3>
 							<p class="code">
 								<code>DOMAssistant.AJAX.getStatusText();</code>
 							</p>						
