@@ -43,7 +43,9 @@ DOMAssistant.CSS = function () {
 				var styleToSet = this.style.cssText;
 				if (typeof style === "object") {
 					for (var i in style) {
-						styleToSet += ";" + i + ":" +  style[i];
+						if (typeof i === "string") {
+							styleToSet += ";" + i + ":" +  style[i];
+						}
 					}
 				}
 				else {
