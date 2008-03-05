@@ -37,6 +37,22 @@ DOMAssistant.CSS = function () {
 		hasClass : function (className) {
 			return new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i").test(this.className);
 		},
+		
+		setStyle : function (style, value) {
+			if (typeof this.style.cssText !== "undefined") {
+				var styleToSet = this.style.cssText;
+				if (typeof style === "object") {
+					for (var i in style) {
+						styleToSet += ";" + i + ":" +  style[i];
+					}
+				}
+				else {
+					styleToSet += ";" + style + ":" + value;
+				}
+				this.style.cssText = styleToSet;
+			}
+			return this;
+		},
 
 		getStyle : function (cssRule) {
 			var cssVal = "";
