@@ -383,7 +383,7 @@ var DOMAssistant = function () {
 						}
 					}
 					function getAttr(elm, attr) {
-						if(isIE) {
+						if (isIE) {
 							switch (attr) {
 								case "id":
 									return elm.id;
@@ -692,7 +692,7 @@ var DOMAssistant = function () {
 													previous = previousMatch[x];
 													prevParent = previous.parentNode;
 													matchingChild = prevParent.firstChild;
-													if(matchingChild.nodeType === 1) {
+													if (matchingChild.nodeType === 1) {
 														childCounter = childCounter + 1;
 													}
 													while (childCounter < nthChild && matchingChild.nextSibling) {
@@ -1105,7 +1105,7 @@ DOMAssistant.AJAX = function () {
 					}
 					if (typeof callBack === "function") {
 						XMLHttp.onreadystatechange = function () {
-							if(XMLHttp.readyState === 4) {
+							if (XMLHttp.readyState === 4) {
 								callBack.call(elm, XMLHttp.responseText, addToContent);
 								readyState = 4;
 								status = XMLHttp.status;
@@ -1193,6 +1193,24 @@ DOMAssistant.CSS = function () {
 		hasClass : function (className) {
 			return new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i").test(this.className);
 		},
+		
+		setStyle : function (style, value) {
+			if (typeof this.style.cssText !== "undefined") {
+				var styleToSet = this.style.cssText;
+				if (typeof style === "object") {
+					for (var i in style) {
+						if (typeof i === "string") {
+							styleToSet += ";" + i + ":" +  style[i];
+						}
+					}
+				}
+				else {
+					styleToSet += ";" + style + ":" + value;
+				}
+				this.style.cssText = styleToSet;
+			}
+			return this;
+		},
 
 		getStyle : function (cssRule) {
 			var cssVal = "";
@@ -1258,7 +1276,7 @@ DOMAssistant.Content = function () {
 			if (typeof content === "string") {
 				this.innerHTML += content;
 			}
-			else{
+			else if (typeof content === "object" && content) {
 				this.appendChild(content);
 			}
 			return this;
@@ -1288,8 +1306,6 @@ DOMAssistant.Content = function () {
 	};
 }();
 DOMAssistant.attach(DOMAssistant.Content);
-// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
-/*extern DOMAssistant, $ */
 DOMAssistant.Events = function () {
 	var uniqueHandlerId = 1;
 	return {
