@@ -3,10 +3,11 @@ var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
 	};
-	var isIE = /*@cc_on!@*/false;
+	var isIE = false;
 	return {
 		allMethods : [],
 		publicMethods : [
+			"cssSelect",
 			"elmsByClass",
 			"elmsByAttribute",
 			"elmsByTag"
@@ -148,14 +149,7 @@ var DOMAssistant = function () {
 	
 		cssSelection : function  (cssRule) {
 			if (document.querySelectorAll) {
-				DOMAssistant.cssSelection = function (cssRule) {
-					var elm = new HTMLArray();
-					var results = document.querySelectorAll(cssRule);
-					for (var i=0, il=results.length; i<il; i++) {
-						elm.push(results[i]);
-					}
-					return elm;
-				};
+				DOMAssistant.cssSelection = DOMAssistant.nativeQuery;
 			}
 			else if (document.evaluate) {
 				DOMAssistant.cssSelection = function (cssRule) {
@@ -349,6 +343,27 @@ var DOMAssistant = function () {
 			}
 			else {				
 				DOMAssistant.cssSelection = function (cssRule) {
+					return DOMAssistant.cssSelect.call(document, cssRule);
+				};
+			}
+			return DOMAssistant.cssSelection.call(this, cssRule); 
+		},
+		
+		nativeQuery : function (cssRule) {
+			var elm = new HTMLArray();
+			var results = document.querySelectorAll(cssRule);
+			for (var i=0, il=results.length; i<il; i++) {
+				elm.push(results[i]);
+			}
+			return elm;
+		},
+		
+		cssSelect : function (cssRule) {
+			if (document.querySelectorAll) {
+				DOMAssistant.cssSelect = DOMAssistant.nativeQuery;
+			}
+			else {
+				DOMAssistant.cssSelect = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
 					var elm = new HTMLArray();
 					var prevElm = new HTMLArray();
@@ -396,8 +411,8 @@ var DOMAssistant = function () {
 						}
 						cssSelectors = currentRule.split(" ");
 						prevElm = [];
-						prevElm.push(document);
-						
+						prevElm.push(this);
+				
 						for (var i=0, il=cssSelectors.length; i<il; i++) {
 							var rule = cssSelectors[i];
 							matchingElms = [];
@@ -686,7 +701,7 @@ var DOMAssistant = function () {
 															childCounter = childCounter + 1;
 														}
 													}
-														
+												
 													if (childCounter === nthChild && matchingChild && !matchingChild.added && (matchingChild.nodeName === previous.nodeName)) {
 														matchingChild.added = true;
 														matchingElms.push(previous);
@@ -871,10 +886,10 @@ var DOMAssistant = function () {
 							elm.push(prevElm[iPrevElm]);
 						}
 					}
-					return elm;
-				};		
+					return elm;	
+				};
 			}
-			return DOMAssistant.cssSelection.call(this, cssRule); 
+			return DOMAssistant.cssSelect.call(this, cssRule);
 		},
 	
 		elmsByClass : function (className, tag) {
