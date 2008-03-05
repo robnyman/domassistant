@@ -35,6 +35,7 @@
 							</p>
 							<h2>Plugin categories</h2>
 							<ul>
+								<li><a href="/plugins/categories/ajax">AJAX (1)</a></li>
 								<li><a href="/plugins/categories/example">Example (1)</a></li>
 							</ul>
 						</div>
