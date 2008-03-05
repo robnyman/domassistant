@@ -48,7 +48,7 @@ DOMAssistant.Content = function () {
 			if (typeof content === "string") {
 				this.innerHTML += content;
 			}
-			else{
+			else if (typeof content === "object" && content) {
 				this.appendChild(content);
 			}
 			return this;
