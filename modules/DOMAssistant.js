@@ -291,7 +291,7 @@ var DOMAssistant = function () {
 											pseudoSelection += "(count(./preceding-sibling::*) + 1)";
 											if (nthSelector < nOperatorVal) {
 												var nOperatorDiff = ((nOperatorVal - nthSelector) % 2 === 0)? 0 : 1;
-												pseudoSelection += " mod " + nthSelector + " = " + nOperatorDiff + " and position() > " + nOperatorVal;
+												pseudoSelection += " mod " + nthSelector + " = " + nOperatorDiff + " and position() >= " + nOperatorVal;
 											}
 											else if (nOperatorVal === nthSelector) {
 												pseudoSelection += " mod " + nthSelector + " = 0";
@@ -695,16 +695,16 @@ var DOMAssistant = function () {
 													if (matchingChild.nodeType === 1) {
 														childCounter = childCounter + 1;
 													}
+													
 													while (childCounter < nthChild && matchingChild.nextSibling) {
 														matchingChild = matchingChild.nextSibling;
 														if (matchingChild.nodeType === 1) {
 															childCounter = childCounter + 1;
 														}
 													}
-												
 													if (childCounter === nthChild && matchingChild && !matchingChild.added && (matchingChild.nodeName === previous.nodeName)) {
 														matchingChild.added = true;
-														matchingElms.push(previous);
+														matchingElms.push(matchingChild);
 													}
 												}
 												clearAdded();
@@ -749,7 +749,7 @@ var DOMAssistant = function () {
 															current = childNodes[zz];
 															if (!current.added && current.nodeName === previous.nodeName) {
 																current.added = true;
-																matchingElms.push(previous);
+																matchingElms.push(current);
 															}
 														}
 													}
