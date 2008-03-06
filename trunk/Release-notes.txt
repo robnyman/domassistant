@@ -1,7 +1,9 @@
 Version 2.6.1:
 =============
 - Unicode support added, implying support for basically any source document language.
-- Method setErrorHandling added for the DOMLoad module.
+- Method cssSelect added to the Core module, to allow CSS selections of an object reference's children.
+- Method setStyle added to the CSS module.
+- Method setErrorHandling added to the DOMLoad module.
 - Fixed so a function for an event, applied with addEvent, couldn't be added multiple times.
 - Fixed so a function in DOMReady couldn't be applied multiple times.
 - Accuracy fixes for ~ selector and contains in Internet Explorer.
