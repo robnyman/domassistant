@@ -6,6 +6,7 @@ Version 2.6.1:
 - Method setErrorHandling added to the DOMLoad module.
 - Fixed so a function for an event, applied with addEvent, couldn't be added multiple times.
 - Fixed so a function in DOMReady couldn't be applied multiple times.
+- Accuracy fixes for nth-child selector.
 - Accuracy fixes for ~ selector and contains in Internet Explorer.
 - Performance fixes for nth-child selector variants and contains in Internet Explorer.
 - Fix for what's returned from the prev and next methods, so it has the correct methods applied.
