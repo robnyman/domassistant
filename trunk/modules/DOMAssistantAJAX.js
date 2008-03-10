@@ -87,7 +87,8 @@ DOMAssistant.AJAX = function () {
 					var headers = ajaxObj.headers;
 					var addToContent = ajaxObj.addToContent;
 					XMLHttp.open(method, url, true);
-					XMLHttp.setRequestHeader("AJAX", "true");				
+					XMLHttp.setRequestHeader("AJAX", "true");
+					XMLHttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 					if (method === "POST") {
 						var contentLength = (params)? params.length : 0;
 						XMLHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
