@@ -1034,6 +1034,8 @@ var DOMAssistant = function () {
 	};	
 }();
 DOMAssistant.initCore();
+// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
+/*extern DOMAssistant */
 DOMAssistant.AJAX = function () {
 	var globalXMLHttp = null;
 	var readyState = 0;
@@ -1089,7 +1091,7 @@ DOMAssistant.AJAX = function () {
 			if (ajaxObj.url && /\?/.test(ajaxObj.url)) {
 				var url = ajaxObj.url.split("?");
 				ajaxObj.url = url[0];
-				ajaxObj.params = url[1];
+				ajaxObj.params = url[1] + ((url[1].length > 0)? "&" : "") + ((ajaxObj.params)? ajaxObj.params : "");
 			}
 			return DOMAssistant.AJAX.makeCall.call(this, ajaxObj);
 		},
