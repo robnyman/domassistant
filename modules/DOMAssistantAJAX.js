@@ -52,7 +52,6 @@ DOMAssistant.AJAX = function () {
 		},
 		
 		ajax : function (ajaxObj) {
-			ajaxObj.elm = this;
 			if (ajaxObj.url && /\?/.test(ajaxObj.url)) {
 				var url = ajaxObj.url.split("?");
 				ajaxObj.url = url[0];
