@@ -1034,21 +1034,25 @@ var DOMAssistant = function () {
 	};	
 }();
 DOMAssistant.initCore();
-// Developed by Robert Nyman, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.robertnyman.com/domassistant
-/*extern DOMAssistant */
 DOMAssistant.AJAX = function () {
 	var globalXMLHttp = null;
 	var readyState = 0;
 	var status = -1;
 	var statusText = "";
 	var createAjaxObj = function (elm, url, method, callback, addToContent) {
-		url = url.split("?");
+		var params = null;
+		if (/POST/i.test(method)) {
+			url = url.split("?");
+			params = url[1];
+			url = url[0];
+		}
 		return {
-			url: url[0],
+			url: url,
 			method : method,
 			callback : callback,
-			params : url[1],
+			params : params,
 			headers : {},
+			responseType : "text",
 			addToContent : addToContent || false
 		};
 	};
@@ -1120,6 +1124,7 @@ DOMAssistant.AJAX = function () {
 					var callback = ajaxObj.callback;
 					var params = ajaxObj.params;
 					var headers = ajaxObj.headers;
+					var responseType = ajaxObj.responseType || "text";
 					var addToContent = ajaxObj.addToContent;
 					XMLHttp.open(method, url, true);
 					XMLHttp.setRequestHeader("AJAX", "true");
@@ -1138,7 +1143,8 @@ DOMAssistant.AJAX = function () {
 					if (typeof callback === "function") {
 						XMLHttp.onreadystatechange = function () {
 							if (XMLHttp.readyState === 4) {
-								callback.call(elm, XMLHttp.responseText, addToContent);
+								var response = (/xml/i.test(responseType))? XMLHttp.responseXML : XMLHttp.responseText;
+								callback.call(elm, response, addToContent);
 								readyState = 4;
 								status = XMLHttp.status;
 								statusText = XMLHttp.statusText;
@@ -1481,8 +1487,8 @@ DOMAssistant.DOMLoad = function () {
 		execFunctions();
 	};
 	/* Internet Explorer */
-	/*@cc_on @*/
-	/*@if (@_win32 || @_win64)
+	/*@cc_on
+	@if (@_win32 || @_win64)
 		if (document.getElementById) {
 			document.write("<script id=\"ieScriptLoad\" defer src=\"//:\"><\/script>");
 		    document.getElementById("ieScriptLoad").onreadystatechange = function() {
@@ -1491,7 +1497,7 @@ DOMAssistant.DOMLoad = function () {
 		        }
 		    };
 		}
-	/*@end @*/
+	@end @*/
 	/* Mozilla/Opera 9 */
 	if (document.addEventListener) {
 		document.addEventListener("DOMContentLoaded", DOMHasLoaded, false);

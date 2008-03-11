@@ -27,8 +27,8 @@ DOMAssistant.DOMLoad = function () {
 		execFunctions();
 	};
 	/* Internet Explorer */
-	/*@cc_on @*/
-	/*@if (@_win32 || @_win64)
+	/*@cc_on
+	@if (@_win32 || @_win64)
 		if (document.getElementById) {
 			document.write("<script id=\"ieScriptLoad\" defer src=\"//:\"><\/script>");
 		    document.getElementById("ieScriptLoad").onreadystatechange = function() {
@@ -37,7 +37,7 @@ DOMAssistant.DOMLoad = function () {
 		        }
 		    };
 		}
-	/*@end @*/
+	@end @*/
 	/* Mozilla/Opera 9 */
 	if (document.addEventListener) {
 		document.addEventListener("DOMContentLoaded", DOMHasLoaded, false);
