@@ -2,7 +2,7 @@ Version 2.6.1:
 =============
 - Unicode support added, implying support for basically any source document language.
 - Method cssSelect added to the Core module, to allow CSS selections of an object reference's children.
-- Method ajax added for making more customized AJAX calls.
+- Method ajax added for making more customized AJAX calls, with more options.
 - Method setStyle added to the CSS module.
 - Method setErrorHandling added to the DOMLoad module.
 - Fixed so a function for an event, applied with addEvent, couldn't be added multiple times.
