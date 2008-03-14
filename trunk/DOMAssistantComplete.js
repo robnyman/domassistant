@@ -111,7 +111,7 @@ var DOMAssistant = function () {
 						}
 					}
 					else {
-						elm = DOMAssistant.cssSelection(arg);
+						elm = DOMAssistant.cssSelection.call(document, arg);
 					}
 				}
 				else if (typeof arg === "object") {
@@ -149,7 +149,14 @@ var DOMAssistant = function () {
 	
 		cssSelection : function  (cssRule) {
 			if (document.querySelectorAll) {
-				DOMAssistant.cssSelection = DOMAssistant.nativeQuery;
+				DOMAssistant.cssSelection = function (cssRule) {
+					var elm = new HTMLArray();
+					var results = this.querySelectorAll(cssRule);
+					for (var i=0, il=results.length; i<il; i++) {
+						elm.push(results[i]);
+					}
+					return elm;
+				};
 			}
 			else if (document.evaluate) {
 				DOMAssistant.cssSelection = function (cssRule) {
@@ -331,7 +338,7 @@ var DOMAssistant = function () {
 								}
 							}	
 						}
-						var xPathNodes = document.evaluate(xPathExpression, document, null, 0, null);
+						var xPathNodes = document.evaluate(xPathExpression, this, null, 0, null);
 						var node = xPathNodes.iterateNext();
 						while(node) {
 							elm.push(node);
@@ -341,29 +348,8 @@ var DOMAssistant = function () {
 					return elm;
 				};
 			}
-			else {				
-				DOMAssistant.cssSelection = function (cssRule) {
-					return DOMAssistant.cssSelect.call(document, cssRule);
-				};
-			}
-			return DOMAssistant.cssSelection.call(this, cssRule); 
-		},
-		
-		nativeQuery : function (cssRule) {
-			var elm = new HTMLArray();
-			var results = document.querySelectorAll(cssRule);
-			for (var i=0, il=results.length; i<il; i++) {
-				elm.push(results[i]);
-			}
-			return elm;
-		},
-		
-		cssSelect : function (cssRule) {
-			if (document.querySelectorAll) {
-				DOMAssistant.cssSelect = DOMAssistant.nativeQuery;
-			}
 			else {
-				DOMAssistant.cssSelect = function (cssRule) {
+				DOMAssistant.cssSelection = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
 					var elm = new HTMLArray();
 					var prevElm = new HTMLArray();
@@ -411,8 +397,7 @@ var DOMAssistant = function () {
 						}
 						cssSelectors = currentRule.split(" ");
 						prevElm = [];
-						prevElm.push(this);
-				
+						prevElm.push(this);				
 						for (var i=0, il=cssSelectors.length; i<il; i++) {
 							var rule = cssSelectors[i];
 							matchingElms = [];
@@ -889,7 +874,11 @@ var DOMAssistant = function () {
 					return elm;	
 				};
 			}
-			return DOMAssistant.cssSelect.call(this, cssRule);
+			return DOMAssistant.cssSelection.call(this, cssRule); 
+		},
+		
+		cssSelect : function (cssRule) {
+			return DOMAssistant.cssSelection.call(this, cssRule);
 		},
 	
 		elmsByClass : function (className, tag) {
