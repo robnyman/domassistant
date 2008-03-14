@@ -35,22 +35,22 @@ DOMAssistant.AJAX = function () {
 			var XMLHttp = null;
 			if (typeof XMLHttpRequest !== "undefined") {
 				XMLHttp = new XMLHttpRequest();
+				DOMAssistant.AJAX.initRequest = function () {
+					return new XMLHttpRequest();
+				};
 			}
 			else if (typeof window.ActiveXObject !== "undefined") {
-				try{
-					XMLHttp = new window.ActiveXObject("Msxml2.XMLHTTP.4.0");
-				}
-				catch(e) {
-					try{
-						XMLHttp = new window.ActiveXObject("MSXML2.XMLHTTP");
+				var XMLHttpMS = ["Msxml2.XMLHTTP.6.0", "Msxml2.XMLHTTP.3.0", "Msxml2.XMLHTTP", "Microsoft.XMLHTTP"];
+				for (var i=0; i<XMLHttpMS.length; i++) {
+					try	{
+						XMLHttp = new window.ActiveXObject(XMLHttpMS[i]);
+						DOMAssistant.AJAX.initRequest = function () {
+							return new window.ActiveXObject(XMLHttpMS[i]);
+						};
+						break;
 					}
-					catch(e2) {
-						try{
-							XMLHttp = new window.ActiveXObject("Microsoft.XMLHTTP");
-						}
-						catch(e3) {
-							XMLHttp = null;
-						}
+					catch (e) {
+						XMLHttp = null;
 					}
 				}
 			}
@@ -99,7 +99,9 @@ DOMAssistant.AJAX = function () {
 						var contentLength = (params)? params.length : 0;
 						XMLHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 						XMLHttp.setRequestHeader("Content-length", contentLength);
-						XMLHttp.setRequestHeader("Connection", "close");
+						if (XMLHttp.overrideMimeType) {
+							XMLHttp.setRequestHeader("Connection", "close");
+						}
 					}
 					for (var i in headers){
 						if (typeof i === "string") {
