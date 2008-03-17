@@ -906,7 +906,7 @@ var DOMAssistant = function () {
 						}
 					}
 					else {
-						var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag : "*") + "[contains(concat(' ', @class, ' '), ' " + className + " ')]", this, null, 0, null);
+						var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag.toLowerCase() : "*") + "[contains(concat(' ', @class, ' '), ' " + className + " ')]", this, null, 0, null);
 						var node = xPathNodes.iterateNext();
 						while(node) {
 							returnElms.push(node);
@@ -957,7 +957,7 @@ var DOMAssistant = function () {
 								break;	
 						}
 					}
-					var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag : "*") + "[" + attribute + "]", this, null, 0, null);
+					var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag.toLowerCase() : "*") + "[" + attribute + "]", this, null, 0, null);
 					var node = xPathNodes.iterateNext();
 					while(node) {
 						returnElms.push(node);
@@ -1013,7 +1013,7 @@ var DOMAssistant = function () {
 			if (document.evaluate) {
 				DOMAssistant.elmsByTag = function (tag) {
 					var returnElms = new HTMLArray();
-					var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag : "*"), this, null, 0, null);
+					var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag.toLowerCase() : "*"), this, null, 0, null);
 					var node = xPathNodes.iterateNext();
 					while(node) {
 						returnElms.push(node);
