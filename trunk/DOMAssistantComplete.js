@@ -3,7 +3,7 @@ var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
 	};
-	var isIE = /*@cc_on!@*/false;
+	var isIE = false;
 	return {
 		allMethods : [],
 		publicMethods : [
@@ -1410,14 +1410,16 @@ DOMAssistant.Events = function () {
 		},
 
 		removeEvent : function (evt, func) {
-			var eventColl = this.events[evt];
-			for (var i=0; i<eventColl.length; i++) {
-				if (eventColl[i] === func) {
-					delete eventColl[i];
-					eventColl.splice(i, 1);
+			if (this.events) {
+				var eventColl = this.events[evt];
+				for (var i=0; i<eventColl.length; i++) {
+					if (eventColl[i] === func) {
+						delete eventColl[i];
+						eventColl.splice(i, 1);
+					}
 				}
+				func.attachedElements[this.uniqueHandlerId] = null;
 			}
-			func.attachedElements[this.uniqueHandlerId] = null;
 			return this;
 		},
 
