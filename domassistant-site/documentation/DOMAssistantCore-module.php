@@ -191,7 +191,40 @@
 										// Do some JavaScript magic<br>
 									});
 								</code>
-							</p>						
+							</p>
+							
+							<!--
+							<h2 id="first"><code>first()</code></h2>
+							<p>To get a reference to the ﬁrst match in a collection.</p>
+							<h3>Return value</h3>
+							<p>Returns a reference to the first element match in a collection, with the DOMAssistant methods applied.</p>
+
+							<h3>Parameters</h3>
+						 	<p>None.</p>
+
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									$("#navigation a").first();
+								</code>
+							</p>
+							-->
+							
+							<h2 id="end"><code>end()</code></h2>
+							<p>To step one step up in the currect chaining context.</p>
+							<h3>Return value</h3>
+							<p>Returns a value to the previous element set in the chain.</p>
+
+							<h3>Parameters</h3>
+						 	<p>None.</p>
+
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									// Returns a reference to the a elements<br>
+									$("#navigation a").create("span", null, true).end();
+								</code>
+							</p>
 						</div>
 						
 						<div id="sidebar">
@@ -204,6 +237,8 @@
 								<li><a href="#elmsByAttribute">elmsByAttribute</a></li>
 								<li><a href="#elmsByTag">elmsByTag</a></li>
 								<li><a href="#each">each</a></li>
+								<!--<li><a href="#first">first</a></li>-->
+								<li><a href="#end">end</a></li>
 							</ul>
 							<?php include "domassistant-module-nav.php" ?>
 						</div>
