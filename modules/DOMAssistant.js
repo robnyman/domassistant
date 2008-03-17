@@ -167,7 +167,8 @@ var DOMAssistant = function () {
 					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
 					var elm = new HTMLArray();
 					var currentRule, identical, cssSelectors, xPathExpression, cssSelector, splitRule, nextTag, followingElm;
-					var cssSelectorRegExp =  /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\u00C0-\uFFFF\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[#?\w+(\^|\$|\*)?=?[\w\-\_]+\]+))\))?)*)?(>|\+|~)?/;
+					var cssSelectorRegExp =  /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[#?\w+(\^|\$|\*)?=?[\w\-\_]+\]+))\))?)*)?(>|\+|~)?/;
+					var spaceRegExp = new RegExp("\\s(?![^\\[]*\\])");
 					for (var i=0, il=cssRules.length; i<il; i++) {
 						currentRule = cssRules[i];
 						if (i > 0) {
@@ -182,7 +183,11 @@ var DOMAssistant = function () {
 								continue;
 							}
 						}
-						cssSelectors = currentRule.split(" ");
+						try {
+							cssSelectors = currentRule.split(spaceRegExp);
+						} catch (e) {
+							cssSelectors = currentRule.split(" ");
+						}
 						xPathExpression = ".";
 						for (var j=0, jl=cssSelectors.length; j<jl; j++) {
 							cssSelector = cssSelectorRegExp.exec(cssSelectors[j]);
@@ -218,7 +223,7 @@ var DOMAssistant = function () {
 								xPathExpression += splitRule.allClasses.replace(/\.([\w\u00C0-\uFFFF\-_]+)/g, "[contains(concat(' ', @class, ' '), ' $1 ')]");
 							}
 							if (splitRule.allAttr) {
-								xPathExpression += splitRule.allAttr.replace(/(\w+)(\^|\$|\*)?=?([\w\u00C0-\uFFFF\-_]+)?/g, function (match, p1, p2, p3, p4) {
+								xPathExpression += splitRule.allAttr.replace(/(\w+)(\^|\$|\*)?=?([\w\u00C0-\uFFFF\s\-_]+)?/g, function (match, p1, p2, p3, p4) {
 									var regExpReturn = match;
 									switch (p2) {
 										case "^":
@@ -360,7 +365,8 @@ var DOMAssistant = function () {
 					var matchingElms = new HTMLArray();
 					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextSelector, nextRegExp, refSeparator, refPrevElm, nextSib, refPrevElmFound, current, previous, prevParent, addElm, firstChild, lastChild, parentTagsByType, matchingChild, childrenNodes, childNodes;
 					var childOrSiblingRefRegExp = /^(>|\+|~)$/;
-					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\u00C0-\uFFFF\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[#?\w+(\^|\$|\*)?=?[\w\-\_]+\]+))\))?)*)?/;
+					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[#?\w+(\^|\$|\*)?=?[\w\-\_]+\]+))\))?)*)?/;
+					var spaceRegExp = new RegExp("\\s(?![^\\[]*\\])");
 					var matchedObjects;
 					function clearAdded() {
 						for (var n=0, nl=prevElm.length; n<nl; n++) {
@@ -399,7 +405,11 @@ var DOMAssistant = function () {
 								continue;
 							}
 						}
-						cssSelectors = currentRule.split(" ");
+						try {
+							cssSelectors = currentRule.split(spaceRegExp);
+						} catch (e) {
+							cssSelectors = currentRule.split(" ");
+						}
 						prevElm = [];
 						prevElm.push(this);				
 						for (var i=0, il=cssSelectors.length; i<il; i++) {
@@ -523,9 +533,9 @@ var DOMAssistant = function () {
 									prevElm = matchingElms;
 								}
 								if (splitRule.allAttr) {
-									splitRule.allAttr = splitRule.allAttr.replace(/(\])(\[)/, "$1 $2").split(" ");
+									splitRule.allAttr = splitRule.allAttr.replace(/(\])(\[)/, "$1|$2").split("|");
 									var regExpAttributes = [];
-									var attributeMatchRegExp = /(\w+)(\^|\$|\*)?=?([\w\u00C0-\uFFFF\-_]+)?/;
+									var attributeMatchRegExp = /(\w+)(\^|\$|\*)?=?([\w\u00C0-\uFFFF\s\-_]+)?/;
 									for (var sp=0, spl=splitRule.allAttr.length, attributeMatch, attribute, attributeValue, attrVal, tag, substrMatchSelector; sp<spl; sp++) {
 										attributeMatch = attributeMatchRegExp.exec(splitRule.allAttr[sp]);
 										attributeValue = attributeMatch[3] || null;
