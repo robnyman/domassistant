@@ -26,6 +26,9 @@ var DOMAssistant = function () {
 				}
 				return this;
 			};
+			HTMLArray.prototype.first = function (functionCall) {
+				return (typeof this[0] !== "undefined")? DOMAssistant.addMethodsToElm(this[0]) : null;
+			};
 			HTMLArray.prototype.end = function () {
 				return this.previousSet;
 			};
@@ -45,6 +48,7 @@ var DOMAssistant = function () {
 					this.applyMethod.call(elm, method, this.allMethods[method]);
 				}
 			}
+			return elm;
 		},
 		
 		applyMethod : function (method, func) {

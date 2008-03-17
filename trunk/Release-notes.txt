@@ -5,6 +5,7 @@ Version 2.7:
 - Method ajax added for making more customized AJAX calls, with more options.
 - Method setStyle added to the CSS module.
 - Method setErrorHandling added to the DOMLoad module.
+- Method first added to get the first of any matches.
 - Fixed so a function for an event, applied with addEvent, couldn't be added multiple times.
 - Fixed so a function in DOMReady couldn't be applied multiple times.
 - Performance fixes for nth-child selector variants and contains in Internet Explorer.
