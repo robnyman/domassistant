@@ -173,11 +173,7 @@ var DOMAssistant = function () {
 								continue;
 							}
 						}
-						try {
-							cssSelectors = currentRule.match(selectorSplitRegExp);
-						} catch (e) {
-							cssSelectors = currentRule.split(" ");
-						}
+						cssSelectors = currentRule.match(selectorSplitRegExp);
 						xPathExpression = ".";
 						for (var j=0, jl=cssSelectors.length; j<jl; j++) {
 							cssSelector = cssSelectorRegExp.exec(cssSelectors[j]);
@@ -356,8 +352,13 @@ var DOMAssistant = function () {
 					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextSelector, nextRegExp, refSeparator, refPrevElm, nextSib, refPrevElmFound, current, previous, prevParent, addElm, firstChild, lastChild, parentTagsByType, matchingChild, childrenNodes, childNodes;
 					var childOrSiblingRefRegExp = /^(>|\+|~)$/;
 					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[#?\w+(\^|\$|\*)?=?[\w\-\_]+\]+))\))?)*)?/;
-					var selectorSplitRegExp = new RegExp("([^\\s\+>~\\[\\(]+(?:\\[[^\\[]*\\])?(?:\\(.*\\))?[^\\s\\+>~]*|[\\+>~])(?=\\s?)", "g");
 					var matchedObjects;
+					var selectorSplitRegExp;
+					try {
+						selectorSplitRegExp = new RegExp("([^\\s\+>~\\[\\(]+(?:\\[[^\\[]*\\])?(?:\\(.*\\))?[^\\s\\+>~]*|[\\+>~])(?=\\s?)", "g");
+					} catch (e) {
+						selectorSplitRegExp = /[^\s]+/g;
+					}
 					function clearAdded() {
 						for (var n=0, nl=prevElm.length; n<nl; n++) {
 							prevElm[n].added = false;
@@ -395,11 +396,7 @@ var DOMAssistant = function () {
 								continue;
 							}
 						}
-						try {
-							cssSelectors = currentRule.match(selectorSplitRegExp);
-						} catch (e) {
-							cssSelectors = currentRule.split(" ");
-						}
+						cssSelectors = currentRule.match(selectorSplitRegExp);
 						prevElm = [];
 						prevElm.push(this);				
 						for (var i=0, il=cssSelectors.length; i<il; i++) {
