@@ -152,17 +152,7 @@ var DOMAssistant = function () {
 		},
 	
 		cssSelection : function  (cssRule) {
-			if (document.querySelectorAll) {
-				DOMAssistant.cssSelection = function (cssRule) {
-					var elm = new HTMLArray();
-					var results = this.querySelectorAll(cssRule);
-					for (var i=0, il=results.length; i<il; i++) {
-						elm.push(results[i]);
-					}
-					return elm;
-				};
-			}
-			else if (document.evaluate) {
+			if (document.evaluate) {
 				DOMAssistant.cssSelection = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
 					var elm = new HTMLArray();
@@ -886,6 +876,22 @@ var DOMAssistant = function () {
 						}
 					}
 					return elm;	
+				};
+			}
+			if (document.querySelectorAll) {
+				var cssSelectionBackup = DOMAssistant.cssSelection;
+				DOMAssistant.cssSelection = function (cssRule) {
+					try {
+						var elm = new HTMLArray();
+						var results = this.querySelectorAll(cssRule);
+						for (var i = 0, il = results.length; i<il; i++) {
+							elm.push(results[i]);
+						}
+						return elm;
+					}
+					catch (e) {
+						return cssSelectionBackup.call(this, cssRule);
+					}
 				};
 			}
 			return DOMAssistant.cssSelection.call(this, cssRule); 
