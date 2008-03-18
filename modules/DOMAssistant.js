@@ -158,7 +158,7 @@ var DOMAssistant = function () {
 					var elm = new HTMLArray();
 					var currentRule, identical, cssSelectors, xPathExpression, cssSelector, splitRule, nextTag, followingElm;
 					var cssSelectorRegExp =  /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[#?\w+(\^|\$|\*)?=?[\w\-\_]+\]+))\))?)*)?(>|\+|~)?/;
-					var spaceRegExp = new RegExp("\\s(?![^\\[]*\\])");
+					var selectorSplitRegExp = new RegExp("([^\\s\+>~\\[\\(]+(?:\\[[^\\[]*\\])?(?:\\(.*\\))?[^\\s\\+>~]*|[\\+>~])(?=\\s?)", "g");
 					for (var i=0, il=cssRules.length; i<il; i++) {
 						currentRule = cssRules[i];
 						if (i > 0) {
@@ -174,7 +174,7 @@ var DOMAssistant = function () {
 							}
 						}
 						try {
-							cssSelectors = currentRule.split(spaceRegExp);
+							cssSelectors = currentRule.match(selectorSplitRegExp);
 						} catch (e) {
 							cssSelectors = currentRule.split(" ");
 						}
@@ -356,7 +356,7 @@ var DOMAssistant = function () {
 					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextSelector, nextRegExp, refSeparator, refPrevElm, nextSib, refPrevElmFound, current, previous, prevParent, addElm, firstChild, lastChild, parentTagsByType, matchingChild, childrenNodes, childNodes;
 					var childOrSiblingRefRegExp = /^(>|\+|~)$/;
 					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[#?\w+(\^|\$|\*)?=?[\w\-\_]+\]+))\))?)*)?/;
-					var spaceRegExp = new RegExp("\\s(?![^\\[]*\\])");
+					var selectorSplitRegExp = new RegExp("([^\\s\+>~\\[\\(]+(?:\\[[^\\[]*\\])?(?:\\(.*\\))?[^\\s\\+>~]*|[\\+>~])(?=\\s?)", "g");
 					var matchedObjects;
 					function clearAdded() {
 						for (var n=0, nl=prevElm.length; n<nl; n++) {
@@ -396,7 +396,7 @@ var DOMAssistant = function () {
 							}
 						}
 						try {
-							cssSelectors = currentRule.split(spaceRegExp);
+							cssSelectors = currentRule.match(selectorSplitRegExp);
 						} catch (e) {
 							cssSelectors = currentRule.split(" ");
 						}
