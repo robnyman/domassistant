@@ -158,7 +158,7 @@ var DOMAssistant = function () {
 					var elm = new HTMLArray();
 					var currentRule, identical, cssSelectors, xPathExpression, cssSelector, splitRule, nextTag, followingElm;
 					var cssSelectorRegExp =  /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d+n?((\+|\-)\d+)?|\w+|((\w*\.[\w\-_]+)*)?|(\[#?\w+(\^|\$|\*)?=?[\w\-\_]+\]+))\))?)*)?(>|\+|~)?/;
-					var selectorSplitRegExp = new RegExp("([^\\s\+>~\\[\\(]+(?:\\[[^\\[]*\\])?(?:\\(.*\\))?[^\\s\\+>~]*|[\\+>~])(?=\\s?)", "g");
+					var selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
 					for (var i=0, il=cssRules.length; i<il; i++) {
 						currentRule = cssRules[i];
 						if (i > 0) {
@@ -355,7 +355,7 @@ var DOMAssistant = function () {
 					var matchedObjects;
 					var selectorSplitRegExp;
 					try {
-						selectorSplitRegExp = new RegExp("([^\\s\+>~\\[\\(]+(?:\\[[^\\[]*\\])?(?:\\(.*\\))?[^\\s\\+>~]*|[\\+>~])(?=\\s?)", "g");
+						selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
 					} catch (e) {
 						selectorSplitRegExp = /[^\s]+/g;
 					}
