@@ -1404,7 +1404,7 @@ DOMAssistant.Events = function () {
 					this.uniqueHandlerId = uniqueHandlerId++;
 				}
 				var alreadyExists = false;
-				if (func.attachedElements && func.attachedElements[this.uniqueHandlerId]) {
+				if (func.attachedElements && func.attachedElements[evt + this.uniqueHandlerId]) {
 					alreadyExists = true;
 				}
 				if (!alreadyExists) {
@@ -1423,8 +1423,10 @@ DOMAssistant.Events = function () {
 					if (typeof this.window === "object") {
 						this.window["on" + evt] = DOMAssistant.Events.handleEvent;
 					}
-					func.attachedElements = {};
-					func.attachedElements[this.uniqueHandlerId] = true;
+					if (!func.attachedElements) {
+						func.attachedElements = {};
+					}
+					func.attachedElements[evt + this.uniqueHandlerId] = true;
 				}
 			}
 			return this;
