@@ -157,7 +157,7 @@ var DOMAssistant = function () {
 					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
 					var elm = new HTMLArray();
 					var currentRule, identical, cssSelectors, xPathExpression, cssSelector, splitRule, nextTag, followingElm;
-					var cssSelectorRegExp =  /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|\w+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+))\))?)*)?(>|\+|~)?/;
+					var cssSelectorRegExp =  /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+))\))?)*)?(>|\+|~)?/;
 					var selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
 					for (var i=0, il=cssRules.length; i<il; i++) {
 						currentRule = cssRules[i];
@@ -363,7 +363,7 @@ var DOMAssistant = function () {
 					var matchingElms = new HTMLArray();
 					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextSelector, nextRegExp, refSeparator, refPrevElm, nextSib, refPrevElmFound, current, previous, prevParent, addElm, firstChild, lastChild, parentTagsByType, matchingChild, childrenNodes, childNodes;
 					var childOrSiblingRefRegExp = /^(>|\+|~)$/;
-					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|\w+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+))\))?)*)?/;
+					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+))\))?)*)?/;
 					var matchedObjects;
 					var selectorSplitRegExp;
 					try {
@@ -874,7 +874,7 @@ var DOMAssistant = function () {
 											prevElm = matchingElms;
 										}
 										else if (/contains/.test(pseudoClass)) {
-											var regExpContains = new RegExp("(^|\\s||\\b)" + pseudoValue + "(\\b|\\s|$)");
+											var regExpContains = new RegExp(pseudoValue);
 											for (var zContains=0, zContainsL=previousMatch.length; zContains<zContainsL; zContains++) {
 												previous = previousMatch[zContains];
 												if (!previous.added) {
