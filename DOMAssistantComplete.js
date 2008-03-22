@@ -157,7 +157,7 @@ var DOMAssistant = function () {
 					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
 					var elm = new HTMLArray();
 					var currentRule, identical, cssSelectors, xPathExpression, cssSelector, splitRule, nextTag, followingElm;
-					var cssSelectorRegExp =  /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+))\))?)*)?(>|\+|~)?/;
+					var cssSelectorRegExp =  /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+))\))?)*)?(>|\+|~)?/;
 					var selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
 					for (var i=0, il=cssRules.length; i<il; i++) {
 						currentRule = cssRules[i];
@@ -209,14 +209,14 @@ var DOMAssistant = function () {
 								xPathExpression += splitRule.allClasses.replace(/\.([\w\u00C0-\uFFFF\-_]+)/g, "[contains(concat(' ', @class, ' '), ' $1 ')]");
 							}
 							if (splitRule.allAttr) {
-								xPathExpression += splitRule.allAttr.replace(/(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_]+)?/g, function (match, p1, p2, p3, p4) {
+								xPathExpression += splitRule.allAttr.replace(/(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_\.]+)?/g, function (match, p1, p2, p3, p4) {
 									var regExpReturn = match;
 									switch (p2) {
 										case "^":
 											regExpReturn = "starts-with(@" + p1 + ", '" + p3 + "')";
 											break;
 										case "$":
-											regExpReturn = "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), 6) = '" + p3 + "'";
+											regExpReturn = "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = '" + p3 + "'";
 											break;
 										case "*":
 											regExpReturn = "contains(concat(' ', @" + p1 + ", ' '), '" + p3 + "')";
@@ -225,7 +225,7 @@ var DOMAssistant = function () {
 											regExpReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + "-'))";
 											break;
 										case "~":
-											regExpReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + " ') or substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), 6) = ' " + p3 + "' or contains(concat(' ', @" + p1 + ", ' '), ' " + p3 + " '))";
+											regExpReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + " ') or substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = ' " + p3 + "' or contains(concat(' ', @" + p1 + ", ' '), ' " + p3 + " '))";
 											break;
 										default :
 											regExpReturn = "@" + p1 + ((p3)? "='" + p3 + "'" : "");
@@ -316,15 +316,15 @@ var DOMAssistant = function () {
 									case "not":
 										pseudoValue = pseudoValue.replace(/^\[#([\w\-\_]+)\]$/, "[id=$1]");
 										var notSelector = pseudoValue.replace(/^(\w+)/, "self::$1");
-										notSelector = notSelector.replace(/\.([\w\u00C0-\uFFFF\-_]+)/g, "contains(concat(' ', @class, ' '), ' $1 ')");
-										notSelector = notSelector.replace(/\[(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_]+)?\]/g, function (match, p1, p2, p3, p4) {
+										notSelector = notSelector.replace(/^\.([\w\u00C0-\uFFFF\-_]+)/g, "contains(concat(' ', @class, ' '), ' $1 ')");
+										notSelector = notSelector.replace(/\[(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_\.]+)?\]/g, function (match, p1, p2, p3, p4) {
 											var regExpReturn = match;
 											switch (p2) {
 												case "^":
 													regExpReturn = "starts-with(@" + p1 + ", '" + p3 + "')";
 													break;
 												case "$":
-													regExpReturn = "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), 6) = '" + p3 + "'";
+													regExpReturn = "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = '" + p3 + "'";
 													break;
 												case "*":
 													regExpReturn = "contains(concat(' ', @" + p1 + ", ' '), '" + p3 + "')";
@@ -333,7 +333,7 @@ var DOMAssistant = function () {
 													regExpReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + "-'))";
 													break;
 												case "~":
-													regExpReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + " ') or substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), 6) = ' " + p3 + "' or contains(concat(' ', @" + p1 + ", ' '), ' " + p3 + " '))";
+													regExpReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + " ') or substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = ' " + p3 + "' or contains(concat(' ', @" + p1 + ", ' '), ' " + p3 + " '))";
 													break;
 												default :
 													regExpReturn = "@" + p1 + ((p3)? "='" + p3 + "'" : "");
@@ -363,7 +363,7 @@ var DOMAssistant = function () {
 					var matchingElms = new HTMLArray();
 					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextSelector, nextRegExp, refSeparator, refPrevElm, nextSib, refPrevElmFound, current, previous, prevParent, addElm, firstChild, lastChild, parentTagsByType, matchingChild, childrenNodes, childNodes;
 					var childOrSiblingRefRegExp = /^(>|\+|~)$/;
-					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_]+\]+))\))?)*)?/;
+					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+))\))?)*)?/;
 					var matchedObjects;
 					var selectorSplitRegExp;
 					try {
@@ -534,10 +534,10 @@ var DOMAssistant = function () {
 								if (splitRule.allAttr) {
 									splitRule.allAttr = splitRule.allAttr.match(/\[[^\]]+\]/g);
 									var regExpAttributes = [];
-									var attributeMatchRegExp = /(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_]+)?/;
+									var attributeMatchRegExp = /(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_\.]+)?/;
 									for (var sp=0, spl=splitRule.allAttr.length, attributeMatch, attribute, attributeValue, attrVal, tag, substrMatchSelector; sp<spl; sp++) {
 										attributeMatch = attributeMatchRegExp.exec(splitRule.allAttr[sp]);
-										attributeValue = attributeMatch[3] || null;
+										attributeValue = attributeMatch[3].replace(/\./g, "\\.") || null;
 										attrVal = (attributeValue)? ("^" + attributeValue + "$") : null;
 										substrMatchSelector = attributeMatch[2] || null;
 										if (typeof substrMatchSelector === "string") {
@@ -597,12 +597,12 @@ var DOMAssistant = function () {
 									if (/^:not$/.test(pseudoClass)) {
 										pseudoValue = pseudoValue.replace(/^\[#([\w\u00C0-\uFFFF\-\_]+)\]$/, "[id=$1]");
 										var notTag = /^(\w+)/.exec(pseudoValue);
-										var notClass = /\.([\w\u00C0-\uFFFF\-_]+)/.exec(pseudoValue);
-										var notAttr = /\[(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_]+)?\]/.exec(pseudoValue);
+										var notClass = /^\.([\w\u00C0-\uFFFF\-_]+)/.exec(pseudoValue);
+										var notAttr = /\[(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_\.]+)?\]/.exec(pseudoValue);
 										var notRegExp = new RegExp("(^|\\s)" + ((notTag)? notTag[1] : (notClass)? notClass[1] : "") + "(\\s|$)", "i");
 										if (notAttr) {
-											var notAttribute = notAttr[3];
-											var notMatchingAttrVal = "^" + notAttr[3] + "$";
+											var notAttribute = notAttr[3].replace(/\./g, "\\.");
+											var notMatchingAttrVal = "^" + notAttribute + "$";
 											var substrNoMatchSelector = notAttr[2];
 											if (typeof substrNoMatchSelector === "string") {
 												switch (substrNoMatchSelector) {
@@ -634,7 +634,8 @@ var DOMAssistant = function () {
 												addElm = notElm;
 											}
 											else if (notAttr) {
-												if (!getAttr(notElm, notAttr[1]) || !notRegExp.test(getAttr(notElm, notAttr[1]))) {
+												var attrVal = getAttr(notElm, notAttr[1]);
+												if (!attrVal || !notRegExp.test(attrVal)) {
 													addElm = notElm;
 												}
 											}

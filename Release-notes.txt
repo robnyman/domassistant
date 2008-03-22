@@ -10,6 +10,7 @@ Version 2.7:
 - Fixed so a function for an event, applied with addEvent, couldn't be added multiple times.
 - Fixed so a function in DOMReady couldn't be applied multiple times.
 - Performance fixes for nth-child selector variants and contains in Internet Explorer.
+- Accuracy fixes for XPath's ends-with() implementation for E[att$=value].
 - Accuracy fixes for nth-child selector.
 - Accuracy fixes for ~ selector and contains in Internet Explorer.
 - Fix for attribute selector to support values that contain spaces.
