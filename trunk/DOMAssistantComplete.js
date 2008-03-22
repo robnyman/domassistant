@@ -156,7 +156,7 @@ var DOMAssistant = function () {
 				DOMAssistant.cssSelection = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
 					var elm = new HTMLArray();
-					var currentRule, identical, cssSelectors, xPathExpression, cssSelector, splitRule, nextTag, followingElm;
+					var currentRule, identical, cssSelectors, xPathExpression, cssSelector, splitRule;
 					var cssSelectorRegExp =  /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+))\))?)*)?(>|\+|~)?/;
 					var selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
 					for (var i=0, il=cssRules.length; i<il; i++) {
@@ -421,40 +421,40 @@ var DOMAssistant = function () {
 									nextTag = /^\w+/.exec(nextSelector);
 									if (nextTag) {
 										nextRegExp = new RegExp("(^|\\s)" + nextTag + "(\\s|$)", "i");
-										refSeparator = childOrSiblingRef[0];
-										if (refSeparator === ">") {
-											for (var j=0, jl=prevElm.length, children; j<jl; j++) {
-												children = prevElm[j].childNodes;
-												for (var k=0, kl=children.length; k<kl; k++) {
-													if (nextRegExp.test(children[k].nodeName)) {
-														matchingElms.push(children[k]);
-													}
+									}
+									refSeparator = childOrSiblingRef[0];
+									if (refSeparator === ">") {
+										for (var j=0, jl=prevElm.length, children; j<jl; j++) {
+											children = prevElm[j].childNodes;
+											for (var k=0, kl=children.length; k<kl; k++) {
+												if (!nextTag || nextRegExp.test(children[k].nodeName)) {
+													matchingElms.push(children[k]);
 												}
-											}	
-										}
-										else if (refSeparator === "+") {
-											for (var l=0, ll=prevElm.length; l<ll; l++) {
-												nextSib = prevElm[l].nextSibling;
-												while (nextSib && nextSib.nodeType !== 1) {
-													nextSib = nextSib.nextSibling;
+											}
+										}	
+									}
+									else if (refSeparator === "+") {
+										for (var l=0, ll=prevElm.length; l<ll; l++) {
+											nextSib = prevElm[l].nextSibling;
+											while (nextSib && nextSib.nodeType !== 1) {
+												nextSib = nextSib.nextSibling;
+											}
+											if (nextSib) {
+												if (!nextTag || nextRegExp.test(nextSib.nodeName)) {
+													matchingElms.push(nextSib);
 												}
+											}
+										}	
+									}
+									else if (refSeparator === "~") {
+										for (var m=0, ml=prevElm.length; m<ml; m++) {
+											nextSib = prevElm[m];
+											while (nextSib) {
+												nextSib = nextSib.nextSibling;
 												if (nextSib) {
-													if (nextRegExp.test(nextSib.nodeName)) {
+													if (!nextSib.added && (!nextTag || nextRegExp.test(nextSib.nodeName))) {
+														nextSib.added = true;
 														matchingElms.push(nextSib);
-													}
-												}
-											}	
-										}
-										else if (refSeparator === "~") {
-											for (var m=0, ml=prevElm.length; m<ml; m++) {
-												nextSib = prevElm[m];
-												while (nextSib) {
-													nextSib = nextSib.nextSibling;
-													if (nextSib) {
-														if (!nextSib.added && nextRegExp.test(nextSib.nodeName)) {
-															nextSib.added = true;
-															matchingElms.push(nextSib);
-														}
 													}
 												}
 											}
