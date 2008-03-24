@@ -13,6 +13,7 @@ Version 2.7:
 - Accuracy fixes for XPath's ends-with() implementation of E[att$=value].
 - Accuracy fixes for nth-child selector.
 - Accuracy fixes for ~ selector and contains in Internet Explorer.
+- Fix for what's allowed following a child/sibling combinator.
 - Fix for attribute selector to support values that contain spaces.
 - Fix for what's returned from the prev and next methods, so it has the correct methods applied.
 
