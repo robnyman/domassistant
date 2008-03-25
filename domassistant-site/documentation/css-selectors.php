@@ -60,6 +60,10 @@
 								<dd>Get any <code>DIV</code> element where the <code>ID</code> attribute value ends with "parent".</dd>
 								<dt><code>div[id*=mpt]</code></dt>
 								<dd>Get any <code>DIV</code> element where the <code>ID</code> attribute value contains the text "mpt".</dd>
+								<dt><code>div[foo~=bar]</code></dt>
+								<dd>Get any <code>DIV</code> element where the <code>foo</code> attribute is a list of space-separated values, one of which is exactly equal to "bar".</dd>
+								<dt><code>div[lang|=en]</code></dt>
+								<dd>Get any <code>DIV</code> element where the <code>lang</code> attribute has a hyphen-separated list of values beginning (from the left) with "en".</dd>
 								<dt><code>div:first-child</code></dt>
 								<dd>Get any <code>DIV</code> element which is the first child of its parent element.</dd>
 								<dt><code>div:last-child</code></dt>
