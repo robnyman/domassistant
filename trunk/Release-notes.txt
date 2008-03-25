@@ -9,7 +9,7 @@ Version 2.7:
 - Added support for selectors E[att|=value] and E[att~=value].
 - Fixed so a function for an event, applied with addEvent, couldn't be added multiple times.
 - Fixed so a function in DOMReady couldn't be applied multiple times.
-- Performance fixes for nth-child selector variants and contains in Internet Explorer.
+- Performance fixes for ~ selector, nth-child variants and contains in Internet Explorer.
 - Accuracy fixes for XPath's ends-with() implementation of E[att$=value].
 - Accuracy fixes for nth-child selector.
 - Accuracy fixes for ~ selector and contains in Internet Explorer.
