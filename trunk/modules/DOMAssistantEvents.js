@@ -41,7 +41,7 @@ DOMAssistant.Events = function () {
 						var existingEvent = this["on" + evt];
 						if (existingEvent) {
 							this.events[evt].push(existingEvent);
-					    }
+						}
 					}							
 					this.events[evt].push(func);
 					this["on" + evt] = DOMAssistant.Events.handleEvent;
@@ -96,7 +96,7 @@ DOMAssistant.Events = function () {
 					evt.preventDefault();
 				};
 			}
-			else{
+			else {
 				DOMAssistant.Events.preventDefault = function (evt) {
 					event.returnValue = false;
 				};
@@ -110,7 +110,7 @@ DOMAssistant.Events = function () {
 					evt.stopPropagation();
 				};
 			}
-			else{
+			else {
 				DOMAssistant.Events.cancelBubble = function (evt) {
 					event.cancelBubble = true;
 				};

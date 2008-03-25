@@ -5,7 +5,7 @@ DOMAssistant.AJAX = function () {
 	var readyState = 0;
 	var status = -1;
 	var statusText = "";
-	var createAjaxObj = function (elm, url, method, callback, addToContent) {
+	var createAjaxObj = function (url, method, callback, addToContent) {
 		var params = null;
 		if (/POST/i.test(method)) {
 			url = url.split("?");
@@ -67,12 +67,12 @@ DOMAssistant.AJAX = function () {
 		},
 	
 		get : function (url, callback, addToContent) {
-			var ajaxObj = createAjaxObj(this, url, "GET", callback, addToContent);
+			var ajaxObj = createAjaxObj(url, "GET", callback, addToContent);
 			return DOMAssistant.AJAX.makeCall.call(this, ajaxObj);
 		},
 		
 		post : function (url, callback) {
-			var ajaxObj = createAjaxObj(this, url, "POST", callback);
+			var ajaxObj = createAjaxObj(url, "POST", callback);
 			return DOMAssistant.AJAX.makeCall.call(this, ajaxObj);
 		},
 		
@@ -80,7 +80,7 @@ DOMAssistant.AJAX = function () {
 			DOMAssistant.AJAX.get.call(this, url, DOMAssistant.AJAX.replaceWithAJAXContent, addToContent);
 		},
 		
-		makeCall : function  (ajaxObj) {
+		makeCall : function (ajaxObj) {
 			var XMLHttp = DOMAssistant.AJAX.initRequest();
 			if (XMLHttp) {
 				globalXMLHttp = XMLHttp;

@@ -4,7 +4,7 @@ DOMAssistant.Content = function () {
 	return {
 		prev : function () {
 			var prevSib = this.previousSibling;
-			while(prevSib && prevSib.nodeType !== 1) {
+			while (prevSib && prevSib.nodeType !== 1) {
 				prevSib = prevSib.previousSibling;
 			}
 			return DOMAssistant.$(prevSib);
@@ -12,7 +12,7 @@ DOMAssistant.Content = function () {
 
 		next : function () {
 			var nextSib = this.nextSibling;
-			while(nextSib && nextSib.nodeType !== 1) {
+			while (nextSib && nextSib.nodeType !== 1) {
 				nextSib = nextSib.nextSibling;
 			}
 			return DOMAssistant.$(nextSib);
@@ -37,7 +37,7 @@ DOMAssistant.Content = function () {
 				if (/class/i.test(i)) {
 					this.className = attr[i];
 				}
-				else{
+				else {
 					this.setAttribute(i, attr[i]);
 				}	
 			}
@@ -65,8 +65,8 @@ DOMAssistant.Content = function () {
 						}
 					}
 				}
-		    	child.parentNode.removeChild(child);
-		    }
+				child.parentNode.removeChild(child);
+			}
 			DOMAssistant.$(this).addContent(newContent);
 			return this;
 		},
