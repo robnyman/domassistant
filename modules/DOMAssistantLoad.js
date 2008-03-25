@@ -8,10 +8,10 @@ DOMAssistant.DOMLoad = function () {
 	var errorHandling = null;
 	var execFunctions = function () {
 		for (var i=0, il=functionsToCall.length; i<il; i++) {
-			try{
+			try {
 				functionsToCall[i]();
 			}
-			catch(e) {
+			catch (e) {
 				if (errorHandling && typeof errorHandling === "function") {
 					errorHandling(e);
 				}
@@ -31,11 +31,11 @@ DOMAssistant.DOMLoad = function () {
 	@if (@_win32 || @_win64)
 		if (document.getElementById) {
 			document.write("<script id=\"ieScriptLoad\" defer src=\"//:\"><\/script>");
-		    document.getElementById("ieScriptLoad").onreadystatechange = function() {
-		        if (this.readyState === "complete") {
-		            DOMHasLoaded();
-		        }
-		    };
+			document.getElementById("ieScriptLoad").onreadystatechange = function() {
+				if (this.readyState === "complete") {
+					DOMHasLoaded();
+				}
+			};
 		}
 	@end @*/
 	/* Mozilla/Opera 9 */
@@ -44,7 +44,7 @@ DOMAssistant.DOMLoad = function () {
 	}
 	/* Safari, iCab, Konqueror */
 	if (/KHTML|WebKit|iCab/i.test(navigator.userAgent)) {
-	    DOMLoadTimer = setInterval(function () {
+		DOMLoadTimer = setInterval(function () {
 			if (/loaded|complete/i.test(document.readyState)) {
 				DOMHasLoaded();
 				clearInterval(DOMLoadTimer);

@@ -44,7 +44,7 @@ DOMAssistant.CSS = function () {
 				if (typeof style === "object") {
 					for (var i in style) {
 						if (typeof i === "string") {
-							styleToSet += ";" + i + ":" +  style[i];
+							styleToSet += ";" + i + ":" + style[i];
 						}
 					}
 				}
