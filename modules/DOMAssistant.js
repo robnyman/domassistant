@@ -223,7 +223,7 @@ var DOMAssistant = function () {
 										case "~":
 											regExpReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + " ') or substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = ' " + p3 + "' or contains(concat(' ', @" + p1 + ", ' '), ' " + p3 + " '))";
 											break;
-										default :
+										default:
 											regExpReturn = "@" + p1 + ((p3)? "='" + p3 + "'" : "");
 									}
 									return regExpReturn;
@@ -331,7 +331,7 @@ var DOMAssistant = function () {
 												case "~":
 													regExpReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + " ') or substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = ' " + p3 + "' or contains(concat(' ', @" + p1 + ", ' '), ' " + p3 + " '))";
 													break;
-												default :
+												default:
 													regExpReturn = "@" + p1 + ((p3)? "='" + p3 + "'" : "");
 											}
 											return regExpReturn;
@@ -421,43 +421,41 @@ var DOMAssistant = function () {
 									if (nextTag) {
 										nextRegExp = new RegExp("(^|\\s)" + nextTag + "(\\s|$)", "i");
 									}
-									refSeparator = childOrSiblingRef[0];
-									if (refSeparator === ">") {
-										for (var j=0, jl=prevElm.length, children; j<jl; j++) {
-											children = prevElm[j].childNodes;
-											for (var k=0, kl=children.length; k<kl; k++) {
-												if (!nextTag || nextRegExp.test(children[k].nodeName)) {
-													matchableElms.push(children[k]);
+									switch (childOrSiblingRef[0]) {
+										case ">":
+											for (var j=0, jl=prevElm.length, children; j<jl; j++) {
+												children = prevElm[j].childNodes;
+												for (var k=0, kl=children.length; k<kl; k++) {
+													if (!nextTag || nextRegExp.test(children[k].nodeName)) {
+														matchableElms.push(children[k]);
+													}
 												}
 											}
-										}	
-									}
-									else if (refSeparator === "+") {
-										for (var l=0, ll=prevElm.length; l<ll; l++) {
-											nextSib = prevElm[l].nextSibling;
-											while (nextSib && nextSib.nodeType !== 1) {
-												nextSib = nextSib.nextSibling;
-											}
-											if (nextSib) {
-												if (!nextTag || nextRegExp.test(nextSib.nodeName)) {
-													matchableElms.push(nextSib);
+											break;
+										case "+":
+											for (var l=0, ll=prevElm.length; l<ll; l++) {
+												nextSib = prevElm[l].nextSibling;
+												while (nextSib && nextSib.nodeType !== 1) {
+													nextSib = nextSib.nextSibling;
 												}
-											}
-										}	
-									}
-									else if (refSeparator === "~") {
-										for (var m=0, ml=prevElm.length; m<ml; m++) {
-											nextSib = prevElm[m];
-											while (nextSib) {
-												nextSib = nextSib.nextSibling;
 												if (nextSib) {
+													if (!nextTag || nextRegExp.test(nextSib.nodeName)) {
+														matchableElms.push(nextSib);
+													}
+												}
+											}
+											break;
+										case "~":
+											for (var m=0, ml=prevElm.length; m<ml; m++) {
+												nextSib = prevElm[m];
+												while ((nextSib = nextSib.nextSibling) && !nextSib.added) {
 													if (!nextSib.added && (!nextTag || nextRegExp.test(nextSib.nodeName))) {
 														nextSib.added = true;
 														matchableElms.push(nextSib);
 													}
 												}
 											}
-										}
+											break;
 									}
 									prevElm = matchingElms = matchableElms;
 									clearAdded();
