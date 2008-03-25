@@ -484,8 +484,8 @@ var DOMAssistant = function () {
 								var DOMElm = document.getElementById(splitRule.id.replace(/#/, ""));
 								if (DOMElm) {
 									if (isChildOrSibling) {
-										for (var k=0, kl=matchableElms.length; k<kl; k++) {
-											if (matchableElms[k] === DOMElm) {
+										for (var mn=0, mnl=matchableElms.length; mn<mnl; mn++) {
+											if (matchableElms[mn] === DOMElm) {
 												matchingElms.push(DOMElm);
 												break;
 											}
@@ -643,8 +643,8 @@ var DOMAssistant = function () {
 											addElm = notElm;
 										}
 										else if (notAttr) {
-											var attrVal = getAttr(notElm, notAttr[1]);
-											if (!attrVal || !notRegExp.test(attrVal)) {
+											var att = getAttr(notElm, notAttr[1]);
+											if (!att || !notRegExp.test(att)) {
 												addElm = notElm;
 											}
 										}
