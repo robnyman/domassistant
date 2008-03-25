@@ -78,8 +78,6 @@
 								<dd>Get any <code>P</code> element which is the only <code>P</code> element child of its parent element.</dd>
 								<dt><code>p:nth-of-type(7)</code></dt>
 								<dd>Get the <code>P</code> element which is the 7th <code>P</code> element child of its parent element.</dd>
-								<dt><code>div#container p:nth-last-of-type()</code></dt>
-								<dd>Get the last <code>P</code> element child of its parent element.</dd>
 								<dt><code>div:empty</code></dt>
 								<dd>Get any <code>DIV</code> element which is completely empty (including text nodes).</dd>
 								<dt><code>div:not([id=container])</code></dt>
