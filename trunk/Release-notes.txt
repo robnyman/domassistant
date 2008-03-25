@@ -7,9 +7,9 @@ Version 2.7:
 - Method setErrorHandling added to the DOMLoad module.
 - Method first added to get the first of any matches.
 - Added support for selectors E[att|=value] and E[att~=value].
+- Significant CSS selector performance improvement in Internet Explorer.
 - Fixed so a function for an event, applied with addEvent, couldn't be added multiple times.
 - Fixed so a function in DOMReady couldn't be applied multiple times.
-- Performance fixes for ~ selector, nth-child variants and contains in Internet Explorer.
 - Accuracy fixes for XPath's ends-with() implementation of E[att$=value].
 - Accuracy fixes for nth-child selector.
 - Accuracy fixes for ~ selector and contains in Internet Explorer.
