@@ -1434,7 +1434,7 @@ DOMAssistant.Events = function () {
 						eventColl.splice(i, 1);
 					}
 				}
-				func.attachedElements[this.uniqueHandlerId] = null;
+				func.attachedElements[evt + this.uniqueHandlerId] = null;
 			}
 			return this;
 		},
