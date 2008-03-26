@@ -96,6 +96,8 @@
 								<dd>Get any <code>INPUT</code> element which is disabled.</dd>
 								<dt><code>input:checked</code></dt>
 								<dd>Get any <code>INPUT</code> element which is checked.</dd>
+								<dt><code>div:lang(zh)</code></dt>
+								<dd>Get any <code>DIV</code> element which is in Chinese.</dd>
 								<dt><code>p, a</code></dt>
 								<dd>Get all <code>P</code> elements and all <code>A</code> elements.</dd>
 							</dl>					
