@@ -551,7 +551,7 @@ var DOMAssistant = function () {
 								var attributeMatchRegExp = /(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_\.]+)?/;
 								for (var sp=0, spl=splitRule.allAttr.length, attributeMatch, attributeValue, attrVal, substrMatchSelector; sp<spl; sp++) {
 									attributeMatch = attributeMatchRegExp.exec(splitRule.allAttr[sp]);
-									attributeValue = attributeMatch[3].replace(/\./g, "\\.") || null;
+									attributeValue = (attributeMatch[3])? attributeMatch[3].replace(/\./g, "\\.") : null;
 									attrVal = (attributeValue)? ("^" + attributeValue + "$") : null;
 									substrMatchSelector = attributeMatch[2] || null;
 									if (typeof substrMatchSelector === "string") {
@@ -616,7 +616,7 @@ var DOMAssistant = function () {
 									var notAttr = /\[(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_\.]+)?\]/.exec(pseudoValue);
 									var notRegExp = new RegExp("(^|\\s)" + ((notTag)? notTag[1] : (notClass)? notClass[1] : "") + "(\\s|$)", "i");
 									if (notAttr) {
-										var notAttribute = notAttr[3].replace(/\./g, "\\.");
+										var notAttribute = (notAttr[3])? notAttr[3].replace(/\./g, "\\.") : null;
 										var notMatchingAttrVal = "^" + notAttribute + "$";
 										var substrNoMatchSelector = notAttr[2];
 										if (typeof substrNoMatchSelector === "string") {
