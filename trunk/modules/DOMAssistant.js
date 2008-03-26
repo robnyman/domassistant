@@ -663,230 +663,233 @@ var DOMAssistant = function () {
 									prevElm = matchingElms;
 								}
 								else {
-									switch (pseudoClass.match(pseudoClassRegExp)[0]) {
-										case "first-child":
-											for (var u=0; (previous=previousMatch[u]); u++) {
-												firstChild = previous.parentNode.firstChild;
-												while (firstChild.nodeType !== 1 && firstChild.nextSibling) {
-													firstChild = firstChild.nextSibling;
-												}
-												if (firstChild === previous) {
-													matchingElms.push(previous);
-												}
-											}
-											prevElm = matchingElms;
-											break;
-										case "last-child":
-											for (var v=0; (previous=previousMatch[v]); v++) {
-												lastChild = previous.parentNode.lastChild;
-												while (lastChild.nodeType !== 1 && lastChild.previousSibling) {
-													lastChild = lastChild.previousSibling;
-												}
-												if (lastChild === previous) {
-													matchingElms.push(previous);
-												}
-											}
-											prevElm = matchingElms;
-											break;
-										case "only-child":
-											for (var w=0; (previous=previousMatch[w]); w++) {
-												prevParent = previous.parentNode;
-												firstChild = prevParent.firstChild;
-												while (firstChild.nodeType !== 1 && firstChild.nextSibling) {
-													firstChild = firstChild.nextSibling;
-												}
-												lastChild = prevParent.lastChild;
-												while (lastChild.nodeType !== 1 && lastChild.previousSibling) {
-													lastChild = lastChild.previousSibling;
-												}
-												if (firstChild === previous && lastChild === previous) {
-													matchingElms.push(previous);
-												}
-											}
-											prevElm = matchingElms;
-											break;
-										case "nth-child":
-											if (/^\d+$/.test(pseudoValue)) {
-												var nthChild = parseInt(pseudoValue, 10);
-												for (var x=0, xl=previousMatch.length, childCounter; x<xl; x++) {
-													childCounter = 0;
-													previous = previousMatch[x];
-													prevParent = previous.parentNode;
-													matchingChild = prevParent.firstChild;
-													if (matchingChild.nodeType === 1) {
-														childCounter = childCounter + 1;
+									var pseudoClassMatches = pseudoClass.match(pseudoClassRegExp);
+									if (pseudoClassMatches && typeof pseudoClassMatches[0] === "string") {
+										switch (pseudoClass.match(pseudoClassRegExp)[0]) {
+											case "first-child":
+												for (var u=0; (previous=previousMatch[u]); u++) {
+													firstChild = previous.parentNode.firstChild;
+													while (firstChild.nodeType !== 1 && firstChild.nextSibling) {
+														firstChild = firstChild.nextSibling;
 													}
-													
-													while (childCounter < nthChild && matchingChild.nextSibling) {
-														matchingChild = matchingChild.nextSibling;
+													if (firstChild === previous) {
+														matchingElms.push(previous);
+													}
+												}
+												prevElm = matchingElms;
+												break;
+											case "last-child":
+												for (var v=0; (previous=previousMatch[v]); v++) {
+													lastChild = previous.parentNode.lastChild;
+													while (lastChild.nodeType !== 1 && lastChild.previousSibling) {
+														lastChild = lastChild.previousSibling;
+													}
+													if (lastChild === previous) {
+														matchingElms.push(previous);
+													}
+												}
+												prevElm = matchingElms;
+												break;
+											case "only-child":
+												for (var w=0; (previous=previousMatch[w]); w++) {
+													prevParent = previous.parentNode;
+													firstChild = prevParent.firstChild;
+													while (firstChild.nodeType !== 1 && firstChild.nextSibling) {
+														firstChild = firstChild.nextSibling;
+													}
+													lastChild = prevParent.lastChild;
+													while (lastChild.nodeType !== 1 && lastChild.previousSibling) {
+														lastChild = lastChild.previousSibling;
+													}
+													if (firstChild === previous && lastChild === previous) {
+														matchingElms.push(previous);
+													}
+												}
+												prevElm = matchingElms;
+												break;
+											case "nth-child":
+												if (/^\d+$/.test(pseudoValue)) {
+													var nthChild = parseInt(pseudoValue, 10);
+													for (var x=0, xl=previousMatch.length, childCounter; x<xl; x++) {
+														childCounter = 0;
+														previous = previousMatch[x];
+														prevParent = previous.parentNode;
+														matchingChild = prevParent.firstChild;
 														if (matchingChild.nodeType === 1) {
 															childCounter = childCounter + 1;
 														}
+														
+														while (childCounter < nthChild && matchingChild.nextSibling) {
+															matchingChild = matchingChild.nextSibling;
+															if (matchingChild.nodeType === 1) {
+																childCounter = childCounter + 1;
+															}
+														}
+														if (childCounter === nthChild && matchingChild && !matchingChild.added && (matchingChild.nodeName === previous.nodeName)) {
+															matchingChild.added = true;
+															matchingElms.push(matchingChild);
+														}
 													}
-													if (childCounter === nthChild && matchingChild && !matchingChild.added && (matchingChild.nodeName === previous.nodeName)) {
-														matchingChild.added = true;
-														matchingElms.push(matchingChild);
-													}
+													clearAdded();
 												}
-												clearAdded();
-											}
-											else if (/^n$/.test(pseudoValue)) {
-												if (!matchingElms.length) {
-													matchingElms = previousMatch;
+												else if (/^n$/.test(pseudoValue)) {
+													if (!matchingElms.length) {
+														matchingElms = previousMatch;
+													}
+													else {
+														for (var y=0, yl=previousMatch.length; y<yl; y++) {
+															matchingElms.push(previousMatch[y]);
+														}
+													}
 												}
 												else {
-													for (var y=0, yl=previousMatch.length; y<yl; y++) {
-														matchingElms.push(previousMatch[y]);
+													var pseudoSelector = /^(odd|even)|(\d*)n((\+|\-)(\d+))?$/.exec(pseudoValue);
+													var nRepeat = parseInt(pseudoSelector[2], 10);
+													var iteratorStart = (pseudoSelector[1] === "even")? 1 : 0;
+													var iteratorAdd = 2;
+													if (nRepeat > 0) {
+														iteratorAdd = nRepeat;
+														var nOperatorVal = (pseudoSelector[4])? parseInt((pseudoSelector[4] + pseudoSelector[5]), 10) : 0;
+														iteratorStart = nOperatorVal - 1;
 													}
-												}
-											}
-											else {
-												var pseudoSelector = /^(odd|even)|(\d*)n((\+|\-)(\d+))?$/.exec(pseudoValue);
-												var nRepeat = parseInt(pseudoSelector[2], 10);
-												var iteratorStart = (pseudoSelector[1] === "even")? 1 : 0;
-												var iteratorAdd = 2;
-												if (nRepeat > 0) {
-													iteratorAdd = nRepeat;
-													var nOperatorVal = (pseudoSelector[4])? parseInt((pseudoSelector[4] + pseudoSelector[5]), 10) : 0;
-													iteratorStart = nOperatorVal - 1;
-												}
-												for (var z=0; (previous=previousMatch[z]); z++) {
-													prevParent = previous.parentNode;
-													if (!prevParent.childElms) {
-														childrenNodes = prevParent.childNodes;
-														childNodes = [];
-														var childElm = prevParent.firstChild;
-														if (childElm.nodeType === 1) {
-															childNodes.push(childElm);
-														}
-														while (childElm && childElm.nextSibling) {
-															childElm = childElm.nextSibling;
+													for (var z=0; (previous=previousMatch[z]); z++) {
+														prevParent = previous.parentNode;
+														if (!prevParent.childElms) {
+															childrenNodes = prevParent.childNodes;
+															childNodes = [];
+															var childElm = prevParent.firstChild;
 															if (childElm.nodeType === 1) {
 																childNodes.push(childElm);
 															}
+															while (childElm && childElm.nextSibling) {
+																childElm = childElm.nextSibling;
+																if (childElm.nodeType === 1) {
+																	childNodes.push(childElm);
+																}
+															}
+															prevParent.childElms = true;
+															prevParents.push(prevParent);
+															for (var zz=iteratorStart, zzl=childNodes.length; zz<zzl; zz=zz+iteratorAdd) {
+																if (zz < 0) {
+																	continue;
+																}
+																current = childNodes[zz];
+																if (!current.added && current.nodeName === previous.nodeName) {
+																	current.added = true;
+																	matchingElms.push(current);
+																}
+															}
 														}
-														prevParent.childElms = true;
-														prevParents.push(prevParent);
-														for (var zz=iteratorStart, zzl=childNodes.length; zz<zzl; zz=zz+iteratorAdd) {
-															if (zz < 0) {
-																continue;
+													}
+													clearAdded();
+													clearChildElms();
+												}
+												prevElm = matchingElms;
+												break;
+											case "first-of-type":
+												for (var zFirst=0; (previous=previousMatch[zFirst]); zFirst++) {
+													firstChild = previous.parentNode.getElementsByTagName(previous.nodeName)[0];
+													if (firstChild === previous) {
+														matchingElms.push(previous);
+													}
+												}
+												prevElm = matchingElms;
+												break;
+											case "last-of-type":
+												for (var zLast=0; (previous=previousMatch[zLast]); zLast++) {
+													if (!previous.added) {
+														prevParent = previous.parentNode;
+														parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
+														lastChild = parentTagsByType[parentTagsByType.length - 1];
+														while (lastChild.parentNode !== prevParent) {
+															lastChild = lastChild.parentNode;
+														}
+														if (lastChild === previous) {
+															previous.added = true;
+															matchingElms.push(previous);
+														}
+													}
+												}
+												break;
+											case "only-of-type":
+												for (var zOnly=0; (previous=previousMatch[zOnly]); zOnly++) {
+													parentTagsByType = previous.parentNode.getElementsByTagName(previous.nodeName);
+													if (parentTagsByType.length === 1) {
+														matchingElms.push(previous);
+													}
+												}
+												prevElm = matchingElms;
+												break;
+											case "nth-of-type":
+												var nthIndex = parseInt(pseudoValue, 10);
+												for (var zNth=0; (previous=previousMatch[zNth]); zNth++) {
+													childNodes = [];
+													parentTagsByType = previous.parentNode.childNodes;
+													if (parentTagsByType.length >= nthIndex) {
+														for (var zInnerNth=0, zInnerNthL=parentTagsByType.length, childNode; zInnerNth<zInnerNthL; zInnerNth++) {
+															if (zInnerNth === nthIndex) {
+																break;
 															}
-															current = childNodes[zz];
-															if (!current.added && current.nodeName === previous.nodeName) {
-																current.added = true;
-																matchingElms.push(current);
+															childNode = parentTagsByType[zInnerNth];
+															if (childNode.nodeName === previous.nodeName) {
+																childNodes.push(childNode);
 															}
+														}
+														current = childNodes[childNodes.length - 1];
+														if (current && current === previous) {
+															matchingElms.push(previous);
+														}
+													}
+												}
+												prevElm = matchingElms;
+												break;
+											case "empty":
+												for (var zEmpty=0; (previous=previousMatch[zEmpty]); zEmpty++) {
+													childrenNodes = previous.parentNode.childNodes;
+													if (!childrenNodes.length) {
+														matchingElms.push(previous);
+													}
+												}
+												prevElm = matchingElms;
+												break;
+											case "enabled":
+												for (var zEnabled=0; (previous=previousMatch[zEnabled]); zEnabled++) {
+													if (!previous.disabled) {
+														matchingElms.push(previous);
+													}
+												}
+												prevElm = matchingElms;
+												break;
+											case "disabled":
+												for (var zDisabled=0; (previous=previousMatch[zDisabled]); zDisabled++) {
+													if (previous.disabled) {
+														matchingElms.push(previous);
+													}
+												}
+												prevElm = matchingElms;
+												break;
+											case "checked":
+												for (var zChecked=0; (previous=previousMatch[zChecked]); zChecked++) {
+													if (previous.checked) {
+														matchingElms.push(previous);
+													}
+												}
+												prevElm = matchingElms;
+												break;
+											case "contains":
+												var regExpContains = new RegExp(pseudoValue);
+												for (var zContains=0; (previous=previousMatch[zContains]); zContains++) {
+													if (!previous.added) {
+														if (regExpContains.test(previous.innerText)) {
+															previous.added = true;
+															matchingElms.push(previous);
 														}
 													}
 												}
 												clearAdded();
-												clearChildElms();
-											}
-											prevElm = matchingElms;
-											break;
-										case "first-of-type":
-											for (var zFirst=0; (previous=previousMatch[zFirst]); zFirst++) {
-												firstChild = previous.parentNode.getElementsByTagName(previous.nodeName)[0];
-												if (firstChild === previous) {
-													matchingElms.push(previous);
-												}
-											}
-											prevElm = matchingElms;
-											break;
-										case "last-of-type":
-											for (var zLast=0; (previous=previousMatch[zLast]); zLast++) {
-												if (!previous.added) {
-													prevParent = previous.parentNode;
-													parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
-													lastChild = parentTagsByType[parentTagsByType.length - 1];
-													while (lastChild.parentNode !== prevParent) {
-														lastChild = lastChild.parentNode;
-													}
-													if (lastChild === previous) {
-														previous.added = true;
-														matchingElms.push(previous);
-													}
-												}
-											}
-											break;
-										case "only-of-type":
-											for (var zOnly=0; (previous=previousMatch[zOnly]); zOnly++) {
-												parentTagsByType = previous.parentNode.getElementsByTagName(previous.nodeName);
-												if (parentTagsByType.length === 1) {
-													matchingElms.push(previous);
-												}
-											}
-											prevElm = matchingElms;
-											break;
-										case "nth-of-type":
-											var nthIndex = parseInt(pseudoValue, 10);
-											for (var zNth=0; (previous=previousMatch[zNth]); zNth++) {
-												childNodes = [];
-												parentTagsByType = previous.parentNode.childNodes;
-												if (parentTagsByType.length >= nthIndex) {
-													for (var zInnerNth=0, zInnerNthL=parentTagsByType.length, childNode; zInnerNth<zInnerNthL; zInnerNth++) {
-														if (zInnerNth === nthIndex) {
-															break;
-														}
-														childNode = parentTagsByType[zInnerNth];
-														if (childNode.nodeName === previous.nodeName) {
-															childNodes.push(childNode);
-														}
-													}
-													current = childNodes[childNodes.length - 1];
-													if (current && current === previous) {
-														matchingElms.push(previous);
-													}
-												}
-											}
-											prevElm = matchingElms;
-											break;
-										case "empty":
-											for (var zEmpty=0; (previous=previousMatch[zEmpty]); zEmpty++) {
-												childrenNodes = previous.parentNode.childNodes;
-												if (!childrenNodes.length) {
-													matchingElms.push(previous);
-												}
-											}
-											prevElm = matchingElms;
-											break;
-										case "enabled":
-											for (var zEnabled=0; (previous=previousMatch[zEnabled]); zEnabled++) {
-												if (!previous.disabled) {
-													matchingElms.push(previous);
-												}
-											}
-											prevElm = matchingElms;
-											break;
-										case "disabled":
-											for (var zDisabled=0; (previous=previousMatch[zDisabled]); zDisabled++) {
-												if (previous.disabled) {
-													matchingElms.push(previous);
-												}
-											}
-											prevElm = matchingElms;
-											break;
-										case "checked":
-											for (var zChecked=0; (previous=previousMatch[zChecked]); zChecked++) {
-												if (previous.checked) {
-													matchingElms.push(previous);
-												}
-											}
-											prevElm = matchingElms;
-											break;
-										case "contains":
-											var regExpContains = new RegExp(pseudoValue);
-											for (var zContains=0; (previous=previousMatch[zContains]); zContains++) {
-												if (!previous.added) {
-													if (regExpContains.test(previous.innerText)) {
-														previous.added = true;
-														matchingElms.push(previous);
-													}
-												}
-											}
-											clearAdded();
-											prevElm = matchingElms;
-											break;
+												prevElm = matchingElms;
+												break;
+										}
 									}
 								}
 							}
