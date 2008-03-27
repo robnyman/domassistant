@@ -32,6 +32,12 @@ var DOMAssistant = function () {
 			HTMLArray.prototype.end = function () {
 				return this.previousSet;
 			};
+			HTMLArray.prototype.pushAll = function (newSet) {
+				for (var i=0, iL=newSet.length; i<iL; i++) {
+					this.push(newSet[i]);
+				}
+				return this;
+			};
 			this.attach(this);
 		},
 		
@@ -86,9 +92,7 @@ var DOMAssistant = function () {
 				for (var i=0, il=this.length; i<il; i++) {
 					elms = method.apply(this[i], arguments);
 					if (typeof elms !== "undefined" && elms !== null && elms.constructor === Array) {
-						for (var j=0, jl=elms.length; j<jl; j++) {
-							elmsToReturn.push(elms[j]);
-						}
+						elmsToReturn.pushAll(elms);
 					}
 					else {
 						elmsToReturn.push(elms);
@@ -119,9 +123,7 @@ var DOMAssistant = function () {
 						elm = DOMAssistant.$$(arg);
 					}
 					else {
-						for (var j=0, jl=arguments.length; j<jl; j++) {
-							elm.push(arguments[j]);
-						}
+						elm.pushAll(arguments);
 					}
 				}
 			}
@@ -722,9 +724,7 @@ var DOMAssistant = function () {
 														matchingElms = previousMatch;
 													}
 													else {
-														for (var y=0, yl=previousMatch.length; y<yl; y++) {
-															matchingElms.push(previousMatch[y]);
-														}
+														matchingElms.pushAll(previousMatch);
 													}
 												}
 												else {
@@ -866,9 +866,7 @@ var DOMAssistant = function () {
 								}
 							}
 						}
-						for (var iPrevElm=0, iPrevElmL=prevElm.length; iPrevElm<iPrevElmL; iPrevElm++) {
-							elm.push(prevElm[iPrevElm]);
-						}
+						elm.pushAll(prevElm);
 					}
 					return elm;	
 				};
@@ -878,10 +876,7 @@ var DOMAssistant = function () {
 				DOMAssistant.cssSelection = function (cssRule) {
 					try {
 						var elm = new HTMLArray();
-						var results = this.querySelectorAll(cssRule);
-						for (var i=0, il=results.length; i<il; i++) {
-							elm.push(results[i]);
-						}
+						elm.pushAll(this.querySelectorAll(cssRule));
 						return elm;
 					}
 					catch (e) {
@@ -901,10 +896,7 @@ var DOMAssistant = function () {
 				DOMAssistant.elmsByClass = function (className, tag) {
 					var returnElms = new HTMLArray();
 					if (this.getElementsByClassName && !tag) {
-						var results = this.getElementsByClassName(className);
-						for (var i=0, il=results.length; i<il; i++) {
-							returnElms.push(results[i]);
-						}
+						returnElms.pushAll(this.getElementsByClassName(className));
 					}
 					else {
 						var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag.toLowerCase() : "*") + "[contains(concat(' ', @class, ' '), ' " + className + " ')]", this, null, 0, null);
@@ -1024,10 +1016,7 @@ var DOMAssistant = function () {
 			else {			
 				DOMAssistant.elmsByTag = function (tag) {
 					var returnElms = new HTMLArray();
-					var elmsWithTag = this.getElementsByTagName(tag);
-					for (var i=0, il=elmsWithTag.length; i<il; i++) {
-						returnElms.push(elmsWithTag[i]);
-					}
+					returnElms.pushAll(this.getElementsByTagName(tag));
 					return returnElms;
 				};
 			}
