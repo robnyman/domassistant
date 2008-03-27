@@ -728,42 +728,45 @@ var DOMAssistant = function () {
 													}
 												}
 												else {
-													var pseudoSelector = /^(odd|even)|(\d*)n((\+|\-)(\d+))?$/.exec(pseudoValue);
-													var nRepeat = parseInt(pseudoSelector[2], 10);
-													var iteratorStart = (pseudoSelector[1] === "even")? 1 : 0;
+													var pseudoSelector = /^(odd|even)|(\d*)(n)((\+|\-)(\d+))?$/.exec(pseudoValue);
+													var nRepeat = (!pseudoSelector[2] && pseudoSelector[3])? 1 : parseInt(pseudoSelector[2], 10);
+													var iteratorStart = (pseudoSelector[1] === "even")? 2 : 1;
 													var iteratorAdd = 2;
 													if (nRepeat > 0) {
-														iteratorAdd = nRepeat;
-														var nOperatorVal = (pseudoSelector[4])? parseInt((pseudoSelector[4] + pseudoSelector[5]), 10) : 0;
-														iteratorStart = nOperatorVal - 1;
+														iteratorStart = iteratorAdd = nRepeat;
+														if (pseudoSelector[5]) {
+															var adder = parseInt(pseudoSelector[6], 10);
+															if (pseudoSelector[5] === "+") {
+																iteratorStart = adder;
+															}
+															else {
+																var n = 1;
+																while ((iteratorStart=(nRepeat*(n++))-adder) < 1) {
+																	continue;
+																}
+															}
+														}
 													}
 													for (var z=0; (previous=previousMatch[z]); z++) {
 														prevParent = previous.parentNode;
 														if (!prevParent.childElms) {
-															childrenNodes = prevParent.childNodes;
-															childNodes = [];
+															var iteratorNext = iteratorStart, childCount = 0;
 															var childElm = prevParent.firstChild;
-															if (childElm.nodeType === 1) {
-																childNodes.push(childElm);
-															}
-															while (childElm && childElm.nextSibling) {
-																childElm = childElm.nextSibling;
+															var firstCount = true;
+															while (firstCount || (childElm = childElm.nextSibling)) {
 																if (childElm.nodeType === 1) {
-																	childNodes.push(childElm);
+																	if (++childCount === iteratorNext) {
+																		if (!childElm.added && childElm.nodeName === previous.nodeName) {
+																			childElm.added = true;
+																			matchingElms.push(childElm);
+																		}
+																		iteratorNext += iteratorAdd;
+																	}
 																}
+																firstCount = false;
 															}
 															prevParent.childElms = true;
 															prevParents.push(prevParent);
-															for (var zz=iteratorStart, zzl=childNodes.length; zz<zzl; zz=zz+iteratorAdd) {
-																if (zz < 0) {
-																	continue;
-																}
-																current = childNodes[zz];
-																if (!current.added && current.nodeName === previous.nodeName) {
-																	current.added = true;
-																	matchingElms.push(current);
-																}
-															}
 														}
 													}
 													clearAdded();
