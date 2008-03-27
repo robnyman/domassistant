@@ -66,7 +66,6 @@ var DOMAssistant = function () {
 		attach : function (plugin) {
 			var publicMethods = plugin.publicMethods;
 			if (typeof publicMethods === "undefined") {
-				var pluginMethod;
 				for (var method in plugin) {
 					if (method !== "init" && typeof plugin[method] !== "undefined") {
 						this.addMethods(method, plugin[method]);
@@ -362,7 +361,7 @@ var DOMAssistant = function () {
 					var prevElm = new HTMLArray();
 					var matchingElms = new HTMLArray();
 					var matchableElms = new HTMLArray();
-					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextSelector, nextRegExp, refSeparator, nextSib, current, previous, prevParent, addElm, firstChild, lastChild, parentTagsByType, matchingChild, childrenNodes, childNodes;
+					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextSelector, nextRegExp, nextSib, current, previous, prevParent, addElm, firstChild, lastChild, parentTagsByType, matchingChild, childrenNodes, childNodes;
 					var childOrSiblingRefRegExp = /^(>|\+|~)$/;
 					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=[\w\u00C0-\uFFFF\s\-\_\.]+)?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+))\))?)*)?/;
 					var selectorSplitRegExp;
@@ -740,8 +739,8 @@ var DOMAssistant = function () {
 																iteratorStart = adder;
 															}
 															else {
-																var n = 1;
-																while ((iteratorStart=(nRepeat*(n++))-adder) < 1) {
+																var nn = 1;
+																while ((iteratorStart=(nRepeat*(nn++))-adder) < 1) {
 																	continue;
 																}
 															}
