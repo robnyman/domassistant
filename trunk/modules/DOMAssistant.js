@@ -519,19 +519,19 @@ var DOMAssistant = function () {
 								}
 								var matchingClassElms = [];
 								for (var p=0, elmClass; (current=prevElm[p]); p++) {
-									if (!current.added) {
+									elmClass = current.className;
+									if (elmClass && !current.added) {
 										addElm = false;
-										elmClass = current.className;
 										for (var q=0, ql=regExpClassNames.length; q<ql; q++) {
 											addElm = regExpClassNames[q].test(elmClass);
 											if (!addElm) {
 												break;
 											}
 										}
-									}
-									if (addElm) {
-										current.added = true;
-										matchingClassElms.push(current);
+										if (addElm) {
+											current.added = true;
+											matchingClassElms.push(current);
+										}
 									}
 								}
 								clearAdded();
@@ -656,7 +656,7 @@ var DOMAssistant = function () {
 								else {
 									var pseudoClassMatches = pseudoClass.match(pseudoClassRegExp);
 									if (pseudoClassMatches && typeof pseudoClassMatches[0] === "string") {
-										switch (pseudoClass.match(pseudoClassRegExp)[0]) {
+										switch (pseudoClassMatches[0]) {
 											case "first-child":
 												for (var u=0; (previous=previousMatch[u]); u++) {
 													firstChild = previous.parentNode.firstChild;
@@ -850,10 +850,9 @@ var DOMAssistant = function () {
 												}
 												break;
 											case "contains":
-												var regExpContains = new RegExp(pseudoValue);
 												for (var zContains=0; (previous=previousMatch[zContains]); zContains++) {
 													if (!previous.added) {
-														if (regExpContains.test(previous.innerText)) {
+														if (previous.innerText.indexOf(pseudoValue) !== -1) {
 															previous.added = true;
 															matchingElms.push(previous);
 														}
@@ -880,7 +879,7 @@ var DOMAssistant = function () {
 					try {
 						var elm = new HTMLArray();
 						var results = this.querySelectorAll(cssRule);
-						for (var i = 0, il = results.length; i<il; i++) {
+						for (var i=0, il=results.length; i<il; i++) {
 							elm.push(results[i]);
 						}
 						return elm;
