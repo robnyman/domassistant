@@ -697,28 +697,7 @@ var DOMAssistant = function () {
 												}
 												break;
 											case "nth-child":
-												if (/^\d+$/.test(pseudoValue)) {
-													var nthChild = parseInt(pseudoValue, 10);
-													for (var x=0, childCounter; (previous=previousMatch[x]); x++) {
-														childCounter = 0;
-														prevParent = previous.parentNode;
-														matchingChild = prevParent.firstChild;
-														if (matchingChild.nodeType === 1) {
-															childCounter = childCounter + 1;
-														}
-														while (childCounter < nthChild && (matchingChild = matchingChild.nextSibling)) {
-															if (matchingChild.nodeType === 1) {
-																childCounter = childCounter + 1;
-															}
-														}
-														if (childCounter === nthChild && matchingChild && !matchingChild.added && (matchingChild.nodeName === previous.nodeName)) {
-															matchingChild.added = true;
-															matchingElms.push(matchingChild);
-														}
-													}
-													clearAdded();
-												}
-												else if (/^n$/.test(pseudoValue)) {
+												if (/^n$/.test(pseudoValue)) {
 													if (!matchingElms.length) {
 														matchingElms = previousMatch;
 													}
@@ -727,21 +706,28 @@ var DOMAssistant = function () {
 													}
 												}
 												else {
-													var pseudoSelector = /^(odd|even)|(\d*)(n)((\+|\-)(\d+))?$/.exec(pseudoValue);
-													var nRepeat = (!pseudoSelector[2] && pseudoSelector[3])? 1 : parseInt(pseudoSelector[2], 10);
-													var iteratorStart = (pseudoSelector[1] === "even")? 2 : 1;
-													var iteratorAdd = 2;
-													if (nRepeat > 0) {
-														iteratorStart = iteratorAdd = nRepeat;
-														if (pseudoSelector[5]) {
-															var adder = parseInt(pseudoSelector[6], 10);
-															if (pseudoSelector[5] === "+") {
-																iteratorStart = adder;
-															}
-															else {
-																var nn = 1;
-																while ((iteratorStart=(nRepeat*(nn++))-adder) < 1) {
-																	continue;
+													var iteratorStart, iteratorAdd;
+													if (/^\d+$/.test(pseudoValue)) {
+														iteratorStart = parseInt(pseudoValue, 10);
+														iteratorAdd = 0;
+													}
+													else {
+														var pseudoSelector = /^(odd|even)|(\d*)(n)((\+|\-)(\d+))?$/.exec(pseudoValue);
+														var nRepeat = (!pseudoSelector[2] && pseudoSelector[3])? 1 : parseInt(pseudoSelector[2], 10);
+														iteratorStart = (pseudoSelector[1] === "even")? 2 : 1;
+														iteratorAdd = 2;
+														if (nRepeat > 0) {
+															iteratorStart = iteratorAdd = nRepeat;
+															if (pseudoSelector[5]) {
+																var adder = parseInt(pseudoSelector[6], 10);
+																if (pseudoSelector[5] === "+") {
+																	iteratorStart = adder;
+																}
+																else {
+																	var nn = 1;
+																	while ((iteratorStart=(nRepeat*(nn++))-adder) < 1) {
+																		continue;
+																	}
 																}
 															}
 														}
@@ -752,7 +738,7 @@ var DOMAssistant = function () {
 															var iteratorNext = iteratorStart, childCount = 0;
 															var childElm = prevParent.firstChild;
 															var firstCount = true;
-															while (firstCount || (childElm = childElm.nextSibling)) {
+															while (childCount < iteratorNext && (firstCount || (childElm = childElm.nextSibling))) {
 																if (childElm.nodeType === 1) {
 																	if (++childCount === iteratorNext) {
 																		if (!childElm.added && childElm.nodeName === previous.nodeName) {
