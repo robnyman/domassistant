@@ -226,7 +226,7 @@ var DOMAssistant = function () {
 											regExpReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + " ') or substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = ' " + p3 + "' or contains(concat(' ', @" + p1 + ", ' '), ' " + p3 + " '))";
 											break;
 										default:
-											regExpReturn = "@" + p1 + ((p3)? "='" + p3 + "'" : "");
+											regExpReturn = "@" + p1 + (p3? "='" + p3 + "'" : "");
 									}
 									return regExpReturn;
 								});
@@ -236,7 +236,7 @@ var DOMAssistant = function () {
 								splitRule.allPseudos = splitRule.allPseudos.match(/(:\w+[\w\-]*)(\([^\)]+\))?/g);
 								for (var y=0, yL=splitRule.allPseudos.length; y<yL; y++) {
 									var pseudo = splitRule.allPseudos[y].match(pseudoSplitRegExp);
-									var pseudoClass = pseudo[1];
+									var pseudoClass = pseudo[1]? pseudo[1].toLowerCase() : null;
 									var pseudoValue = pseudo[3]? pseudo[3] : null;
 									switch (pseudoClass) {
 										case "first-child":
@@ -339,7 +339,7 @@ var DOMAssistant = function () {
 														regExpReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + " ') or substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = ' " + p3 + "' or contains(concat(' ', @" + p1 + ", ' '), ' " + p3 + " '))";
 														break;
 													default:
-														regExpReturn = "@" + p1 + ((p3)? "='" + p3 + "'" : "");
+														regExpReturn = "@" + p1 + (p3? "='" + p3 + "'" : "");
 												}
 												return regExpReturn;
 											});
@@ -544,8 +544,8 @@ var DOMAssistant = function () {
 								var attributeMatchRegExp = /(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_\.]+)?/;
 								for (var sp=0, spl=splitRule.allAttr.length, attributeMatch, attributeValue, attrVal, substrMatchSelector; sp<spl; sp++) {
 									attributeMatch = attributeMatchRegExp.exec(splitRule.allAttr[sp]);
-									attributeValue = (attributeMatch[3])? attributeMatch[3].replace(/\./g, "\\.") : null;
-									attrVal = (attributeValue)? ("^" + attributeValue + "$") : null;
+									attributeValue = attributeMatch[3]? attributeMatch[3].replace(/\./g, "\\.") : null;
+									attrVal = attributeValue? "^" + attributeValue + "$" : null;
 									substrMatchSelector = attributeMatch[2] || null;
 									if (typeof substrMatchSelector === "string") {
 										switch (substrMatchSelector) {
@@ -566,7 +566,7 @@ var DOMAssistant = function () {
 												break;	
 										}
 									}
-									regExpAttributes.push([((attrVal)? new RegExp(attrVal) : null), attributeMatch[1]]);
+									regExpAttributes.push([(attrVal? new RegExp(attrVal) : null), attributeMatch[1]]);
 								}
 								var matchingAttributeElms = [];
 								for (var r=0, currentAttr; (current=matchingElms[r]); r++) {
@@ -599,7 +599,7 @@ var DOMAssistant = function () {
 								splitRule.allPseudos = splitRule.allPseudos.match(/(:\w+[\w\-]*)(\([^\)]+\))?/g);
 								for (var y=0, yL=splitRule.allPseudos.length; y<yL; y++) {
 									var pseudo = splitRule.allPseudos[y].match(pseudoSplitRegExp);
-									var pseudoClass = pseudo[1];
+									var pseudoClass = pseudo[1]? pseudo[1].toLowerCase() : null;
 									var pseudoValue = pseudo[3]? pseudo[3] : null;
 									var previousMatch = matchingElms;
 									matchingElms = [];
@@ -609,9 +609,9 @@ var DOMAssistant = function () {
 										var notTag = /^(\w+)/.exec(pseudoValue);
 										var notClass = /^\.([\w\u00C0-\uFFFF\-_]+)/.exec(pseudoValue);
 										var notAttr = /\[(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_\.]+)?\]/.exec(pseudoValue);
-										var notRegExp = new RegExp("(^|\\s)" + ((notTag)? notTag[1] : (notClass)? notClass[1] : "") + "(\\s|$)", "i");
+										var notRegExp = new RegExp("(^|\\s)" + (notTag? notTag[1] : notClass? notClass[1] : "") + "(\\s|$)", "i");
 										if (notAttr) {
-											var notAttribute = (notAttr[3])? notAttr[3].replace(/\./g, "\\.") : null;
+											var notAttribute = notAttr[3]? notAttr[3].replace(/\./g, "\\.") : null;
 											var notMatchingAttrVal = "^" + notAttribute + "$";
 											var substrNoMatchSelector = notAttr[2];
 											if (typeof substrNoMatchSelector === "string") {
