@@ -596,7 +596,6 @@ var DOMAssistant = function () {
 							}
 							if (splitRule.allPseudos) {
 								var pseudoSplitRegExp = /:(\w[\w\-]*)(\(([^\)]+)\))?/;
-								var pseudoClassRegExp = /((first|last|only|nth)-child|(first|last|only|nth)-of-type|empty|enabled|disabled|checked|contains|lang)/i;
 								splitRule.allPseudos = splitRule.allPseudos.match(/(:\w+[\w\-]*)(\([^\)]+\))?/g);
 								for (var y=0, yL=splitRule.allPseudos.length; y<yL; y++) {
 									var pseudo = splitRule.allPseudos[y].match(pseudoSplitRegExp);
@@ -657,188 +656,185 @@ var DOMAssistant = function () {
 										}
 									}
 									else {
-										var pseudoClassMatches = pseudoClass.match(pseudoClassRegExp);
-										if (pseudoClassMatches && typeof pseudoClassMatches[0] === "string") {
-											switch (pseudoClassMatches[0]) {
-												case "first-child":
-													for (var u=0; (previous=previousMatch[u]); u++) {
-														firstChild = previous.parentNode.firstChild;
-														while (firstChild.nodeType !== 1 && (firstChild = firstChild.nextSibling)) {}
-														if (firstChild === previous) {
-															matchingElms.push(previous);
-														}
+										switch (pseudoClass) {
+											case "first-child":
+												for (var u=0; (previous=previousMatch[u]); u++) {
+													firstChild = previous.parentNode.firstChild;
+													while (firstChild.nodeType !== 1 && (firstChild = firstChild.nextSibling)) {}
+													if (firstChild === previous) {
+														matchingElms.push(previous);
 													}
-													break;
-												case "last-child":
-													for (var v=0; (previous=previousMatch[v]); v++) {
-														lastChild = previous.parentNode.lastChild;
-														while (lastChild.nodeType !== 1 && (lastChild = lastChild.previousSibling)) {}
-														if (lastChild === previous) {
-															matchingElms.push(previous);
-														}
+												}
+												break;
+											case "last-child":
+												for (var v=0; (previous=previousMatch[v]); v++) {
+													lastChild = previous.parentNode.lastChild;
+													while (lastChild.nodeType !== 1 && (lastChild = lastChild.previousSibling)) {}
+													if (lastChild === previous) {
+														matchingElms.push(previous);
 													}
-													break;
-												case "only-child":
-													for (var w=0; (previous=previousMatch[w]); w++) {
-														prevParent = previous.parentNode;
-														firstChild = prevParent.firstChild;
-														lastChild = prevParent.lastChild;
-														while (firstChild.nodeType !== 1 && (firstChild = firstChild.nextSibling)) {}
-														while (lastChild.nodeType !== 1 && (lastChild = lastChild.previousSibling)) {}
-														if (firstChild === previous && lastChild === previous) {
-															matchingElms.push(previous);
-														}
+												}
+												break;
+											case "only-child":
+												for (var w=0; (previous=previousMatch[w]); w++) {
+													prevParent = previous.parentNode;
+													firstChild = prevParent.firstChild;
+													lastChild = prevParent.lastChild;
+													while (firstChild.nodeType !== 1 && (firstChild = firstChild.nextSibling)) {}
+													while (lastChild.nodeType !== 1 && (lastChild = lastChild.previousSibling)) {}
+													if (firstChild === previous && lastChild === previous) {
+														matchingElms.push(previous);
 													}
-													break;
-												case "nth-child":
-													if (/^n$/.test(pseudoValue)) {
-														matchingElms = pushAll(matchingElms, previousMatch);
+												}
+												break;
+											case "nth-child":
+												if (/^n$/.test(pseudoValue)) {
+													matchingElms = pushAll(matchingElms, previousMatch);
+												}
+												else {
+													var iteratorStart, iteratorAdd;
+													if (/^\d+$/.test(pseudoValue)) {
+														iteratorStart = parseInt(pseudoValue, 10);
+														iteratorAdd = 0;
 													}
 													else {
-														var iteratorStart, iteratorAdd;
-														if (/^\d+$/.test(pseudoValue)) {
-															iteratorStart = parseInt(pseudoValue, 10);
-															iteratorAdd = 0;
-														}
-														else {
-															var pseudoSelector = /^(odd|even)|(\d*)(n)((\+|\-)(\d+))?$/.exec(pseudoValue);
-															var nRepeat = (!pseudoSelector[2] && pseudoSelector[3])? 1 : parseInt(pseudoSelector[2], 10);
-															iteratorStart = (pseudoSelector[1] === "even")? 2 : 1;
-															iteratorAdd = 2;
-															if (nRepeat > 0) {
-																iteratorStart = iteratorAdd = nRepeat;
-																if (pseudoSelector[5]) {
-																	var adder = parseInt(pseudoSelector[6], 10);
-																	if (pseudoSelector[5] === "+") {
-																		iteratorStart = adder;
-																	}
-																	else {
-																		var nn = 1;
-																		while ((iteratorStart=(nRepeat*(nn++))-adder) < 1) {}
-																	}
+														var pseudoSelector = /^(odd|even)|(\d*)(n)((\+|\-)(\d+))?$/.exec(pseudoValue);
+														var nRepeat = (!pseudoSelector[2] && pseudoSelector[3])? 1 : parseInt(pseudoSelector[2], 10);
+														iteratorStart = (pseudoSelector[1] === "even")? 2 : 1;
+														iteratorAdd = 2;
+														if (nRepeat > 0) {
+															iteratorStart = iteratorAdd = nRepeat;
+															if (pseudoSelector[5]) {
+																var adder = parseInt(pseudoSelector[6], 10);
+																if (pseudoSelector[5] === "+") {
+																	iteratorStart = adder;
+																}
+																else {
+																	var nn = 1;
+																	while ((iteratorStart=(nRepeat*(nn++))-adder) < 1) {}
 																}
 															}
 														}
-														for (var z=0; (previous=previousMatch[z]); z++) {
-															prevParent = previous.parentNode;
-															if (!prevParent.childElms) {
-																var iteratorNext = iteratorStart, childCount = 0;
-																var childElm = prevParent.firstChild;
-																while (childElm && (childCount < iteratorNext)) {
-																	if (childElm.nodeType === 1) {
-																		if (++childCount === iteratorNext) {
-																			if (!childElm.added && childElm.nodeName === previous.nodeName) {
-																				childElm.added = true;
-																				matchingElms.push(childElm);
-																			}
-																			iteratorNext += iteratorAdd;
+													}
+													for (var z=0; (previous=previousMatch[z]); z++) {
+														prevParent = previous.parentNode;
+														if (!prevParent.childElms) {
+															var iteratorNext = iteratorStart, childCount = 0;
+															var childElm = prevParent.firstChild;
+															while (childElm && (childCount < iteratorNext)) {
+																if (childElm.nodeType === 1) {
+																	if (++childCount === iteratorNext) {
+																		if (!childElm.added && childElm.nodeName === previous.nodeName) {
+																			childElm.added = true;
+																			matchingElms.push(childElm);
 																		}
+																		iteratorNext += iteratorAdd;
 																	}
-																	childElm = childElm.nextSibling;
 																}
-																prevParent.childElms = true;
-																prevParents.push(prevParent);
+																childElm = childElm.nextSibling;
+															}
+															prevParent.childElms = true;
+															prevParents.push(prevParent);
+														}
+													}
+													clearAdded();
+													clearChildElms();
+												}
+												break;
+											case "first-of-type":
+												for (var zFirst=0; (previous=previousMatch[zFirst]); zFirst++) {
+													firstChild = previous.parentNode.getElementsByTagName(previous.nodeName)[0];
+													if (firstChild === previous) {
+														matchingElms.push(previous);
+													}
+												}
+												break;
+											case "last-of-type":
+												for (var zLast=0; (previous=previousMatch[zLast]); zLast++) {
+													if (!previous.added) {
+														prevParent = previous.parentNode;
+														parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
+														lastChild = parentTagsByType[parentTagsByType.length - 1];
+														while ((lastChild = lastChild.parentNode) && lastChild !== prevParent) {}
+														if (lastChild === previous) {
+															previous.added = true;
+															matchingElms.push(previous);
+														}
+													}
+												}
+												break;
+											case "only-of-type":
+												for (var zOnly=0; (previous=previousMatch[zOnly]); zOnly++) {
+													parentTagsByType = previous.parentNode.getElementsByTagName(previous.nodeName);
+													if (parentTagsByType.length === 1) {
+														matchingElms.push(previous);
+													}
+												}
+												break;
+											case "nth-of-type":
+												var nthIndex = parseInt(pseudoValue, 10);
+												for (var zNth=0; (previous=previousMatch[zNth]); zNth++) {
+													childNodes = [];
+													parentTagsByType = previous.parentNode.childNodes;
+													if (parentTagsByType.length >= nthIndex) {
+														for (var zInnerNth=0, childNode; (zInnerNth !== nthIndex && (childNode=parentTagsByType[zInnerNth])); zInnerNth++) {
+															if (childNode.nodeName === previous.nodeName) {
+																childNodes.push(childNode);
 															}
 														}
-														clearAdded();
-														clearChildElms();
-													}
-													break;
-												case "first-of-type":
-													for (var zFirst=0; (previous=previousMatch[zFirst]); zFirst++) {
-														firstChild = previous.parentNode.getElementsByTagName(previous.nodeName)[0];
-														if (firstChild === previous) {
+														current = childNodes[childNodes.length - 1];
+														if (current && current === previous) {
 															matchingElms.push(previous);
 														}
 													}
-													break;
-												case "last-of-type":
-													for (var zLast=0; (previous=previousMatch[zLast]); zLast++) {
-														if (!previous.added) {
-															prevParent = previous.parentNode;
-															parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
-															lastChild = parentTagsByType[parentTagsByType.length - 1];
-															while ((lastChild = lastChild.parentNode) && lastChild !== prevParent) {}
-															if (lastChild === previous) {
-																previous.added = true;
-																matchingElms.push(previous);
-															}
-														}
+												}
+												break;
+											case "empty":
+												for (var zEmpty=0; (previous=previousMatch[zEmpty]); zEmpty++) {
+													childrenNodes = previous.parentNode.childNodes;
+													if (!childrenNodes.length) {
+														matchingElms.push(previous);
 													}
-													break;
-												case "only-of-type":
-													for (var zOnly=0; (previous=previousMatch[zOnly]); zOnly++) {
-														parentTagsByType = previous.parentNode.getElementsByTagName(previous.nodeName);
-														if (parentTagsByType.length === 1) {
+												}
+												break;
+											case "enabled":
+												for (var zEnabled=0; (previous=previousMatch[zEnabled]); zEnabled++) {
+													if (!previous.disabled) {
+														matchingElms.push(previous);
+													}
+												}
+												break;
+											case "disabled":
+												for (var zDisabled=0; (previous=previousMatch[zDisabled]); zDisabled++) {
+													if (previous.disabled) {
+														matchingElms.push(previous);
+													}
+												}
+												break;
+											case "checked":
+												for (var zChecked=0; (previous=previousMatch[zChecked]); zChecked++) {
+													if (previous.checked) {
+														matchingElms.push(previous);
+													}
+												}
+												break;
+											case "contains":
+												for (var zContains=0; (previous=previousMatch[zContains]); zContains++) {
+													if (!previous.added) {
+														if (previous.innerText.indexOf(pseudoValue) !== -1) {
+															previous.added = true;
 															matchingElms.push(previous);
 														}
 													}
-													break;
-												case "nth-of-type":
-													var nthIndex = parseInt(pseudoValue, 10);
-													for (var zNth=0; (previous=previousMatch[zNth]); zNth++) {
-														childNodes = [];
-														parentTagsByType = previous.parentNode.childNodes;
-														if (parentTagsByType.length >= nthIndex) {
-															for (var zInnerNth=0, childNode; (zInnerNth !== nthIndex && (childNode=parentTagsByType[zInnerNth])); zInnerNth++) {
-																if (childNode.nodeName === previous.nodeName) {
-																	childNodes.push(childNode);
-																}
-															}
-															current = childNodes[childNodes.length - 1];
-															if (current && current === previous) {
-																matchingElms.push(previous);
-															}
-														}
+												}
+												break;
+											default:
+												for (var zDefault=0; (previous=previousMatch[zDefault]); zDefault++) {
+													if (previous.getAttribute(pseudoClass, 2) === pseudoValue) {
+														matchingElms.push(previous);
 													}
-													break;
-												case "empty":
-													for (var zEmpty=0; (previous=previousMatch[zEmpty]); zEmpty++) {
-														childrenNodes = previous.parentNode.childNodes;
-														if (!childrenNodes.length) {
-															matchingElms.push(previous);
-														}
-													}
-													break;
-												case "enabled":
-													for (var zEnabled=0; (previous=previousMatch[zEnabled]); zEnabled++) {
-														if (!previous.disabled) {
-															matchingElms.push(previous);
-														}
-													}
-													break;
-												case "disabled":
-													for (var zDisabled=0; (previous=previousMatch[zDisabled]); zDisabled++) {
-														if (previous.disabled) {
-															matchingElms.push(previous);
-														}
-													}
-													break;
-												case "checked":
-													for (var zChecked=0; (previous=previousMatch[zChecked]); zChecked++) {
-														if (previous.checked) {
-															matchingElms.push(previous);
-														}
-													}
-													break;
-												case "contains":
-													for (var zContains=0; (previous=previousMatch[zContains]); zContains++) {
-														if (!previous.added) {
-															if (previous.innerText.indexOf(pseudoValue) !== -1) {
-																previous.added = true;
-																matchingElms.push(previous);
-															}
-														}
-													}
-													break;
-												default:
-													for (var zDefault=0; (previous=previousMatch[zDefault]); zDefault++) {
-														if (previous.getAttribute(pseudoClassMatches[0], 2) === pseudoValue) {
-															matchingElms.push(previous);
-														}
-													}
-													break;
-											}
+												}
+												break;
 										}
 									}
 									clearAdded(matchingElms);
