@@ -3,18 +3,14 @@
 DOMAssistant.Content = function () {
 	return {
 		prev : function () {
-			var prevSib = this.previousSibling;
-			while (prevSib && prevSib.nodeType !== 1) {
-				prevSib = prevSib.previousSibling;
-			}
+			var prevSib = this;
+			while ((prevSib = prevSib.previousSibling) && prevSib.nodeType !== 1) {}
 			return DOMAssistant.$(prevSib);
 		},
 
 		next : function () {
-			var nextSib = this.nextSibling;
-			while (nextSib && nextSib.nodeType !== 1) {
-				nextSib = nextSib.nextSibling;
-			}
+			var nextSib = this;
+			while ((nextSib = nextSib.nextSibling) && nextSib.nodeType !== 1) {}
 			return DOMAssistant.$(nextSib);
 		},
 

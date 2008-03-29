@@ -96,7 +96,7 @@ DOMAssistant.AJAX = function () {
 					XMLHttp.setRequestHeader("AJAX", "true");
 					XMLHttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 					if (method === "POST") {
-						var contentLength = (params)? params.length : 0;
+						var contentLength = params? params.length : 0;
 						XMLHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 						XMLHttp.setRequestHeader("Content-length", contentLength);
 						if (XMLHttp.overrideMimeType) {
@@ -133,8 +133,7 @@ DOMAssistant.AJAX = function () {
 			}
 			else {
 				var elms = this.elmsByTag("*");
-				for (var i=0, il=elms.length, elm, attr; i<il; i++) {
-					elm = elms[i];
+				for (var i=0, elm, attr; (elm=elms[i]); i++) {
 					attr = elm.attributes;
 					if (attr) {
 						for (var j=0, jl=attr.length; j<jl; j++) {
