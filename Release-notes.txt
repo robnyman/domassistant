@@ -7,6 +7,7 @@ Version 2.7:
 - Method setErrorHandling added to the DOMLoad module.
 - Method first added to get the first of any matches.
 - Added support for attribute selectors E[att|=val], E[att~=val], and pseudo-class :lang.
+- Added support for multiple pseudo-classes, eg. tr:nth-child(odd):not([id]).
 - Significant CSS selector performance improvement in Internet Explorer.
 - Fixed so a function for an event, applied with addEvent, couldn't be added multiple times.
 - Fixed so a function in DOMReady couldn't be applied multiple times.
