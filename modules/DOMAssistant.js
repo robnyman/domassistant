@@ -867,128 +867,17 @@ var DOMAssistant = function () {
 		},
 	
 		elmsByClass : function (className, tag) {
-			if (document.evaluate) {
-				DOMAssistant.elmsByClass = function (className, tag) {
-					var returnElms = new HTMLArray();
-					if (this.getElementsByClassName && !tag) {
-						returnElms = pushAll(returnElms, this.getElementsByClassName(className));
-					}
-					else {
-						var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag.toLowerCase() : "*") + "[contains(concat(' ', @class, ' '), ' " + className + " ')]", this, null, 0, null), node;
-						while ((node = xPathNodes.iterateNext())) {
-							returnElms.push(node);
-						}
-					}
-					return returnElms;
-				};
-			}
-			else {
-				DOMAssistant.elmsByClass = function (className, tag) {
-					var returnElms = new HTMLArray();
-					var elms;
-					if (tag && typeof tag === "object") {
-						elms = (tag.constructor === Array)? tag : [tag];
-					}
-					else {
-						elms = this.getElementsByTagName(tag || "*");
-					}
-					var regExp = new RegExp("(^|\\s)" + className + "(\\s|$)");
-					for (var i=0, elm; (elm=elms[i]); i++) {
-						if (regExp.test(elm.className)) {
-							returnElms.push(elm);
-						}
-					}
-					return returnElms;
-				};
-			}
-			return DOMAssistant.elmsByClass.call(this, className, tag);
+			var cssRule = (tag? tag : "") + "." + className;
+			return DOMAssistant.cssSelection.call(this, cssRule);
 		},
 	
 		elmsByAttribute : function (attr, attrVal, tag, substrMatchSelector) {
-			if (document.evaluate) {
-				DOMAssistant.elmsByAttribute = function (attr, attrVal, tag, substrMatchSelector) {
-					var returnElms = new HTMLArray();
-					var attribute = "@" + attr + ((typeof attrVal === "undefined" || attrVal === "*")? "" : " = '" + attrVal + "'");
-					if (typeof substrMatchSelector === "string") {
-						switch (substrMatchSelector) {
-							case "^":
-								attribute = "starts-with(@" + attr + ", '" + attrVal + "')";
-								break;
-							case "$":
-								attribute = "substring(@" + attr + ", (string-length(@" + attr + ") - " + (attrVal.length - 1) + "), 6) = '" + attrVal + "'";
-								break;
-							case "*":
-								attribute = "contains(concat(' ', @" + attr + ", ' '), '" + attrVal + "')";
-								break;	
-						}
-					}
-					var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag.toLowerCase() : "*") + "[" + attribute + "]", this, null, 0, null), node;
-					while ((node = xPathNodes.iterateNext())) {
-						returnElms.push(node);
-					}
-					return returnElms;
-				};
-			}
-			else {
-				DOMAssistant.elmsByAttribute = function (attr, attrVal, tag, substrMatchSelector) {
-					var returnElms = new HTMLArray();
-					if (window.ActiveXObject && document.all) {
-						attr = attr.replace(/class/, "className");
-					}
-					var attribute = (typeof attrVal === "undefined")? null : ("(^|\\s)" + attrVal + "(\\s|$)");
-					if (typeof substrMatchSelector === "string") {
-						switch (substrMatchSelector) {
-							case "^":
-								attribute = ("^" + attrVal);
-								break;
-							case "$":
-								attribute = (attrVal + "$");
-								break;
-							case "*":
-								attribute = (attrVal);
-								break;	
-						}
-					}
-					var attributeRegExp = new RegExp(attribute);
-					var elms;
-					if (tag && typeof tag === "object") {
-						elms = (tag.constructor === Array)? tag : [tag];
-					}
-					else {
-						elms = this.getElementsByTagName(tag || "*");
-					}
-					for (var i=0,current,currentAttr; (current=elms[i]); i++) {
-						currentAttr = current.getAttribute(attr, 2);
-						if (typeof currentAttr === "string" && currentAttr.length) {
-							if (!attributeRegExp || typeof attributeRegExp === "undefined" || (attributeRegExp && attributeRegExp.test(currentAttr))) {
-								returnElms.push(current);
-							}
-						}
-					}
-					return returnElms;
-				};
-			}
-			return DOMAssistant.elmsByAttribute.call(this, attr, attrVal, tag, substrMatchSelector);
+			var cssRule = (tag? tag : "") + "[" + attr + ((attrVal && attrVal !== "*")? ((substrMatchSelector? substrMatchSelector : "") + "=" + attrVal + "]") : "]");
+			return DOMAssistant.cssSelection.call(this, cssRule);
 		},
 	
 		elmsByTag : function (tag) {
-			if (document.evaluate) {
-				DOMAssistant.elmsByTag = function (tag) {
-					var returnElms = new HTMLArray();
-					var xPathNodes = document.evaluate(".//" + ((typeof tag === "string")? tag.toLowerCase() : "*"), this, null, 0, null), node;
-					while ((node = xPathNodes.iterateNext())) {
-						returnElms.push(node);
-					}
-					return returnElms;
-				};
-			}
-			else {			
-				DOMAssistant.elmsByTag = function (tag) {
-					var returnElms = new HTMLArray();
-					return pushAll(returnElms, this.getElementsByTagName(tag));
-				};
-			}
-			return DOMAssistant.elmsByTag.call(this, tag);
+			return DOMAssistant.cssSelection.call(this, tag);
 		}
 	};	
 }();
