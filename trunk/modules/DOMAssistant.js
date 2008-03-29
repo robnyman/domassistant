@@ -181,14 +181,9 @@ var DOMAssistant = function () {
 								id : (cssSelector[3] !== "*")? cssSelector[2] : null,
 								allClasses : cssSelector[4],
 								allAttr : cssSelector[6],
-								pseudoClass : cssSelector[12],
-								pseudoValue : cssSelector[14],
+								allPseudos : cssSelector[10],
 								tagRelation : cssSelector[21]
 							};
-							if (splitRule.pseudoClass === ":lang") {
-								splitRule.allAttr = "[lang=" + splitRule.pseudoValue + "]" + splitRule.allAttr;
-								splitRule.pseudoClass = splitRule.pseudoValue = null;
-							}
 							if (splitRule.tagRelation) {
 								switch (splitRule.tagRelation) {
 									case ">":
@@ -236,117 +231,126 @@ var DOMAssistant = function () {
 									return regExpReturn;
 								});
 							}
-							if (splitRule.pseudoClass) {
-								var pseudoValue = splitRule.pseudoValue;
-								switch (splitRule.pseudoClass.replace(/^:/, "")) {
-									case "first-child":
-										xPathExpression += "[count(preceding-sibling::*) = 0]";
-										break;
-									case "first-of-type":
-										xPathExpression += "[count(preceding-sibling::" + splitRule.tag + ") = 0]";
-										break;
-									case "last-child":
-										xPathExpression += "[count(following-sibling::*) = 0]";
-										break;
-									case "last-of-type":
-										xPathExpression += "[count(following-sibling::" + splitRule.tag + ") = 0]";
-										break;
-									case "only-child":
-										xPathExpression += "[count(preceding-sibling::*) = 0 and count(following-sibling::*) = 0]";
-										break;
-									case "only-of-type":
-										xPathExpression += "[count(preceding-sibling::" + splitRule.tag + ") = 0 and count(following-sibling::" + splitRule.tag + ") = 0]";
-										break;		
-									case "nth-of-type":
-										xPathExpression += "[" + pseudoValue + "]";
-										break;
-									case "empty":
-										xPathExpression += "[count(child::*) = 0 and string-length(text()) = 0]";
-										break;
-									case "contains":
-										xPathExpression += "[contains(., '" + pseudoValue + "')]";
-										break;	
-									case "enabled":
-										xPathExpression += "[not(@disabled)]";
-										break;
-									case "disabled":
-										xPathExpression += "[@disabled]";
-										break;
-									case "checked":
-										xPathExpression += "[@checked='checked']"; // Doesn't work in Opera 9.24
-										break;
-									case "nth-child":
-										var pseudoSelection = "[";
-										if (/^\d+$/.test(pseudoValue)) {
-											pseudoSelection += "position() = " + pseudoValue;
-										}
-										else if (/^n$/.test(pseudoValue)) {
-											pseudoSelection = "";
-										}
-										else {
-											if (/^odd$/.test(pseudoValue)) {
-												pseudoValue = "2n+1";
+							if (splitRule.allPseudos) {
+								var pseudoSplitRegExp = /:(\w[\w\-]*)(\(([^\)]+)\))?/;
+								splitRule.allPseudos = splitRule.allPseudos.match(/(:\w+[\w\-]*)(\([^\)]+\))?/g);
+								for (var y=0, yL=splitRule.allPseudos.length; y<yL; y++) {
+									var pseudo = splitRule.allPseudos[y].match(pseudoSplitRegExp);
+									var pseudoClass = pseudo[1];
+									var pseudoValue = pseudo[3]? pseudo[3] : null;
+									switch (pseudoClass) {
+										case "first-child":
+											xPathExpression += "[count(preceding-sibling::*) = 0]";
+											break;
+										case "first-of-type":
+											xPathExpression += "[count(preceding-sibling::" + splitRule.tag + ") = 0]";
+											break;
+										case "last-child":
+											xPathExpression += "[count(following-sibling::*) = 0]";
+											break;
+										case "last-of-type":
+											xPathExpression += "[count(following-sibling::" + splitRule.tag + ") = 0]";
+											break;
+										case "only-child":
+											xPathExpression += "[count(preceding-sibling::*) = 0 and count(following-sibling::*) = 0]";
+											break;
+										case "only-of-type":
+											xPathExpression += "[count(preceding-sibling::" + splitRule.tag + ") = 0 and count(following-sibling::" + splitRule.tag + ") = 0]";
+											break;		
+										case "nth-of-type":
+											xPathExpression += "[" + pseudoValue + "]";
+											break;
+										case "empty":
+											xPathExpression += "[count(child::*) = 0 and string-length(text()) = 0]";
+											break;
+										case "contains":
+											xPathExpression += "[contains(., '" + pseudoValue + "')]";
+											break;	
+										case "enabled":
+											xPathExpression += "[not(@disabled)]";
+											break;
+										case "disabled":
+											xPathExpression += "[@disabled]";
+											break;
+										case "checked":
+											xPathExpression += "[@checked='checked']"; // Doesn't work in Opera 9.24
+											break;
+										case "nth-child":
+											var pseudoSelection = "[";
+											if (/^\d+$/.test(pseudoValue)) {
+												pseudoSelection += "position() = " + pseudoValue;
 											}
-											else if (/^even$/.test(pseudoValue)) {
-												pseudoValue = "2n+0";
-											}
-											var pseudoSelector = /^(\d+)n((\+|\-)(\d+))?$/.exec(pseudoValue);
-											var nthSelector = parseInt(pseudoSelector[1], 10);
-											var nOperatorVal = 0;
-											if (pseudoSelector[3] && pseudoSelector[4]) {
-												nOperatorVal = parseInt((pseudoSelector[3] + pseudoSelector[4]), 10);
-												if (nOperatorVal < 0) {
-													nOperatorVal = nthSelector + nOperatorVal;
-												}
-											}
-											pseudoSelection += "(count(./preceding-sibling::*) + 1)";
-											if (nthSelector < nOperatorVal) {
-												var nOperatorDiff = ((nOperatorVal - nthSelector) % 2 === 0)? 0 : 1;
-												pseudoSelection += " mod " + nthSelector + " = " + nOperatorDiff + " and position() >= " + nOperatorVal;
-											}
-											else if (nOperatorVal === nthSelector) {
-												pseudoSelection += " mod " + nthSelector + " = 0";
+											else if (/^n$/.test(pseudoValue)) {
+												pseudoSelection = "";
 											}
 											else {
-												pseudoSelection += " mod " + nthSelector + " = " + nOperatorVal;
+												if (/^odd$/.test(pseudoValue)) {
+													pseudoValue = "2n+1";
+												}
+												else if (/^even$/.test(pseudoValue)) {
+													pseudoValue = "2n+0";
+												}
+												var pseudoSelector = /^(\d+)n((\+|\-)(\d+))?$/.exec(pseudoValue);
+												var nthSelector = parseInt(pseudoSelector[1], 10);
+												var nOperatorVal = 0;
+												if (pseudoSelector[3] && pseudoSelector[4]) {
+													nOperatorVal = parseInt((pseudoSelector[3] + pseudoSelector[4]), 10);
+													if (nOperatorVal < 0) {
+														nOperatorVal = nthSelector + nOperatorVal;
+													}
+												}
+												pseudoSelection += "(count(./preceding-sibling::*) + 1)";
+												if (nthSelector < nOperatorVal) {
+													var nOperatorDiff = ((nOperatorVal - nthSelector) % 2 === 0)? 0 : 1;
+													pseudoSelection += " mod " + nthSelector + " = " + nOperatorDiff + " and position() >= " + nOperatorVal;
+												}
+												else if (nOperatorVal === nthSelector) {
+													pseudoSelection += " mod " + nthSelector + " = 0";
+												}
+												else {
+													pseudoSelection += " mod " + nthSelector + " = " + nOperatorVal;
+												}
 											}
-										}
-										if (!/^n$/.test(pseudoValue)) {
-											pseudoSelection += "]";
-										}
-										xPathExpression += pseudoSelection;
-										break;	
-									case "not":
-										pseudoValue = pseudoValue.replace(/^\[#([\w\-\_]+)\]$/, "[id=$1]");
-										var notSelector = pseudoValue.replace(/^(\w+)/, "self::$1");
-										notSelector = notSelector.replace(/^\.([\w\u00C0-\uFFFF\-_]+)/g, "contains(concat(' ', @class, ' '), ' $1 ')");
-										notSelector = notSelector.replace(/\[(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_\.]+)?\]/g, function (match, p1, p2, p3) {
-											var regExpReturn = match;
-											switch (p2) {
-												case "^":
-													regExpReturn = "starts-with(@" + p1 + ", '" + p3 + "')";
-													break;
-												case "$":
-													regExpReturn = "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = '" + p3 + "'";
-													break;
-												case "*":
-													regExpReturn = "contains(concat(' ', @" + p1 + ", ' '), '" + p3 + "')";
-													break;
-												case "|":
-													regExpReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + "-'))";
-													break;
-												case "~":
-													regExpReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + " ') or substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = ' " + p3 + "' or contains(concat(' ', @" + p1 + ", ' '), ' " + p3 + " '))";
-													break;
-												default:
-													regExpReturn = "@" + p1 + ((p3)? "='" + p3 + "'" : "");
+											if (!/^n$/.test(pseudoValue)) {
+												pseudoSelection += "]";
 											}
-											return regExpReturn;
-										});
-										xPathExpression += "[not(" + notSelector + ")]";
-										break;
+											xPathExpression += pseudoSelection;
+											break;	
+										case "not":
+											pseudoValue = pseudoValue.replace(/^\[#([\w\u00C0-\uFFFF\-\_]+)\]$/, "[id=$1]");
+											var notSelector = pseudoValue.replace(/^(\w+)/, "self::$1");
+											notSelector = notSelector.replace(/^\.([\w\u00C0-\uFFFF\-_]+)/g, "contains(concat(' ', @class, ' '), ' $1 ')");
+											notSelector = notSelector.replace(/\[(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_\.]+)?\]/g, function (match, p1, p2, p3) {
+												var regExpReturn = match;
+												switch (p2) {
+													case "^":
+														regExpReturn = "starts-with(@" + p1 + ", '" + p3 + "')";
+														break;
+													case "$":
+														regExpReturn = "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = '" + p3 + "'";
+														break;
+													case "*":
+														regExpReturn = "contains(concat(' ', @" + p1 + ", ' '), '" + p3 + "')";
+														break;
+													case "|":
+														regExpReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + "-'))";
+														break;
+													case "~":
+														regExpReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + " ') or substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = ' " + p3 + "' or contains(concat(' ', @" + p1 + ", ' '), ' " + p3 + " '))";
+														break;
+													default:
+														regExpReturn = "@" + p1 + ((p3)? "='" + p3 + "'" : "");
+												}
+												return regExpReturn;
+											});
+											xPathExpression += "[not(" + notSelector + ")]";
+											break;
+										default:
+											xPathExpression += "[@" + pseudoClass + "='" + pseudoValue + "']";
+											break;
+									}
 								}
-							}	
+							}
 						}
 						var xPathNodes = document.evaluate(xPathExpression, this, null, 0, null), node;
 						while ((node = xPathNodes.iterateNext())) {
@@ -363,7 +367,7 @@ var DOMAssistant = function () {
 					var prevElm = new HTMLArray();
 					var matchingElms = new HTMLArray();
 					var matchableElms = new HTMLArray();
-					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextSelector, nextRegExp, nextSib, current, previous, prevParent, addElm, firstChild, lastChild, parentTagsByType, matchingChild, childrenNodes, childNodes;
+					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextSelector, nextRegExp, nextSib, current, previous, prevParent, addElm, firstChild, lastChild, parentTagsByType, childrenNodes, childNodes;
 					var childOrSiblingRefRegExp = /^(>|\+|~)$/;
 					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=[\w\u00C0-\uFFFF\s\-\_\.]+)?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+))\))?)*)?/;
 					var selectorSplitRegExp;
@@ -373,9 +377,10 @@ var DOMAssistant = function () {
 					catch (e) {
 						selectorSplitRegExp = /[^\s]+/g;
 					}
-					function clearAdded() {
-						for (var n=0, nl=prevElm.length; n<nl; n++) {
-							prevElm[n].added = false;
+					function clearAdded(elm) {
+						elm = elm? elm : prevElm;
+						for (var n=0, nl=elm.length; n<nl; n++) {
+							elm[n].added = false;
 						}
 					}
 					function clearChildElms () {
@@ -468,13 +473,8 @@ var DOMAssistant = function () {
 								id : (cssSelector[3] !== "*")? cssSelector[2] : null,
 								allClasses : cssSelector[4],
 								allAttr : cssSelector[6],
-								pseudoClass : cssSelector[12],
-								pseudoValue : cssSelector[14]
+								allPseudos : cssSelector[10]
 							};
-							if (splitRule.pseudoClass === ":lang") {
-								splitRule.allAttr = "[lang=" + splitRule.pseudoValue + "]" + splitRule.allAttr;
-								splitRule.pseudoClass = splitRule.pseudoValue = null;
-							}
 							if (splitRule.id) {
 								var DOMElm = document.getElementById(splitRule.id.replace(/#/, ""));
 								if (DOMElm) {
@@ -594,246 +594,256 @@ var DOMAssistant = function () {
 								matchingElms = matchingAttributeElms;
 								prevElm = matchingElms;
 							}
-							if (splitRule.pseudoClass) {
-								var pseudoClassRegExp = /((first|last|only|nth)-child|(first|last|only|nth)-of-type|empty|enabled|disabled|checked|contains)/i;
-								var pseudoClass = splitRule.pseudoClass;
-								var pseudoValue = splitRule.pseudoValue;
-								var previousMatch = matchingElms;
-								matchingElms = [];
-								prevParents = [];
-								if (/^:not$/.test(pseudoClass)) {
-									pseudoValue = pseudoValue.replace(/^\[#([\w\u00C0-\uFFFF\-\_]+)\]$/, "[id=$1]");
-									var notTag = /^(\w+)/.exec(pseudoValue);
-									var notClass = /^\.([\w\u00C0-\uFFFF\-_]+)/.exec(pseudoValue);
-									var notAttr = /\[(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_\.]+)?\]/.exec(pseudoValue);
-									var notRegExp = new RegExp("(^|\\s)" + ((notTag)? notTag[1] : (notClass)? notClass[1] : "") + "(\\s|$)", "i");
-									if (notAttr) {
-										var notAttribute = (notAttr[3])? notAttr[3].replace(/\./g, "\\.") : null;
-										var notMatchingAttrVal = "^" + notAttribute + "$";
-										var substrNoMatchSelector = notAttr[2];
-										if (typeof substrNoMatchSelector === "string") {
-											switch (substrNoMatchSelector) {
-												case "^":
-													notMatchingAttrVal = ("^" + notAttribute);
-													break;
-												case "$":
-													notMatchingAttrVal = (notAttribute + "$");
-													break;
-												case "*":
-													notMatchingAttrVal = (notAttribute);
-													break;	
-												case "|":
-													notMatchingAttrVal = ("(^" + notAttribute + "$)|(^" + notAttribute + "\\-)");
-													break;	
-												case "~":
-													notMatchingAttrVal = ("\\b" + notAttribute + "\\b");
-													break;
+							if (splitRule.allPseudos) {
+								var pseudoSplitRegExp = /:(\w[\w\-]*)(\(([^\)]+)\))?/;
+								var pseudoClassRegExp = /((first|last|only|nth)-child|(first|last|only|nth)-of-type|empty|enabled|disabled|checked|contains|lang)/i;
+								splitRule.allPseudos = splitRule.allPseudos.match(/(:\w+[\w\-]*)(\([^\)]+\))?/g);
+								for (var y=0, yL=splitRule.allPseudos.length; y<yL; y++) {
+									var pseudo = splitRule.allPseudos[y].match(pseudoSplitRegExp);
+									var pseudoClass = pseudo[1];
+									var pseudoValue = pseudo[3]? pseudo[3] : null;
+									var previousMatch = matchingElms;
+									matchingElms = [];
+									prevParents = [];
+									if (pseudoClass === "not") {
+										pseudoValue = pseudoValue.replace(/^\[#([\w\u00C0-\uFFFF\-\_]+)\]$/, "[id=$1]");
+										var notTag = /^(\w+)/.exec(pseudoValue);
+										var notClass = /^\.([\w\u00C0-\uFFFF\-_]+)/.exec(pseudoValue);
+										var notAttr = /\[(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_\.]+)?\]/.exec(pseudoValue);
+										var notRegExp = new RegExp("(^|\\s)" + ((notTag)? notTag[1] : (notClass)? notClass[1] : "") + "(\\s|$)", "i");
+										if (notAttr) {
+											var notAttribute = (notAttr[3])? notAttr[3].replace(/\./g, "\\.") : null;
+											var notMatchingAttrVal = "^" + notAttribute + "$";
+											var substrNoMatchSelector = notAttr[2];
+											if (typeof substrNoMatchSelector === "string") {
+												switch (substrNoMatchSelector) {
+													case "^":
+														notMatchingAttrVal = ("^" + notAttribute);
+														break;
+													case "$":
+														notMatchingAttrVal = (notAttribute + "$");
+														break;
+													case "*":
+														notMatchingAttrVal = (notAttribute);
+														break;	
+													case "|":
+														notMatchingAttrVal = ("(^" + notAttribute + "(\\-\\w+)*$)");
+														break;	
+													case "~":
+														notMatchingAttrVal = ("\\b" + notAttribute + "\\b");
+														break;
+												}
 											}
+											notRegExp = new RegExp(notMatchingAttrVal, "i");
 										}
-										notRegExp = new RegExp(notMatchingAttrVal, "i");
-									}
-									for (var t=0, notElm; (notElm=previousMatch[t]); t++) {
-										addElm = null;
-										if (notTag && !notRegExp.test(notElm.nodeName)) {
-											addElm = notElm;
-										}		
-										else if (notClass && !notRegExp.test(notElm.className)) {
-											addElm = notElm;
-										}
-										else if (notAttr) {
-											var att = getAttr(notElm, notAttr[1]);
-											if (!att || !notRegExp.test(att)) {
+										for (var t=0, notElm; (notElm=previousMatch[t]); t++) {
+											addElm = null;
+											if (notTag && !notRegExp.test(notElm.nodeName)) {
+												addElm = notElm;
+											}		
+											else if (notClass && !notRegExp.test(notElm.className)) {
 												addElm = notElm;
 											}
-										}
-										if (addElm && !addElm.added) {
-											addElm.added = true;
-											matchingElms.push(addElm);
+											else if (notAttr) {
+												var att = getAttr(notElm, notAttr[1]);
+												if (!att || !notRegExp.test(att)) {
+													addElm = notElm;
+												}
+											}
+											if (addElm && !addElm.added) {
+												addElm.added = true;
+												matchingElms.push(addElm);
+											}
 										}
 									}
-									clearAdded();
-									prevElm = matchingElms;
-								}
-								else {
-									var pseudoClassMatches = pseudoClass.match(pseudoClassRegExp);
-									if (pseudoClassMatches && typeof pseudoClassMatches[0] === "string") {
-										switch (pseudoClassMatches[0]) {
-											case "first-child":
-												for (var u=0; (previous=previousMatch[u]); u++) {
-													firstChild = previous.parentNode.firstChild;
-													while (firstChild.nodeType !== 1 && (firstChild = firstChild.nextSibling)) {}
-													if (firstChild === previous) {
-														matchingElms.push(previous);
+									else {
+										var pseudoClassMatches = pseudoClass.match(pseudoClassRegExp);
+										if (pseudoClassMatches && typeof pseudoClassMatches[0] === "string") {
+											switch (pseudoClassMatches[0]) {
+												case "first-child":
+													for (var u=0; (previous=previousMatch[u]); u++) {
+														firstChild = previous.parentNode.firstChild;
+														while (firstChild.nodeType !== 1 && (firstChild = firstChild.nextSibling)) {}
+														if (firstChild === previous) {
+															matchingElms.push(previous);
+														}
 													}
-												}
-												break;
-											case "last-child":
-												for (var v=0; (previous=previousMatch[v]); v++) {
-													lastChild = previous.parentNode.lastChild;
-													while (lastChild.nodeType !== 1 && (lastChild = lastChild.previousSibling)) {}
-													if (lastChild === previous) {
-														matchingElms.push(previous);
+													break;
+												case "last-child":
+													for (var v=0; (previous=previousMatch[v]); v++) {
+														lastChild = previous.parentNode.lastChild;
+														while (lastChild.nodeType !== 1 && (lastChild = lastChild.previousSibling)) {}
+														if (lastChild === previous) {
+															matchingElms.push(previous);
+														}
 													}
-												}
-												break;
-											case "only-child":
-												for (var w=0; (previous=previousMatch[w]); w++) {
-													prevParent = previous.parentNode;
-													firstChild = prevParent.firstChild;
-													lastChild = prevParent.lastChild;
-													while (firstChild.nodeType !== 1 && (firstChild = firstChild.nextSibling)) {}
-													while (lastChild.nodeType !== 1 && (lastChild = lastChild.previousSibling)) {}
-													if (firstChild === previous && lastChild === previous) {
-														matchingElms.push(previous);
+													break;
+												case "only-child":
+													for (var w=0; (previous=previousMatch[w]); w++) {
+														prevParent = previous.parentNode;
+														firstChild = prevParent.firstChild;
+														lastChild = prevParent.lastChild;
+														while (firstChild.nodeType !== 1 && (firstChild = firstChild.nextSibling)) {}
+														while (lastChild.nodeType !== 1 && (lastChild = lastChild.previousSibling)) {}
+														if (firstChild === previous && lastChild === previous) {
+															matchingElms.push(previous);
+														}
 													}
-												}
-												break;
-											case "nth-child":
-												if (/^n$/.test(pseudoValue)) {
-													matchingElms = pushAll(matchingElms, previousMatch);
-												}
-												else {
-													var iteratorStart, iteratorAdd;
-													if (/^\d+$/.test(pseudoValue)) {
-														iteratorStart = parseInt(pseudoValue, 10);
-														iteratorAdd = 0;
+													break;
+												case "nth-child":
+													if (/^n$/.test(pseudoValue)) {
+														matchingElms = pushAll(matchingElms, previousMatch);
 													}
 													else {
-														var pseudoSelector = /^(odd|even)|(\d*)(n)((\+|\-)(\d+))?$/.exec(pseudoValue);
-														var nRepeat = (!pseudoSelector[2] && pseudoSelector[3])? 1 : parseInt(pseudoSelector[2], 10);
-														iteratorStart = (pseudoSelector[1] === "even")? 2 : 1;
-														iteratorAdd = 2;
-														if (nRepeat > 0) {
-															iteratorStart = iteratorAdd = nRepeat;
-															if (pseudoSelector[5]) {
-																var adder = parseInt(pseudoSelector[6], 10);
-																if (pseudoSelector[5] === "+") {
-																	iteratorStart = adder;
-																}
-																else {
-																	var nn = 1;
-																	while ((iteratorStart=(nRepeat*(nn++))-adder) < 1) {}
-																}
-															}
+														var iteratorStart, iteratorAdd;
+														if (/^\d+$/.test(pseudoValue)) {
+															iteratorStart = parseInt(pseudoValue, 10);
+															iteratorAdd = 0;
 														}
-													}
-													for (var z=0; (previous=previousMatch[z]); z++) {
-														prevParent = previous.parentNode;
-														if (!prevParent.childElms) {
-															var iteratorNext = iteratorStart, childCount = 0;
-															var childElm = prevParent.firstChild;
-															while (childElm && (childCount < iteratorNext)) {
-																if (childElm.nodeType === 1) {
-																	if (++childCount === iteratorNext) {
-																		if (!childElm.added && childElm.nodeName === previous.nodeName) {
-																			childElm.added = true;
-																			matchingElms.push(childElm);
-																		}
-																		iteratorNext += iteratorAdd;
+														else {
+															var pseudoSelector = /^(odd|even)|(\d*)(n)((\+|\-)(\d+))?$/.exec(pseudoValue);
+															var nRepeat = (!pseudoSelector[2] && pseudoSelector[3])? 1 : parseInt(pseudoSelector[2], 10);
+															iteratorStart = (pseudoSelector[1] === "even")? 2 : 1;
+															iteratorAdd = 2;
+															if (nRepeat > 0) {
+																iteratorStart = iteratorAdd = nRepeat;
+																if (pseudoSelector[5]) {
+																	var adder = parseInt(pseudoSelector[6], 10);
+																	if (pseudoSelector[5] === "+") {
+																		iteratorStart = adder;
+																	}
+																	else {
+																		var nn = 1;
+																		while ((iteratorStart=(nRepeat*(nn++))-adder) < 1) {}
 																	}
 																}
-																childElm = childElm.nextSibling;
-															}
-															prevParent.childElms = true;
-															prevParents.push(prevParent);
-														}
-													}
-													clearAdded();
-													clearChildElms();
-												}
-												break;
-											case "first-of-type":
-												for (var zFirst=0; (previous=previousMatch[zFirst]); zFirst++) {
-													firstChild = previous.parentNode.getElementsByTagName(previous.nodeName)[0];
-													if (firstChild === previous) {
-														matchingElms.push(previous);
-													}
-												}
-												break;
-											case "last-of-type":
-												for (var zLast=0; (previous=previousMatch[zLast]); zLast++) {
-													if (!previous.added) {
-														prevParent = previous.parentNode;
-														parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
-														lastChild = parentTagsByType[parentTagsByType.length - 1];
-														while ((lastChild = lastChild.parentNode) && lastChild !== prevParent) {}
-														if (lastChild === previous) {
-															previous.added = true;
-															matchingElms.push(previous);
-														}
-													}
-												}
-												break;
-											case "only-of-type":
-												for (var zOnly=0; (previous=previousMatch[zOnly]); zOnly++) {
-													parentTagsByType = previous.parentNode.getElementsByTagName(previous.nodeName);
-													if (parentTagsByType.length === 1) {
-														matchingElms.push(previous);
-													}
-												}
-												break;
-											case "nth-of-type":
-												var nthIndex = parseInt(pseudoValue, 10);
-												for (var zNth=0; (previous=previousMatch[zNth]); zNth++) {
-													childNodes = [];
-													parentTagsByType = previous.parentNode.childNodes;
-													if (parentTagsByType.length >= nthIndex) {
-														for (var zInnerNth=0, childNode; (zInnerNth !== nthIndex && (childNode=parentTagsByType[zInnerNth])); zInnerNth++) {
-															if (childNode.nodeName === previous.nodeName) {
-																childNodes.push(childNode);
 															}
 														}
-														current = childNodes[childNodes.length - 1];
-														if (current && current === previous) {
+														for (var z=0; (previous=previousMatch[z]); z++) {
+															prevParent = previous.parentNode;
+															if (!prevParent.childElms) {
+																var iteratorNext = iteratorStart, childCount = 0;
+																var childElm = prevParent.firstChild;
+																while (childElm && (childCount < iteratorNext)) {
+																	if (childElm.nodeType === 1) {
+																		if (++childCount === iteratorNext) {
+																			if (!childElm.added && childElm.nodeName === previous.nodeName) {
+																				childElm.added = true;
+																				matchingElms.push(childElm);
+																			}
+																			iteratorNext += iteratorAdd;
+																		}
+																	}
+																	childElm = childElm.nextSibling;
+																}
+																prevParent.childElms = true;
+																prevParents.push(prevParent);
+															}
+														}
+														clearAdded();
+														clearChildElms();
+													}
+													break;
+												case "first-of-type":
+													for (var zFirst=0; (previous=previousMatch[zFirst]); zFirst++) {
+														firstChild = previous.parentNode.getElementsByTagName(previous.nodeName)[0];
+														if (firstChild === previous) {
 															matchingElms.push(previous);
 														}
 													}
-												}
-												break;
-											case "empty":
-												for (var zEmpty=0; (previous=previousMatch[zEmpty]); zEmpty++) {
-													childrenNodes = previous.parentNode.childNodes;
-													if (!childrenNodes.length) {
-														matchingElms.push(previous);
+													break;
+												case "last-of-type":
+													for (var zLast=0; (previous=previousMatch[zLast]); zLast++) {
+														if (!previous.added) {
+															prevParent = previous.parentNode;
+															parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
+															lastChild = parentTagsByType[parentTagsByType.length - 1];
+															while ((lastChild = lastChild.parentNode) && lastChild !== prevParent) {}
+															if (lastChild === previous) {
+																previous.added = true;
+																matchingElms.push(previous);
+															}
+														}
 													}
-												}
-												break;
-											case "enabled":
-												for (var zEnabled=0; (previous=previousMatch[zEnabled]); zEnabled++) {
-													if (!previous.disabled) {
-														matchingElms.push(previous);
-													}
-												}
-												break;
-											case "disabled":
-												for (var zDisabled=0; (previous=previousMatch[zDisabled]); zDisabled++) {
-													if (previous.disabled) {
-														matchingElms.push(previous);
-													}
-												}
-												break;
-											case "checked":
-												for (var zChecked=0; (previous=previousMatch[zChecked]); zChecked++) {
-													if (previous.checked) {
-														matchingElms.push(previous);
-													}
-												}
-												break;
-											case "contains":
-												for (var zContains=0; (previous=previousMatch[zContains]); zContains++) {
-													if (!previous.added) {
-														if (previous.innerText.indexOf(pseudoValue) !== -1) {
-															previous.added = true;
+													break;
+												case "only-of-type":
+													for (var zOnly=0; (previous=previousMatch[zOnly]); zOnly++) {
+														parentTagsByType = previous.parentNode.getElementsByTagName(previous.nodeName);
+														if (parentTagsByType.length === 1) {
 															matchingElms.push(previous);
 														}
 													}
-												}
-												clearAdded();
-												break;
+													break;
+												case "nth-of-type":
+													var nthIndex = parseInt(pseudoValue, 10);
+													for (var zNth=0; (previous=previousMatch[zNth]); zNth++) {
+														childNodes = [];
+														parentTagsByType = previous.parentNode.childNodes;
+														if (parentTagsByType.length >= nthIndex) {
+															for (var zInnerNth=0, childNode; (zInnerNth !== nthIndex && (childNode=parentTagsByType[zInnerNth])); zInnerNth++) {
+																if (childNode.nodeName === previous.nodeName) {
+																	childNodes.push(childNode);
+																}
+															}
+															current = childNodes[childNodes.length - 1];
+															if (current && current === previous) {
+																matchingElms.push(previous);
+															}
+														}
+													}
+													break;
+												case "empty":
+													for (var zEmpty=0; (previous=previousMatch[zEmpty]); zEmpty++) {
+														childrenNodes = previous.parentNode.childNodes;
+														if (!childrenNodes.length) {
+															matchingElms.push(previous);
+														}
+													}
+													break;
+												case "enabled":
+													for (var zEnabled=0; (previous=previousMatch[zEnabled]); zEnabled++) {
+														if (!previous.disabled) {
+															matchingElms.push(previous);
+														}
+													}
+													break;
+												case "disabled":
+													for (var zDisabled=0; (previous=previousMatch[zDisabled]); zDisabled++) {
+														if (previous.disabled) {
+															matchingElms.push(previous);
+														}
+													}
+													break;
+												case "checked":
+													for (var zChecked=0; (previous=previousMatch[zChecked]); zChecked++) {
+														if (previous.checked) {
+															matchingElms.push(previous);
+														}
+													}
+													break;
+												case "contains":
+													for (var zContains=0; (previous=previousMatch[zContains]); zContains++) {
+														if (!previous.added) {
+															if (previous.innerText.indexOf(pseudoValue) !== -1) {
+																previous.added = true;
+																matchingElms.push(previous);
+															}
+														}
+													}
+													break;
+												default:
+													for (var zDefault=0; (previous=previousMatch[zDefault]); zDefault++) {
+														if (previous.getAttribute(pseudoClassMatches[0], 2) === pseudoValue) {
+															matchingElms.push(previous);
+														}
+													}
+													break;
+											}
 										}
-										prevElm = matchingElms;
 									}
+									clearAdded(matchingElms);
 								}
+								prevElm = matchingElms;
 							}
 						}
 						elm = pushAll(elm, prevElm);
