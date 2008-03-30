@@ -749,7 +749,7 @@ var DOMAssistant = function () {
 											case "last-of-type":
 												for (var zLast=0; (previous=previousMatch[zLast]); zLast++) {
 													lastChild = previous.parentNode.lastChild;
-													while (lastChild.nodeName != previous.nodeName) {
+													while (lastChild.nodeName !== previous.nodeName) {
 														lastChild = lastChild.previousSibling;
 													}
 													if (lastChild === previous) {
