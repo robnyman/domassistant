@@ -691,14 +691,17 @@ var DOMAssistant = function () {
 												}
 												break;
 											case "only-child":
-												for (var w=0; (previous=previousMatch[w]); w++) {
+												for (var w=0, oldParent; (previous=previousMatch[w]); w++) {
 													prevParent = previous.parentNode;
-													firstChild = prevParent.firstChild;
-													lastChild = prevParent.lastChild;
-													while (firstChild.nodeType !== 1 && (firstChild = firstChild.nextSibling)) {}
-													while (lastChild.nodeType !== 1 && (lastChild = lastChild.previousSibling)) {}
-													if (firstChild === previous && lastChild === previous) {
-														matchingElms.push(previous);
+													if (prevParent !== oldParent) {
+														firstChild = prevParent.firstChild;
+														lastChild = prevParent.lastChild;
+														while (firstChild.nodeType !== 1 && (firstChild = firstChild.nextSibling)) {}
+														while (lastChild.nodeType !== 1 && (lastChild = lastChild.previousSibling)) {}
+														if (firstChild === previous && lastChild === previous) {
+															matchingElms.push(previous);
+														}
+														oldParent = prevParent;
 													}
 												}
 												break;
