@@ -88,7 +88,7 @@
 								<dd>Get every odd <code>DIV</code> child element of its parent element.</dd>
 								<dt><code>div:nth-child(even)</code></dt>
 								<dd>Get every even <code>DIV</code> child element of its parent element.</dd>
-								<dt><code>div:nth-child(n5+3)</code></dt>
+								<dt><code>div:nth-child(5n+3)</code></dt>
 								<dd>Get every 5th <code>DIV</code> child element of its parent element, starting at 3, then 8, 13, 18 etc.</dd>
 								<dt><code>input:enabled</code></dt>
 								<dd>Get any <code>INPUT</code> element which is enabled.</dd>
