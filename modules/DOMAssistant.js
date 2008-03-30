@@ -157,7 +157,7 @@ var DOMAssistant = function () {
 					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
 					var elm = new HTMLArray();
 					var currentRule, identical, cssSelectors, xPathExpression, cssSelector, splitRule;
-					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=[\w\u00C0-\uFFFF\s\-\_\.]+)?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+))\))?)*)?(>|\+|~)?/;
+					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=[\w\u00C0-\uFFFF\s\-\_\.]+)?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+))\))?)*)?(>|\+|~)?/;
 					var selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
 					for (var i=0; (currentRule=cssRules[i]); i++) {
 						if (i > 0) {
@@ -290,25 +290,35 @@ var DOMAssistant = function () {
 												else if (/^even$/.test(pseudoValue)) {
 													pseudoValue = "2n+0";
 												}
-												var pseudoSelector = /^(\d+)n((\+|\-)(\d+))?$/.exec(pseudoValue);
-												var nthSelector = parseInt(pseudoSelector[1], 10);
-												var nOperatorVal = 0;
-												if (pseudoSelector[3] && pseudoSelector[4]) {
-													nOperatorVal = parseInt((pseudoSelector[3] + pseudoSelector[4]), 10);
-													if (nOperatorVal < 0) {
-														nOperatorVal = nthSelector + nOperatorVal;
-													}
-												}
 												pseudoSelection += "(count(./preceding-sibling::*) + 1)";
-												if (nthSelector < nOperatorVal) {
-													var nOperatorDiff = ((nOperatorVal - nthSelector) % 2 === 0)? 0 : 1;
-													pseudoSelection += " mod " + nthSelector + " = " + nOperatorDiff + " and position() >= " + nOperatorVal;
-												}
-												else if (nOperatorVal === nthSelector) {
-													pseudoSelection += " mod " + nthSelector + " = 0";
+												var pseudoSelector = /^(\d*)n((\+|\-)(\d+))?|(\-(\d*)n\+(\d+))$/.exec(pseudoValue);
+												if (pseudoSelector[5]) {
+													var iteratorAdd = pseudoSelector[6]? parseInt(pseudoSelector[6], 10) : 1;
+													var iteratorMax = parseInt(pseudoSelector[7], 10);
+													var iteratorStart = iteratorMax;
+													while ((iteratorStart - iteratorAdd) > 0) {
+														iteratorStart -= iteratorAdd;
+													}
+													pseudoSelection += " mod " + iteratorAdd + " = " + iteratorStart + " and position() <= " + iteratorMax;
 												}
 												else {
-													pseudoSelection += " mod " + nthSelector + " = " + nOperatorVal;
+													var nthSelector = pseudoSelector[1]? parseInt(pseudoSelector[1], 10) : 1;
+													var nOperatorVal = 0;
+													if (pseudoSelector[3] && pseudoSelector[4]) {
+														nOperatorVal = parseInt((pseudoSelector[3] + pseudoSelector[4]), 10);
+														while (nOperatorVal < 0) {
+															nOperatorVal += nthSelector;
+														}
+													}
+													if (nthSelector < nOperatorVal) {
+														pseudoSelection += " mod " + nthSelector + " = " + ((nOperatorVal - nthSelector) % nthSelector) + " and position() >= " + nOperatorVal;
+													}
+													else if (nOperatorVal === nthSelector) {
+														pseudoSelection += " mod " + nthSelector + " = 0";
+													}
+													else {
+														pseudoSelection += " mod " + nthSelector + " = " + nOperatorVal;
+													}
 												}
 											}
 											if (!/^n$/.test(pseudoValue)) {
@@ -369,7 +379,7 @@ var DOMAssistant = function () {
 					var matchableElms = new HTMLArray();
 					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextSelector, nextRegExp, nextSib, current, previous, prevParent, addElm, firstChild, lastChild, parentTagsByType, childrenNodes, childNodes;
 					var childOrSiblingRefRegExp = /^(>|\+|~)$/;
-					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=[\w\u00C0-\uFFFF\s\-\_\.]+)?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+))\))?)*)?/;
+					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=[\w\u00C0-\uFFFF\s\-\_\.]+)?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+))\))?)*)?/;
 					var selectorSplitRegExp;
 					try {
 						selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
@@ -692,26 +702,32 @@ var DOMAssistant = function () {
 													matchingElms = pushAll(matchingElms, previousMatch);
 												}
 												else {
-													var iteratorStart, iteratorAdd;
+													var iteratorStart, iteratorAdd, iteratorMax;
 													if (/^\d+$/.test(pseudoValue)) {
-														iteratorStart = parseInt(pseudoValue, 10);
+														iteratorMax = iteratorStart = parseInt(pseudoValue, 10);
 														iteratorAdd = 0;
 													}
 													else {
-														var pseudoSelector = /^(odd|even)|(\d*)(n)((\+|\-)(\d+))?$/.exec(pseudoValue);
-														var nRepeat = (!pseudoSelector[2] && pseudoSelector[3])? 1 : parseInt(pseudoSelector[2], 10);
-														iteratorStart = (pseudoSelector[1] === "even")? 2 : 1;
-														iteratorAdd = 2;
-														if (nRepeat > 0) {
-															iteratorStart = iteratorAdd = nRepeat;
-															if (pseudoSelector[5]) {
-																var adder = parseInt(pseudoSelector[6], 10);
-																if (pseudoSelector[5] === "+") {
-																	iteratorStart = adder;
-																}
-																else {
-																	var nn = 1;
-																	while ((iteratorStart=(nRepeat*(nn++))-adder) < 1) {}
+														var pseudoSelector = /^(odd|even)|(\d*)(n)((\+|\-)(\d+))?|(\-(\d*)n\+(\d+))$/.exec(pseudoValue);
+														if (pseudoSelector[7]) {
+															iteratorAdd = pseudoSelector[8]? parseInt(pseudoSelector[8], 10) : 1;
+															iteratorStart = iteratorMax = parseInt(pseudoSelector[9], 10);
+															while ((iteratorStart - iteratorAdd) > 0) {
+																iteratorStart -= iteratorAdd;
+															}
+														}
+														else {
+															var nRepeat = (!pseudoSelector[2] && pseudoSelector[3])? 1 : parseInt(pseudoSelector[2], 10);
+															iteratorStart = (pseudoSelector[1] === "even")? 2 : 1;
+															iteratorMax = -1;
+															iteratorAdd = 2;
+															if (nRepeat > 0) {
+																iteratorStart = iteratorAdd = nRepeat;
+																if (pseudoSelector[5]) {
+																	iteratorStart = parseInt(pseudoSelector[5] + pseudoSelector[6], 10);
+																	while (iteratorStart < 1) {
+																		iteratorStart += nRepeat;
+																	}
 																}
 															}
 														}
@@ -721,7 +737,7 @@ var DOMAssistant = function () {
 														if (!prevParent.childElms) {
 															var iteratorNext = iteratorStart, childCount = 0;
 															var childElm = prevParent.firstChild;
-															while (childElm && (childCount < iteratorNext)) {
+															while (childElm && (iteratorMax < 0 || iteratorNext <= iteratorMax)) {
 																if (childElm.nodeType === 1) {
 																	if (++childCount === iteratorNext) {
 																		if (!childElm.added && childElm.nodeName === previous.nodeName) {
