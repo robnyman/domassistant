@@ -110,6 +110,43 @@ var DOMAssistant = function () {
 			};
 		},
 	
+		getSequence: function (expression) {
+			var start, add = 2, max = -1, modVal = -1;
+			var expressionRegExp = /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n((\+|\-)(\d+))?)|(\-(([1-9]\d*)?)n\+(\d+)))$/;
+			var pseudoValue = expressionRegExp.exec(expression);
+			if (!pseudoValue) {
+				return null;
+			}
+			else {
+				if (pseudoValue[2]) {	// odd or even
+					start = (pseudoValue[2] === "odd")? 1 : 2;
+					modVal = (start === 1)? 1 : 0;
+				}
+				else if (pseudoValue[3]) {	// single digit
+					start = parseInt(pseudoValue[3], 10);
+					add = 0;
+					max = start;
+				}
+				else if (pseudoValue[4]) {	// an+b
+					add = pseudoValue[6]? parseInt(pseudoValue[6], 10) : 1;
+					start = pseudoValue[7]? parseInt(pseudoValue[8] + pseudoValue[9], 10) : 0;
+					while (start < 1) {
+						start += add;
+					}
+					modVal = (start > add)? (start - add) % add : ((start === add)? 0 : start);
+				}
+				else if (pseudoValue[10]) {	// -an+b
+					add = pseudoValue[12]? parseInt(pseudoValue[12], 10) : 1;
+					start = max = parseInt(pseudoValue[13], 10);
+					while ((start - add) > 0) {
+						start -= add;
+					}
+					modVal = (max > add)? (max - add) % add : ((max === add)? 0 : max);
+				}
+			}
+			return { start: start, add: add, max: max, modVal: modVal };
+		},
+		
 		$ : function () {
 			var elm = new HTMLArray();
 			if (document.getElementById) {
@@ -276,53 +313,21 @@ var DOMAssistant = function () {
 											xPathExpression += "[@checked='checked']"; // Doesn't work in Opera 9.24
 											break;
 										case "nth-child":
-											var pseudoSelection = "[";
-											if (/^\d+$/.test(pseudoValue)) {
-												pseudoSelection += "position() = " + pseudoValue;
-											}
-											else if (/^n$/.test(pseudoValue)) {
-												pseudoSelection = "";
-											}
-											else {
-												if (/^odd$/.test(pseudoValue)) {
-													pseudoValue = "2n+1";
-												}
-												else if (/^even$/.test(pseudoValue)) {
-													pseudoValue = "2n+0";
-												}
-												pseudoSelection += "(count(./preceding-sibling::*) + 1)";
-												var pseudoSelector = /^(\d*)n((\+|\-)(\d+))?|(\-(\d*)n\+(\d+))$/.exec(pseudoValue);
-												if (pseudoSelector[5]) {
-													var iteratorAdd = pseudoSelector[6]? parseInt(pseudoSelector[6], 10) : 1;
-													var iteratorMax = parseInt(pseudoSelector[7], 10);
-													var iteratorStart = iteratorMax;
-													while ((iteratorStart - iteratorAdd) > 0) {
-														iteratorStart -= iteratorAdd;
-													}
-													pseudoSelection += " mod " + iteratorAdd + " = " + iteratorStart + " and position() <= " + iteratorMax;
-												}
-												else {
-													var nthSelector = pseudoSelector[1]? parseInt(pseudoSelector[1], 10) : 1;
-													var nOperatorVal = 0;
-													if (pseudoSelector[3] && pseudoSelector[4]) {
-														nOperatorVal = parseInt((pseudoSelector[3] + pseudoSelector[4]), 10);
-														while (nOperatorVal < 0) {
-															nOperatorVal += nthSelector;
-														}
-													}
-													if (nthSelector < nOperatorVal) {
-														pseudoSelection += " mod " + nthSelector + " = " + ((nOperatorVal - nthSelector) % nthSelector) + " and position() >= " + nOperatorVal;
-													}
-													else if (nOperatorVal === nthSelector) {
-														pseudoSelection += " mod " + nthSelector + " = 0";
+											var pseudoSelection = "";
+											if (!/^n$/.test(pseudoValue)) {
+												var sequence = DOMAssistant.getSequence(pseudoValue);
+												if (sequence) {
+													pseudoSelection = "[";
+													if (sequence.start === sequence.max) {
+														pseudoSelection += "position() = " + sequence.start;
 													}
 													else {
-														pseudoSelection += " mod " + nthSelector + " = " + nOperatorVal;
+														pseudoSelection += "(count(./preceding-sibling::*) + 1) mod " + sequence.add + " = " + sequence.modVal;
+														pseudoSelection += (sequence.start > 1)? " and position() >= " + sequence.start : "";
+														pseudoSelection += (sequence.max > 0)? " and position() <= " + sequence.max : "";
 													}
+													pseudoSelection += "]";
 												}
-											}
-											if (!/^n$/.test(pseudoValue)) {
-												pseudoSelection += "]";
 											}
 											xPathExpression += pseudoSelection;
 											break;	
@@ -702,59 +707,32 @@ var DOMAssistant = function () {
 													matchingElms = pushAll(matchingElms, previousMatch);
 												}
 												else {
-													var iteratorStart, iteratorAdd, iteratorMax;
-													if (/^\d+$/.test(pseudoValue)) {
-														iteratorMax = iteratorStart = parseInt(pseudoValue, 10);
-														iteratorAdd = 0;
-													}
-													else {
-														var pseudoSelector = /^(odd|even)|(\d*)(n)((\+|\-)(\d+))?|(\-(\d*)n\+(\d+))$/.exec(pseudoValue);
-														if (pseudoSelector[7]) {
-															iteratorAdd = pseudoSelector[8]? parseInt(pseudoSelector[8], 10) : 1;
-															iteratorStart = iteratorMax = parseInt(pseudoSelector[9], 10);
-															while ((iteratorStart - iteratorAdd) > 0) {
-																iteratorStart -= iteratorAdd;
-															}
-														}
-														else {
-															var nRepeat = (!pseudoSelector[2] && pseudoSelector[3])? 1 : parseInt(pseudoSelector[2], 10);
-															iteratorStart = (pseudoSelector[1] === "even")? 2 : 1;
-															iteratorMax = -1;
-															iteratorAdd = 2;
-															if (nRepeat > 0) {
-																iteratorStart = iteratorAdd = nRepeat;
-																if (pseudoSelector[5]) {
-																	iteratorStart = parseInt(pseudoSelector[5] + pseudoSelector[6], 10);
-																	while (iteratorStart < 1) {
-																		iteratorStart += nRepeat;
-																	}
-																}
-															}
-														}
-													}
-													for (var z=0; (previous=previousMatch[z]); z++) {
-														prevParent = previous.parentNode;
-														if (!prevParent.childElms) {
-															var iteratorNext = iteratorStart, childCount = 0;
-															var childElm = prevParent.firstChild;
-															while (childElm && (iteratorMax < 0 || iteratorNext <= iteratorMax)) {
-																if (childElm.nodeType === 1) {
-																	if (++childCount === iteratorNext) {
-																		if (!childElm.added && childElm.nodeName === previous.nodeName) {
-																			childElm.added = true;
-																			matchingElms.push(childElm);
+													var sequence = DOMAssistant.getSequence(pseudoValue);
+													if (sequence) {
+														for (var z=0; (previous=previousMatch[z]); z++) {
+															prevParent = previous.parentNode;
+															if (!prevParent.childElms) {
+																var iteratorNext = sequence.start, childCount = 0;
+																var childElm = prevParent.firstChild;
+																while (childElm && (sequence.max < 0 || iteratorNext <= sequence.max)) {
+																	if (childElm.nodeType === 1) {
+																		if (++childCount === iteratorNext) {
+																			if (!childElm.added && childElm.nodeName === previous.nodeName) {
+																				childElm.added = true;
+																				matchingElms.push(childElm);
+																			}
+																			iteratorNext += sequence.add;
 																		}
-																		iteratorNext += iteratorAdd;
 																	}
+																	childElm = childElm.nextSibling;
 																}
-																childElm = childElm.nextSibling;
+																prevParent.childElms = true;
+																prevParents.push(prevParent);
 															}
-															prevParent.childElms = true;
-															prevParents.push(prevParent);
 														}
+														clearAdded();
+														clearChildElms();
 													}
-													clearAdded();
-													clearChildElms();
 												}
 												break;
 											case "first-of-type":
