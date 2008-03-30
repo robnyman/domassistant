@@ -745,15 +745,12 @@ var DOMAssistant = function () {
 												break;
 											case "last-of-type":
 												for (var zLast=0; (previous=previousMatch[zLast]); zLast++) {
-													if (!previous.added) {
-														prevParent = previous.parentNode;
-														parentTagsByType = prevParent.getElementsByTagName(previous.nodeName);
-														lastChild = parentTagsByType[parentTagsByType.length - 1];
-														while ((lastChild = lastChild.parentNode) && lastChild !== prevParent) {}
-														if (lastChild === previous) {
-															previous.added = true;
-															matchingElms.push(previous);
-														}
+													lastChild = previous.parentNode.lastChild;
+													while (lastChild.nodeName != previous.nodeName) {
+														lastChild = lastChild.previousSibling;
+													}
+													if (lastChild === previous) {
+														matchingElms.push(previous);
 													}
 												}
 												break;
