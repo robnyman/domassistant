@@ -673,19 +673,17 @@ var DOMAssistant = function () {
 									else {
 										switch (pseudoClass) {
 											case "first-child":
-												for (var u=0; (previous=previousMatch[u]); u++) {
-													firstChild = previous.parentNode.firstChild;
-													while (firstChild.nodeType !== 1 && (firstChild = firstChild.nextSibling)) {}
-													if (firstChild === previous) {
+												for (var u=0, prevSibling; (prevSibling=previous=previousMatch[u]); u++) {
+													while ((prevSibling = prevSibling.previousSibling) && prevSibling.nodeType !== 1) {}
+													if (!prevSibling) {
 														matchingElms.push(previous);
 													}
 												}
 												break;
 											case "last-child":
-												for (var v=0; (previous=previousMatch[v]); v++) {
-													lastChild = previous.parentNode.lastChild;
-													while (lastChild.nodeType !== 1 && (lastChild = lastChild.previousSibling)) {}
-													if (lastChild === previous) {
+												for (var v=0, nextSibling; (nextSibling=previous=previousMatch[v]); v++) {
+													while ((nextSibling = nextSibling.nextSibling) && nextSibling.nodeType !== 1) {}
+													if (!nextSibling) {
 														matchingElms.push(previous);
 													}
 												}
@@ -720,8 +718,7 @@ var DOMAssistant = function () {
 																while (childElm && (sequence.max < 0 || iteratorNext <= sequence.max)) {
 																	if (childElm.nodeType === 1) {
 																		if (++childCount === iteratorNext) {
-																			if (!childElm.added && childElm.nodeName === previous.nodeName) {
-																				childElm.added = true;
+																			if (childElm.nodeName === previous.nodeName) {
 																				matchingElms.push(childElm);
 																			}
 																			iteratorNext += sequence.add;
@@ -733,7 +730,6 @@ var DOMAssistant = function () {
 																prevParents.push(prevParent);
 															}
 														}
-														clearAdded();
 														clearChildElms();
 													}
 												}
