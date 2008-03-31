@@ -381,7 +381,6 @@ var DOMAssistant = function () {
 					var elm = new HTMLArray();
 					var prevElm = [];
 					var matchingElms = [];
-					var matchableElms = [];
 					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextSelector, nextRegExp, nextSib, current, previous, prevParent, addElm, firstChild, lastChild, parentTagsByType, childrenNodes, childNodes;
 					var childOrSiblingRefRegExp = /^(>|\+|~)$/;
 					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=[\w\u00C0-\uFFFF\s\-\_\.]+)?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+))\))?)*)?/;
@@ -431,10 +430,10 @@ var DOMAssistant = function () {
 						}
 						cssSelectors = currentRule.match(selectorSplitRegExp);
 						prevElm = [];
-						prevElm.push(this);				
+						prevElm.push(this);
 						for (var i=0, rule; (rule=cssSelectors[i]); i++) {
 							var isChildOrSibling = false;
-							matchingElms = matchableElms = [];
+							matchingElms = [];
 							if (i > 0 && childOrSiblingRefRegExp.test(rule)) {
 								childOrSiblingRef = childOrSiblingRefRegExp.exec(rule);
 								if (childOrSiblingRef) {
@@ -450,7 +449,7 @@ var DOMAssistant = function () {
 												children = prevElm[j].childNodes;
 												for (var k=0, child; (child=children[k]); k++) {
 													if (!nextTag || nextRegExp.test(child.nodeName)) {
-														matchableElms.push(child);
+														matchingElms.push(child);
 													}
 												}
 											}
@@ -460,7 +459,7 @@ var DOMAssistant = function () {
 												while ((nextSib = nextSib.nextSibling) && nextSib.nodeType !== 1) {}
 												if (nextSib) {
 													if (!nextTag || nextRegExp.test(nextSib.nodeName)) {
-														matchableElms.push(nextSib);
+														matchingElms.push(nextSib);
 													}
 												}
 											}
@@ -470,13 +469,13 @@ var DOMAssistant = function () {
 												while ((nextSib = nextSib.nextSibling) && !nextSib.added) {
 													if (!nextTag || nextRegExp.test(nextSib.nodeName)) {
 														nextSib.added = true;
-														matchableElms.push(nextSib);
+														matchingElms.push(nextSib);
 													}
 												}
 											}
 											break;
 									}
-									prevElm = matchingElms = matchableElms;
+									prevElm = matchingElms;
 									clearAdded();
 									rule = cssSelectors[++i];
 									prevElm.skipTag = true;
@@ -492,20 +491,21 @@ var DOMAssistant = function () {
 							};
 							if (splitRule.id) {
 								var DOMElm = document.getElementById(splitRule.id.replace(/#/, ""));
+								var matchingID = [];
 								if (DOMElm) {
 									if (isChildOrSibling) {
-										for (var mn=0, mnl=matchableElms.length; mn<mnl; mn++) {
-											if (matchableElms[mn] === DOMElm) {
-												matchingElms.push(DOMElm);
+										for (var mn=0, mnl=matchingElms.length; mn<mnl; mn++) {
+											if (matchingElms[mn] === DOMElm) {
+												matchingID.push(DOMElm);
 												break;
 											}
 										}
 									}
 									else {
-										matchingElms.push(DOMElm);
+										matchingID.push(DOMElm);
 									}
 								}
-								prevElm = matchingElms;
+								prevElm = matchingElms = matchingID;
 							}
 							else if (splitRule.tag && !prevElm.skipTag) {
 								if (!matchingElms.length && prevElm.length === 1) {
@@ -550,8 +550,7 @@ var DOMAssistant = function () {
 									}
 								}
 								clearAdded();
-								matchingElms = matchingClassElms;
-								prevElm = matchingElms;
+								prevElm = matchingElms = matchingClassElms;
 							}
 							if (splitRule.allAttr) {
 								splitRule.allAttr = splitRule.allAttr.match(/\[[^\]]+\]/g);
@@ -606,8 +605,7 @@ var DOMAssistant = function () {
 									}
 								}
 								clearAdded();
-								matchingElms = matchingAttributeElms;
-								prevElm = matchingElms;
+								prevElm = matchingElms = matchingAttributeElms;
 							}
 							if (splitRule.allPseudos) {
 								var pseudoSplitRegExp = /:(\w[\w\-]*)(\(([^\)]+)\))?/;
