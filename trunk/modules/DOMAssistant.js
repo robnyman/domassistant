@@ -509,13 +509,14 @@ var DOMAssistant = function () {
 							}
 							else if (splitRule.tag && !prevElm.skipTag) {
 								if (!matchingElms.length && prevElm.length === 1) {
-									matchingElms = pushAll(matchingElms, prevElm[0].getElementsByTagName(splitRule.tag));
+									var matchingTags = (isIE && prevElm[0] === this)? ((splitRule.tag === "*")? document.all : document.all.tags(splitRule.tag)) : prevElm[0].getElementsByTagName(splitRule.tag);
+									matchingElms = pushAll(matchingElms, matchingTags);
 								}
 								else {
 									for (var n=0, nl=prevElm.length, tagCollectionMatches, tagMatch; n<nl; n++) {
-										tagCollectionMatches = prevElm[n].getElementsByTagName(splitRule.tag);
+										tagCollectionMatches = (splitRule.tag === "*")? prevElm[n].childNodes : prevElm[n].getElementsByTagName(splitRule.tag);
 										for (var o=0; (tagMatch=tagCollectionMatches[o]); o++) {
-											if (!tagMatch.added) {
+											if (tagMatch.nodeType === 1 && !tagMatch.added) {
 												tagMatch.added = true;
 												matchingElms.push(tagMatch);
 											}
