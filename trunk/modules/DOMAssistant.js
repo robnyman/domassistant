@@ -4,7 +4,6 @@ var DOMAssistant = function () {
 		// Constructor
 	};
 	var isIE = /*@cc_on!@*/false;
-	var cachedElm = [];
 	function pushAll(set1, set2) {
 		if (isIE) {
 			if (set2.slice) {
@@ -509,31 +508,23 @@ var DOMAssistant = function () {
 								prevElm = matchingElms = matchingID;
 							}
 							else if (splitRule.tag && !prevElm.skipTag) {
-								if (i === 0 && cachedElm[splitRule.tag]) {
-									prevElm = matchingElms = cachedElm[splitRule.tag];
+								if (!matchingElms.length && prevElm.length === 1) {
+									var matchingTags = (isIE && prevElm[0] === document)? ((splitRule.tag === "*")? document.all : document.all.tags(splitRule.tag)) : prevElm[0].getElementsByTagName(splitRule.tag);
+									matchingElms = pushAll(matchingElms, matchingTags);
 								}
 								else {
-									if (!matchingElms.length && prevElm.length === 1) {
-										var matchingTags = (isIE && prevElm[0] === document)? ((splitRule.tag === "*")? document.all : document.all.tags(splitRule.tag)) : prevElm[0].getElementsByTagName(splitRule.tag);
-										matchingElms = pushAll(matchingElms, matchingTags);
-									}
-									else {
-										for (var n=0, nl=prevElm.length, tagCollectionMatches, tagMatch; n<nl; n++) {
-											tagCollectionMatches = prevElm[n].getElementsByTagName(splitRule.tag);
-											for (var o=0; (tagMatch=tagCollectionMatches[o]); o++) {
-												if (!tagMatch.added) {
-													tagMatch.added = true;
-													matchingElms.push(tagMatch);
-												}
+									for (var n=0, nl=prevElm.length, tagCollectionMatches, tagMatch; n<nl; n++) {
+										tagCollectionMatches = prevElm[n].getElementsByTagName(splitRule.tag);
+										for (var o=0; (tagMatch=tagCollectionMatches[o]); o++) {
+											if (!tagMatch.added) {
+												tagMatch.added = true;
+												matchingElms.push(tagMatch);
 											}
 										}
 									}
-									prevElm = matchingElms;
-									clearAdded();
-									if (i === 0 && cachedElm.length <= 10) {
-										cachedElm[splitRule.tag] = prevElm;
-									}
 								}
+								prevElm = matchingElms;
+								clearAdded();
 							}
 							prevElm.skipTag = false;
 							if (splitRule.allClasses) {
