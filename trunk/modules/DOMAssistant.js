@@ -429,8 +429,7 @@ var DOMAssistant = function () {
 							}
 						}
 						cssSelectors = currentRule.match(selectorSplitRegExp);
-						prevElm = [];
-						prevElm.push(this);
+						prevElm = [this];
 						for (var i=0, rule; (rule=cssSelectors[i]); i++) {
 							var isChildOrSibling = false;
 							matchingElms = [];
@@ -491,26 +490,25 @@ var DOMAssistant = function () {
 							};
 							if (splitRule.id) {
 								var DOMElm = document.getElementById(splitRule.id.replace(/#/, ""));
-								var matchingID = [];
 								if (DOMElm) {
 									if (isChildOrSibling) {
 										for (var mn=0, mnl=matchingElms.length; mn<mnl; mn++) {
 											if (matchingElms[mn] === DOMElm) {
-												matchingID.push(DOMElm);
+												matchingElms = [DOMElm];
 												break;
 											}
 										}
 									}
 									else {
-										matchingID.push(DOMElm);
+										matchingElms = [DOMElm];
 									}
 								}
-								prevElm = matchingElms = matchingID;
+								prevElm = matchingElms;
 							}
 							else if (splitRule.tag && !prevElm.skipTag) {
 								if (!matchingElms.length && prevElm.length === 1) {
 									var matchingTags = (isIE && prevElm[0] === document)? ((splitRule.tag === "*")? document.all : document.all.tags(splitRule.tag)) : prevElm[0].getElementsByTagName(splitRule.tag);
-									matchingElms = pushAll(matchingElms, matchingTags);
+									prevElm = matchingElms = pushAll([], matchingTags);
 								}
 								else {
 									for (var n=0, nl=prevElm.length, tagCollectionMatches, tagMatch; n<nl; n++) {
@@ -522,9 +520,9 @@ var DOMAssistant = function () {
 											}
 										}
 									}
+									prevElm = matchingElms;
+									clearAdded();
 								}
-								prevElm = matchingElms;
-								clearAdded();
 							}
 							prevElm.skipTag = false;
 							if (splitRule.allClasses) {
