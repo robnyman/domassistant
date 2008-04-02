@@ -415,7 +415,7 @@ var DOMAssistant = function () {
 									break;	
 							}
 						}
-						return regexpReturn;
+						return new RegExp(regexpReturn);
 					}
 					for (var a=0; (currentRule=cssRules[a]); a++) {
 						if (a > 0) {
@@ -564,8 +564,8 @@ var DOMAssistant = function () {
 								for (var sp=0, spl=splitRule.allAttr.length, attributeMatch, attributeValue, attrVal; sp<spl; sp++) {
 									attributeMatch = attributeMatchRegExp.exec(splitRule.allAttr[sp]);
 									attributeValue = attributeMatch[3]? attributeMatch[3].replace(/\./g, "\\.") : null;
-									attrVal = attrToRegExp(attributeValue, (attributeMatch[2] || null));
-									regExpAttributes[regExpAttributes.length] = [(attrVal? new RegExp(attrVal) : null), attributeMatch[1]];
+									attrVal = (attributeValue)? attrToRegExp(attributeValue, (attributeMatch[2] || null)) : null;
+									regExpAttributes[regExpAttributes.length] = [attrVal, attributeMatch[1]];
 								}
 								matchingAttributeElms = [];
 								for (var r=0, currentAttr; (current=matchingElms[r]); r++) {
