@@ -4,21 +4,22 @@ var DOMAssistant = function () {
 		// Constructor
 	};
 	var isIE = /*@cc_on!@*/false;
-	function pushAll(set1, set2) {
-		if (isIE) {
+	var pushAll = function (set1, set2) {
+		for (var j=0, jL=set2.length; j<jL; j++) {
+			set1.push(set2[j]);
+		}
+		return set1;
+	};
+	if (isIE) {
+		pushAll = function (set1, set2) {
 			if (set2.slice) {
 				return set1.concat(set2);
 			}
 			for (var i=0, iL=set2.length; i<iL; i++) {
 				set1[set1.length] = set2[i];
 			}
-		}
-		else {
-			for (var j=0, jL=set2.length; j<jL; j++) {
-				set1.push(set2[j]);
-			}
-		}
-		return set1;
+			return set1;
+		};
 	}
 	return {
 		allMethods : [],
@@ -28,6 +29,7 @@ var DOMAssistant = function () {
 			"elmsByAttribute",
 			"elmsByTag"
 		],
+		
 		initCore : function () {
 			this.applyMethod.call(window, "$", this.$);
 			this.applyMethod.call(window, "$$", this.$$);
