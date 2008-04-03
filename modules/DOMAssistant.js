@@ -4,6 +4,7 @@ var DOMAssistant = function () {
 		// Constructor
 	};
 	var isIE = /*@cc_on!@*/false;
+	var cachedElms = [];
 	var pushAll = function (set1, set2) {
 		for (var j=0, jL=set2.length; j<jL; j++) {
 			set1.push(set2[j]);
@@ -446,8 +447,7 @@ var DOMAssistant = function () {
 									}
 									switch (childOrSiblingRef[0]) {
 										case ">":
-											for (var j=0, jl=prevElm.length, prevRef, children; j<jl; j++) {
-												prevRef = prevElm[j];
+											for (var j=0, prevRef, children; (prevRef=prevElm[j]); j++) {
 												children = prevRef.getElementsByTagName(nextTag || "*");
 												for (var k=0, child; (child=children[k]); k++) {
 													if (child.parentNode === prevRef) {
@@ -513,8 +513,10 @@ var DOMAssistant = function () {
 							}
 							else if (splitRule.tag && !prevElm.skipTag) {
 								if (!matchingElms.length && prevElm.length === 1) {
-									var matchingTags = (isIE && prevElm[0] === document)? ((splitRule.tag === "*")? document.all : document.all.tags(splitRule.tag)) : prevElm[0].getElementsByTagName(splitRule.tag);
-									prevElm = matchingElms = pushAll([], matchingTags);
+									if (!cachedElms[splitRule.tag]) {
+										cachedElms[splitRule.tag] = (isIE && prevElm[0] === document)? ((splitRule.tag === "*")? document.all : document.all.tags(splitRule.tag)) : prevElm[0].getElementsByTagName(splitRule.tag);
+									}
+									prevElm = matchingElms = pushAll([], cachedElms[splitRule.tag]);
 								}
 								else {
 									for (var n=0, nl=prevElm.length, tagCollectionMatches, tagMatch; n<nl; n++) {
@@ -529,6 +531,9 @@ var DOMAssistant = function () {
 									prevElm = matchingElms;
 									clearAdded();
 								}
+							}
+							if (!matchingElms.length) {
+								break;
 							}
 							prevElm.skipTag = false;
 							if (splitRule.allClasses) {
