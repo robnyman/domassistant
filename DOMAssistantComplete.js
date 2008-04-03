@@ -512,11 +512,16 @@ var DOMAssistant = function () {
 								prevElm = matchingElms;
 							}
 							else if (splitRule.tag && !prevElm.skipTag) {
-								if (!matchingElms.length && prevElm.length === 1) {
-									if (!cachedElms[splitRule.tag]) {
-										cachedElms[splitRule.tag] = (isIE && prevElm[0] === document)? ((splitRule.tag === "*")? document.all : document.all.tags(splitRule.tag)) : prevElm[0].getElementsByTagName(splitRule.tag);
+								if (i===0 && !matchingElms.length) {
+									if (prevElm[0] === document) {
+										if (!cachedElms[splitRule.tag]) {
+											cachedElms[splitRule.tag] = isIE? ((splitRule.tag === "*")? document.all : document.all.tags(splitRule.tag)) : document.getElementsByTagName(splitRule.tag);
+										}
+										prevElm = matchingElms = pushAll([], cachedElms[splitRule.tag]);
 									}
-									prevElm = matchingElms = pushAll([], cachedElms[splitRule.tag]);
+									else {
+										prevElm = matchingElms = pushAll([], prevElm[0].getElementsByTagName(splitRule.tag));
+									}
 								}
 								else {
 									for (var n=0, nl=prevElm.length, tagCollectionMatches, tagMatch; n<nl; n++) {
