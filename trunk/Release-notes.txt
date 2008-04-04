@@ -8,7 +8,7 @@ Version 2.7:
 - Method first added to get the first of any matches.
 - Added support for attribute selectors E[att|=val], E[att~=val], and pseudo-class :lang.
 - Added support for multiple pseudo-classes, eg. tr:nth-child(odd):not([id]).
-- Added support for negative values of a in :nth-child(an+b).
+- Added full compliance for the an+b expression in :nth-child and :nth-of-type, including negative a.
 - Significant CSS selector performance improvement in Internet Explorer.
 - Fixed so a function for an event, applied with addEvent, couldn't be added multiple times.
 - Fixed so a function in DOMReady couldn't be applied multiple times.

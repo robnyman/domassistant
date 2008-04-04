@@ -196,7 +196,7 @@ var DOMAssistant = function () {
 				DOMAssistant.cssSelection = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
 					var elm = new HTMLArray();
-					var currentRule, identical, cssSelectors, xPathExpression, cssSelector, splitRule;
+					var currentRule, identical, cssSelectors, xPathExpression, cssSelector, splitRule, sequence;
 					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=[\w\u00C0-\uFFFF\s\-\_\.]+)?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+))\))?)*)?(>|\+|~)?/;
 					var selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
 					function attrToXPath(match, p1, p2, p3) {
@@ -298,8 +298,31 @@ var DOMAssistant = function () {
 										case "only-of-type":
 											xPathExpression += "[count(preceding-sibling::" + splitRule.tag + ") = 0 and count(following-sibling::" + splitRule.tag + ") = 0]";
 											break;		
+										case "nth-child":
+											if (!/^n$/.test(pseudoValue)) {
+												sequence = DOMAssistant.getSequence(pseudoValue);
+												if (sequence) {
+													if (sequence.start === sequence.max) {
+														xPathExpression += "[count(preceding-sibling::*) = " + (sequence.start - 1) + "]";
+													}
+													else {
+														xPathExpression += "[(count(preceding-sibling::*) + 1) mod " + sequence.add + " = " + sequence.modVal + ((sequence.start > 1)? " and count(preceding-sibling::*) >= " + (sequence.start - 1) : "") + ((sequence.max > 0)? " and count(preceding-sibling::*) <= " + (sequence.max - 1): "") + "]";
+													}
+												}
+											}
+											break;	
 										case "nth-of-type":
-											xPathExpression += "[" + pseudoValue + "]";
+											if (!/^n$/.test(pseudoValue)) {
+												sequence = DOMAssistant.getSequence(pseudoValue);
+												if (sequence) {
+													if (sequence.start === sequence.max) {
+														xPathExpression += "[" + pseudoValue + "]";
+													}
+													else {
+														xPathExpression += "[position() mod " + sequence.add + " = " + sequence.modVal + ((sequence.start > 1)? " and position() >= " + sequence.start : "") + ((sequence.max > 0)? " and position() <= " + sequence.max : "") + "]";
+													}
+												}
+											}
 											break;
 										case "empty":
 											xPathExpression += "[count(child::*) = 0 and string-length(text()) = 0]";
@@ -316,23 +339,6 @@ var DOMAssistant = function () {
 										case "checked":
 											xPathExpression += "[@checked='checked']"; // Doesn't work in Opera 9.24
 											break;
-										case "nth-child":
-											var pseudoSelection = "";
-											if (!/^n$/.test(pseudoValue)) {
-												var sequence = DOMAssistant.getSequence(pseudoValue);
-												if (sequence) {
-													pseudoSelection = "[";
-													if (sequence.start === sequence.max) {
-														pseudoSelection += "position() = " + sequence.start;
-													}
-													else {
-														pseudoSelection += "(count(./preceding-sibling::*) + 1) mod " + sequence.add + " = " + sequence.modVal + ((sequence.start > 1)? " and position() >= " + sequence.start : "") + ((sequence.max > 0)? " and position() <= " + sequence.max : "");
-													}
-													pseudoSelection += "]";
-												}
-											}
-											xPathExpression += pseudoSelection;
-											break;	
 										case "not":
 											pseudoValue = pseudoValue.replace(/^\[#([\w\u00C0-\uFFFF\-\_]+)\]$/, "[id=$1]");
 											var notSelector = pseudoValue.replace(/^(\w+)/, "self::$1");
@@ -361,7 +367,7 @@ var DOMAssistant = function () {
 					var elm = new HTMLArray();
 					var prevElm = [];
 					var matchingElms = [];
-					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextSelector, nextRegExp, nextSib, regExpClassNames, matchingClassElms, regExpAttributes, matchingAttributeElms, attributeMatchRegExp, current, previous, prevParent, addElm, firstChild, lastChild, parentTagsByType, childrenNodes, childNodes;
+					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextSelector, nextRegExp, nextSib, regExpClassNames, matchingClassElms, regExpAttributes, matchingAttributeElms, attributeMatchRegExp, current, previous, prevParent, addElm, firstChild, lastChild, parentTagsByType, childrenNodes, iteratorNext, childCount, childElm, sequence;
 					var childOrSiblingRefRegExp = /^(>|\+|~)$/;
 					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=[\w\u00C0-\uFFFF\s\-\_\.]+)?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+))\))?)*)?/;
 					var selectorSplitRegExp;
@@ -374,7 +380,7 @@ var DOMAssistant = function () {
 					function clearAdded(elm) {
 						elm = elm? elm : prevElm;
 						for (var n=0, nl=elm.length; n<nl; n++) {
-							elm[n].added = false;
+							elm[n].added = null;
 						}
 					}
 					function clearChildElms () {
@@ -677,13 +683,14 @@ var DOMAssistant = function () {
 													matchingElms = pushAll(matchingElms, previousMatch);
 												}
 												else {
-													var sequence = DOMAssistant.getSequence(pseudoValue);
+													sequence = DOMAssistant.getSequence(pseudoValue);
 													if (sequence) {
 														for (var z=0; (previous=previousMatch[z]); z++) {
 															prevParent = previous.parentNode;
 															if (!prevParent.childElms) {
-																var iteratorNext = sequence.start, childCount = 0;
-																var childElm = prevParent.firstChild;
+																iteratorNext = sequence.start;
+																childCount = 0;
+																childElm = prevParent.firstChild;
 																while (childElm && (sequence.max < 0 || iteratorNext <= sequence.max)) {
 																	if (childElm.nodeType === 1) {
 																		if (++childCount === iteratorNext) {
@@ -731,20 +738,32 @@ var DOMAssistant = function () {
 												}
 												break;
 											case "nth-of-type":
-												var nthIndex = parseInt(pseudoValue, 10);
-												for (var zNth=0; (previous=previousMatch[zNth]); zNth++) {
-													childNodes = [];
-													parentTagsByType = previous.parentNode.childNodes;
-													if (parentTagsByType.length >= nthIndex) {
-														for (var zInnerNth=0, childNode; (zInnerNth !== nthIndex && (childNode=parentTagsByType[zInnerNth])); zInnerNth++) {
-															if (childNode.nodeName === previous.nodeName) {
-																childNodes[childNodes.length] = childNode;
+												if (/^n$/.test(pseudoValue)) {
+													matchingElms = pushAll(matchingElms, previousMatch);
+												}
+												else {
+													sequence = DOMAssistant.getSequence(pseudoValue);
+													if (sequence) {
+														for (var zNth=0; (previous=previousMatch[zNth]); zNth++) {
+															prevParent = previous.parentNode;
+															if (!prevParent.childElms) {
+																iteratorNext = sequence.start;
+																childCount = 0;
+																childElm = prevParent.firstChild;
+																while (childElm && (sequence.max < 0 || iteratorNext <= sequence.max)) {
+																	if (childElm.nodeName === previous.nodeName) {
+																		if (++childCount === iteratorNext) {
+																			matchingElms[matchingElms.length] = childElm;
+																			iteratorNext += sequence.add;
+																		}
+																	}
+																	childElm = childElm.nextSibling;
+																}
+																prevParent.childElms = true;
+																prevParents[prevParents.length] = prevParent;
 															}
 														}
-														current = childNodes[childNodes.length - 1];
-														if (current && current === previous) {
-															matchingElms[matchingElms.length] = previous;
-														}
+														clearChildElms();
 													}
 												}
 												break;
