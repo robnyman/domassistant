@@ -513,7 +513,7 @@ var DOMAssistant = function () {
 							}
 							else if (splitRule.tag && !prevElm.skipTag) {
 								if (i===0 && !matchingElms.length) {
-									if (prevElm[0] === document) {
+									if (prevElm[0] === document || prevElm[0].lastModified) {
 										if (!cachedElms[splitRule.tag]) {
 											cachedElms[splitRule.tag] = isIE? ((splitRule.tag === "*")? document.all : document.all.tags(splitRule.tag)) : document.getElementsByTagName(splitRule.tag);
 										}
