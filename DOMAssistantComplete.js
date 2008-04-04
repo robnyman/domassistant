@@ -424,6 +424,10 @@ var DOMAssistant = function () {
 						}
 						return regexpReturn;
 					}
+					function getElementsByTagName(tag, parent) {
+						parent = parent || document;
+						return isIE? ((tag === "*")? parent.all : parent.all.tags(tag)) : parent.getElementsByTagName(tag);
+					}
 					for (var a=0; (currentRule=cssRules[a]); a++) {
 						if (a > 0) {
 							identical = false;
@@ -521,17 +525,17 @@ var DOMAssistant = function () {
 								if (i===0 && !matchingElms.length && prevElm.length === 1) {
 									if (prevElm[0] === document || prevElm[0].lastModified) {
 										if (!cachedElms[splitRule.tag]) {
-											cachedElms[splitRule.tag] = isIE? ((splitRule.tag === "*")? document.all : document.all.tags(splitRule.tag)) : document.getElementsByTagName(splitRule.tag);
+											cachedElms[splitRule.tag] = getElementsByTagName(splitRule.tag);
 										}
 										prevElm = matchingElms = pushAll([], cachedElms[splitRule.tag]);
 									}
 									else {
-										prevElm = matchingElms = pushAll([], prevElm[0].getElementsByTagName(splitRule.tag));
+										prevElm = matchingElms = pushAll([], getElementsByTagName(splitRule.tag, prevElm[0]));
 									}
 								}
 								else {
 									for (var n=0, nl=prevElm.length, tagCollectionMatches, tagMatch; n<nl; n++) {
-										tagCollectionMatches = prevElm[n].getElementsByTagName(splitRule.tag);
+										tagCollectionMatches = getElementsByTagName(splitRule.tag, prevElm[n]);
 										for (var o=0; (tagMatch=tagCollectionMatches[o]); o++) {
 											if (!tagMatch.added) {
 												tagMatch.added = true;
