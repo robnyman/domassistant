@@ -113,7 +113,7 @@ var DOMAssistant = function () {
 			};
 		},
 	
-		getSequence: function (expression) {
+		getSequence : function (expression) {
 			var start, add = 2, max = -1, modVal = -1;
 			var expressionRegExp = /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n((\+|\-)(\d+))?)|(\-(([1-9]\d*)?)n\+(\d+)))$/;
 			var pseudoValue = expressionRegExp.exec(expression);
@@ -199,28 +199,15 @@ var DOMAssistant = function () {
 					var currentRule, identical, cssSelectors, xPathExpression, cssSelector, splitRule, sequence;
 					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=[\w\u00C0-\uFFFF\s\-\_\.]+)?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+))\))?)*)?(>|\+|~)?/;
 					var selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
-					function attrToXPath(match, p1, p2, p3) {
-						var xpathReturn = match;
+					function attrToXPath (match, p1, p2, p3) {
 						switch (p2) {
-							case "^":
-								xpathReturn = "starts-with(@" + p1 + ", '" + p3 + "')";
-								break;
-							case "$":
-								xpathReturn = "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = '" + p3 + "'";
-								break;
-							case "*":
-								xpathReturn = "contains(concat(' ', @" + p1 + ", ' '), '" + p3 + "')";
-								break;
-							case "|":
-								xpathReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + "-'))";
-								break;
-							case "~":
-								xpathReturn = "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + " ') or substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = ' " + p3 + "' or contains(concat(' ', @" + p1 + ", ' '), ' " + p3 + " '))";
-								break;
-							default:
-								xpathReturn = "@" + p1 + (p3? "='" + p3 + "'" : "");
+							case "^": return "starts-with(@" + p1 + ", '" + p3 + "')";
+							case "$": return "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = '" + p3 + "'";
+							case "*": return "contains(concat(' ', @" + p1 + ", ' '), '" + p3 + "')";
+							case "|": return "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + "-'))";
+							case "~": return "(@" + p1 + "='" + p3 + "' or starts-with(@" + p1 + ", '" + p3 + " ') or substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = ' " + p3 + "' or contains(concat(' ', @" + p1 + ", ' '), ' " + p3 + " '))";
+							default: return "@" + p1 + (p3? "='" + p3 + "'" : "");
 						}
-						return xpathReturn;
 					}
 					for (var i=0; (currentRule=cssRules[i]); i++) {
 						if (i > 0) {
@@ -365,8 +352,7 @@ var DOMAssistant = function () {
 				DOMAssistant.cssSelection = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
 					var elm = new HTMLArray();
-					var prevElm = [];
-					var matchingElms = [];
+					var prevElm = [], matchingElms = [];
 					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextSelector, nextRegExp, nextSib, regExpClassNames, matchingClassElms, regExpAttributes, matchingAttributeElms, attributeMatchRegExp, current, previous, prevParent, addElm, firstChild, lastChild, parentTagsByType, childrenNodes, iteratorNext, childCount, childElm, sequence;
 					var childOrSiblingRefRegExp = /^(>|\+|~)$/;
 					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=[\w\u00C0-\uFFFF\s\-\_\.]+)?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+))\))?)*)?/;
@@ -377,8 +363,8 @@ var DOMAssistant = function () {
 					catch (e) {
 						selectorSplitRegExp = /[^\s]+/g;
 					}
-					function clearAdded(elm) {
-						elm = elm? elm : prevElm;
+					function clearAdded (elm) {
+						elm = elm || prevElm;
 						for (var n=0, nl=elm.length; n<nl; n++) {
 							elm[n].added = null;
 						}
@@ -388,7 +374,7 @@ var DOMAssistant = function () {
 							prevParents[n].childElms = null;
 						}
 					}
-					function getAttr(elm, attr) {
+					function getAttr (elm, attr) {
 						if (isIE) {
 							switch (attr) {
 								case "id":
@@ -401,30 +387,17 @@ var DOMAssistant = function () {
 						}
 						return elm.getAttribute(attr, 2);
 					}
-					function attrToRegExp(attrVal, substrOperator) {
-						var regexpReturn = attrVal? "^" + attrVal + "$" : null;
-						if (typeof substrOperator === "string") {
-							switch (substrOperator) {
-								case "^":
-									regexpReturn = "^" + attrVal;
-									break;
-								case "$":
-									regexpReturn = attrVal + "$";
-									break;
-								case "*":
-									regexpReturn = attrVal;
-									break;	
-								case "|":
-									regexpReturn = "(^" + attrVal + "(\\-\\w+)*$)";
-									break;	
-								case "~":
-									regexpReturn = "\\b" + attrVal + "\\b";
-									break;	
-							}
+					function attrToRegExp (attrVal, substrOperator) {
+						switch (substrOperator) {
+							case "^": return "^" + attrVal;
+							case "$": return attrVal + "$";
+							case "*": return attrVal;
+							case "|": return "(^" + attrVal + "(\\-\\w+)*$)";
+							case "~": return "\\b" + attrVal + "\\b";
+							default: return attrVal? "^" + attrVal + "$" : null;
 						}
-						return regexpReturn;
 					}
-					function getElementsByTagName(tag, parent) {
+					function getElementsByTagName (tag, parent) {
 						parent = parent || document;
 						return isIE? ((tag === "*")? parent.all : parent.all.tags(tag)) : parent.getElementsByTagName(tag);
 					}
