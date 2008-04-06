@@ -398,7 +398,14 @@ var DOMAssistant = function () {
 						}
 					}
 					function getElementsByTagName (tag, parent) {
+						tag = tag || "*";
 						parent = parent || document;
+						if (parent === document || parent.lastModified) {
+							if (!cachedElms[tag]) {
+								cachedElms[tag] = isIE? ((tag === "*")? document.all : document.all.tags(tag)) : document.getElementsByTagName(tag);
+							}
+							return cachedElms[tag];
+						}
 						return isIE? ((tag === "*")? parent.all : parent.all.tags(tag)) : parent.getElementsByTagName(tag);
 					}
 					for (var a=0; (currentRule=cssRules[a]); a++) {
@@ -417,21 +424,20 @@ var DOMAssistant = function () {
 						cssSelectors = currentRule.match(selectorSplitRegExp);
 						prevElm = [this];
 						for (var i=0, rule; (rule=cssSelectors[i]); i++) {
-							var isChildOrSibling = false;
 							matchingElms = [];
 							if (i > 0 && childOrSiblingRefRegExp.test(rule)) {
 								childOrSiblingRef = childOrSiblingRefRegExp.exec(rule);
 								if (childOrSiblingRef) {
-									isChildOrSibling = true;
 									nextSelector = cssSelectors[i+1];
 									nextTag = /^\w+/.exec(nextSelector);
 									if (nextTag) {
+										nextTag = nextTag[0];
 										nextRegExp = new RegExp("(^|\\s)" + nextTag + "(\\s|$)", "i");
 									}
 									switch (childOrSiblingRef[0]) {
 										case ">":
 											for (var j=0, prevRef, children; (prevRef=prevElm[j]); j++) {
-												children = prevRef.getElementsByTagName(nextTag || "*");
+												children = getElementsByTagName(nextTag, prevRef);
 												for (var k=0, child; (child=children[k]); k++) {
 													if (child.parentNode === prevRef) {
 														matchingElms[matchingElms.length] = child;
@@ -480,31 +486,13 @@ var DOMAssistant = function () {
 							if (splitRule.id) {
 								var DOMElm = document.getElementById(splitRule.id.replace(/#/, ""));
 								if (DOMElm) {
-									if (isChildOrSibling) {
-										for (var mn=0, mnl=matchingElms.length; mn<mnl; mn++) {
-											if (matchingElms[mn] === DOMElm) {
-												matchingElms = [DOMElm];
-												break;
-											}
-										}
-									}
-									else {
-										matchingElms = [DOMElm];
-									}
+									matchingElms = [DOMElm];
 								}
 								prevElm = matchingElms;
 							}
 							else if (splitRule.tag && !prevElm.skipTag) {
 								if (i===0 && !matchingElms.length && prevElm.length === 1) {
-									if (prevElm[0] === document || prevElm[0].lastModified) {
-										if (!cachedElms[splitRule.tag]) {
-											cachedElms[splitRule.tag] = getElementsByTagName(splitRule.tag);
-										}
-										prevElm = matchingElms = pushAll([], cachedElms[splitRule.tag]);
-									}
-									else {
-										prevElm = matchingElms = pushAll([], getElementsByTagName(splitRule.tag, prevElm[0]));
-									}
+									prevElm = matchingElms = pushAll([], getElementsByTagName(splitRule.tag, prevElm[0]));
 								}
 								else {
 									for (var n=0, nl=prevElm.length, tagCollectionMatches, tagMatch; n<nl; n++) {
@@ -657,7 +645,7 @@ var DOMAssistant = function () {
 												break;
 											case "nth-child":
 												if (/^n$/.test(pseudoValue)) {
-													matchingElms = pushAll(matchingElms, previousMatch);
+													matchingElms = previousMatch;
 												}
 												else {
 													sequence = DOMAssistant.getSequence(pseudoValue);
@@ -716,7 +704,7 @@ var DOMAssistant = function () {
 												break;
 											case "nth-of-type":
 												if (/^n$/.test(pseudoValue)) {
-													matchingElms = pushAll(matchingElms, previousMatch);
+													matchingElms = previousMatch;
 												}
 												else {
 													sequence = DOMAssistant.getSequence(pseudoValue);
