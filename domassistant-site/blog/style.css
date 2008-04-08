@@ -328,6 +328,10 @@ textarea{
 	margin-top: 1em;
 }
 
+.entry h4{
+	padding-top: 0;
+}
+
 #sidebar.blog-nav ul{
 	list-style: none;
 	margin-left: 0;
