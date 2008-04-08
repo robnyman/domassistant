@@ -6,7 +6,6 @@
 	<title>DOM Assistant demo - DOM Assistant, the modular lightweight JavaScript library</title>
 	<link rel="stylesheet" href="css/domassistant.css" type="text/css">
 	
-	
 	<script type="text/javascript" src="../trunk/modules/DOMAssistant.js"></script>
 	<script type="text/javascript" src="../trunk/modules/DOMAssistantAJAX.js"></script>
 	<script type="text/javascript" src="../trunk/modules/DOMAssistantContent.js"></script>
@@ -21,54 +20,59 @@
 	
 	<script type="text/javascript">
 		//alert(typeof document.getElementsByClassName);
-		DOMAssistant.DOMReady(function () {
-			/*$("td").each(function () {
-				$(this).load("ajax.html");
-			});*/
-			
-			try{
-				$("#container").create("h1", null, true, "Monkeys").addContent(" like bananas").addClass("focused");
-				$$("container").create("h1", null, true, "One").addContent(" more time").addClass("focused");
-				$("td").create("h1", null, true, "Hippos").addContent(" have huge teeth").addClass("focused");
-				
-				//$("td").addContent($(document).create("h1")).addContent("Apa");
-				//alert($("td").addContent($("td").create("h1", null, true, "Apa")));
-			}
-			catch(e){
-				alert(e);
-			}
-			
-			//alert($("div#aaa.ccc"));
-			//$("div#aaa.ccc").style.background = "red";
-			
-			
-			$('div.我 p:first-child)').each( function()
-			{ this.style.backgroundColor = 'blue'; });
-			$('#中文 #大').each( function() { this.style.backgroundColor = 'red'; });
-			$('#中文.我 .小[title=他]').each( function() { this.style.backgroundColor =
-			'green'; });
-			$$('妖').style.backgroundColor = 'yellow';
-			
-			
-			//$("td").addContent($("td").create("h1", null, true)).addContent("Hej");
-			//$("#container").get("ajax.html", func);
-			//$$("container").get("ajax.html", func);
-		});
-		function func (response) {
-			this.innerHTML = response;
-			//setTimeout("alert(DOMAssistant.AJAX.getReadyState())", 500);
+		function apan (gagan) {
+			alert("Yeah");
 		}
+		var GA = {
+			apan : function () {
+				/*
+					$('div.我 p:first-child)').each( function()
+					{ this.style.backgroundColor = 'blue'; });
+					$('#中文 #大').each( function() { this.style.backgroundColor = 'red'; });
+					$('#中文.我 .小[title=他]').each( function() { this.style.backgroundColor =
+					'green'; });
+					$$('妖').style.backgroundColor = 'yellow';
+				*/
+				$("#container").cssSelect("td").setStyle({
+					background : "#faa",
+					color : "red",
+					"border-left" : "10px solid red"
+				});
+				$("#container").setStyle("border", "10px solid red");
+				$("#aaa.bbb").addEvent("click", other);
+				$("#aaa.bbb").addEvent("click", other);
+				$("#aaa.bbb").addEvent("click", other2);
+			}
+		};
+		function other () {
+			alert("Overridden");
+		}
+		function other2 () {
+			alert("Still works");
+			$("#aaa.bbb").removeEvent("click", other);
+			$("#aaa.bbb").addEvent("click", other);
+		}
+		DOMAssistant.DOMReady(GA.apan);
+		DOMAssistant.DOMReady(GA.apan);
 	</script>
 	<style type="text/css" media="screen">
 		.focused{
-			background: #ccc;
+			background: #c00;
 		}
 	</style>
 </head>
 
 <body>
 	
-	<div id="aaa" class="bbb">Test</div>
+	
+	<script type="text/javascript">
+		alert(document.embeds);
+		if (document.embeds["FlashObject"]) {
+			alert("Hej");
+		}
+	</script>
+	
+	<div id="aaa" class="bbb" onclick="alert('apa')">Test</div>
 	
 	<div id="中文" class="我">
 	       <p>段落1</p>
@@ -83,7 +87,7 @@
 				<td>Row 1<div class="apa"></div></td>
 			</tr>
 			<tr>
-				<td>Row 2</td>
+				<td style="background: red;">Row 2</td>
 			</tr>
 			<tr>
 				<td>Row 3</td>
