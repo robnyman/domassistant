@@ -104,19 +104,15 @@
 							<p>Element which called the method.</p>
 
 							<h3>Example calls</h3>
-							<p class="code">
-								<code>
-									$("#container").ajax({<br>
-										url: "ajax.php",<br>
-										method: "POST",<br>
-										params : "name=DOMAssistant",<br>
-										callback: functionReference,<br>
-										headers : {<br>
-											"Content-type" : "application/x-www-form-urlencoded"<br>
-										}<br>
-									});
-								</code>
-							</p>
+							<pre class="code"><code>$("#container").ajax({
+	url: "ajax.php",
+	method: "POST",
+	params : "name=DOMAssistant",
+	callback: functionReference,
+	headers : {
+		"Content-type" : "application/x-www-form-urlencoded"
+	}
+});</code></pre>
 							
 							<h2 id="getReadyState"><code>getReadyState()</code></h2>
 							<p>Helper method to check the current <code>readyState</code> of the XMLHttpRequest.</p>

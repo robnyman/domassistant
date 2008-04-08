@@ -8,8 +8,11 @@ body{
 }
  
 code{
-	font-size: 100%;
 	font-family: Monaco, "Courier New", Tahoma;
+}
+
+pre code{
+	font-size: 100%;
 }
  
 input, select, textarea{
