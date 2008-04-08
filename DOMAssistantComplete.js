@@ -366,7 +366,7 @@ var DOMAssistant = function () {
 					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
 					var elm = new HTMLArray();
 					var prevElm = [], matchingElms = [];
-					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, regExpClassNames, matchingClassElms, regExpAttributes, matchingAttributeElms, attributeMatchRegExp, current, previous, prevParent, addElm, firstChild, lastChild, childrenNodes, iteratorNext, childCount, childElm, sequence;
+					var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, regExpClassNames, matchingClassElms, regExpAttributes, matchingAttributeElms, attributeMatchRegExp, current, previous, prevParent, addElm, childrenNodes, iteratorNext, childCount, childElm, sequence;
 					var childOrSiblingRefRegExp = /^(>|\+|~)$/;
 					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=[\w\u00C0-\uFFFF\s\-\_\.]+)?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+)|(:\w+[\w\-]*))\))?)*)?/;
 					var selectorSplitRegExp;
@@ -438,33 +438,30 @@ var DOMAssistant = function () {
 					}
 					function getElementsByPseudo (previousMatch, pseudoClass, pseudoValue) {
 						prevParents = [];
-						var matchingElms = [];
+						var direction = {
+							"first-child" : "previousSibling",
+							"last-child" : "nextSibling",
+							"first-of-type" : "previousSibling",
+							"last-of-type" : "nextSibling"
+						};
+						var matchingElms = [], dir = direction[pseudoClass], prev, next;
 						switch (pseudoClass) {
 							case "first-child":
-								for (var i=0, prevSibling; (prevSibling=previous=previousMatch[i]); i++) {
-									while ((prevSibling = prevSibling.previousSibling) && prevSibling.nodeType !== 1) {}
-									if (!prevSibling) {
-										matchingElms[matchingElms.length] = previous;
-									}
-								}
-								break;
 							case "last-child":
-								for (var j=0, nextSibling; (nextSibling=previous=previousMatch[j]); j++) {
-									while ((nextSibling = nextSibling.nextSibling) && nextSibling.nodeType !== 1) {}
-									if (!nextSibling) {
+								for (var j=0; (next=previous=previousMatch[j]); j++) {
+									while ((next = next[dir]) && next.nodeType !== 1) {}
+									if (!next) {
 										matchingElms[matchingElms.length] = previous;
 									}
 								}
 								break;
 							case "only-child":
-								for (var k=0, kParent; (previous=previousMatch[k]); k++) {
+								for (var k=0, kParent; (prev=next=previous=previousMatch[k]); k++) {
 									prevParent = previous.parentNode;
 									if (prevParent !== kParent) {
-										firstChild = prevParent.firstChild;
-										lastChild = prevParent.lastChild;
-										while (firstChild.nodeType !== 1 && (firstChild = firstChild.nextSibling)) {}
-										while (lastChild.nodeType !== 1 && (lastChild = lastChild.previousSibling)) {}
-										if (firstChild === previous && lastChild === previous) {
+										while ((prev = prev.previousSibling) && prev.nodeType !== 1) {}
+										while ((next = next.nextSibling) && next.nodeType !== 1) {}
+										if (!prev && !next) {
 											matchingElms[matchingElms.length] = previous;
 										}
 										kParent = prevParent;
@@ -504,30 +501,21 @@ var DOMAssistant = function () {
 								}
 								break;
 							case "first-of-type":
-								for (var m=0; (previous=previousMatch[m]); m++) {
-									firstChild = previous.parentNode.getElementsByTagName(previous.nodeName)[0];
-									if (firstChild === previous) {
-										matchingElms[matchingElms.length] = previous;
-									}
-								}
-								break;
 							case "last-of-type":
-								for (var n=0; (previous=previousMatch[n]); n++) {
-									lastChild = previous.parentNode.lastChild;
-									while (lastChild.nodeName !== previous.nodeName && (lastChild = lastChild.previousSibling)) {}
-									if (lastChild === previous) {
+								for (var n=0; (next=previous=previousMatch[n]); n++) {
+									while ((next = next[dir]) && next.nodeName !== previous.nodeName) {}
+									if (!next) {
 										matchingElms[matchingElms.length] = previous;
 									}
 								}
 								break;
 							case "only-of-type":
-								for (var o=0, oParent; (previous=previousMatch[o]); o++) {
+								for (var o=0, oParent; (prev=next=previous=previousMatch[o]); o++) {
 									prevParent = previous.parentNode;
 									if (prevParent !== oParent) {
-										firstChild = prevParent.getElementsByTagName(previous.nodeName)[0];
-										lastChild = prevParent.lastChild;
-										while (lastChild.nodeName !== previous.nodeName && (lastChild = lastChild.previousSibling)) {}
-										if (firstChild === previous && lastChild === previous) {
+										while ((prev = prev.previousSibling) && prev.nodeName !== previous.nodeName) {}
+										while ((next = next.nextSibling) && next.nodeName !== previous.nodeName) {}
+										if (!prev && !next) {
 											matchingElms[matchingElms.length] = previous;
 										}
 										oParent = prevParent;
