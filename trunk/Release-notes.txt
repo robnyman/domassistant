@@ -14,7 +14,7 @@ Version 2.7:
 - Fixed so a function for an event, applied with addEvent, couldn't be added multiple times.
 - Fixed so a function in DOMReady couldn't be applied multiple times.
 - Accuracy fixes for the following selectors:
-  ~, E[att$=val], :nth-child, :only-of-type, :last-of-type and :contains
+  ~, E[att$=val], :nth-child, :only-of-type, :last-of-type, :contains and :empty
 - Fix for what's allowed following a child/sibling combinator.
 - Fix for attribute selector to support values that contain spaces.
 - Fix for what's returned from the prev and next methods, so it has the correct methods applied.
