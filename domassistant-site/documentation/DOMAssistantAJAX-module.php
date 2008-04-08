@@ -92,7 +92,7 @@
 								<code>$("contacts").load("staff.aspx", true);</code>
 							</p>
 							
-							<!--<h2 id="ajax"><code>ajax(ajaxObject)</code></h2>
+							<h2 id="ajax"><code>ajax(ajaxObject)</code></h2>
 							<p>A general-purpose method of doing more advanced AJAX calls where parameters are set manually.</p>
 							<h3>Parameters</h3>
 							<dl>
@@ -116,7 +116,7 @@
 										}<br>
 									});
 								</code>
-							</p>-->
+							</p>
 							
 							<h2 id="getReadyState"><code>getReadyState()</code></h2>
 							<p>Helper method to check the current <code>readyState</code> of the XMLHttpRequest.</p>
@@ -171,7 +171,7 @@
 								<li><a href="#get">get</a></li>
 								<li><a href="#post">post</a></li>
 								<li><a href="#load">load</a></li>
-								<!--<li><a href="#ajax">ajax</a></li>-->
+								<li><a href="#ajax">ajax</a></li>
 								<li><a href="#getReadyState">getReadyState</a></li>
 								<li><a href="#getStatus">getStatus</a></li>
 								<li><a href="#getStatusText">getStatusText</a></li>

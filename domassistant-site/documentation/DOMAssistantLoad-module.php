@@ -60,7 +60,7 @@
 								</code>
 							</p>
 							
-							<!--<h2 id="setErrorHandling"><code>setErrorHandling()</code></h2>
+							<h2 id="setErrorHandling"><code>setErrorHandling()</code></h2>
 							<p>Offers a possibility to handle errors when the <code>DOMReady</code> method is being called.</p>
 							<h3>Parameters</h3>
 							<p>Send in a function reference.</p>
@@ -73,14 +73,14 @@
 										// e is the error object passed<br>
 									});
 								</code>
-							</p>-->						
+							</p>
 						</div>
 						
 						<div id="sidebar">
 							<h3>DOMAssistantLoad methods</h3>
 							<ul>
 								<li><a href="#DOMReady">DOMReady</a></li>
-								<!--<li><a href="#setErrorHandling">setErrorHandling</a></li>-->
+								<li><a href="#setErrorHandling">setErrorHandling</a></li>
 							</ul>
 							<?php include "domassistant-module-nav.php" ?>
 						</div>

@@ -80,7 +80,7 @@
 								</code>
 							</p>
 							
-							<!--<h2 id="setStyle"><code>setStyle(style, value)</code></h2>
+							<h2 id="setStyle"><code>setStyle(style, value)</code></h2>
 							<p>Sets one or several styles inline of an element. Note: it uses CSS syntax instead of JavaScript property syntax. I.e. background-color instead of backgroundColor etc.</p>
 							<h3>Parameters</h3>
 							<dl>
@@ -101,7 +101,7 @@
 <pre class="code"><code>$("#container").setStyle({
 	background : "#ffffa2",
 	color : "#f00"
-});</code></pre>-->
+});</code></pre>
 
 							<h2 id="getStyle"><code>getStyle(cssRule)</code></h2>
 							<p>Gets the rendered style for a certain CSS property on the current element, no matter if it was applied inline or from an external stylesheet. Note: make sure to look for the specific property instead of general ones. I.e. <code>background-color</code> instead of <code>background</code> etc.</p>
@@ -127,7 +127,7 @@
 								<li><a href="#addClass">addClass</a></li>
 								<li><a href="#removeClass">removeClass</a></li>
 								<li><a href="#hasClass">hasClass</a></li>
-								<!--<li><a href="#setStyle">setStyle</a></li>-->
+								<li><a href="#setStyle">setStyle</a></li>
 								<li><a href="#getStyle">getStyle</a></li>
 							</ul>
 							<?php include "domassistant-module-nav.php" ?>

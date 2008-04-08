@@ -75,7 +75,7 @@
 								<code>$$("navigation");</code>
 							</p>
 							
-							<!--<h2 id="cssSelect"><code>cssSelect(cssSelector)</code></h2>
+							<h2 id="cssSelect"><code>cssSelect(cssSelector)</code></h2>
 							<p>Intended to be used on existing object references, to use a CSS selector to find children element(s) of the current object.</p>
 
 							<h3>Parameters</h3>
@@ -96,7 +96,7 @@
 								<code>
 									$$(DOMElementReference).cssSelect(".important[type=test]");
 								</code>
-							</p>-->
+							</p>
 
 							<h2 id="elmsByClass"><code>elmsByClass(className, tag)</code></h2>
 							<p>For getting elements based on their <code>className</code>. The method has a required parameter which is the desired <code>className</code>, and one optional if you want to limit the search to a certain tag.</p>
@@ -193,7 +193,6 @@
 								</code>
 							</p>
 							
-							<!--
 							<h2 id="first"><code>first()</code></h2>
 							<p>To get a reference to the ﬁrst match in a collection.</p>
 							<h3>Return value</h3>
@@ -208,7 +207,6 @@
 									$("#navigation a").first();
 								</code>
 							</p>
-							-->
 							
 							<h2 id="end"><code>end()</code></h2>
 							<p>To step one step up in the currect chaining context.</p>
@@ -232,12 +230,12 @@
 							<ul>
 								<li><a href="#dollar">$</a></li>
 								<li><a href="#double-dollar">$$</a></li>
-								<!--<li><a href="#cssSelect">cssSelect</a></li>-->
+								<li><a href="#cssSelect">cssSelect</a></li>
 								<li><a href="#elmsByClass">elmsByClass</a></li>
 								<li><a href="#elmsByAttribute">elmsByAttribute</a></li>
 								<li><a href="#elmsByTag">elmsByTag</a></li>
 								<li><a href="#each">each</a></li>
-								<!--<li><a href="#first">first</a></li>-->
+								<li><a href="#first">first</a></li>
 								<li><a href="#end">end</a></li>
 							</ul>
 							<?php include "domassistant-module-nav.php" ?>
