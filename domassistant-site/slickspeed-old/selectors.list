@@ -1,0 +1,36 @@
+*
+body
+div
+body div
+div div
+div div div
+div, div, div
+div, a, span
+div > div
+div + div
+div ~ div
+#speech5
+div#speech5
+div #speech5
+.dialog
+div.dialog
+div .dialog
+div.character, div.dialog
+div.dialog.scene
+div.scene div.dialog
+div#scene1 div.dialog div
+div[%class]
+div[%class=dialog]
+div[%class^=dia]
+div[%class$=log]
+div[%class*=sce]
+div[class^=dia][class$=log]
+div:first-child
+div:last-child
+div:only-child
+div:nth-child(even)
+div:nth-child(2n)
+div:nth-child(odd)
+div:nth-child(2n+1)
+div:nth-child(n)
+div:contains(CELIA)

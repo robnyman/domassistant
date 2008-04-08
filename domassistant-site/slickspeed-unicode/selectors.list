@@ -1,0 +1,23 @@
+div.dürch
+a[rel=external][title=Öffne in ein neues fenster]
+a[title^=Öffne] span[title=Español]
+div[lang|=zh]
+div:not([lang|=zh])
+*[title^=摘自 Google]
+.东方 h2 a[href*=xinhuanet.com]
+p:contains(不)
+#なので
+div[lang|=ja] a#なので
+a:not(#なので)
+div.dürch, div.东方, div.Россия
+.øresund.københavn,.dürch
+:not(div.dürch)
+:not(.bärsåsöverdrift)
+div:lang(sv-SE) .idévärldsskrävel
+.dürch>a span
+div .blå-länk~em
+h1:contains(€)
+:contains(idévärld)
+.småländsk-titel+.idévärldsskrävel
+h2>a:not([href*=blåbärsplockarförmännen]):not(.blå-länk)
+a:not([href$=blåbärsplockarförmännen.se])
