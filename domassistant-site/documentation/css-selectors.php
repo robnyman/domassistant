@@ -90,6 +90,10 @@
 								<dd>Get every even <code>DIV</code> child element of its parent element.</dd>
 								<dt><code>div:nth-child(5n+3)</code></dt>
 								<dd>Get every 5th <code>DIV</code> child element of its parent element, starting at 3, then 8, 13, 18 etc.</dd>
+								<dt><code>tr:nth-last-of-type(-n+3)</code></dt>
+								<dd>Get the last three rows of any tables.</dd>
+								<dt><code>td:nth-last-child(n+1)</code></dt>
+								<dd>Get all but the last column of any tables.</dd>
 								<dt><code>input:enabled</code></dt>
 								<dd>Get any <code>INPUT</code> element which is enabled.</dd>
 								<dt><code>input:disabled</code></dt>
@@ -98,6 +102,8 @@
 								<dd>Get any <code>INPUT</code> element which is checked.</dd>
 								<dt><code>div:lang(zh)</code></dt>
 								<dd>Get any <code>DIV</code> element which is in Chinese.</dd>
+								<dt><code>p:target</code></dt>
+								<dd>Get the <code>P</code> element which is the target of the referring URL.</dd>
 								<dt><code>p, a</code></dt>
 								<dd>Get all <code>P</code> elements and all <code>A</code> elements.</dd>
 							</dl>					

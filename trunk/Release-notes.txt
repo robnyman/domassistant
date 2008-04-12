@@ -1,6 +1,6 @@
 Version 2.7.1:
 =============
-- Added support for pseudo-classes :nth-last-child and :nth-last-of-type.
+- Added support for pseudo-classes :nth-last-child, :nth-last-of-type and :target.
 
 Version 2.7:
 =============
