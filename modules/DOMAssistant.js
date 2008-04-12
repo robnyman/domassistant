@@ -112,10 +112,10 @@ var DOMAssistant = function () {
 				return elmsToReturn;
 			};
 		},
-	
+		
 		getSequence : function (expression) {
 			var start, add = 2, max = -1, modVal = -1;
-			var expressionRegExp = /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n((\+|\-)(\d+))?)|(\-(([1-9]\d*)?)n\+(\d+)))$/;
+			var expressionRegExp = /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n([\+\-]\d+)?)|(\-(([1-9]\d*)?)n\+(\d+)))$/;
 			var pseudoValue = expressionRegExp.exec(expression);
 			if (!pseudoValue) {
 				return null;
@@ -132,15 +132,15 @@ var DOMAssistant = function () {
 				}
 				else if (pseudoValue[4]) {	// an+b
 					add = pseudoValue[6]? parseInt(pseudoValue[6], 10) : 1;
-					start = pseudoValue[7]? parseInt(pseudoValue[8] + pseudoValue[9], 10) : 0;
+					start = pseudoValue[7]? parseInt(pseudoValue[7], 10) : 0;
 					while (start < 1) {
 						start += add;
 					}
 					modVal = (start > add)? (start - add) % add : ((start === add)? 0 : start);
 				}
-				else if (pseudoValue[10]) {	// -an+b
-					add = pseudoValue[12]? parseInt(pseudoValue[12], 10) : 1;
-					start = max = parseInt(pseudoValue[13], 10);
+				else if (pseudoValue[8]) {	// -an+b
+					add = pseudoValue[10]? parseInt(pseudoValue[10], 10) : 1;
+					start = max = parseInt(pseudoValue[11], 10);
 					while (start > add) {
 						start -= add;
 					}
@@ -250,6 +250,10 @@ var DOMAssistant = function () {
 								break;
 							case "checked":
 								xpath = "@checked='checked'"; // Doesn't work in Opera 9.24
+								break;
+							case "target":
+								var hash = document.location.hash.slice(1);
+								xpath = "@name='" + hash + "' or @id='" + hash + "'";
 								break;
 							case "not":
 								if (/^(:\w+[\w\-]*)$/.test(pseudoValue)) {
@@ -418,66 +422,53 @@ var DOMAssistant = function () {
 					}
 					function getElementsByPseudo (previousMatch, pseudoClass, pseudoValue) {
 						prevParents = [];
-						var direction = (/^last\-/.test(pseudoClass))? "nextSibling" : "previousSibling";
-						var matchingElms = [], prev, next;
-						switch (pseudoClass) {
-							case "first-child":
-							case "last-child":
-								for (var i=0; (next=previous=previousMatch[i]); i++) {
-									while ((next = next[direction]) && next.nodeType !== 1) {}
-									if (!next) {
+						var pseudo = pseudoClass.split("-"), matchingElms = [], checkNodeName;
+						var prop = (checkNodeName = /\-of\-type$/.test(pseudoClass))? "nodeName" : "nodeType";
+						function getPrevElm(elm) {
+							var val = checkNodeName? elm.nodeName : 1;
+							while ((elm = elm.previousSibling) && elm[prop] !== val) {}
+							return elm;
+						}
+						function getNextElm(elm) {
+							var val = checkNodeName? elm.nodeName : 1;
+							while ((elm = elm.nextSibling) && elm[prop] !== val) {}
+							return elm;
+						}
+						switch (pseudo[0]) {
+							case "first":
+								for (var i=0; (previous=previousMatch[i]); i++) {
+									if (!getPrevElm(previous)) {
 										matchingElms[matchingElms.length] = previous;
 									}
 								}
 								break;
-							case "only-child":
-								for (var j=0, jParent; (prev=next=previous=previousMatch[j]); j++) {
-									prevParent = previous.parentNode;
-									if (prevParent !== jParent) {
-										while ((prev = prev.previousSibling) && prev.nodeType !== 1) {}
-										while ((next = next.nextSibling) && next.nodeType !== 1) {}
-										if (!prev && !next) {
-											matchingElms[matchingElms.length] = previous;
-										}
-										jParent = prevParent;
-									}
-								}
-								break;
-							case "first-of-type":
-							case "last-of-type":
-								for (var k=0; (next=previous=previousMatch[k]); k++) {
-									while ((next = next[direction]) && next.nodeName !== previous.nodeName) {}
-									if (!next) {
+							case "last":
+								for (var j=0; (previous=previousMatch[j]); j++) {
+									if (!getNextElm(previous)) {
 										matchingElms[matchingElms.length] = previous;
 									}
 								}
 								break;
-							case "only-of-type":
-								for (var l=0, lParent; (prev=next=previous=previousMatch[l]); l++) {
+							case "only":
+								for (var k=0, kParent; (previous=previousMatch[k]); k++) {
 									prevParent = previous.parentNode;
-									if (prevParent !== lParent) {
-										while ((prev = prev.previousSibling) && prev.nodeName !== previous.nodeName) {}
-										while ((next = next.nextSibling) && next.nodeName !== previous.nodeName) {}
-										if (!prev && !next) {
+									if (prevParent !== kParent) {
+										if (!getPrevElm(previous) && !getNextElm(previous)) {
 											matchingElms[matchingElms.length] = previous;
 										}
-										lParent = prevParent;
+										kParent = prevParent;
 									}
 								}
 								break;
-							case "nth-child":
-							case "nth-last-child":
-							case "nth-of-type":
-							case "nth-last-of-type":
+							case "nth":
 								if (/^n$/.test(pseudoValue)) {
 									matchingElms = previousMatch;
 								}
 								else {
-									var checkNodeName = /\-of\-type$/.test(pseudoClass);
-									direction = (/\-last\-/.test(pseudoClass))? ["lastChild", "previousSibling"] : ["firstChild", "nextSibling"];
+									var direction = (pseudo[1] === "last")? ["lastChild", "previousSibling"] : ["firstChild", "nextSibling"];
 									sequence = DOMAssistant.getSequence(pseudoValue);
 									if (sequence) {
-										for (var m=0; (previous=previousMatch[m]); m++) {
+										for (var l=0; (previous=previousMatch[l]); l++) {
 											prevParent = previous.parentNode;
 											if (!prevParent.childElms) {
 												iteratorNext = sequence.start;
@@ -513,39 +504,50 @@ var DOMAssistant = function () {
 								}
 								break;
 							case "empty":
-								for (var n=0; (previous=previousMatch[n]); n++) {
+								for (var m=0; (previous=previousMatch[m]); m++) {
 									if (!previous.childNodes.length) {
 										matchingElms[matchingElms.length] = previous;
 									}
 								}
 								break;
 							case "enabled":
-								for (var o=0; (previous=previousMatch[o]); o++) {
+								for (var n=0; (previous=previousMatch[n]); n++) {
 									if (!previous.disabled) {
 										matchingElms[matchingElms.length] = previous;
 									}
 								}
 								break;
 							case "disabled":
-								for (var p=0; (previous=previousMatch[p]); p++) {
+								for (var o=0; (previous=previousMatch[o]); o++) {
 									if (previous.disabled) {
 										matchingElms[matchingElms.length] = previous;
 									}
 								}
 								break;
 							case "checked":
-								for (var q=0; (previous=previousMatch[q]); q++) {
+								for (var p=0; (previous=previousMatch[p]); p++) {
 									if (previous.checked) {
 										matchingElms[matchingElms.length] = previous;
 									}
 								}
 								break;
 							case "contains":
-								for (var r=0; (previous=previousMatch[r]); r++) {
+								for (var q=0; (previous=previousMatch[q]); q++) {
 									if (!previous.added) {
 										if (previous.innerText.indexOf(pseudoValue) !== -1) {
 											previous.added = true;
 											matchingElms[matchingElms.length] = previous;
+										}
+									}
+								}
+								break;
+							case "target":
+								var hash = document.location.hash.slice(1);
+								if (hash) {
+									for (var r=0; (previous=previousMatch[r]); r++) {
+										if (getAttr(previous, "name") === hash || getAttr(previous, "id") === hash) {
+											matchingElms[matchingElms.length] = previous;
+											break;
 										}
 									}
 								}
@@ -588,7 +590,7 @@ var DOMAssistant = function () {
 								break;
 							default:
 								for (var t=0; (previous=previousMatch[t]); t++) {
-									if (previous.getAttribute(pseudoClass, 2) === pseudoValue) {
+									if (getAttr(previous, pseudoClass) === pseudoValue) {
 										matchingElms[matchingElms.length] = previous;
 									}
 								}
