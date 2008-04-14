@@ -1,9 +1,9 @@
-// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7
+// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7.1
 var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
 	};
-	var isIE = false;
+	var isIE = /*@cc_on!@*/false;
 	var cachedElms = [];
 	var pushAll = function (set1, set2) {
 		for (var j=0, jL=set2.length; j<jL; j++) {
@@ -199,6 +199,12 @@ var DOMAssistant = function () {
 					var currentRule, identical, cssSelectors, xPathExpression, cssSelector, splitRule, sequence;
 					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=[\w\u00C0-\uFFFF\s\-\_\.]+)?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+)|(:\w+[\w\-]*))\))?)*)?(>|\+|~)?/;
 					var selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
+					var ns = { xhtml: "http://www.w3.org/1999/xhtml" };
+					var root = (this.ownerDocument === null)? this.documentElement : this.ownerDocument.documentElement;
+					var prefix = (root.namespaceURI === ns.xhtml)? "xhtml:" : "";
+					var nsResolver = function lookupNamespaceURI (prefix) {
+						return ns[prefix] || null;
+					};
 					function attrToXPath (match, p1, p2, p3) {
 						switch (p2) {
 							case "^": return "starts-with(@" + p1 + ", '" + p3 + "')";
@@ -291,7 +297,7 @@ var DOMAssistant = function () {
 						for (var j=0, jl=cssSelectors.length; j<jl; j++) {
 							cssSelector = cssSelectorRegExp.exec(cssSelectors[j]);
 							splitRule = {
-								tag : (!cssSelector[1] || cssSelector[3] === "*")? "*" : cssSelector[1],
+								tag : prefix + ((!cssSelector[1] || cssSelector[3] === "*")? "*" : cssSelector[1]),
 								id : (cssSelector[3] !== "*")? cssSelector[2] : null,
 								allClasses : cssSelector[4],
 								allAttr : cssSelector[6],
@@ -337,7 +343,7 @@ var DOMAssistant = function () {
 								}
 							}
 						}
-						var xPathNodes = document.evaluate(xPathExpression, this, null, 0, null), node;
+						var xPathNodes = document.evaluate(xPathExpression, this, nsResolver, 0, null), node;
 						while ((node = xPathNodes.iterateNext())) {
 							elm.push(node);
 						}
