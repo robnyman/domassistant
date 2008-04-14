@@ -3,7 +3,7 @@ var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
 	};
-	var isIE = /*@cc_on!@*/false;
+	var isIE = false;
 	var cachedElms = [];
 	var pushAll = function (set1, set2) {
 		for (var j=0, jL=set2.length; j<jL; j++) {
@@ -1081,7 +1081,7 @@ DOMAssistant.Content = function () {
 		},
 
 		addContent : function (content) {
-			if (typeof content === "string") {
+			if (typeof content === "string" || typeof content === "number") {
 				this.innerHTML += content;
 			}
 			else if (typeof content === "object" && content) {

@@ -41,7 +41,7 @@ DOMAssistant.Content = function () {
 		},
 
 		addContent : function (content) {
-			if (typeof content === "string") {
+			if (typeof content === "string" || typeof content === "number") {
 				this.innerHTML += content;
 			}
 			else if (typeof content === "object" && content) {
