@@ -113,43 +113,6 @@ var DOMAssistant = function () {
 			};
 		},
 		
-		getSequence : function (expression) {
-			var start, add = 2, max = -1, modVal = -1;
-			var expressionRegExp = /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n([\+\-]\d+)?)|(\-(([1-9]\d*)?)n\+(\d+)))$/;
-			var pseudoValue = expressionRegExp.exec(expression);
-			if (!pseudoValue) {
-				return null;
-			}
-			else {
-				if (pseudoValue[2]) {	// odd or even
-					start = (pseudoValue[2] === "odd")? 1 : 2;
-					modVal = (start === 1)? 1 : 0;
-				}
-				else if (pseudoValue[3]) {	// single digit
-					start = parseInt(pseudoValue[3], 10);
-					add = 0;
-					max = start;
-				}
-				else if (pseudoValue[4]) {	// an+b
-					add = pseudoValue[6]? parseInt(pseudoValue[6], 10) : 1;
-					start = pseudoValue[7]? parseInt(pseudoValue[7], 10) : 0;
-					while (start < 1) {
-						start += add;
-					}
-					modVal = (start > add)? (start - add) % add : ((start === add)? 0 : start);
-				}
-				else if (pseudoValue[8]) {	// -an+b
-					add = pseudoValue[10]? parseInt(pseudoValue[10], 10) : 1;
-					start = max = parseInt(pseudoValue[11], 10);
-					while (start > add) {
-						start -= add;
-					}
-					modVal = (max > add)? (max - add) % add : ((max === add)? 0 : max);
-				}
-			}
-			return { start: start, add: add, max: max, modVal: modVal };
-		},
-		
 		$ : function () {
 			var elm = new HTMLArray();
 			if (document.getElementById) {
@@ -192,6 +155,42 @@ var DOMAssistant = function () {
 		},
 	
 		cssSelection : function (cssRule) {
+			var getSequence = function (expression) {
+				var start, add = 2, max = -1, modVal = -1;
+				var expressionRegExp = /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n([\+\-]\d+)?)|(\-(([1-9]\d*)?)n\+(\d+)))$/;
+				var pseudoValue = expressionRegExp.exec(expression);
+				if (!pseudoValue) {
+					return null;
+				}
+				else {
+					if (pseudoValue[2]) {	// odd or even
+						start = (pseudoValue[2] === "odd")? 1 : 2;
+						modVal = (start === 1)? 1 : 0;
+					}
+					else if (pseudoValue[3]) {	// single digit
+						start = parseInt(pseudoValue[3], 10);
+						add = 0;
+						max = start;
+					}
+					else if (pseudoValue[4]) {	// an+b
+						add = pseudoValue[6]? parseInt(pseudoValue[6], 10) : 1;
+						start = pseudoValue[7]? parseInt(pseudoValue[7], 10) : 0;
+						while (start < 1) {
+							start += add;
+						}
+						modVal = (start > add)? (start - add) % add : ((start === add)? 0 : start);
+					}
+					else if (pseudoValue[8]) {	// -an+b
+						add = pseudoValue[10]? parseInt(pseudoValue[10], 10) : 1;
+						start = max = parseInt(pseudoValue[11], 10);
+						while (start > add) {
+							start -= add;
+						}
+						modVal = (max > add)? (max - add) % add : ((max === add)? 0 : max);
+					}
+				}
+				return { start: start, add: add, max: max, modVal: modVal };
+			};
 			if (document.evaluate) {
 				DOMAssistant.cssSelection = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
@@ -231,7 +230,7 @@ var DOMAssistant = function () {
 							case "nth":
 								if (!/^n$/.test(pseudoValue)) {
 									var position = ((pseudo[1] === "last")? "(count(following-sibling::" : "(count(preceding-sibling::") + tag + ") + 1)";
-									sequence = DOMAssistant.getSequence(pseudoValue);
+									sequence = getSequence(pseudoValue);
 									if (sequence) {
 										if (sequence.start === sequence.max) {
 											xpath = position + " = " + sequence.start;
@@ -472,7 +471,7 @@ var DOMAssistant = function () {
 								}
 								else {
 									var direction = (pseudo[1] === "last")? ["lastChild", "previousSibling"] : ["firstChild", "nextSibling"];
-									sequence = DOMAssistant.getSequence(pseudoValue);
+									sequence = getSequence(pseudoValue);
 									if (sequence) {
 										for (var l=0; (previous=previousMatch[l]); l++) {
 											prevParent = previous.parentNode;
