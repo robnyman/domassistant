@@ -5,6 +5,17 @@ var DOMAssistant = function () {
 	};
 	var isIE = /*@cc_on!@*/false;
 	var cachedElms = [];
+	var camel = {
+		"accesskey": "accessKey",
+		"class": "className",
+		"colspan": "colSpan",
+		"for": "htmlFor",
+		"maxlength": "maxLength",
+		"readonly": "readOnly",
+		"rowspan": "rowSpan",
+		"tabindex": "tabIndex",
+		"valign": "vAlign"
+	};
 	var pushAll = function (set1, set2) {
 		for (var j=0, jL=set2.length; j<jL; j++) {
 			set1.push(set2[j]);
@@ -23,6 +34,8 @@ var DOMAssistant = function () {
 		};
 	}
 	return {
+		isIE : isIE,
+		camel : camel,
 		allMethods : [],
 		publicMethods : [
 			"cssSelect",
@@ -192,18 +205,17 @@ var DOMAssistant = function () {
 				return { start: start, add: add, max: max, modVal: modVal };
 			};
 			if (document.evaluate) {
+				var ns = { xhtml: "http://www.w3.org/1999/xhtml" };
+				var prefix = (document.documentElement.namespaceURI === ns.xhtml)? "xhtml:" : "";
+				var nsResolver = function lookupNamespaceURI (prefix) {
+					return ns[prefix] || null;
+				};
 				DOMAssistant.cssSelection = function (cssRule) {
 					var cssRules = cssRule.replace(/\s*(,)\s*/g, "$1").split(",");
 					var elm = new HTMLArray();
 					var currentRule, identical, cssSelectors, xPathExpression, cssSelector, splitRule, sequence;
 					var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=[\w\u00C0-\uFFFF\s\-\_\.]+)?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_]+|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+)|(:\w+[\w\-]*))\))?)*)?(>|\+|~)?/;
 					var selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
-					var ns = { xhtml: "http://www.w3.org/1999/xhtml" };
-					var root = (this.ownerDocument === null)? this.documentElement : this.ownerDocument.documentElement;
-					var prefix = (root.namespaceURI === ns.xhtml)? "xhtml:" : "";
-					var nsResolver = function lookupNamespaceURI (prefix) {
-						return ns[prefix] || null;
-					};
 					function attrToXPath (match, p1, p2, p3) {
 						switch (p2) {
 							case "^": return "starts-with(@" + p1 + ", '" + p3 + "')";
@@ -392,17 +404,7 @@ var DOMAssistant = function () {
 						return arr1;
 					}
 					function getAttr (elm, attr) {
-						if (isIE) {
-							switch (attr) {
-								case "id":
-									return elm.id;
-								case "for":
-									return elm.htmlFor;
-								case "class":
-									return elm.className;
-							}
-						}
-						return elm.getAttribute(attr, 2);
+						return isIE? elm[camel[attr.toLowerCase()] || attr] : elm.getAttribute(attr, 2);
 					}
 					function attrToRegExp (attrVal, substrOperator) {
 						switch (substrOperator) {
