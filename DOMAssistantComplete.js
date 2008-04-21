@@ -1136,17 +1136,20 @@ DOMAssistant.Content = function () {
 		},
 
 		replaceContent : function (newContent) {
-			for (var i=(this.childNodes.length - 1), child, attr; i>=0; i--) {
-				child = this.childNodes[i];
+			var children = this.all || this.getElementsByTagName("*");
+			for (var i=0, child, attr; (child=children[i]); i++) {
 				attr = child.attributes;
 				if (attr) {
-					for (var j=0, jl=attr.length; j<jl; j++) {
-						if (typeof child[attr[j].name] === "function") {
-							child[attr[j].name] = null;
+					for (var j=0, jl=attr.length, att; j<jl; j++) {
+						att = attr[j].nodeName.toLowerCase();
+						if (typeof child[att] === "function") {
+							child[att] = null;
 						}
 					}
 				}
-				child.parentNode.removeChild(child);
+			}
+			while (this.hasChildNodes()) {
+				this.removeChild(this.firstChild);
 			}
 			DOMAssistant.$(this).addContent(newContent);
 			return this;
