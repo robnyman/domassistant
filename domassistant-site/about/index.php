@@ -67,7 +67,7 @@
 						<div id="sidebar">
 							<h2>About DOMAssistant</h2>
 							<ul>
-								<li><a href="#domassistant-team">The DOMAssistant Team</li>
+								<li><a href="#domassistant-team">The DOMAssistant Team</a></li>
 								<li><a href="#mailing-list">Mailing list and discussion</a></li>
 								<li><a href="#compatibility">Compatibility</a></li>
 								<li><a href="#adaptions">Adaptions</a></li>

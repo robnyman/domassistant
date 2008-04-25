@@ -1,4 +1,4 @@
-§<?php include "../header-start.php" ?>
+<?php include "../header-start.php" ?>
 	<title>Documentation - DOMAssistant, the modular lightweight JavaScript library, with CSS selectors and AJAX</title>
 <?php include "../header-end.php" ?>
 
