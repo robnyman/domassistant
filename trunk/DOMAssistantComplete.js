@@ -917,7 +917,7 @@ DOMAssistant.AJAX = function () {
 							XMLHttp.setRequestHeader("Connection", "close");
 						}
 					}
-					for (var i in headers){
+					for (var i in headers) {
 						if (typeof i === "string") {
 							XMLHttp.setRequestHeader(i, headers[i]);
 						}
@@ -946,16 +946,17 @@ DOMAssistant.AJAX = function () {
 				this.innerHTML += content;
 			}
 			else {
-				var elms = this.elmsByTag("*");
+				var elms = this.all || this.getElementsByTagName("*");
 				for (var i=0, elm, attr; (elm=elms[i]); i++) {
 					attr = elm.attributes;
 					if (attr) {
-						for (var j=0, jl=attr.length; j<jl; j++) {
-							if (typeof elm[attr[j].name] === "function") {
-								elm[attr[j].name] = null;
+						for (var j=0, jl=attr.length, att; j<jl; j++) {
+							att = attr[j].nodeName.toLowerCase();
+							if (typeof elm[att] === "function") {
+								elm[att] = null;
 							}
 						}
-					}	
+					}
 				}
 				this.innerHTML = content;
 			}
