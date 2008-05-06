@@ -1,6 +1,7 @@
 Version 2.7.1:
 =============
 - Added support for pseudo-classes :nth-last-child, :nth-last-of-type and :target.
+- Added support for single and double quotes around attribute values.
 - Fixed setAttributes method on IE.
 - Fixed xhtml namespace evaluation in XPath.
 
