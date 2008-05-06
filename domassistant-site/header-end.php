@@ -1,5 +1,5 @@
 	<style type="text/css">
-		@import url("/css/domassistant.css");
+		@import url("/css/domassistant.gz.css");
 	</style>
 	<!--[if lt IE 7]>
 		<link rel="stylesheet" href="/css/ie.css" type="text/css">

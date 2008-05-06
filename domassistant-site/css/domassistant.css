@@ -1,5 +1,43 @@
-/* Importing other styles */
-@import url("fonts.css");
+/* Fonts */
+html{
+	font-size: 100%;	
+}
+ 
+body{
+	font: 0.75em/1.5em "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+}
+ 
+code{
+	font-family: Monaco, "Courier New", Tahoma;
+}
+
+pre code{
+	font-size: 100%;
+}
+ 
+input, select, textarea{
+	font-size: 100%;
+}
+ 
+h1{
+	font: 2em/1.3em Arial, Helvetica, sans-serif;	
+}
+ 
+h2{
+	font: 1.8em/1.3em Arial, Helvetica, sans-serif;	
+}
+ 
+h3{
+	font: bold 1.25em/1em Arial, Helvetica, sans-serif;	
+}
+ 
+h4{
+	font: bold 1em/1em Arial, Helvetica, sans-serif;	
+}
+ 
+h5{
+	font: bold 1em/1em Arial, Helvetica, sans-serif;	
+}
 
 /* Tag-specific */
 html, body, form, fieldset, li, h1, h2, h3, h4, h5, h6, p, ul, dl, dt, dd, input{
@@ -275,6 +313,10 @@ tr.first-row td, tr.first-row th{
 
 .nav-bullet-lists li, .focused-block li{
 	margin-bottom: 0.25em;
+}
+
+.plugin-presentation{
+	width: 100%;
 }
 
 /* Download box */

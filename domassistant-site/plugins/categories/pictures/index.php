@@ -27,15 +27,15 @@
 					<div id="content-areas">
 
 						<div id="main-content-area">
-							<h1>AJAX category - Plugins</h1>
-							<p>Here you can find all the plugins in the AJAX category. Each plugin tells you of the author, and what prerequisite DOMAssistant file(s) you need to ensure that it will work as expected.</p>
+							<h1>Pictures category - Plugins</h1>
+							<p>Here you can find all the plugins in the Pictures category. Each plugin tells you of the author, and what prerequisite DOMAssistant file(s) you need to ensure that it will work as expected.</p>
 							<h2>Plugins</h2>
 							<div class="plugin">
-								<h3>AJAXForms</h3>
+								<h3>PictureSlides</h3>
 								<table cellspacing="0" class="plugin-presentation">
 									<tr>
-										<th>File:</th>
-										<td><a href="http://code.google.com/p/ajaxformsplugin/downloads/list">DOMAssistantAJAXForms.js</a></td>
+										<th>Files:</th>
+										<td><a href="http://code.google.com/p/pictureslides/downloads/list">PictureSlides.js</a>, <a href="http://code.google.com/p/pictureslides/downloads/list">PictureSlides-settings.js</a></td>
 									</tr>
 									<tr>
 										<th>Author:</th>
@@ -43,7 +43,7 @@
 									</tr>
 									<tr>
 										<th>Description:</th>
-										<td>This is a plugin used to post <code>forms</code> through AJAX, and handle the response dynamically without having to leave the current page.</td>
+										<td>This plugin allows you to create compelling image slideshows, gallery views and other image presentations.</td>
 									</tr>
 									<tr>
 										<th>Prerequisites:</th>

@@ -32,7 +32,7 @@
 							<h2>Plugins</h2>
 							<div class="plugin">
 								<h3>DOMAssistantMyPlugIn</h3>
-								<table cellspacing="0">
+								<table cellspacing="0" class="plugin-presentation">
 									<tr>
 										<th>File:</th>
 										<td><a href="DOMAssistantMyPlugIn.js">DOMAssistantMyPlugIn.js</a></td>
