@@ -1,5 +1,5 @@
 <?php include "../../../header-start.php" ?>
-	<title>Example category - Plugins - DOMAssistant, the modular lightweight JavaScript library, with CSS selectors and AJAX</title>
+	<title>AJAX category - Plugins - DOMAssistant, the modular lightweight JavaScript library, with CSS selectors and AJAX</title>
 <?php include "../../../header-end.php" ?>
 
 <body>

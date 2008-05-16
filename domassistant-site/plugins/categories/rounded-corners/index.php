@@ -1,5 +1,5 @@
 <?php include "../../../header-start.php" ?>
-	<title>Pictures category - Plugins - DOMAssistant, the modular lightweight JavaScript library, with CSS selectors and AJAX</title>
+	<title>Rounded corners category - Plugins - DOMAssistant, the modular lightweight JavaScript library, with CSS selectors and AJAX</title>
 <?php include "../../../header-end.php" ?>
 
 <body>
@@ -27,23 +27,23 @@
 					<div id="content-areas">
 
 						<div id="main-content-area">
-							<h1>Pictures category - Plugins</h1>
-							<p>Here you can find all the plugins in the Pictures category. Each plugin tells you of the author, and what prerequisite DOMAssistant file(s) you need to ensure that it will work as expected.</p>
+							<h1>Rounded corners category - Plugins</h1>
+							<p>Here you can find all the plugins in the Rounded corners category. Each plugin tells you of the author, and what prerequisite DOMAssistant file(s) you need to ensure that it will work as expected.</p>
 							<h2>Plugins</h2>
 							<div class="plugin">
-								<h3>PictureSlides</h3>
+								<h3>BoxIt</h3>
 								<table cellspacing="0" class="plugin-presentation">
 									<tr>
 										<th>Files:</th>
-										<td><a href="http://code.google.com/p/pictureslides/downloads/list">PictureSlides.js</a>, <a href="http://code.google.com/p/pictureslides/downloads/list">PictureSlides-settings.js</a></td>
+										<td><a href="http://www.ifacta.fr/labo/scripts/domassistant.boxit/download/">DOMAssistant.boxIt</a></td>
 									</tr>
 									<tr>
 										<th>Author:</th>
-										<td><a href="http://www.robertnyman.com/">Robert Nyman</a></td>
+										<td><a href="http://www.ifacta.fr/">Samuel Desnoës</a></td>
 									</tr>
 									<tr>
 										<th>Description:</th>
-										<td>This plugin allows you to create compelling image slideshows, gallery views and other image presentations. Read the <a href="http://www.robertnyman.com/picture-slides/">PictureSlides documentation</a> for more information.</td>
+										<td>This plugin can be used to automate the creation of graphical round boxes on block-type tags (P, DIV, UL, LI) in an HTML page. Read the <a href="http://www.ifacta.fr/labo/scripts/domassistant.boxit/en/">BoxIt documentation</a> for more info.</td>
 									</tr>
 									<tr>
 										<th>Prerequisites:</th>
