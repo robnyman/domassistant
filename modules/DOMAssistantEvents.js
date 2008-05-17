@@ -64,15 +64,13 @@ DOMAssistant.Events = function () {
 				currentTarget = currentTarget.parentNode;
 			}			
 			currentEvt.eventTarget = currentTarget;
-			var eventType = currentEvt.type;
-			var eventColl = this.events[eventType];
-			var eventCollLength = eventColl.length;
-			var eventReturn;
-			for (var i=0; i<eventCollLength; i++) {
-				eventReturn = eventColl[i].call(this, currentEvt);
-				if (i === (eventCollLength - 1)) {
-					return eventReturn;
+			var eventColl = this.events[currentEvt.type].slice(0);
+			var eventCollLength = eventColl.length - 1;
+			if (eventCollLength !== -1) {
+				for (var i=0; i<eventCollLength; i++) {
+					eventColl[i].call(this, currentEvt);
 				}
+				return eventColl[i].call(this, currentEvt);
 			}
 		},
 
