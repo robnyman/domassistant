@@ -41,8 +41,6 @@
 								<dd>Roger is working as a Front-end Web Developer at NetRelations in G&ouml;teborg, Sweden. He has a strong passion for web standards and accessibility, and has been blogging about those topics for almost five years now at <a href="http://www.456bereastreet.com/">456 Berea Street.</a></dd>
 								<dt><a href="http://www.oktavilla.se/oktavilla/gustaf_forsslund">Gustaf Forsslund (in Swedish)</a></dt>
 								<dd>Gustaf is based in Stockholm, Sweden, and works as an Interface and Web Developer at the 								Swedish design company Oktavilla (where he is also a partner and co-founder). He is passionate about modern web design practices like unobtrusiveness, semantics and graceful degradation, and has always been balancing on the sharp edge between client and server side programming, but is now definitely on the client side.</dd>
-								<dt>Carsten Witt</dt>
-								<dd>Carsten is living and working as a media designer (print) in Kiel, Northern Germany. He has a strong leaning towards technical things such as final drawing, passional, web conceptual design and development. Dreams in angle brackets.</dd>
 								<dt>Gustaf Lindqvist</dt>
 								<dd>Gustaf is living and working in Sundsvall, in northern Sweden, as a consultant System/Web Developer for a world leading end-to-end IT services provider.</dd>
 							</dl>
