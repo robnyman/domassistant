@@ -142,7 +142,7 @@ var DOMAssistant = function () {
 						elm = DOMAssistant.cssSelection.call(document, arg);
 					}
 				}
-				else if (typeof arg === "object") {
+				else if ((typeof arg === "object") || (typeof arg === "function" && typeof arg.nodeName !== "undefined")) {
 					elm = (arguments.length === 1)? DOMAssistant.$$(arg) : pushAll(elm, arguments);
 				}
 			}
@@ -150,7 +150,7 @@ var DOMAssistant = function () {
 		},
 	
 		$$ : function (id, addMethods) {
-			var elm = (typeof id === "object")? id : document.getElementById(id);
+			var elm = ((typeof id === "object") || (typeof id === "function" && typeof id.nodeName !== "undefined"))? id : document.getElementById(id);
 			var applyMethods = addMethods || true;
 			if (typeof id === "string" && elm && elm.id !== id) {
 				elm = null;
