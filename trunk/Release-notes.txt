@@ -6,6 +6,7 @@ Version 2.7.1:
 - Fixed xhtml namespace evaluation in XPath.
 - Fixed so addContent accepts a number value as content as well.
 - Fixed so events can be added or removed from an event itself without causing any problem in the event handler
+- Fixed <object> creation in Firefox
 
 Version 2.7:
 =============
