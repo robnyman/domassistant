@@ -58,7 +58,7 @@ DOMAssistant.AJAX = function () {
 		},
 		
 		ajax : function (ajaxObj) {
-			if (ajaxObj.url && /\?/.test(ajaxObj.url) && ajaxObj.method && /POST/i.test(ajaxObj.method)) {
+			if (!ajaxObj.noParse && ajaxObj.url && /\?/.test(ajaxObj.url) && ajaxObj.method && /POST/i.test(ajaxObj.method)) {
 				var url = ajaxObj.url.split("?");
 				ajaxObj.url = url[0];
 				ajaxObj.params = url[1] + ((url[1].length > 0 && ajaxObj.params)? ("&" + ajaxObj.params) : "");
