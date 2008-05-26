@@ -2,6 +2,7 @@ Version 2.7.1:
 =============
 - Added support for pseudo-classes :nth-last-child, :nth-last-of-type and :target.
 - Added support for single and double quotes around attribute values.
+- Added "noParse" option to .ajax() for disabling the forced conversion of GET-parameters to POST-parameters in a POST-call
 - Fixed setAttributes method on IE.
 - Fixed xhtml namespace evaluation in XPath.
 - Fixed so addContent accepts a number value as content as well.
