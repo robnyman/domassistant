@@ -1,5 +1,5 @@
 <?php include "header-start.php" ?>
-	<title>DOMAssistant, the modular lightweight JavaScript library, with CSS selectors and AJAX</title>
+	<title>DOMAssistant, the modular lightweight JavaScript library, with CSS selectors, event handling, AJAX and complete Unicode support</title>
 <?php include "header-end.php" ?>
 
 <body id="start-page">
@@ -43,7 +43,10 @@
 							</div>
 							
 							<h2>DOMAssistant is Modular</h2>
-							<p>DOMAssistant is completely modular, in the sense that it is only dependent on one single core JavaScript file, <code>DOMAssistant.js</code>. All other modules are optional, and you can choose to only use the ones you find necessary in your application. The reasoning behind this is to make the file size as small as possible, while at the same time addressing any potential bandwidth issues.</p>							
+							<p>DOMAssistant is completely modular, in the sense that it is only dependent on one single core JavaScript file, <code>DOMAssistant.js</code>. All other modules are optional, and you can choose to only use the ones you find necessary in your application. The reasoning behind this is to make the file size as small as possible, while at the same time addressing any potential bandwidth issues.</p>
+							
+							<h2>Multi-language documentation</h2>
+							<p>The <a href="http://www.domassistant.com/documentation/">documentation</a> is offered online in English, and there is also complete downloadable documentation available in English, French and Chinese.</p>
 						</div>
 						
 						<div id="sidebar">
@@ -62,8 +65,10 @@
 								<dd>Intended for learning and development usage.</dd>
 							</dl>
 							
-							<h2>Performance test</h2>
-							<p>DOMAssistant has the overall fastest CSS selector performance. <a href="http://www.domassistant.com/slickspeed/">Take a look at the test</a>!</p>	
+							<h2>Fastest performance</h2>
+							<p>DOMAssistant has the <a href="http://www.domassistant.com/slickspeed/">overall fastest and most accurate CSS selector performance</a>.</p>
+							<h2>Best Unicode support</h2>
+							<p>DOMAssistant is the only JavaScript library with <a href="http://www.domassistant.com/slickspeed/">complete Unicode support</a>!</p>
 						</div>
 					</div>
 					<?php include "get-your-copy.php" ?>

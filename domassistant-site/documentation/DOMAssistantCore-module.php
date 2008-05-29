@@ -1,5 +1,5 @@
 <?php include "../header-start.php" ?>
-	<title>DOMAssistant Core module - Documentation - DOMAssistant, the modular lightweight JavaScript library, with CSS selectors and AJAX</title>
+	<title>DOMAssistant Core module - Documentation - DOMAssistant, the modular lightweight JavaScript library, with CSS selectors, event handling, AJAX and complete Unicode support</title>
 <?php include "../header-end.php" ?>
 
 <body>

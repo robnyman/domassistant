@@ -1,5 +1,5 @@
 <?php include "../header-start.php" ?>
-	<title>CSS selectors - Documentation - DOMAssistant, the modular lightweight JavaScript library, with CSS selectors and AJAX</title>
+	<title>CSS selectors - Documentation - DOMAssistant, the modular lightweight JavaScript library, with CSS selectors, event handling, AJAX and complete Unicode support</title>
 <?php include "../header-end.php" ?>
 
 <body>
