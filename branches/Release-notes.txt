@@ -1,3 +1,8 @@
+Version 2.7.1.1:
+=============
+- Fixed attribute adding for cellspacing and cellpadding in IE
+- Fixed attribute adding in IE so it accepts numbers as well as string (per default DOM behavior)
+
 Version 2.7.1:
 =============
 - Added support for pseudo-classes :nth-last-child, :nth-last-of-type and :target.
