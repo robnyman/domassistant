@@ -1,4 +1,4 @@
-// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7.1
+// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7.1.1
 var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
@@ -14,7 +14,9 @@ var DOMAssistant = function () {
 		"readonly": "readOnly",
 		"rowspan": "rowSpan",
 		"tabindex": "tabIndex",
-		"valign": "vAlign"
+		"valign": "vAlign",
+		"cellspacing": "cellSpacing",
+		"cellpadding": "cellPadding"
 	};
 	var pushAll = function (set1, set2) {
 		for (var j=0, jL=set2.length; j<jL; j++) {
@@ -1097,7 +1099,7 @@ DOMAssistant.Content = function () {
 					var elem = this;
 					var parent = this.parentNode;
 					for (var i in attr) {
-						if (typeof attr[i] === "string") {
+						if (typeof attr[i] === "string" || typeof attr[i] === "number") {
 							var newElem = setAttr(elem, i, attr[i]);
 							if (parent && /(name|type)/i.test(i)) {
 								if (elem.innerHTML) {

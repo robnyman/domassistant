@@ -1,5 +1,5 @@
 // Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation. Module inspiration by Dean Edwards, Matthias Miller, and John Resig: http://dean.edwards.name/weblog/2006/06/again/
-/*extern DOMAssistant */
+/*global DOMAssistant */
 DOMAssistant.DOMLoad = function () {
 	var DOMLoaded = false;
 	var DOMLoadTimer = null;
