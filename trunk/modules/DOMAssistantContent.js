@@ -1,5 +1,5 @@
 // Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation
-/*extern DOMAssistant */
+/*global DOMAssistant */
 DOMAssistant.Content = function () {
 	return {
 		prev : function () {
@@ -48,7 +48,7 @@ DOMAssistant.Content = function () {
 					var elem = this;
 					var parent = this.parentNode;
 					for (var i in attr) {
-						if (typeof attr[i] === "string") {
+						if (typeof attr[i] === "string" || typeof attr[i] === "number") {
 							var newElem = setAttr(elem, i, attr[i]);
 							if (parent && /(name|type)/i.test(i)) {
 								if (elem.innerHTML) {

@@ -1,5 +1,5 @@
 // Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation
-/*extern DOMAssistant, $ */
+/*global DOMAssistant, $ */
 DOMAssistant.Events = function () {
 	var uniqueHandlerId = 1;
 	return {

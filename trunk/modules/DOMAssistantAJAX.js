@@ -1,5 +1,5 @@
 // Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation
-/*extern DOMAssistant */
+/*global DOMAssistant */
 DOMAssistant.AJAX = function () {
 	var globalXMLHttp = null;
 	var readyState = 0;
@@ -45,8 +45,10 @@ DOMAssistant.AJAX = function () {
 					try	{
 						XMLHttp = new window.ActiveXObject(XMLHttpMS[i]);
 						DOMAssistant.AJAX.initRequest = function () {
-							return new window.ActiveXObject(XMLHttpMS[i]);
-						};
+							return function () {
+								return new window.ActiveXObject(XMLHttpMS[i]);
+							};
+						}();
 						break;
 					}
 					catch (e) {
