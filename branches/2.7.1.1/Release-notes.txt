@@ -1,0 +1,74 @@
+Version 2.7.1.1:
+=============
+- Fixed attribute adding for cellspacing and cellpadding in IE
+- Fixed attribute adding in IE so it accepts numbers as well as string (per default DOM behavior)
+
+Version 2.7.1:
+=============
+- Added support for pseudo-classes :nth-last-child, :nth-last-of-type and :target.
+- Added support for single and double quotes around attribute values.
+- Added "noParse" option to .ajax() for disabling the forced conversion of GET-parameters to POST-parameters in a POST-call
+- Fixed setAttributes method on IE.
+- Fixed xhtml namespace evaluation in XPath.
+- Fixed so addContent accepts a number value as content as well.
+- Fixed so events can be added or removed from an event itself without causing any problem in the event handler
+- Fixed <object> creation in Firefox
+
+Version 2.7:
+=============
+- Unicode support added, implying support for basically any source document language.
+- Method cssSelect added to the Core module, to allow CSS selections of an object reference's children.
+- Method ajax added for making more customized AJAX calls, with more options.
+- Method setStyle added to the CSS module.
+- Method setErrorHandling added to the DOMLoad module.
+- Method first added to get the first of any matches.
+- Added support for attribute selectors E[att|=val], E[att~=val], and pseudo-class :lang.
+- Added support for multiple pseudo-classes, eg. tr:nth-child(odd):not([id]).
+- Added support for nested pseudo-classes within :not, eg. tr:not(:first-of-type).
+- Added full compliance for the an+b expression in :nth-child and :nth-of-type, including negative a.
+- Significant CSS selector performance improvement in Internet Explorer.
+- Fixed so a function for an event, applied with addEvent, couldn't be added multiple times.
+- Fixed so a function in DOMReady couldn't be applied multiple times.
+- Accuracy fixes for the following selectors:
+  ~, E[att$=val], :nth-child, :only-of-type, :last-of-type, :contains and :empty
+- Fix for what's allowed following a child/sibling combinator.
+- Fix for attribute selector to support values that contain spaces.
+- Fix for what's returned from the prev and next methods, so it has the correct methods applied.
+
+Version 2.6:
+=============
+- Major CSS selector performance improvement, and using querySelectorAll and native getElementsByClassName where it's available.
+- New plug-in structure added with attach method.
+- New $$ method for native selection of element by id.
+- Support for multiple simultaneous AJAX calls.
+- Fix for addContent method on a collection.
+- Fix for replaceContent method on a collection.
+- Fix for id bug in Internet Explorer and Opera, where it matched elements with that name as well.
+- Removed unnecessary attribute removal in the replaceWithAJAXContent method for the AJAX module.
+- Added support for XUL events (DOMMouseScroll etc) with the addEvent method.
+
+Version 2.5.7:
+=============
+- Fixing URL stripping issue with GET calls in the AJAX module
+
+Version 2.5.6:
+=============
+- Fixing minor issues with the post method for the AJAX module
+
+Version 2.5.5:
+=============
+- Better event handling
+	- Supporting return false
+	- eventTarget for a reference to where the event occurred
+	- Easier syntax for preventDefault and cancelBubble: $(this).preventDefault(evt)
+- replaceClass(className, newClass) method added
+- end() method added
+- Added post method to the AJAX module
+- Fixed :not pseudo-selector bug in Internet Explorer and Opera
+
+
+Version 2.5:
+=============
+- Added CSS selector support
+- Added elmsByTag and each methods for DOMAssistant Core module
+- Added load, getReadyState, getStatus and getStatusText for DOMAssistantAJAX module
