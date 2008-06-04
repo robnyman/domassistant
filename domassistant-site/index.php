@@ -68,7 +68,7 @@
 							<h2>Fastest performance</h2>
 							<p>DOMAssistant has the <a href="http://www.domassistant.com/slickspeed/">overall fastest and most accurate CSS selector performance</a>.</p>
 							<h2>Best Unicode support</h2>
-							<p>DOMAssistant is the only JavaScript library with <a href="http://www.domassistant.com/slickspeed/">complete Unicode support</a>!</p>
+							<p>DOMAssistant is the only JavaScript library with <a href="http://www.domassistant.com/slickspeed-unicode/">complete Unicode support</a>!</p>
 						</div>
 					</div>
 					<?php include "get-your-copy.php" ?>
