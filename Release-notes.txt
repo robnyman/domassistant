@@ -1,3 +1,7 @@
+Version 2.7.2:
+=============
+- Fixed passed parameters not checked before their usage in attrToXpath()
+
 Version 2.7.1.1:
 =============
 - Fixed attribute adding for cellspacing and cellpadding in IE
