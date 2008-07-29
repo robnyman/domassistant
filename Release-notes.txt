@@ -1,6 +1,7 @@
 Version 2.7.2:
 =============
 - Fixed passed parameters not checked before their usage in attrToXpath()
+- Fixed buggy :checked behavior in non-IE browsers
 
 Version 2.7.1.1:
 =============
