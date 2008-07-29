@@ -1,4 +1,4 @@
-// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7.1.1
+// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7.2
 var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
@@ -170,6 +170,7 @@ var DOMAssistant = function () {
 		},
 	
 		cssSelection : function (cssRule) {
+			var xpathable = !(/:checked/).test(cssRule);
 			var getSequence = function (expression) {
 				var start, add = 2, max = -1, modVal = -1;
 				var expressionRegExp = /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n([\+\-]\d+)?)|(\-(([1-9]\d*)?)n\+(\d+)))$/;
@@ -206,7 +207,7 @@ var DOMAssistant = function () {
 				}
 				return { start: start, add: add, max: max, modVal: modVal };
 			};
-			if (document.evaluate) {
+			if (document.evaluate && xpathable) {
 				var ns = { xhtml: "http://www.w3.org/1999/xhtml" };
 				var prefix = (document.documentElement.namespaceURI === ns.xhtml)? "xhtml:" : "";
 				var nsResolver = function lookupNamespaceURI (prefix) {
@@ -269,9 +270,6 @@ var DOMAssistant = function () {
 								break;
 							case "disabled":
 								xpath = "@disabled";
-								break;
-							case "checked":
-								xpath = "@checked=\"checked\""; // Doesn't work in Opera 9.24
 								break;
 							case "target":
 								var hash = document.location.hash.slice(1);
