@@ -130,8 +130,7 @@ var DOMAssistant = function () {
 		
 		$ : function () {
 			var elm = new HTMLArray();
-			if (document.getElementById) {
-				var arg = arguments[0];
+			for (var i=0, arg; (arg=arguments[i]); i++) {
 				if (typeof arg === "string") {
 					arg = arg.replace(/^[^#]*(#)/, "$1");
 					if (/^#[\w\u00C0-\uFFFF\-\_]+$/.test(arg)) {
@@ -141,16 +140,16 @@ var DOMAssistant = function () {
 						}
 					}
 					else {
-						elm = DOMAssistant.cssSelection.call(document, arg);
+						elm = pushAll(elm, DOMAssistant.cssSelection.call(document, arg));
 					}
 				}
 				else if ((typeof arg === "object") || (typeof arg === "function" && typeof arg.nodeName !== "undefined")) {
-					elm = (arguments.length === 1)? DOMAssistant.$$(arg) : pushAll(elm, arguments);
+					elm.push(DOMAssistant.$$(arg));
 				}
 			}
 			return elm;
 		},
-	
+		
 		$$ : function (id, addMethods) {
 			var elm = ((typeof id === "object") || (typeof id === "function" && typeof id.nodeName !== "undefined"))? id : document.getElementById(id);
 			var applyMethods = addMethods || true;
@@ -168,9 +167,9 @@ var DOMAssistant = function () {
 			}
 			return elm;
 		},
-	
+		
 		cssSelection : function (cssRule) {
-			var xpathable = !(/:checked/).test(cssRule);
+			var xpathable = !/:checked/.test(cssRule);
 			var getSequence = function (expression) {
 				var start, add = 2, max = -1, modVal = -1;
 				var expressionRegExp = /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n([\+\-]\d+)?)|(\-(([1-9]\d*)?)n\+(\d+)))$/;
@@ -233,7 +232,7 @@ var DOMAssistant = function () {
 						}
 					}
 					function pseudoToXPath (tag, pseudoClass, pseudoValue) {
-						tag = (/\-child$/.test(pseudoClass))? "*" : tag;
+						tag = /\-child$/.test(pseudoClass)? "*" : tag;
 						var xpath = "", pseudo = pseudoClass.split("-");
 						switch (pseudo[0]) {
 							case "first":
