@@ -18,7 +18,7 @@ DOMAssistant.Events = function () {
 		},
 
 		addEvent : function (evt, func) {
-			var XULEvent = (/^DOM/.test(evt));
+			var XULEvent = /^DOM/.test(evt);
 			if (XULEvent) {
 				if (this.addEventListener) {
 					this.addEventListener(evt, func, false);
