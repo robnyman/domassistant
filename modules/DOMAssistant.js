@@ -551,7 +551,7 @@ var DOMAssistant = function () {
 						splitRule.allClasses = splitRule.allClasses.replace(/^\./, "").split(".");
 						regExpClassNames = [];
 						for (var n=0, nl=splitRule.allClasses.length; n<nl; n++) {
-							regExpClassNames[regExpClassNames.length] = new RegExp("(^|\\s)" + splitRule.allClasses[n] + "(\\s|$)");
+							regExpClassNames[n] = new RegExp("(^|\\s)" + splitRule.allClasses[n] + "(\\s|$)");
 						}
 						matchingClassElms = [];
 						for (var o=0, elmClass; (current=prevElm[o]); o++) {
@@ -580,7 +580,7 @@ var DOMAssistant = function () {
 						for (var q=0, ql=splitRule.allAttr.length, attributeMatch, attrVal; q<ql; q++) {
 							attributeMatch = attributeMatchRegExp.exec(splitRule.allAttr[q]);
 							attrVal = attrToRegExp(attributeMatch[3], (attributeMatch[2] || null));
-							regExpAttributes[regExpAttributes.length] = [(attrVal? new RegExp(attrVal) : null), attributeMatch[1]];
+							regExpAttributes[q] = [(attrVal? new RegExp(attrVal) : null), attributeMatch[1]];
 						}
 						matchingAttributeElms = [];
 						for (var r=0, currentAttr; (current=matchingElms[r]); r++) {
@@ -637,9 +637,7 @@ var DOMAssistant = function () {
 				var cssSelectorRegExp = /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+)|(:\w+[\w\-]*))\))?)*)?(>|\+|~)?/;
 				var selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
 				function attrToXPath (match, p1, p2, p3) {
-					if (p3) {
-						p3 = p3.replace(/^["'](.*)["']$/, "$1");
-					}
+					p3 = p3? p3.replace(/^["'](.*)["']$/, "$1") : p3;
 					switch (p2) {
 						case "^": return "starts-with(@" + p1 + ", \"" + p3 + "\")";
 						case "$": return "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = \"" + p3 + "\"";
@@ -661,7 +659,7 @@ var DOMAssistant = function () {
 							break;
 						case "only":
 							xpath = "not(preceding-sibling::" + tag + " or following-sibling::" + tag + ")";
-							break;		
+							break;
 						case "nth":
 							if (!/^n$/.test(pseudoValue)) {
 								var position = ((pseudo[1] === "last")? "(count(following-sibling::" : "(count(preceding-sibling::") + tag + ") + 1)";
@@ -675,13 +673,13 @@ var DOMAssistant = function () {
 									}
 								}
 							}
-							break;	
+							break;
 						case "empty":
 							xpath = "count(child::*) = 0 and string-length(text()) = 0";
 							break;
 						case "contains":
 							xpath = "contains(., \"" + pseudoValue.replace(/^["'](.*)["']$/, "$1") + "\")";
-							break;	
+							break;
 						case "enabled":
 							xpath = "not(@disabled)";
 							break;
