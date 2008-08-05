@@ -129,6 +129,10 @@ var DOMAssistant = function () {
 		},
 		
 		$ : function () {
+			var arg = arguments[0];
+			if (arguments.length === 1 && (typeof arg === "object" || (typeof arg === "function" && typeof arg.nodeName !== "undefined"))) {
+				return DOMAssistant.$$(arg);
+			}
 			var elm = new HTMLArray();
 			for (var i=0, arg; (arg=arguments[i]); i++) {
 				if (typeof arg === "string") {
@@ -142,9 +146,6 @@ var DOMAssistant = function () {
 					else {
 						elm = pushAll(elm, DOMAssistant.cssSelection.call(document, arg));
 					}
-				}
-				else if ((typeof arg === "object") || (typeof arg === "function" && typeof arg.nodeName !== "undefined")) {
-					elm.push(DOMAssistant.$$(arg));
 				}
 			}
 			return elm;
