@@ -82,7 +82,7 @@ DOMAssistant.Content = function () {
 			if (typeof content === "string" || typeof content === "number") {
 				this.innerHTML += content;
 			}
-			else if ((typeof content === "object") || (typeof content === "function" && typeof content.nodeName !== "undefined")) {
+			else if (typeof content === "object" || (typeof content === "function" && typeof content.nodeName !== "undefined")) {
 				this.appendChild(content);
 			}
 			return this;

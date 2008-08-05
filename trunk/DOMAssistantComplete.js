@@ -129,9 +129,9 @@ var DOMAssistant = function () {
 		},
 		
 		$ : function () {
-			var arg = arguments[0];
-			if (arguments.length === 1 && (typeof arg === "object" || (typeof arg === "function" && typeof arg.nodeName !== "undefined"))) {
-				return DOMAssistant.$$(arg);
+			var obj = arguments[0];
+			if (arguments.length === 1 && (typeof obj === "object" || (typeof obj === "function" && typeof obj.nodeName !== "undefined"))) {
+				return DOMAssistant.$$(obj);
 			}
 			var elm = new HTMLArray();
 			for (var i=0, arg; (arg=arguments[i]); i++) {
@@ -152,7 +152,7 @@ var DOMAssistant = function () {
 		},
 		
 		$$ : function (id, addMethods) {
-			var elm = ((typeof id === "object") || (typeof id === "function" && typeof id.nodeName !== "undefined"))? id : document.getElementById(id);
+			var elm = (typeof id === "object" || (typeof id === "function" && typeof id.nodeName !== "undefined"))? id : document.getElementById(id);
 			var applyMethods = addMethods || true;
 			if (typeof id === "string" && elm && elm.id !== id) {
 				elm = null;
@@ -1136,7 +1136,7 @@ DOMAssistant.Content = function () {
 			if (typeof content === "string" || typeof content === "number") {
 				this.innerHTML += content;
 			}
-			else if ((typeof content === "object") || (typeof content === "function" && typeof content.nodeName !== "undefined")) {
+			else if (typeof content === "object" || (typeof content === "function" && typeof content.nodeName !== "undefined")) {
 				this.appendChild(content);
 			}
 			return this;
