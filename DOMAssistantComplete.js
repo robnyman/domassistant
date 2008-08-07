@@ -422,7 +422,7 @@ var DOMAssistant = function () {
 								addElm = null;
 								if (notTag && !notRegExp.test(notElm.nodeName)) {
 									addElm = notElm;
-								}		
+								}
 								else if (notClass && !notRegExp.test(notElm.className)) {
 									addElm = notElm;
 								}
@@ -862,7 +862,7 @@ DOMAssistant.AJAX = function () {
 			else if (typeof window.ActiveXObject !== "undefined") {
 				var XMLHttpMS = ["Msxml2.XMLHTTP.6.0", "Msxml2.XMLHTTP.3.0", "Msxml2.XMLHTTP", "Microsoft.XMLHTTP"];
 				for (var i=0; i<XMLHttpMS.length; i++) {
-					try	{
+					try {
 						XMLHttp = new window.ActiveXObject(XMLHttpMS[i]);
 						DOMAssistant.AJAX.initRequest = function () {
 							return new window.ActiveXObject(XMLHttpMS[i]);
@@ -942,7 +942,7 @@ DOMAssistant.AJAX = function () {
 						};
 					}
 					XMLHttp.send(params);
-				}(this);				
+				}(this);
 			}
 			return this;
 		},
@@ -1124,7 +1124,7 @@ DOMAssistant.Content = function () {
 						}
 						else {
 							this.setAttribute(i, attr[i]);
-						}	
+						}
 					}
 					return this;
 				};
@@ -1197,11 +1197,7 @@ DOMAssistant.Events = function () {
 				if (!this.uniqueHandlerId) {
 					this.uniqueHandlerId = uniqueHandlerId++;
 				}
-				var alreadyExists = false;
-				if (func.attachedElements && func.attachedElements[evt + this.uniqueHandlerId]) {
-					alreadyExists = true;
-				}
-				if (!alreadyExists) {
+				if (!(func.attachedElements && func.attachedElements[evt + this.uniqueHandlerId])) {
 					if (!this.events) {
 						this.events = {};
 					}
@@ -1211,7 +1207,7 @@ DOMAssistant.Events = function () {
 						if (existingEvent) {
 							this.events[evt].push(existingEvent);
 						}
-					}							
+					}
 					this.events[evt].push(func);
 					this["on" + evt] = DOMAssistant.Events.handleEvent;
 					if (typeof this.window === "object") {
@@ -1231,7 +1227,7 @@ DOMAssistant.Events = function () {
 			var currentTarget = currentEvt.target || currentEvt.srcElement || document;
 			while (currentTarget.nodeType !== 1 && currentTarget.parentNode) {
 				currentTarget = currentTarget.parentNode;
-			}			
+			}
 			currentEvt.eventTarget = currentTarget;
 			var eventColl = this.events[currentEvt.type].slice(0);
 			var eventCollLength = eventColl.length - 1;

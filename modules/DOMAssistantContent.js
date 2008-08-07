@@ -70,7 +70,7 @@ DOMAssistant.Content = function () {
 						}
 						else {
 							this.setAttribute(i, attr[i]);
-						}	
+						}
 					}
 					return this;
 				};

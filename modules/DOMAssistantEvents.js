@@ -28,11 +28,7 @@ DOMAssistant.Events = function () {
 				if (!this.uniqueHandlerId) {
 					this.uniqueHandlerId = uniqueHandlerId++;
 				}
-				var alreadyExists = false;
-				if (func.attachedElements && func.attachedElements[evt + this.uniqueHandlerId]) {
-					alreadyExists = true;
-				}
-				if (!alreadyExists) {
+				if (!(func.attachedElements && func.attachedElements[evt + this.uniqueHandlerId])) {
 					if (!this.events) {
 						this.events = {};
 					}
@@ -42,7 +38,7 @@ DOMAssistant.Events = function () {
 						if (existingEvent) {
 							this.events[evt].push(existingEvent);
 						}
-					}							
+					}
 					this.events[evt].push(func);
 					this["on" + evt] = DOMAssistant.Events.handleEvent;
 					if (typeof this.window === "object") {
@@ -62,7 +58,7 @@ DOMAssistant.Events = function () {
 			var currentTarget = currentEvt.target || currentEvt.srcElement || document;
 			while (currentTarget.nodeType !== 1 && currentTarget.parentNode) {
 				currentTarget = currentTarget.parentNode;
-			}			
+			}
 			currentEvt.eventTarget = currentTarget;
 			var eventColl = this.events[currentEvt.type].slice(0);
 			var eventCollLength = eventColl.length - 1;
