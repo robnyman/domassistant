@@ -833,7 +833,7 @@ DOMAssistant.AJAX = function () {
 			url = url[0];
 		}
 		return {
-			url: url,
+			url : url,
 			method : method,
 			callback : callback,
 			params : params,
@@ -1173,6 +1173,7 @@ DOMAssistant.Events = function () {
 	var uniqueHandlerId = 1;
 	return {
 		publicMethods : [
+			"triggerEvent",
 			"addEvent",
 			"removeEvent",
 			"preventDefault",
@@ -1184,6 +1185,26 @@ DOMAssistant.Events = function () {
 			window.removeEvent = this.removeEvent;
 			DOMAssistant.preventDefault = this.preventDefault;
 			DOMAssistant.cancelBubble = this.cancelBubble;
+		},
+
+		triggerEvent : function (evt, target) {
+			if (this.events && this.events[evt]) {
+				// Define a fake event
+				var event = {
+					type: evt,
+					target: target || this,
+					currentTarget: this,
+					bubbles: false,
+					cancelable: false,
+					preventDefault: function(){},
+					stopPropagation: function(){},
+					timeStamp: +new Date
+				};
+				for (var i=0, iL=this.events[evt].length; i<iL; i++) {
+					this.events[evt][i].call(this, event);
+				}
+			}
+			return this;
 		},
 
 		addEvent : function (evt, func) {

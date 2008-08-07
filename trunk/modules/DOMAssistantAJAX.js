@@ -13,7 +13,7 @@ DOMAssistant.AJAX = function () {
 			url = url[0];
 		}
 		return {
-			url: url,
+			url : url,
 			method : method,
 			callback : callback,
 			params : params,
