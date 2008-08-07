@@ -422,7 +422,7 @@ var DOMAssistant = function () {
 								addElm = null;
 								if (notTag && !notRegExp.test(notElm.nodeName)) {
 									addElm = notElm;
-								}		
+								}
 								else if (notClass && !notRegExp.test(notElm.className)) {
 									addElm = notElm;
 								}
