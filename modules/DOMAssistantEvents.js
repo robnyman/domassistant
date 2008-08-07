@@ -29,7 +29,7 @@ DOMAssistant.Events = function () {
 					cancelable: false,
 					preventDefault: function(){},
 					stopPropagation: function(){},
-					timeStamp: +new Date
+					timeStamp: +new Date()
 				};
 				for (var i=0, iL=this.events[evt].length; i<iL; i++) {
 					this.events[evt][i].call(this, event);
