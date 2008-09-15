@@ -28,7 +28,7 @@
 
 						<div id="main-content-area">
 							<h1>About</h1>
-							<p>DOMAssistant was originally developed by <a href="http://www.robertnyman.com/">Robert Nyman</a> to meet a need of a small yet very powerful JavaScript library, focusing on performance and modularity. Robert still develops the library, but now through the help of the invaluable DOMAssistant Team.</p>
+							<p>DOMAssistant was originally developed by <a href="http://www.robertnyman.com/">Robert Nyman</a> to meet a need of a small yet very powerful JavaScript library, focusing on performance and modularity. Robert still plays a part in the DOMAssistant world, but now the technical lead is Lim Cheng Hong and the invaluable DOMAssistant Team.</p>
 							
 							<h2 id="domassistant-team">The DOMAssistant Team</h2>
 							<p>The DOMAssistant team consists of:</p>
@@ -37,8 +37,6 @@
 								<dd>Cheng Hong currently resides and works in Singapore as a Senior	Consultant for a software firm. User interface is his passion, and he swears by accessible, usable and standards-based designs.</dd>
 								<dt><a href="http://kodfabrik.se/blog/">Pelle Wessman</a></dt>
 								<dd>Pelle is a freelancing Web Developer from Esl&ouml;v in Sk&aring;ne, southern Sweden. He's working with Javascript, PHP, MySQL, HTML, CSS etc depending on the current assignment. He is a strong follower of standards and semantics and really likes initiatives like Microformats.</dd>
-								<dt><a href="http://www.456bereastreet.com/">Roger Johansson</a></dt>
-								<dd>Roger is working as a Front-end Web Developer at NetRelations in G&ouml;teborg, Sweden. He has a strong passion for web standards and accessibility, and has been blogging about those topics for almost five years now at <a href="http://www.456bereastreet.com/">456 Berea Street.</a></dd>
 								<dt><a href="http://www.oktavilla.se/oktavilla/gustaf_forsslund">Gustaf Forsslund (in Swedish)</a></dt>
 								<dd>Gustaf is based in Stockholm, Sweden, and works as an Interface and Web Developer at the 								Swedish design company Oktavilla (where he is also a partner and co-founder). He is passionate about modern web design practices like unobtrusiveness, semantics and graceful degradation, and has always been balancing on the sharp edge between client and server side programming, but is now definitely on the client side.</dd>
 								<dt>Gustaf Lindqvist</dt>
