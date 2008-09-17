@@ -36,7 +36,7 @@
 								<dt>Lim Cheng Hong</dt>
 								<dd>Cheng Hong currently resides and works in Singapore as a Senior	Consultant for a software firm. User interface is his passion, and he swears by accessible, usable and standards-based designs.</dd>
 								<dt><a href="http://kodfabrik.se/blog/">Pelle Wessman</a></dt>
-								<dd>Pelle is a freelancing Web Developer from Esl&ouml;v in Sk&aring;ne, southern Sweden. He's working with Javascript, PHP, MySQL, HTML, CSS etc depending on the current assignment. He is a strong follower of standards and semantics and really likes initiatives like Microformats.</dd>
+								<dd>Pelle works as a Web Developer for <a href="http://goodold.se/">Good Old</a>, and comes from Esl&ouml;v in Sk&aring;ne, southern Sweden. He's working with Javascript, PHP, MySQL, HTML, CSS etc depending on the current assignment. He is a strong follower of standards and semantics and really likes initiatives like Microformats.</dd>
 								<dt>Gustaf Lindqvist</dt>
 								<dd>Gustaf is living and working in Sundsvall, in northern Sweden, as a consultant System/Web Developer for a world leading end-to-end IT services provider.</dd>
 							</dl>
