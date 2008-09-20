@@ -79,16 +79,17 @@ DOMAssistant.Content = function () {
 		},
 
 		addContent : function (content) {
-			if (typeof content === "string" || typeof content === "number") {
+			var type = typeof content;
+			if (type === "string" || type === "number") {
 				this.innerHTML += content;
 			}
-			else if (typeof content === "object" || (typeof content === "function" && typeof content.nodeName !== "undefined")) {
+			else if (type === "object" || (type === "function" && typeof content.nodeName !== "undefined")) {
 				this.appendChild(content);
 			}
 			return this;
 		},
 
-		replaceContent : function (newContent) {
+		replaceContent : function (content) {
 			var children = this.all || this.getElementsByTagName("*");
 			for (var i=0, child, attr; (child=children[i]); i++) {
 				attr = child.attributes;
@@ -104,8 +105,25 @@ DOMAssistant.Content = function () {
 			while (this.hasChildNodes()) {
 				this.removeChild(this.firstChild);
 			}
-			DOMAssistant.$(this).addContent(newContent);
+			DOMAssistant.$(this).addContent(content);
 			return this;
+		},
+
+		replace : function (content, returnNew) {
+			var type = typeof content;
+			if (type === "string" || type === "number") {
+				var parent = this.parentNode;
+				var tmp = DOMAssistant.$(parent).create("div", null, false, content);
+				for (var i=tmp.childNodes.length-1; i>=0; i--) {
+					parent.insertBefore(tmp.childNodes[i], this.nextSibling);
+				}
+				content = this.nextSibling;
+				parent.removeChild(this);
+			}
+			else if (type === "object" || (type === "function" && typeof content.nodeName !== "undefined")) {
+				this.parentNode.replaceChild(content, this);
+			}
+			return returnNew? content : this;
 		},
 
 		remove : function () {

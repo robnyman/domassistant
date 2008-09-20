@@ -20,7 +20,7 @@ DOMAssistant.Events = function () {
 
 		triggerEvent : function (evt, target) {
 			if (this.events && this.events[evt]) {
-				// Define a fake event
+				// Create synthetic event
 				var event = {
 					type: evt,
 					target: target || this,

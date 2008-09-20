@@ -122,7 +122,7 @@ var DOMAssistant = function () {
 					}
 					else {
 						elmsToReturn.push(elms);
-					}	
+					}
 				}
 				return elmsToReturn;
 			};

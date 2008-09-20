@@ -3,6 +3,7 @@ Version 2.7.2:
 - Fixed regression bug on $ with multiple arguments
 - Fixed passed parameters not checked before their usage in attrToXpath()
 - Fixed buggy :checked behavior in non-IE browsers
+- Two new methods preview: triggerEvent() and replace()
 
 Version 2.7.1.1:
 =============
