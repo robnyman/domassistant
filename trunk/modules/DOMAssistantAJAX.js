@@ -112,12 +112,12 @@ DOMAssistant.AJAX = function () {
 						XMLHttp.onreadystatechange = function () {
 							if (XMLHttp.readyState === 4) {
 								var response = /xml/i.test(responseType)? XMLHttp.responseXML : XMLHttp.responseText;
-								callback.call(elm, response, addToContent);
 								readyState = 4;
 								status = XMLHttp.status;
 								statusText = XMLHttp.statusText;
 								globalXMLHttp = null;
 								XMLHttp = null;
+								callback.call(elm, response, addToContent);
 							}
 						};
 					}
