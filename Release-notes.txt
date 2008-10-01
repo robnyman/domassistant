@@ -1,5 +1,6 @@
 Version 2.7.3:
 =============
+- Added support for "opacity" with getStyle() and setStyle()
 - Fixed getStatus() and getStatusText() not working from within the Ajax callback function
 
 Version 2.7.2:
