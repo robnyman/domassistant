@@ -1021,6 +1021,9 @@ DOMAssistant.CSS = function () {
 		},
 		
 		setStyle : function (style, value) {
+			if (this.filters && (typeof style === "string"? /opacity/.test(style) : style.opacity)) {
+				this.style.filter = "alpha(opacity=" + (value || style.opacity || 1) * 100 + ")";
+			}
 			if (typeof this.style.cssText !== "undefined") {
 				var styleToSet = this.style.cssText;
 				if (typeof style === "object") {
@@ -1039,6 +1042,10 @@ DOMAssistant.CSS = function () {
 		},
 
 		getStyle : function (cssRule) {
+			if (this.filters && /opacity/.test(cssRule)) {
+				var alpha = this.filters["DXImageTransform.Microsoft.Alpha"] || this.filters.alpha || {};
+				return (alpha.opacity || 100) / 100;
+			}
 			var cssVal = "";
 			if (document.defaultView && document.defaultView.getComputedStyle) {
 				cssVal = document.defaultView.getComputedStyle(this, "").getPropertyValue(cssRule);
