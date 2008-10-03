@@ -38,7 +38,7 @@
 								<li><a href="/plugins/categories/ajax">AJAX (1)</a></li>
 								<li><a href="/plugins/categories/example">Example (1)</a></li>
 								<li><a href="/plugins/categories/pictures">Pictures (1)</a></li>
-								<li><a href="/plugins/categories/rounded-corners">Rounded corners (1)</a></li>
+								<li><a href="/plugins/categories/ui">User Interface (2)</a></li>
 							</ul>
 						</div>
 
