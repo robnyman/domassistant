@@ -847,8 +847,7 @@ DOMAssistant.AJAX = function () {
 			"ajax",
 			"get",
 			"post",
-			"load",
-			"replaceWithAJAXContent"
+			"load"
 		],
 		
 		initRequest : function () {
