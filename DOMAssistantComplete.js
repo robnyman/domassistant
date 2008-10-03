@@ -993,21 +993,13 @@ DOMAssistant.CSS = function () {
 		},
 
 		removeClass : function (className) {
-			var classToRemove = new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i");
-			this.className = this.className.replace(classToRemove, function (match) {
-				var retVal = "";
-				if (new RegExp("^\\s+.*\\s+$").test(match)) {
-					retVal = match.replace(/(\s+).+/, "$1");
-				}
-				return retVal;
-			}).replace(/^\s+|\s+$/g, "");
-			return this;
+			return $(this).replaceClass(className);
 		},
 		
 		replaceClass : function (className, newClass) {
 			var classToRemove = new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i");
 			this.className = this.className.replace(classToRemove, function (match, p1, p2) {
-				var retVal = p1 + newClass + p2;
+				var retVal = newClass? (p1 + newClass + p2) : "";
 				if (new RegExp("^\\s+.*\\s+$").test(match)) {
 					retVal = match.replace(/(\s+).+/, "$1");
 				}
@@ -1021,7 +1013,7 @@ DOMAssistant.CSS = function () {
 		},
 		
 		setStyle : function (style, value) {
-			if (this.filters && (typeof style === "string"? /opacity/.test(style) : style.opacity)) {
+			if (this.filters && (typeof style === "string"? /opacity/i.test(style) : style.opacity)) {
 				this.style.filter = "alpha(opacity=" + (value || style.opacity || 1) * 100 + ")";
 			}
 			if (typeof this.style.cssText !== "undefined") {
@@ -1042,7 +1034,7 @@ DOMAssistant.CSS = function () {
 		},
 
 		getStyle : function (cssRule) {
-			if (this.filters && /opacity/.test(cssRule)) {
+			if (this.filters && /opacity/i.test(cssRule)) {
 				var alpha = this.filters["DXImageTransform.Microsoft.Alpha"] || this.filters.alpha || {};
 				return (alpha.opacity || 100) / 100;
 			}
