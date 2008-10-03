@@ -176,32 +176,30 @@ var DOMAssistant = function () {
 			if (!pseudoValue) {
 				return null;
 			}
-			else {
-				if (pseudoValue[2]) {	// odd or even
-					start = (pseudoValue[2] === "odd")? 1 : 2;
-					modVal = (start === 1)? 1 : 0;
+			if (pseudoValue[2]) {	// odd or even
+				start = (pseudoValue[2] === "odd")? 1 : 2;
+				modVal = (start === 1)? 1 : 0;
+			}
+			else if (pseudoValue[3]) {	// single digit
+				start = parseInt(pseudoValue[3], 10);
+				add = 0;
+				max = start;
+			}
+			else if (pseudoValue[4]) {	// an+b
+				add = pseudoValue[6]? parseInt(pseudoValue[6], 10) : 1;
+				start = pseudoValue[7]? parseInt(pseudoValue[7], 10) : 0;
+				while (start < 1) {
+					start += add;
 				}
-				else if (pseudoValue[3]) {	// single digit
-					start = parseInt(pseudoValue[3], 10);
-					add = 0;
-					max = start;
+				modVal = (start > add)? (start - add) % add : ((start === add)? 0 : start);
+			}
+			else if (pseudoValue[8]) {	// -an+b
+				add = pseudoValue[10]? parseInt(pseudoValue[10], 10) : 1;
+				start = max = parseInt(pseudoValue[11], 10);
+				while (start > add) {
+					start -= add;
 				}
-				else if (pseudoValue[4]) {	// an+b
-					add = pseudoValue[6]? parseInt(pseudoValue[6], 10) : 1;
-					start = pseudoValue[7]? parseInt(pseudoValue[7], 10) : 0;
-					while (start < 1) {
-						start += add;
-					}
-					modVal = (start > add)? (start - add) % add : ((start === add)? 0 : start);
-				}
-				else if (pseudoValue[8]) {	// -an+b
-					add = pseudoValue[10]? parseInt(pseudoValue[10], 10) : 1;
-					start = max = parseInt(pseudoValue[11], 10);
-					while (start > add) {
-						start -= add;
-					}
-					modVal = (max > add)? (max - add) % add : ((max === add)? 0 : max);
-				}
+				modVal = (max > add)? (max - add) % add : ((max === add)? 0 : max);
 			}
 			return { start: start, add: add, max: max, modVal: modVal };
 		},
@@ -610,7 +608,7 @@ var DOMAssistant = function () {
 						for (var t=0, tl=allPseudos.length; t<tl; t++) {
 							var pseudo = allPseudos[t].match(pseudoSplitRegExp);
 							var pseudoClass = pseudo[1]? pseudo[1].toLowerCase() : null;
-							var pseudoValue = pseudo[3]? pseudo[3] : null;
+							var pseudoValue = pseudo[3] || null;
 							matchingElms = getElementsByPseudo(matchingElms, pseudoClass, pseudoValue);
 							clearAdded(matchingElms);
 						}
@@ -756,7 +754,7 @@ var DOMAssistant = function () {
 							for (var k=0, kl=allPseudos.length; k<kl; k++) {
 								var pseudo = allPseudos[k].match(pseudoSplitRegExp);
 								var pseudoClass = pseudo[1]? pseudo[1].toLowerCase() : null;
-								var pseudoValue = pseudo[3]? pseudo[3] : null;
+								var pseudoValue = pseudo[3] || null;
 								var xpath = pseudoToXPath(splitRule.tag, pseudoClass, pseudoValue);
 								if (xpath.length) {
 									xPathExpression += "[" + xpath + "]";
