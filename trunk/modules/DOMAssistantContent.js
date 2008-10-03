@@ -105,8 +105,7 @@ DOMAssistant.Content = function () {
 			while (this.hasChildNodes()) {
 				this.removeChild(this.firstChild);
 			}
-			DOMAssistant.$(this).addContent(content);
-			return this;
+			return DOMAssistant.$(this).addContent(content);
 		},
 
 		replace : function (content, returnNew) {

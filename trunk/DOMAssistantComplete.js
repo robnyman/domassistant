@@ -735,17 +735,8 @@ var DOMAssistant = function () {
 							tagRelation : cssSelector[23]
 						};
 						if (splitRule.tagRelation) {
-							switch (splitRule.tagRelation) {
-								case ">":
-									xPathExpression += "/child::";
-									break;
-								case "+":
-									xPathExpression += "/following-sibling::*[1]/self::";
-									break;
-								case "~":
-									xPathExpression += "/following-sibling::";
-									break;
-							}
+							var mapping = { ">": "/child::", "+": "/following-sibling::*[1]/self::", "~": "/following-sibling::" };
+							xPathExpression += mapping[splitRule.tagRelation] || "";
 						}
 						else {
 							xPathExpression += (j > 0 && /(>|\+|~)/.test(cssSelectors[j-1]))? splitRule.tag : ("/descendant::" + splitRule.tag);
@@ -999,7 +990,7 @@ DOMAssistant.CSS = function () {
 			var classToRemove = new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i");
 			this.className = this.className.replace(classToRemove, function (match, p1, p2) {
 				var retVal = newClass? (p1 + newClass + p2) : "";
-				if (new RegExp("^\\s+.*\\s+$").test(match)) {
+				if (/^\s+.*\s+$/.test(match)) {
 					retVal = match.replace(/(\s+).+/, "$1");
 				}
 				return retVal;
@@ -1157,8 +1148,7 @@ DOMAssistant.Content = function () {
 			while (this.hasChildNodes()) {
 				this.removeChild(this.firstChild);
 			}
-			DOMAssistant.$(this).addContent(content);
-			return this;
+			return DOMAssistant.$(this).addContent(content);
 		},
 
 		replace : function (content, returnNew) {

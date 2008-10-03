@@ -18,7 +18,7 @@ DOMAssistant.CSS = function () {
 			var classToRemove = new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i");
 			this.className = this.className.replace(classToRemove, function (match, p1, p2) {
 				var retVal = newClass? (p1 + newClass + p2) : "";
-				if (new RegExp("^\\s+.*\\s+$").test(match)) {
+				if (/^\s+.*\s+$/.test(match)) {
 					retVal = match.replace(/(\s+).+/, "$1");
 				}
 				return retVal;
