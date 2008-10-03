@@ -735,17 +735,8 @@ var DOMAssistant = function () {
 							tagRelation : cssSelector[23]
 						};
 						if (splitRule.tagRelation) {
-							switch (splitRule.tagRelation) {
-								case ">":
-									xPathExpression += "/child::";
-									break;
-								case "+":
-									xPathExpression += "/following-sibling::*[1]/self::";
-									break;
-								case "~":
-									xPathExpression += "/following-sibling::";
-									break;
-							}
+							var mapping = { ">": "/child::", "+": "/following-sibling::*[1]/self::", "~": "/following-sibling::" };
+							xPathExpression += mapping[splitRule.tagRelation] || "";
 						}
 						else {
 							xPathExpression += (j > 0 && /(>|\+|~)/.test(cssSelectors[j-1]))? splitRule.tag : ("/descendant::" + splitRule.tag);
