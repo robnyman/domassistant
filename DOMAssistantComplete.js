@@ -993,7 +993,7 @@ DOMAssistant.CSS = function () {
 		},
 
 		removeClass : function (className) {
-			return $(this).replaceClass(className);
+			return DOMAssistant.$(this).replaceClass(className);
 		},
 		
 		replaceClass : function (className, newClass) {
