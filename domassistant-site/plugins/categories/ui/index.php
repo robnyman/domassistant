@@ -43,7 +43,7 @@
 									</tr>
 									<tr>
 										<th>Description:</th>
-										<td>This plugin can be used to create a tab-based navigation system using the HTML structure of a block element (title, h1, h2, etc). Read the <a href="http://www.ifacta.fr/labo/scripts/domassistant.boxit/en/">DOMAssistant.Tabs documentation</a> for more info.</td>
+										<td>This plugin can be used to create a tab-based navigation system using the HTML structure of a block element (title, h1, h2, etc). Read the <a href="http://www.ifacta.fr/labo/scripts/domassistant.tabs/en/">DOMAssistant.Tabs documentation</a> for more info.</td>
 									</tr>
 									<tr>
 										<th>Prerequisites:</th>
