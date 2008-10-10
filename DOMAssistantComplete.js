@@ -146,14 +146,11 @@ var DOMAssistant = function () {
 				return DOMAssistant.$$(obj);
 			}
 			var elm = new HTMLArray();
-			for (var i=0, arg; (arg=arguments[i]); i++) {
+			for (var i=0, arg, idMatch; (arg=arguments[i]); i++) {
 				if (typeof arg === "string") {
 					arg = arg.replace(/^[^#]*(#)/, "$1");
-					if (regex.id.test(arg)) {
-						var idMatch = DOMAssistant.$$(arg.substr(1), false);
-						if (idMatch) {
-							elm.push(idMatch);
-						}
+					if (regex.id.test(arg) && (idMatch = DOMAssistant.$$(arg.substr(1), false))) {
+						elm.push(idMatch);
 					}
 					else {
 						elm = pushAll(elm, DOMAssistant.cssSelection.call(document, arg));
@@ -220,7 +217,7 @@ var DOMAssistant = function () {
 			var cssRules = cssRule.replace(regex.rules, "$1").split(",");
 			var elm = new HTMLArray();
 			var prevElm = [], matchingElms = [];
-			var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, regExpClassNames, matchingClassElms, regExpAttributes, matchingAttributeElms, current, previous, prevParent, addElm, iteratorNext, childCount, childElm, sequence;
+			var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, regExpClassNames, matchingClassElms, regExpAttributes, matchingAttributeElms, current, previous, prevParent, notElm, addElm, iteratorNext, childCount, childElm, sequence;
 			var selectorSplitRegExp;
 			try {
 				selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
@@ -278,7 +275,7 @@ var DOMAssistant = function () {
 			}
 			function getElementsByPseudo (previousMatch, pseudoClass, pseudoValue) {
 				prevParents = [];
-				var pseudo = pseudoClass.split("-"), matchingElms = [], checkNodeName;
+				var pseudo = pseudoClass.split("-"), matchingElms = [], idx = 0, checkNodeName;
 				var prop = (checkNodeName = /\-of\-type$/.test(pseudoClass))? "nodeName" : "nodeType";
 				function getPrevElm(elm) {
 					var val = checkNodeName? elm.nodeName : 1;
@@ -292,21 +289,22 @@ var DOMAssistant = function () {
 				}
 				switch (pseudo[0]) {
 					case "first":
-						for (var i=0; (previous=previousMatch[i]); i++) {
+						while ((previous=previousMatch[idx++])) {
 							if (!getPrevElm(previous)) {
 								matchingElms[matchingElms.length] = previous;
 							}
 						}
 						break;
 					case "last":
-						for (var j=0; (previous=previousMatch[j]); j++) {
+						while ((previous=previousMatch[idx++])) {
 							if (!getNextElm(previous)) {
 								matchingElms[matchingElms.length] = previous;
 							}
 						}
 						break;
 					case "only":
-						for (var k=0, kParent; (previous=previousMatch[k]); k++) {
+						var kParent;
+						while ((previous=previousMatch[idx++])) {
 							prevParent = previous.parentNode;
 							if (prevParent !== kParent) {
 								if (!getPrevElm(previous) && !getNextElm(previous)) {
@@ -324,7 +322,7 @@ var DOMAssistant = function () {
 							var direction = (pseudo[1] === "last")? ["lastChild", "previousSibling"] : ["firstChild", "nextSibling"];
 							sequence = DOMAssistant.getSequence.call(this, pseudoValue);
 							if (sequence) {
-								for (var l=0; (previous=previousMatch[l]); l++) {
+								while ((previous=previousMatch[idx++])) {
 									prevParent = previous.parentNode;
 									if (!prevParent.childElms) {
 										iteratorNext = sequence.start;
@@ -360,28 +358,28 @@ var DOMAssistant = function () {
 						}
 						break;
 					case "empty":
-						for (var m=0; (previous=previousMatch[m]); m++) {
+						while ((previous=previousMatch[idx++])) {
 							if (!previous.childNodes.length) {
 								matchingElms[matchingElms.length] = previous;
 							}
 						}
 						break;
 					case "enabled":
-						for (var n=0; (previous=previousMatch[n]); n++) {
+						while ((previous=previousMatch[idx++])) {
 							if (!previous.disabled) {
 								matchingElms[matchingElms.length] = previous;
 							}
 						}
 						break;
 					case "disabled":
-						for (var o=0; (previous=previousMatch[o]); o++) {
+						while ((previous=previousMatch[idx++])) {
 							if (previous.disabled) {
 								matchingElms[matchingElms.length] = previous;
 							}
 						}
 						break;
 					case "checked":
-						for (var p=0; (previous=previousMatch[p]); p++) {
+						while ((previous=previousMatch[idx++])) {
 							if (previous.checked) {
 								matchingElms[matchingElms.length] = previous;
 							}
@@ -389,7 +387,7 @@ var DOMAssistant = function () {
 						break;
 					case "contains":
 						pseudoValue = pseudoValue.replace(regex.quoted, "$1");
-						for (var q=0; (previous=previousMatch[q]); q++) {
+						while ((previous=previousMatch[idx++])) {
 							if (!previous.added) {
 								if (previous.innerText.indexOf(pseudoValue) !== -1) {
 									previous.added = true;
@@ -401,7 +399,7 @@ var DOMAssistant = function () {
 					case "target":
 						var hash = document.location.hash.slice(1);
 						if (hash) {
-							for (var r=0; (previous=previousMatch[r]); r++) {
+							while ((previous=previousMatch[idx++])) {
 								if (getAttr(previous, "name") === hash || getAttr(previous, "id") === hash) {
 									matchingElms[matchingElms.length] = previous;
 									break;
@@ -415,15 +413,14 @@ var DOMAssistant = function () {
 						}
 						else {
 							pseudoValue = pseudoValue.replace(regex.id, "[id=$1]");
+							for (var re in regex) {
+								regex[re].lastIndex = 0;
+							}
 							var notTag = regex.tag.exec(pseudoValue);
 							var notClass = regex.classes.exec(pseudoValue);
 							var notAttr = regex.attribs.exec(pseudoValue);
-							var notRegExp = new RegExp("(^|\\s)" + (notTag? notTag[1] : notClass? notClass[1] : "") + "(\\s|$)", "i");
-							if (notAttr) {
-								var notMatchingAttrVal = attrToRegExp(notAttr[3], notAttr[2]);
-								notRegExp = new RegExp(notMatchingAttrVal, "i");
-							}
-							for (var s=0, notElm; (notElm=previousMatch[s]); s++) {
+							var notRegExp = new RegExp(notAttr? attrToRegExp(notAttr[3], notAttr[2]) : "(^|\\s)" + (notTag? notTag[1] : notClass? notClass[1] : "") + "(\\s|$)", "i");
+							while ((notElm=previousMatch[idx++])) {
 								addElm = null;
 								if (notTag && !notRegExp.test(notElm.nodeName)) {
 									addElm = notElm;
@@ -445,7 +442,7 @@ var DOMAssistant = function () {
 						}
 						break;
 					default:
-						for (var t=0; (previous=previousMatch[t]); t++) {
+						while ((previous=previousMatch[idx++])) {
 							if (getAttr(previous, pseudoClass) === pseudoValue) {
 								matchingElms[matchingElms.length] = previous;
 							}
