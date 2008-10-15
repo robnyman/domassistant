@@ -35,6 +35,9 @@ DOMAssistant.Events = function () {
 					this.events[evt][i].call(this, event);
 				}
 			}
+			else if (this["on" + evt]) {
+				this["on" + evt].call(this, event);
+			}
 			return this;
 		},
 
@@ -81,13 +84,14 @@ DOMAssistant.Events = function () {
 				currentTarget = currentTarget.parentNode;
 			}
 			currentEvt.eventTarget = currentTarget;
-			var eventColl = this.events[currentEvt.type].slice(0);
-			var eventCollLength = eventColl.length - 1;
-			if (eventCollLength !== -1) {
+			var eventColl = this.events[currentEvt.type].slice(0), eventCollLength, eventReturn;
+			if ((eventCollLength = eventColl.length)) {
 				for (var i=0; i<eventCollLength; i++) {
-					eventColl[i].call(this, currentEvt);
+					if (typeof eventColl[i] === "function") {
+						eventReturn = eventColl[i].call(this, currentEvt);
+					}
 				}
-				return eventColl[i].call(this, currentEvt);
+				return eventReturn;
 			}
 		},
 

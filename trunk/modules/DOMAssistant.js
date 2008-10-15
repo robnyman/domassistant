@@ -28,7 +28,8 @@ var DOMAssistant = function () {
 		pseudos: /:(\w[\w\-]*)(\(([^\)]+)\))?/g,
 		attribs: /\[(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_\.]+|"[^"]*"|'[^']*')?\]/g,
 		classes: /\.([\w\u00C0-\uFFFF\-_]+)/g,
-		quoted: /^["'](.*)["']$/
+		quoted: /^["'](.*)["']$/,
+		nth: /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n([\+\-]\d+)?)|(\-(([1-9]\d*)?)n\+(\d+)))$/
 	};
 	var pushAll = function (set1, set2) {
 		for (var j=0, jL=set2.length; j<jL; j++) {
@@ -180,8 +181,7 @@ var DOMAssistant = function () {
 		
 		getSequence : function (expression) {
 			var start, add = 2, max = -1, modVal = -1;
-			var expressionRegExp = /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n([\+\-]\d+)?)|(\-(([1-9]\d*)?)n\+(\d+)))$/;
-			var pseudoValue = expressionRegExp.exec(expression);
+			var pseudoValue = regex.nth.exec(expression);
 			if (!pseudoValue) {
 				return null;
 			}
