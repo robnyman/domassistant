@@ -268,10 +268,11 @@ var DOMAssistant = function () {
 			function getElementsByTagName (tag, parent) {
 				tag = tag || "*";
 				parent = parent || document;
+				var ie5 = isIE && parseFloat(navigator.appVersion) < 6;
 				if (parent === document || parent.lastModified) {
-					return cachedElms[tag] || (cachedElms[tag] = isIE? ((tag === "*")? document.all : document.all.tags(tag)) : document.getElementsByTagName(tag));
+					return cachedElms[tag] || (cachedElms[tag] = ie5? ((tag === "*")? document.all : document.all.tags(tag)) : document.getElementsByTagName(tag));
 				}
-				return isIE? ((tag === "*")? parent.all : parent.all.tags(tag)) : parent.getElementsByTagName(tag);
+				return ie5? ((tag === "*")? parent.all : parent.all.tags(tag)) : parent.getElementsByTagName(tag);
 			}
 			function getElementsByPseudo (previousMatch, pseudoClass, pseudoValue) {
 				prevParents = [];
@@ -412,10 +413,12 @@ var DOMAssistant = function () {
 							matchingElms = subtractArray(previousMatch, getElementsByPseudo(previousMatch, pseudoValue.slice(1)));
 						}
 						else {
-							pseudoValue = pseudoValue.replace(regex.id, "[id=$1]");
 							for (var re in regex) {
-								regex[re].lastIndex = 0;
+								if (regex[re].lastIndex) {
+									regex[re].lastIndex = 0;
+								}
 							}
+							pseudoValue = pseudoValue.replace(regex.id, "[id=$1]");
 							var notTag = regex.tag.exec(pseudoValue);
 							var notClass = regex.classes.exec(pseudoValue);
 							var notAttr = regex.attribs.exec(pseudoValue);
@@ -580,7 +583,7 @@ var DOMAssistant = function () {
 						for (var q=0, ql=allAttr.length, attributeMatch, attrVal; q<ql; q++) {
 							regex.attribs.lastIndex = 0;
 							attributeMatch = regex.attribs.exec(allAttr[q]);
-							attrVal = attrToRegExp(attributeMatch[3], (attributeMatch[2] || null));
+							attrVal = attrToRegExp(attributeMatch[3], attributeMatch[2] || null);
 							regExpAttributes[q] = [(attrVal? new RegExp(attrVal) : null), attributeMatch[1]];
 						}
 						matchingAttributeElms = [];
@@ -647,6 +650,9 @@ var DOMAssistant = function () {
 						default: return "@" + p1 + (p3? "=\"" + p3 + "\"" : "");
 					}
 				}
+				function attrToXPathB (match, p1, p2, p3) {
+					return "[" + attrToXPath(match, p1, p2, p3) + "]";
+				}
 				function pseudoToXPath (tag, pseudoClass, pseudoValue) {
 					tag = /\-child$/.test(pseudoClass)? "*" : tag;
 					var xpath = "", pseudo = pseudoClass.split("-");
@@ -663,14 +669,10 @@ var DOMAssistant = function () {
 						case "nth":
 							if (!/^n$/.test(pseudoValue)) {
 								var position = ((pseudo[1] === "last")? "(count(following-sibling::" : "(count(preceding-sibling::") + tag + ") + 1)";
-								sequence = DOMAssistant.getSequence.call(this, pseudoValue);
-								if (sequence) {
-									if (sequence.start === sequence.max) {
-										xpath = position + " = " + sequence.start;
-									}
-									else {
-										xpath = position + " mod " + sequence.add + " = " + sequence.modVal + ((sequence.start > 1)? " and " + position + " >= " + sequence.start : "") + ((sequence.max > 0)? " and " + position + " <= " + sequence.max: "");
-									}
+								if ((sequence = DOMAssistant.getSequence.call(this, pseudoValue))) {
+									xpath = (sequence.start === sequence.max)?
+										position + " = " + sequence.start :
+										position + " mod " + sequence.add + " = " + sequence.modVal + ((sequence.start > 1)? " and " + position + " >= " + sequence.start : "") + ((sequence.max > 0)? " and " + position + " <= " + sequence.max: "");
 								}
 							}
 							break;
@@ -691,16 +693,13 @@ var DOMAssistant = function () {
 							xpath = "@name=\"" + hash + "\" or @id=\"" + hash + "\"";
 							break;
 						case "not":
-							if (regex.pseudo.test(pseudoValue)) {
-								xpath = "not(" + pseudoToXPath(tag, pseudoValue.slice(1)) + ")";
-							}
-							else {
-								pseudoValue = pseudoValue.replace(regex.id, "[id=$1]");
-								var notSelector = pseudoValue.replace(regex.tag, "self::$1");
-								notSelector = notSelector.replace(regex.classes, "contains(concat(\" \", @class, \" \"), \" $1 \")");
-								notSelector = notSelector.replace(regex.attribs, attrToXPath);
-								xpath = "not(" + notSelector + ")";
-							}
+							var notSelector = regex.pseudo.test(pseudoValue)?
+								pseudoToXPath(tag, pseudoValue.slice(1)) :
+								pseudoValue.replace(regex.id, "[id=$1]")
+									.replace(regex.tag, "self::$1")
+									.replace(regex.classes, "contains(concat(\" \", @class, \" \"), \" $1 \")")
+									.replace(regex.attribs, attrToXPath);
+							xpath = "not(" + notSelector + ")";
 							break;
 						default:
 							xpath = "@" + pseudoClass + "=\"" + pseudoValue + "\"";
@@ -747,7 +746,7 @@ var DOMAssistant = function () {
 							xPathExpression += splitRule.allClasses.replace(regex.classes, "[contains(concat(\" \", @class, \" \"), \" $1 \")]");
 						}
 						if (splitRule.allAttr) {
-							xPathExpression += splitRule.allAttr.replace(regex.attribs, function(p0, p1, p2, p3) { return "[" + attrToXPath(p0, p1, p2, p3) + "]"; });
+							xPathExpression += splitRule.allAttr.replace(regex.attribs, attrToXPathB);
 						}
 						if (splitRule.allPseudos) {
 							var allPseudos = splitRule.allPseudos.match(regex.pseudos);
