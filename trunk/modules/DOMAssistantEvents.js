@@ -96,15 +96,21 @@ DOMAssistant.Events = function () {
 		},
 
 		removeEvent : function (evt, func) {
-			if (this.events) {
+			if (this.events && this.events[evt]) {
 				var eventColl = this.events[evt];
-				for (var i=0; i<eventColl.length; i++) {
-					if (eventColl[i] === func) {
+				for (var fn, i=eventColl.length-1; i>=0; i--) {
+					fn = func || eventColl[i];
+					if (eventColl[i] === fn) {
 						delete eventColl[i];
 						eventColl.splice(i, 1);
+						if (fn.attachedElements) {
+							fn.attachedElements[evt + this.uniqueHandlerId] = null;
+						}
 					}
 				}
-				func.attachedElements[evt + this.uniqueHandlerId] = null;
+			}
+			else if (this["on" + evt] && !func) {
+				this["on" + evt] = null;
 			}
 			return this;
 		},

@@ -831,6 +831,9 @@ DOMAssistant.AJAX = function () {
 			addToContent : addToContent || false
 		};
 	};
+	var inProgress = function (xhr) {
+		return (xhr.readyState >= 1 && xhr.readyState <= 3);
+	};
 	return {
 		publicMethods : [
 			"ajax",
@@ -873,7 +876,7 @@ DOMAssistant.AJAX = function () {
 			}
 			return DOMAssistant.AJAX.makeCall.call(this, ajaxObj);
 		},
-	
+		
 		get : function (url, callback, addToContent) {
 			var ajaxObj = createAjaxObj(url, "GET", callback, addToContent);
 			return DOMAssistant.AJAX.makeCall.call(this, ajaxObj);
@@ -893,13 +896,16 @@ DOMAssistant.AJAX = function () {
 			if (XMLHttp) {
 				globalXMLHttp = XMLHttp;
 				var ajaxCall = function (elm) {
-					var url = ajaxObj.url;
-					var method = ajaxObj.method || "GET";
-					var callback = ajaxObj.callback;
-					var params = ajaxObj.params;
-					var headers = ajaxObj.headers;
-					var responseType = ajaxObj.responseType || "text";
-					var addToContent = ajaxObj.addToContent;
+					var url = ajaxObj.url,
+						method = ajaxObj.method || "GET",
+						callback = ajaxObj.callback,
+						params = ajaxObj.params,
+						headers = ajaxObj.headers,
+						responseType = ajaxObj.responseType || "text",
+						addToContent = ajaxObj.addToContent,
+						timeout = ajaxObj.timeout || null,
+						ex = ajaxObj.exception,
+						timeoutId = null;
 					XMLHttp.open(method, url, true);
 					XMLHttp.setRequestHeader("AJAX", "true");
 					XMLHttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
@@ -919,17 +925,36 @@ DOMAssistant.AJAX = function () {
 					if (typeof callback === "function") {
 						XMLHttp.onreadystatechange = function () {
 							if (XMLHttp.readyState === 4) {
+								if (timeoutId) {
+									window.clearTimeout(timeoutId);
+								}
 								var response = /xml/i.test(responseType)? XMLHttp.responseXML : XMLHttp.responseText;
+								if (/json/i.test(responseType)) {
+									response = (JSON && JSON.parse)? JSON.parse(response) : eval("(" + response + ")");
+								}
 								readyState = 4;
 								status = XMLHttp.status;
 								statusText = XMLHttp.statusText;
-								globalXMLHttp = null;
-								XMLHttp = null;
+								globalXMLHttp = XMLHttp = null;
 								callback.call(elm, response, addToContent);
 							}
 						};
 					}
 					XMLHttp.send(params);
+					if (timeout) {
+						timeoutId = window.setTimeout( function () {
+							if (inProgress(XMLHttp)) {
+								XMLHttp.abort();
+								if (typeof ex === "function") {
+									readyState = 0;
+									status = 408;
+									statusText = "Request timeout";
+									globalXMLHttp = XMLHttp = null;
+									ex.call(elm, statusText);
+								}
+							}
+						}, timeout);
+					}
 				}(this);
 			}
 			return this;
@@ -1269,15 +1294,21 @@ DOMAssistant.Events = function () {
 		},
 
 		removeEvent : function (evt, func) {
-			if (this.events) {
+			if (this.events && this.events[evt]) {
 				var eventColl = this.events[evt];
-				for (var i=0; i<eventColl.length; i++) {
-					if (eventColl[i] === func) {
+				for (var fn, i=eventColl.length-1; i>=0; i--) {
+					fn = func || eventColl[i];
+					if (eventColl[i] === fn) {
 						delete eventColl[i];
 						eventColl.splice(i, 1);
+						if (fn.attachedElements) {
+							fn.attachedElements[evt + this.uniqueHandlerId] = null;
+						}
 					}
 				}
-				func.attachedElements[evt + this.uniqueHandlerId] = null;
+			}
+			else if (this["on" + evt] && !func) {
+				this["on" + evt] = null;
 			}
 			return this;
 		},
