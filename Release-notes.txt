@@ -1,6 +1,9 @@
 Version 2.7.3:
 =============
 - Added support for "opacity" with getStyle() and setStyle()
+- Added JSON response native parsing with eval fallback
+- Added support for timeout and exception handling in Ajax
+- Enhanced removeEvent() capable of removing all listener functions binded to an event
 - Fixed getStatus() and getStatusText() not working from within the Ajax callback function
 - Fixed selecting element of id="tags" in IE
 - Fixed inline events not getting triggered with triggerEvent()
