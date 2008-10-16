@@ -92,12 +92,12 @@
 								<code>$("contacts").load("staff.aspx", true);</code>
 							</p>
 							
-							<h2 id="ajax"><code>ajax(ajaxObject)</code></h2>
+							<h2 id="ajax"><code>ajax(option)</code></h2>
 							<p>A general-purpose method of doing more advanced AJAX calls where parameters are set manually.</p>
 							<h3>Parameters</h3>
 							<dl>
-								<dt>ajaxObject</dt>
-								<dd>A JavaScript object with different parameters set. Available parameters are: url, method, params, callback, headers. Required.</dd>
+								<dt>option</dt>
+								<dd>A JavaScript object with different parameters set. Available parameters are: url, method, params, callback, headers, responseType, timeout, exception. Required.</dd>
 							</dl>
 
 							<h3>Return value</h3>
@@ -105,12 +105,17 @@
 
 							<h3>Example calls</h3>
 							<pre class="code"><code>$("#container").ajax({
-	url: "ajax.php",
-	method: "POST",
+	url : "ajax.php",
+	method : "POST",
 	params : "name=DOMAssistant",
-	callback: functionReference,
+	callback : functionReference,
 	headers : {
 		"Content-type" : "application/x-www-form-urlencoded"
+	},
+	responseType : "json",
+	timeout : 5000,
+	exception : function(err) {
+		alert("Ajax error: " + err);
 	}
 });</code></pre>
 							

@@ -100,7 +100,8 @@
 							</p>
 <pre class="code"><code>$("#container").setStyle({
 	background : "#ffffa2",
-	color : "#f00"
+	color : "#f00",
+	opacity : 0.5
 });</code></pre>
 
 							<h2 id="getStyle"><code>getStyle(cssRule)</code></h2>

@@ -169,6 +169,30 @@
 								</code>
 							</p>
 
+							<h2 id="replace"><code>replace(content, returnNew)</code></h2>
+							<p>Replaces the current element with a new one.</p>
+							<h3>Parameters</h3>
+							<dl>
+								<dt>content</dt>
+								<dd>New content that can be specified either through an element, string or number reference.</dd>
+								<dt>returnNew</dt>
+								<dd>If set to true, the new element is returned; otherwise the replaced element is returned. Optional.</dd>
+							</dl>
+
+							<h3>Return value</h3>
+							<p>Either the replaced element or the new element.</p>
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									$("container").replace("&lt;div&gt;&lt;em&gt;Way&lt;/em&gt; cooler content!&lt;/div&gt;");
+								</code>
+							</p>
+							<p class="code">
+								<code>		
+									var newElem = $$("placeholder").replace(elementRef, true);
+								</code>
+							</p>
+
 							<h2 id="remove"><code>remove()</code></h2>
 							<p>Removes the current element.</p>
 							<h3>Parameters</h3>
@@ -193,6 +217,7 @@
 								<li><a href="#setAttributes">setAttributes</a></li>
 								<li><a href="#addContent">addContent</a></li>
 								<li><a href="#replaceContent">replaceContent</a></li>
+								<li><a href="#replace">replace</a></li>
 								<li><a href="#remove">remove</a></li>
 							</ul>
 							<?php include "domassistant-module-nav.php" ?>

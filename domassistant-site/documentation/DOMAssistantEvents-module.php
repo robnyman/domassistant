@@ -34,7 +34,7 @@
 							<h3>Parameters</h3>
 							<dl>
 								<dt>evt</dt>
-								<dd>Event to apply, specified as a string, without the "on" prefix.</dd>
+								<dd>Event to apply, specified as a string, without the "on" prefix. Custom events are acceptable.</dd>
 								<dt>func</dt>
 								<dd>Function to handle the event, specified as a function reference (without parentheses) or an anonymous function.</dd>
 							</dl>
@@ -56,13 +56,13 @@
 							</p>
 
 							<h2 id="removeEvent"><code>removeEvent(evt, func)</code></h2>
-							<p>Removes an event handler from the current element. Works only for function references, and not anonymous functions.</p>
+							<p>Removes either a specific event handler or all of them from the current element.</p>
 							<h3>Parameters</h3>
 							<dl>
 								<dt>evt</dt>
 								<dd>Event to remove, specified as a string, without the "on" prefix.</dd>
 								<dt>func</dt>
-								<dd>Function to stop from handling the event, specified as a function reference (without parentheses).</dd>
+								<dd>Function to stop from handling the event, specified as a function reference (without parentheses). Optional. If unspecified, all handlers (including inline event handlers) for the event will be removed.</dd>
 							</dl>
 							<h3>Return value</h3>
 							<p>Element which called the method.</p>
@@ -71,6 +71,35 @@
 							<p class="code">
 								<code>
 									$("container").removeEvent("click", getListing);
+								</code>	
+							</p>
+							<p class="code">
+								<code>
+									$("tr:nth-child(odd)").removeEvent("mouseover").removeEvent("mouseout");
+								</code>	
+							</p>
+
+							<h2 id="triggerEvent"><code>triggerEvent(evt, target)</code></h2>
+							<p>Triggers an event on the current element, and optionally sets the <i>target</i> to which the event is dispatched to. Note that the actual event does not happen - this method merely triggers the event handlers.</p>
+							<h3>Parameters</h3>
+							<dl>
+								<dt>evt</dt>
+								<dd>Event to trigger, specified as a string, without the "on" prefix. Custom events are acceptable.</dd>
+								<dt>target</dt>
+								<dd>The target element to which the event is dispatched. Optional.</dd>
+							</dl>
+							<h3>Return value</h3>
+							<p>Element which called the method.</p>
+
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									$("news").triggerEvent("click");
+								</code>	
+							</p>
+							<p class="code">
+								<code>
+									$("home-link").triggerEvent("customevent", elementRef);
 								</code>	
 							</p>
 
@@ -114,6 +143,7 @@
 							<ul>
 								<li><a href="#addEvent">addEvent</a></li>
 								<li><a href="#removeEvent">removeEvent</a></li>
+								<li><a href="#triggerEvent">triggerEvent</a></li>
 								<li><a href="#preventDefault">preventDefault</a></li>
 								<li><a href="#cancelBubble">cancelBubble</a></li>
 							</ul>
