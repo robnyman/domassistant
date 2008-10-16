@@ -1,5 +1,5 @@
 <?php include "../header-start.php" ?>
-	<title>DOMAssistantAJAX module - Documentation - DOM Assistant, the modular lightweight JavaScript library</title>
+	<title>DOMAssistantAJAX module - Documentation - DOMAssistant, the modular lightweight JavaScript library</title>
 <?php include "../header-end.php" ?>
 
 <body>
