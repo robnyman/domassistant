@@ -4,6 +4,7 @@ var DOMAssistant = function () {
 		// Constructor
 	};
 	var isIE = /*@cc_on!@*/false;
+	var ie5 = isIE && parseFloat(navigator.appVersion) < 6;
 	var cachedElms = [];
 	var camel = {
 		"accesskey": "accessKey",
@@ -268,7 +269,6 @@ var DOMAssistant = function () {
 			function getElementsByTagName (tag, parent) {
 				tag = tag || "*";
 				parent = parent || document;
-				var ie5 = isIE && parseFloat(navigator.appVersion) < 6;
 				if (parent === document || parent.lastModified) {
 					return cachedElms[tag] || (cachedElms[tag] = ie5? ((tag === "*")? document.all : document.all.tags(tag)) : document.getElementsByTagName(tag));
 				}

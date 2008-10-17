@@ -4,6 +4,7 @@ var DOMAssistant = function () {
 		// Constructor
 	};
 	var isIE = /*@cc_on!@*/false;
+	var ie5 = isIE && parseFloat(navigator.appVersion) < 6;
 	var cachedElms = [];
 	var camel = {
 		"accesskey": "accessKey",
@@ -268,7 +269,6 @@ var DOMAssistant = function () {
 			function getElementsByTagName (tag, parent) {
 				tag = tag || "*";
 				parent = parent || document;
-				var ie5 = isIE && parseFloat(navigator.appVersion) < 6;
 				if (parent === document || parent.lastModified) {
 					return cachedElms[tag] || (cachedElms[tag] = ie5? ((tag === "*")? document.all : document.all.tags(tag)) : document.getElementsByTagName(tag));
 				}
@@ -814,6 +814,7 @@ DOMAssistant.AJAX = function () {
 	var readyState = 0;
 	var status = -1;
 	var statusText = "";
+	var requestPool = [];
 	var createAjaxObj = function (url, method, callback, addToContent) {
 		var params = null;
 		if (/POST/i.test(method)) {
@@ -847,7 +848,7 @@ DOMAssistant.AJAX = function () {
 			if (typeof XMLHttpRequest !== "undefined") {
 				XMLHttp = new XMLHttpRequest();
 				DOMAssistant.AJAX.initRequest = function () {
-					return new XMLHttpRequest();
+					return requestPool.length? requestPool.pop() : new XMLHttpRequest();
 				};
 			}
 			else if (typeof window.ActiveXObject !== "undefined") {
@@ -856,7 +857,7 @@ DOMAssistant.AJAX = function () {
 					try {
 						XMLHttp = new window.ActiveXObject(XMLHttpMS[i]);
 						DOMAssistant.AJAX.initRequest = function () {
-							return new window.ActiveXObject(XMLHttpMS[i]);
+							return requestPool.length? requestPool.pop() : new window.ActiveXObject(XMLHttpMS[i]);
 						};
 						break;
 					}
@@ -935,7 +936,9 @@ DOMAssistant.AJAX = function () {
 								readyState = 4;
 								status = XMLHttp.status;
 								statusText = XMLHttp.statusText;
-								globalXMLHttp = XMLHttp = null;
+								globalXMLHttp = null;
+								XMLHttp.onreadystatechange = function () {};
+								requestPool.push(XMLHttp);
 								callback.call(elm, response, addToContent);
 							}
 						};
@@ -1208,7 +1211,7 @@ DOMAssistant.Events = function () {
 			"preventDefault",
 			"cancelBubble"
 		],
-		
+
 		init : function () {
 			window.addEvent = this.addEvent;
 			window.removeEvent = this.removeEvent;
@@ -1233,15 +1236,14 @@ DOMAssistant.Events = function () {
 					this.events[evt][i].call(this, event);
 				}
 			}
-			else if (this["on" + evt]) {
+			else if (typeof this["on" + evt] === "function") {
 				this["on" + evt].call(this, event);
 			}
 			return this;
 		},
 
 		addEvent : function (evt, func) {
-			var XULEvent = /^DOM/.test(evt);
-			if (XULEvent) {
+			if (/^DOM/.test(evt)) {
 				if (this.addEventListener) {
 					this.addEventListener(evt, func, false);
 				}
