@@ -5,6 +5,7 @@ DOMAssistant.AJAX = function () {
 	var readyState = 0;
 	var status = -1;
 	var statusText = "";
+	var requestPool = [];
 	var createAjaxObj = function (url, method, callback, addToContent) {
 		var params = null;
 		if (/POST/i.test(method)) {
@@ -38,7 +39,7 @@ DOMAssistant.AJAX = function () {
 			if (typeof XMLHttpRequest !== "undefined") {
 				XMLHttp = new XMLHttpRequest();
 				DOMAssistant.AJAX.initRequest = function () {
-					return new XMLHttpRequest();
+					return requestPool.length? requestPool.pop() : new XMLHttpRequest();
 				};
 			}
 			else if (typeof window.ActiveXObject !== "undefined") {
@@ -47,7 +48,7 @@ DOMAssistant.AJAX = function () {
 					try {
 						XMLHttp = new window.ActiveXObject(XMLHttpMS[i]);
 						DOMAssistant.AJAX.initRequest = function () {
-							return new window.ActiveXObject(XMLHttpMS[i]);
+							return requestPool.length? requestPool.pop() : new window.ActiveXObject(XMLHttpMS[i]);
 						};
 						break;
 					}
@@ -126,7 +127,9 @@ DOMAssistant.AJAX = function () {
 								readyState = 4;
 								status = XMLHttp.status;
 								statusText = XMLHttp.statusText;
-								globalXMLHttp = XMLHttp = null;
+								globalXMLHttp = null;
+								XMLHttp.onreadystatechange = function () {};
+								requestPool.push(XMLHttp);
 								callback.call(elm, response, addToContent);
 							}
 						};

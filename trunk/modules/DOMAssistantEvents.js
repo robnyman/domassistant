@@ -10,7 +10,7 @@ DOMAssistant.Events = function () {
 			"preventDefault",
 			"cancelBubble"
 		],
-		
+
 		init : function () {
 			window.addEvent = this.addEvent;
 			window.removeEvent = this.removeEvent;
@@ -35,15 +35,14 @@ DOMAssistant.Events = function () {
 					this.events[evt][i].call(this, event);
 				}
 			}
-			else if (this["on" + evt]) {
+			else if (typeof this["on" + evt] === "function") {
 				this["on" + evt].call(this, event);
 			}
 			return this;
 		},
 
 		addEvent : function (evt, func) {
-			var XULEvent = /^DOM/.test(evt);
-			if (XULEvent) {
+			if (/^DOM/.test(evt)) {
 				if (this.addEventListener) {
 					this.addEventListener(evt, func, false);
 				}
