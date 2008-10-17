@@ -931,7 +931,7 @@ DOMAssistant.AJAX = function () {
 								}
 								var response = /xml/i.test(responseType)? XMLHttp.responseXML : XMLHttp.responseText;
 								if (/json/i.test(responseType)) {
-									response = (JSON && JSON.parse)? JSON.parse(response) : eval("(" + response + ")");
+									response = (typeof JSON !== "undefined" && typeof JSON.parse === "function")? JSON.parse(response) : eval("(" + response + ")");
 								}
 								readyState = 4;
 								status = XMLHttp.status;
