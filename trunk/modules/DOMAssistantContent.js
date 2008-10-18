@@ -1,21 +1,22 @@
 // Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation
 /*global DOMAssistant */
 DOMAssistant.Content = function () {
+	var $ = DOMAssistant.$;
 	return {
 		prev : function () {
 			var prevSib = this;
 			while ((prevSib = prevSib.previousSibling) && prevSib.nodeType !== 1) {}
-			return DOMAssistant.$(prevSib);
+			return $(prevSib);
 		},
 
 		next : function () {
 			var nextSib = this;
 			while ((nextSib = nextSib.nextSibling) && nextSib.nodeType !== 1) {}
-			return DOMAssistant.$(nextSib);
+			return $(nextSib);
 		},
 
 		create : function (name, attr, append, content) {
-			var elm = DOMAssistant.$(document.createElement(name));
+			var elm = $(document.createElement(name));
 			if (attr) {
 				elm = elm.setAttributes(attr);
 			}
@@ -59,7 +60,7 @@ DOMAssistant.Content = function () {
 							elem = newElem;
 						}
 					}
-					return DOMAssistant.$(elem);
+					return $(elem);
 				};
 			}
 			else {
@@ -105,14 +106,14 @@ DOMAssistant.Content = function () {
 			while (this.hasChildNodes()) {
 				this.removeChild(this.firstChild);
 			}
-			return DOMAssistant.$(this).addContent(content);
+			return $(this).addContent(content);
 		},
 
 		replace : function (content, returnNew) {
 			var type = typeof content;
 			if (type === "string" || type === "number") {
 				var parent = this.parentNode;
-				var tmp = DOMAssistant.$(parent).create("div", null, false, content);
+				var tmp = $(parent).create("div", null, false, content);
 				for (var i=tmp.childNodes.length-1; i>=0; i--) {
 					parent.insertBefore(tmp.childNodes[i], this.nextSibling);
 				}
