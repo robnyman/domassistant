@@ -131,7 +131,7 @@ var DOMAssistant = function () {
 				var elms;
 				for (var i=0, il=this.length; i<il; i++) {
 					elms = method.apply(this[i], arguments);
-					if (typeof elms !== "undefined" && elms !== null && elms.constructor === Array) {
+					if (!!elms && elms.constructor === Array) {
 						elmsToReturn = pushAll(elmsToReturn, elms);
 					}
 					else {
@@ -144,7 +144,7 @@ var DOMAssistant = function () {
 		
 		$ : function () {
 			var obj = arguments[0];
-			if (arguments.length === 1 && (typeof obj === "object" || (typeof obj === "function" && typeof obj.nodeName !== "undefined"))) {
+			if (arguments.length === 1 && (typeof obj === "object" || (typeof obj === "function" && !!obj.nodeName))) {
 				return DOMAssistant.$$(obj);
 			}
 			var elm = new HTMLArray();
@@ -163,7 +163,7 @@ var DOMAssistant = function () {
 		},
 		
 		$$ : function (id, addMethods) {
-			var elm = (typeof id === "object" || (typeof id === "function" && typeof id.nodeName !== "undefined"))? id : document.getElementById(id);
+			var elm = (typeof id === "object" || (typeof id === "function" && !!id.nodeName))? id : document.getElementById(id);
 			var applyMethods = addMethods || true;
 			if (typeof id === "string" && elm && elm.id !== id) {
 				elm = null;
@@ -593,7 +593,7 @@ var DOMAssistant = function () {
 								attributeRegExp = regExpAttributes[s][0];
 								currentAttr = getAttr(current, regExpAttributes[s][1]);
 								if (typeof currentAttr === "string" && currentAttr.length) {
-									if (!attributeRegExp || typeof attributeRegExp === "undefined" || (attributeRegExp && attributeRegExp.test(currentAttr))) {
+									if (!!!attributeRegExp || (!!attributeRegExp && attributeRegExp.test(currentAttr))) {
 										addElm = true;
 									}
 								}
