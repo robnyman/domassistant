@@ -84,7 +84,7 @@ DOMAssistant.Content = function () {
 			if (type === "string" || type === "number") {
 				this.innerHTML += content;
 			}
-			else if (type === "object" || (type === "function" && typeof content.nodeName !== "undefined")) {
+			else if (type === "object" || (type === "function" && !!content.nodeName)) {
 				this.appendChild(content);
 			}
 			return this;
@@ -120,7 +120,7 @@ DOMAssistant.Content = function () {
 				content = this.nextSibling;
 				parent.removeChild(this);
 			}
-			else if (type === "object" || (type === "function" && typeof content.nodeName !== "undefined")) {
+			else if (type === "object" || (type === "function" && !!content.nodeName)) {
 				this.parentNode.replaceChild(content, this);
 			}
 			return returnNew? content : this;

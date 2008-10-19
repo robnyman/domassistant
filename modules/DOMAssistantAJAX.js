@@ -24,7 +24,7 @@ DOMAssistant.AJAX = function () {
 		};
 	};
 	var inProgress = function (xhr) {
-		return (xhr.readyState >= 1 && xhr.readyState <= 3);
+		return (!!xhr && xhr.readyState >= 1 && xhr.readyState <= 3);
 	};
 	return {
 		publicMethods : [
@@ -36,13 +36,13 @@ DOMAssistant.AJAX = function () {
 		
 		initRequest : function () {
 			var XMLHttp = null;
-			if (typeof XMLHttpRequest !== "undefined") {
+			if (!!window.XMLHttpRequest) {
 				XMLHttp = new XMLHttpRequest();
 				DOMAssistant.AJAX.initRequest = function () {
 					return requestPool.length? requestPool.pop() : new XMLHttpRequest();
 				};
 			}
-			else if (typeof window.ActiveXObject !== "undefined") {
+			else if (!!window.ActiveXObject) {
 				var XMLHttpMS = ["Msxml2.XMLHTTP.6.0", "Msxml2.XMLHTTP.3.0", "Msxml2.XMLHTTP", "Microsoft.XMLHTTP"];
 				for (var i=0; i<XMLHttpMS.length; i++) {
 					try {
@@ -87,7 +87,7 @@ DOMAssistant.AJAX = function () {
 			var XMLHttp = DOMAssistant.AJAX.initRequest();
 			if (XMLHttp) {
 				globalXMLHttp = XMLHttp;
-				var ajaxCall = function (elm) {
+				(function (elm) {
 					var url = ajaxObj.url,
 						method = ajaxObj.method || "GET",
 						callback = ajaxObj.callback,
@@ -116,21 +116,29 @@ DOMAssistant.AJAX = function () {
 					}
 					if (typeof callback === "function") {
 						XMLHttp.onreadystatechange = function () {
-							if (XMLHttp.readyState === 4) {
-								if (timeoutId) {
-									window.clearTimeout(timeoutId);
+							try {
+								if (XMLHttp.readyState === 4) {
+									if (timeoutId) {
+										window.clearTimeout(timeoutId);
+									}
+									status = XMLHttp.status;
+									statusText = XMLHttp.statusText;
+									readyState = 4;
+									var response = /xml/i.test(responseType)? XMLHttp.responseXML : XMLHttp.responseText;
+									if (/json/i.test(responseType)) {
+										response = (typeof JSON === "object" && typeof JSON.parse === "function")? JSON.parse(response) : eval("(" + response + ")");
+									}
+									globalXMLHttp = null;
+									XMLHttp.onreadystatechange = function () {};
+									requestPool.push(XMLHttp);
+									callback.call(elm, response, addToContent);
 								}
-								var response = /xml/i.test(responseType)? XMLHttp.responseXML : XMLHttp.responseText;
-								if (/json/i.test(responseType)) {
-									response = (typeof JSON === "object" && typeof JSON.parse === "function")? JSON.parse(response) : eval("(" + response + ")");
+							}
+							catch (e) {
+								globalXMLHttp = XMLHttp = null;
+								if (typeof ex === "function") {
+									ex.call(elm, e.toString());
 								}
-								readyState = 4;
-								status = XMLHttp.status;
-								statusText = XMLHttp.statusText;
-								globalXMLHttp = null;
-								XMLHttp.onreadystatechange = function () {};
-								requestPool.push(XMLHttp);
-								callback.call(elm, response, addToContent);
 							}
 						};
 					}
@@ -149,7 +157,7 @@ DOMAssistant.AJAX = function () {
 							}
 						}, timeout);
 					}
-				}(this);
+				})(this);
 			}
 			return this;
 		},
