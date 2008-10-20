@@ -3,17 +3,17 @@
 DOMAssistant.CSS = function () {
 	return {
 		addClass : function (className) {
-			var currentClass = this.className;
-			if (!new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i").test(currentClass)) {
+			if (!this.hasClass(className)) {
+				var currentClass = this.className;
 				this.className = currentClass + (currentClass.length? " " : "") + className;
 			}
 			return this;
 		},
 
 		removeClass : function (className) {
-			return DOMAssistant.$(this).replaceClass(className);
+			return this.replaceClass(className);
 		},
-		
+
 		replaceClass : function (className, newClass) {
 			var classToRemove = new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i");
 			this.className = this.className.replace(classToRemove, function (match, p1, p2) {
@@ -29,7 +29,7 @@ DOMAssistant.CSS = function () {
 		hasClass : function (className) {
 			return new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i").test(this.className);
 		},
-		
+
 		setStyle : function (style, value) {
 			if (this.filters && (typeof style === "string"? /opacity/i.test(style) : style.opacity)) {
 				this.style.filter = "alpha(opacity=" + (value || style.opacity || 1) * 100 + ")";
@@ -61,7 +61,7 @@ DOMAssistant.CSS = function () {
 				cssVal = document.defaultView.getComputedStyle(this, "").getPropertyValue(cssRule);
 			}
 			else if (this.currentStyle) {
-				cssVal = cssRule.replace(/\-(\w)/g, function (match, p1) {
+				cssVal = cssRule.replace(/^float$/i, "styleFloat").replace(/\-(\w)/g, function (match, p1) {
 					return p1.toUpperCase();
 				});
 				cssVal = this.currentStyle[cssVal];
