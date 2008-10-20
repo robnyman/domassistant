@@ -1058,21 +1058,26 @@ DOMAssistant.CSS = function () {
 		},
 
 		getStyle : function (cssRule) {
-			if (this.filters && /opacity/i.test(cssRule)) {
-				var alpha = this.filters["DXImageTransform.Microsoft.Alpha"] || this.filters.alpha || {};
-				return (alpha.opacity || 100) / 100;
-			}
-			var cssVal = "";
+			var val = "", cssRule = cssRule.toLowerCase();
 			if (document.defaultView && document.defaultView.getComputedStyle) {
-				cssVal = document.defaultView.getComputedStyle(this, "").getPropertyValue(cssRule);
+				val = document.defaultView.getComputedStyle(this, "").getPropertyValue(cssRule);
 			}
 			else if (this.currentStyle) {
-				cssVal = cssRule.replace(/^float$/i, "styleFloat").replace(/\-(\w)/g, function (match, p1) {
-					return p1.toUpperCase();
-				});
-				cssVal = this.currentStyle[cssVal];
+				if (this.filters && /^opacity$/.test(cssRule)) {
+					var alpha = this.filters["DXImageTransform.Microsoft.Alpha"] || this.filters.alpha || {};
+					val = (alpha.opacity || 100) / 100;
+				}
+				else {
+					cssRule = cssRule.replace(/^float$/, "styleFloat").replace(/\-(\w)/g, function (match, p1) {
+						return p1.toUpperCase();
+					});
+					val = this.currentStyle[cssRule];
+				}
+				if (val === "auto" && /^(width|height)$/.test(cssRule) && this.currentStyle.display !== "none") {
+					val = this["offset" + cssRule.charAt(0).toUpperCase() + cssRule.substr(1)] + "px";
+				}
 			}
-			return cssVal;
+			return val;
 		}
 	};
 }();
