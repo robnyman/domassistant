@@ -49,6 +49,13 @@ var DOMAssistant = function () {
 			return set1;
 		};
 	}
+	var contains = function(array, value) {
+		if (array.indexOf) { return array.indexOf(value) >= 0; }
+		for (var i=0, iL=array.length; i<iL; i++) {
+			if (array[i] === value) { return true; }
+		}
+		return false;
+	};
 	return {
 		isIE : isIE,
 		camel : camel,
@@ -218,7 +225,7 @@ var DOMAssistant = function () {
 			var cssRules = cssRule.replace(regex.rules, "$1").split(",");
 			var elm = new HTMLArray();
 			var prevElm = [], matchingElms = [];
-			var prevParents, currentRule, identical, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, regExpClassNames, matchingClassElms, regExpAttributes, matchingAttributeElms, current, previous, prevParent, notElm, addElm, iteratorNext, childCount, childElm, sequence;
+			var prevParents, currentRule, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, current, previous, prevParent, notElm, addElm, iteratorNext, childElm, sequence;
 			var selectorSplitRegExp;
 			try {
 				selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
@@ -326,26 +333,15 @@ var DOMAssistant = function () {
 								while ((previous=previousMatch[idx++])) {
 									prevParent = previous.parentNode;
 									if (!prevParent.childElms) {
+										var childCount = 0, p = previous.nodeName;
 										iteratorNext = sequence.start;
-										childCount = 0;
 										childElm = prevParent[direction[0]];
 										while (childElm && (sequence.max < 0 || iteratorNext <= sequence.max)) {
-											if (checkNodeName) {
-												if (childElm.nodeName === previous.nodeName) {
-													if (++childCount === iteratorNext) {
-														matchingElms[matchingElms.length] = childElm;
-														iteratorNext += sequence.add;
-													}
-												}
-											}
-											else {
-												if (childElm.nodeType === 1) {
-													if (++childCount === iteratorNext) {
-														if (childElm.nodeName === previous.nodeName) {
-															matchingElms[matchingElms.length] = childElm;
-														}
-														iteratorNext += sequence.add;
-													}
+											var c = childElm.nodeName;
+											if ((checkNodeName && c === p) || (!checkNodeName && childElm.nodeType === 1)) {
+												if (++childCount === iteratorNext) {
+													if (c === p) { matchingElms[matchingElms.length] = childElm; }
+													iteratorNext += sequence.add;
 												}
 											}
 											childElm = childElm[direction[1]];
@@ -455,20 +451,9 @@ var DOMAssistant = function () {
 				return matchingElms;
 			}
 			for (var a=0; (currentRule=cssRules[a]); a++) {
-				if (a > 0) {
-					identical = false;
-					for (var b=0, bl=a; b<bl; b++) {
-						if (cssRules[a] === cssRules[b]) {
-							identical = true;
-							break;
-						}
-					}
-					if (identical) {
-						continue;
-					}
-				}
-				cssSelectors = currentRule.match(selectorSplitRegExp);
+				if (a && contains(cssRules.slice(0, a), currentRule)) { continue; }
 				prevElm = [this];
+				cssSelectors = currentRule.match(selectorSplitRegExp);
 				for (var i=0, rule; (rule=cssSelectors[i]); i++) {
 					matchingElms = [];
 					if (i > 0 && regex.relation.test(rule)) {
@@ -552,56 +537,41 @@ var DOMAssistant = function () {
 					}
 					prevElm.skipTag = false;
 					if (splitRule.allClasses) {
-						var allClasses = splitRule.allClasses.replace(/^\./, "").split(".");
-						regExpClassNames = [];
-						for (var n=0, nl=allClasses.length; n<nl; n++) {
-							regExpClassNames[n] = new RegExp("(^|\\s)" + allClasses[n] + "(\\s|$)");
-						}
-						matchingClassElms = [];
-						for (var o=0, elmClass; (current=prevElm[o]); o++) {
-							elmClass = current.className;
-							if (elmClass && !current.added) {
-								addElm = false;
-								for (var p=0, pl=regExpClassNames.length; p<pl; p++) {
-									addElm = regExpClassNames[p].test(elmClass);
-									if (!addElm) {
+						var n = 0, matchingClassElms = [], allClasses = splitRule.allClasses.split(".").slice(1);
+						while ((current = prevElm[n++])) {
+							var matchCls = true, elmClass = current.className;
+							if (elmClass && elmClass.length) {
+								elmClass = elmClass.split(" ");
+								for (var o=0, ol=allClasses.length; o<ol; o++) {
+									if (!contains(elmClass, allClasses[o])) {
+										matchCls = false;
 										break;
 									}
 								}
-								if (addElm) {
-									current.added = true;
+								if (matchCls) {
 									matchingClassElms[matchingClassElms.length] = current;
 								}
 							}
 						}
-						clearAdded();
 						prevElm = matchingElms = matchingClassElms;
 					}
 					if (splitRule.allAttr) {
-						var allAttr = splitRule.allAttr.match(/\[[^\]]+\]/g);
-						regExpAttributes = [];
+						var r = 0, regExpAttributes = [], matchingAttributeElms = [], allAttr = splitRule.allAttr.match(/\[[^\]]+\]/g);
 						for (var q=0, ql=allAttr.length, attributeMatch, attrVal; q<ql; q++) {
 							regex.attribs.lastIndex = 0;
 							attributeMatch = regex.attribs.exec(allAttr[q]);
 							attrVal = attrToRegExp(attributeMatch[3], attributeMatch[2] || null);
 							regExpAttributes[q] = [(attrVal? new RegExp(attrVal) : null), attributeMatch[1]];
 						}
-						matchingAttributeElms = [];
-						for (var r=0, currentAttr; (current=matchingElms[r]); r++) {
-							for (var s=0, sl=regExpAttributes.length, attributeRegExp; s<sl; s++) {
-								addElm = false;
-								attributeRegExp = regExpAttributes[s][0];
-								currentAttr = getAttr(current, regExpAttributes[s][1]);
-								if (typeof currentAttr === "string" && currentAttr.length) {
-									if (!!!attributeRegExp || (!!attributeRegExp && attributeRegExp.test(currentAttr))) {
-										addElm = true;
-									}
-								}
-								if (!addElm) {
+						while ((current = matchingElms[r++])) {
+							for (var s=0, sl=regExpAttributes.length; s<sl; s++) {
+								var matchAttr = true, attributeRegExp = regExpAttributes[s][0], currentAttr = getAttr(current, regExpAttributes[s][1]) || null;
+								if ((!attributeRegExp && (currentAttr === null || typeof currentAttr !== "string" || !currentAttr.length)) || (!!attributeRegExp && !attributeRegExp.test(currentAttr))) {
+									matchAttr = false;
 									break;
 								}
 							}
-							if (addElm) {
+							if (matchAttr) {
 								matchingAttributeElms[matchingAttributeElms.length] = current;
 							}
 						}
@@ -637,7 +607,7 @@ var DOMAssistant = function () {
 				}
 				var cssRules = cssRule.replace(regex.rules, "$1").split(",");
 				var elm = new HTMLArray();
-				var currentRule, identical, cssSelectors, xPathExpression, cssSelector, splitRule, sequence;
+				var currentRule, cssSelectors, xPathExpression, cssSelector, splitRule, sequence;
 				var selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
 				function attrToXPath (match, p1, p2, p3) {
 					p3 = p3? p3.replace(regex.quoted, "$1") : p3;
@@ -708,18 +678,7 @@ var DOMAssistant = function () {
 					return xpath;
 				}
 				for (var i=0; (currentRule=cssRules[i]); i++) {
-					if (i > 0) {
-						identical = false;
-						for (var x=0, xl=i; x<xl; x++) {
-							if (cssRules[i] === cssRules[x]) {
-								identical = true;
-								break;
-							}
-						}
-						if (identical) {
-							continue;
-						}
-					}
+					if (i && contains(cssRules.slice(0, i), currentRule)) { continue; }
 					cssSelectors = currentRule.match(selectorSplitRegExp);
 					xPathExpression = ".";
 					for (var j=0, jl=cssSelectors.length; j<jl; j++) {
