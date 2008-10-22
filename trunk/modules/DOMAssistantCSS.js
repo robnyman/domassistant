@@ -52,7 +52,8 @@ DOMAssistant.CSS = function () {
 		},
 
 		getStyle : function (cssRule) {
-			var val = "", cssRule = cssRule.toLowerCase();
+			var val = "";
+			cssRule = cssRule.toLowerCase();
 			if (document.defaultView && document.defaultView.getComputedStyle) {
 				val = document.defaultView.getComputedStyle(this, "").getPropertyValue(cssRule);
 			}
