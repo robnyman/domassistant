@@ -5,7 +5,7 @@ var DOMAssistant = function () {
 	};
 	var isIE = /*@cc_on!@*/false;
 	var ie5 = isIE && parseFloat(navigator.appVersion) < 6;
-	var cachedElms = [];
+	var tagCache = {}, lastCache = {}, useCache = true;
 	var camel = {
 		"accesskey": "accessKey",
 		"class": "className",
@@ -149,6 +149,24 @@ var DOMAssistant = function () {
 			};
 		},
 		
+		clearHandlers : function () {
+			var children = this.all || this.getElementsByTagName("*");
+			for (var i=0, child, attr; (child=children[i++]);) {
+				if ((attr = child.attributes)) {
+					for (var j=0, jl=attr.length, att; j<jl; j++) {
+						att = attr[j].nodeName.toLowerCase();
+						if (typeof child[att] === "function") {
+							child[att] = null;
+						}
+					}
+				}
+			}
+		},
+		
+		setCaching : function (cache) {
+			useCache = cache;
+		},
+		
 		$ : function () {
 			var obj = arguments[0];
 			if (arguments.length === 1 && (typeof obj === "object" || (typeof obj === "function" && !!obj.nodeName))) {
@@ -162,7 +180,8 @@ var DOMAssistant = function () {
 						elm.push(idMatch);
 					}
 					else {
-						elm = pushAll(elm, DOMAssistant.cssSelection.call(document, arg));
+						elm = (useCache && lastCache.rule && lastCache.rule === arg)? lastCache.elms : pushAll(elm, DOMAssistant.cssSelection.call(document, arg));
+						lastCache = { rule: arg, elms: elm };
 					}
 				}
 			}
@@ -188,8 +207,7 @@ var DOMAssistant = function () {
 		},
 		
 		getSequence : function (expression) {
-			var start, add = 2, max = -1, modVal = -1;
-			var pseudoValue = regex.nth.exec(expression);
+			var start, add = 2, max = -1, modVal = -1, pseudoValue = regex.nth.exec(expression);
 			if (!pseudoValue) {
 				return null;
 			}
@@ -223,10 +241,8 @@ var DOMAssistant = function () {
 		
 		cssByDOM : function (cssRule) {
 			var cssRules = cssRule.replace(regex.rules, "$1").split(",");
-			var elm = new HTMLArray();
-			var prevElm = [], matchingElms = [];
-			var prevParents, currentRule, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, current, previous, prevParent, notElm, addElm, iteratorNext, childElm, sequence;
-			var selectorSplitRegExp;
+			var elm = new HTMLArray(), prevElm = [], matchingElms = [];
+			var selectorSplitRegExp, prevParents, currentRule, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, current, previous, prevParent, notElm, addElm, iteratorNext, childElm, sequence;
 			try {
 				selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
 			}
@@ -250,6 +266,7 @@ var DOMAssistant = function () {
 					for (var j=0, src2; (src2=arr2[j]); j++) {
 						if (src2 === src1) {
 							found = true;
+							arr2.splice(j, 1);
 							break;
 						}
 					}
@@ -277,7 +294,7 @@ var DOMAssistant = function () {
 				tag = tag || "*";
 				parent = parent || document;
 				if (parent === document || parent.lastModified) {
-					return cachedElms[tag] || (cachedElms[tag] = ie5? ((tag === "*")? document.all : document.all.tags(tag)) : document.getElementsByTagName(tag));
+					return tagCache[tag] || (tagCache[tag] = ie5? ((tag === "*")? document.all : document.all.tags(tag)) : document.getElementsByTagName(tag));
 				}
 				return ie5? ((tag === "*")? parent.all : parent.all.tags(tag)) : parent.getElementsByTagName(tag);
 			}
