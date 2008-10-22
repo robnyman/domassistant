@@ -180,8 +180,9 @@ var DOMAssistant = function () {
 						elm.push(idMatch);
 					}
 					else {
-						elm = (useCache && lastCache.rule && lastCache.rule === arg)? lastCache.elms : pushAll(elm, DOMAssistant.cssSelection.call(document, arg));
-						lastCache = { rule: arg, elms: elm };
+						var doc = (document.all || document.getElementsByTagName("*")).length;
+						elm = (!document.querySelectorAll && useCache && lastCache.rule && lastCache.rule === arg && lastCache.doc === doc)? lastCache.elms : pushAll(elm, DOMAssistant.cssSelection.call(document, arg));
+						lastCache = { rule: arg, elms: elm, doc: doc };
 					}
 				}
 			}
@@ -582,8 +583,8 @@ var DOMAssistant = function () {
 						}
 						while ((current = matchingElms[r++])) {
 							for (var s=0, sl=regExpAttributes.length; s<sl; s++) {
-								var matchAttr = true, attributeRegExp = regExpAttributes[s][0], currentAttr = getAttr(current, regExpAttributes[s][1]) || null;
-								if ((!attributeRegExp && (currentAttr === null || typeof currentAttr !== "string" || !currentAttr.length)) || (!!attributeRegExp && !attributeRegExp.test(currentAttr))) {
+								var matchAttr = true, attributeRegExp = regExpAttributes[s][0], currentAttr = getAttr(current, regExpAttributes[s][1]);
+								if ((!attributeRegExp && (!currentAttr || typeof currentAttr !== "string" || !currentAttr.length)) || (!!attributeRegExp && !attributeRegExp.test(currentAttr))) {
 									matchAttr = false;
 									break;
 								}
@@ -1049,8 +1050,11 @@ DOMAssistant.CSS = function () {
 DOMAssistant.attach(DOMAssistant.CSS);
 DOMAssistant.Content = function () {
 	var $ = DOMAssistant.$;
-	DOMAssistant.setCaching(false);
 	return {
+		init : function () {
+			DOMAssistant.setCaching(false);
+		},
+
 		prev : function () {
 			var prevSib = this;
 			while ((prevSib = prevSib.previousSibling) && prevSib.nodeType !== 1) {}
