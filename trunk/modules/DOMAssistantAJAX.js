@@ -167,18 +167,7 @@ DOMAssistant.AJAX = function () {
 				this.innerHTML += content;
 			}
 			else {
-				var elms = this.all || this.getElementsByTagName("*");
-				for (var i=0, elm, attr; (elm=elms[i]); i++) {
-					attr = elm.attributes;
-					if (attr) {
-						for (var j=0, jl=attr.length, att; j<jl; j++) {
-							att = attr[j].nodeName.toLowerCase();
-							if (typeof elm[att] === "function") {
-								elm[att] = null;
-							}
-						}
-					}
-				}
+				DOMAssistant.clearHandlers.apply(this);
 				this.innerHTML = content;
 			}
 		},

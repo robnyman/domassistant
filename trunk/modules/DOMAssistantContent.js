@@ -2,6 +2,7 @@
 /*global DOMAssistant */
 DOMAssistant.Content = function () {
 	var $ = DOMAssistant.$;
+	DOMAssistant.setCaching(false);
 	return {
 		prev : function () {
 			var prevSib = this;
@@ -91,22 +92,9 @@ DOMAssistant.Content = function () {
 		},
 
 		replaceContent : function (content) {
-			var children = this.all || this.getElementsByTagName("*");
-			for (var i=0, child, attr; (child=children[i]); i++) {
-				attr = child.attributes;
-				if (attr) {
-					for (var j=0, jl=attr.length, att; j<jl; j++) {
-						att = attr[j].nodeName.toLowerCase();
-						if (typeof child[att] === "function") {
-							child[att] = null;
-						}
-					}
-				}
-			}
-			while (this.hasChildNodes()) {
-				this.removeChild(this.firstChild);
-			}
-			return $(this).addContent(content);
+			DOMAssistant.clearHandlers.apply(this);
+			this.innerHTML = "";
+			return this.addContent(content);
 		},
 
 		replace : function (content, returnNew) {
