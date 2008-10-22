@@ -2,8 +2,11 @@
 /*global DOMAssistant */
 DOMAssistant.Content = function () {
 	var $ = DOMAssistant.$;
-	DOMAssistant.setCaching(false);
 	return {
+		init : function () {
+			DOMAssistant.setCaching(false);
+		},
+
 		prev : function () {
 			var prevSib = this;
 			while ((prevSib = prevSib.previousSibling) && prevSib.nodeType !== 1) {}
