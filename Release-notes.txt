@@ -1,16 +1,16 @@
 Version 2.7.3:
 =============
-- Added support for "opacity" with getStyle() and setStyle()
-- Added JSON response native parsing with eval fallback
-- Added support for timeout and exception handling in Ajax
-- Implemented Ajax request pooling
-- Enhanced removeEvent() capable of removing all listener functions binded to an event
-- Significantly improved selector performance in IE
-- Fixed getStatus() and getStatusText() not working from within the Ajax callback function
-- Fixed selecting element of id="tags" in IE
-- Fixed getStyle() for "float", "width" and "height" not returning correct values in IE
-- Fixed inline events not getting triggered with triggerEvent()
-- Fixed event handle throws error under rare circumstances in IE
+- [Add] Support for "opacity" with getStyle() and setStyle()
+- [Add] JSON response native parsing with eval fallback
+- [Add] Support for timeout and exception handling in Ajax
+- [Add] Enhanced removeEvent() capable of removing all handlers binded to an event
+- [Chg] Significantly improved selector performance in IE
+- [Chg] Implemented Ajax request pooling
+- [Chg] Inline events now gets triggered with triggerEvent()
+- [Fix] Multiple selector accuracy fixes in edge cases
+- [Fix] getStatus() and getStatusText() now works from within the Ajax callback function
+- [Fix] getStyle() for "float", "width" and "height" now return correct values in IE
+- [Fix] Event handle threw error under rare circumstances in IE
 
 Version 2.7.2:
 =============

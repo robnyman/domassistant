@@ -208,7 +208,8 @@ var DOMAssistant = function () {
 		},
 		
 		getSequence : function (expression) {
-			var start, add = 2, max = -1, modVal = -1, pseudoValue = regex.nth.exec(expression);
+			var start, add = 2, max = -1, modVal = -1,
+				pseudoValue = regex.nth.exec(expression.replace(/^0n\+/, "").replace(/^2n$/, "even").replace(/^2n+1$/, "odd"));
 			if (!pseudoValue) {
 				return null;
 			}
@@ -584,6 +585,7 @@ var DOMAssistant = function () {
 						while ((current = matchingElms[r++])) {
 							for (var s=0, sl=regExpAttributes.length; s<sl; s++) {
 								var matchAttr = true, attributeRegExp = regExpAttributes[s][0], currentAttr = getAttr(current, regExpAttributes[s][1]);
+								if (!attributeRegExp && currentAttr === true) continue;
 								if ((!attributeRegExp && (!currentAttr || typeof currentAttr !== "string" || !currentAttr.length)) || (!!attributeRegExp && !attributeRegExp.test(currentAttr))) {
 									matchAttr = false;
 									break;
