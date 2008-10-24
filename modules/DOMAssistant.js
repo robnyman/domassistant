@@ -25,7 +25,7 @@ var DOMAssistant = function () {
 		id: /^#([\w\u00C0-\uFFFF\-\_]+)$/,
 		tag: /^(\w+)/,
 		relation: /(>|\+|~)/,
-		pseudo: /^(:\w+[\w\-]*)$/,
+		pseudo: /^:(\w[\w\-]*)(\((.+)\))?$/,
 		pseudos: /:(\w[\w\-]*)(\(([^\)]+)\))?/g,
 		attribs: /\[(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_\.]+|"[^"]*"|'[^']*')?\]/g,
 		classes: /\.([\w\u00C0-\uFFFF\-_]+)/g,
@@ -43,8 +43,9 @@ var DOMAssistant = function () {
 			if (set2.slice) {
 				return set1.concat(set2);
 			}
-			for (var i=0, iL=set2.length; i<iL; i++) {
-				set1[set1.length] = set2[i];
+			var i=0, item;
+			while ((item = set2[i++])) {
+				set1[set1.length] = item;
 			}
 			return set1;
 		};
@@ -302,7 +303,7 @@ var DOMAssistant = function () {
 			}
 			function getElementsByPseudo (previousMatch, pseudoClass, pseudoValue) {
 				prevParents = [];
-				var pseudo = pseudoClass.split("-"), matchingElms = [], idx = 0, checkNodeName;
+				var pseudo = pseudoClass.split("-"), matchingElms = [], idx = 0, checkNodeName, recur;
 				var prop = (checkNodeName = /\-of\-type$/.test(pseudoClass))? "nodeName" : "nodeType";
 				function getPrevElm(elm) {
 					var val = checkNodeName? elm.nodeName : 1;
@@ -424,8 +425,8 @@ var DOMAssistant = function () {
 						}
 						break;
 					case "not":
-						if (regex.pseudo.test(pseudoValue)) {
-							matchingElms = subtractArray(previousMatch, getElementsByPseudo(previousMatch, pseudoValue.slice(1)));
+						if ((recur = regex.pseudo.exec(pseudoValue))) {
+							matchingElms = subtractArray(previousMatch, getElementsByPseudo(previousMatch, recur[1]? recur[1].toLowerCase() : null, recur[3] || null));
 						}
 						else {
 							for (var re in regex) {
@@ -645,7 +646,7 @@ var DOMAssistant = function () {
 				}
 				function pseudoToXPath (tag, pseudoClass, pseudoValue) {
 					tag = /\-child$/.test(pseudoClass)? "*" : tag;
-					var xpath = "", pseudo = pseudoClass.split("-");
+					var xpath = "", pseudo = pseudoClass.split("-"), recur;
 					switch (pseudo[0]) {
 						case "first":
 							xpath = "not(preceding-sibling::" + tag + ")";
@@ -683,8 +684,8 @@ var DOMAssistant = function () {
 							xpath = "@name=\"" + hash + "\" or @id=\"" + hash + "\"";
 							break;
 						case "not":
-							var notSelector = regex.pseudo.test(pseudoValue)?
-								pseudoToXPath(tag, pseudoValue.slice(1)) :
+							var notSelector = (recur = regex.pseudo.exec(pseudoValue))?
+								pseudoToXPath(tag, recur[1]? recur[1].toLowerCase() : null, recur[3] || null) :
 								pseudoValue.replace(regex.id, "[id=$1]")
 									.replace(regex.tag, "self::$1")
 									.replace(regex.classes, "contains(concat(\" \", @class, \" \"), \" $1 \")")
