@@ -907,12 +907,13 @@ DOMAssistant.AJAX = function () {
 						XMLHttp.onreadystatechange = function () {
 							try {
 								if (XMLHttp.readyState === 4) {
-									if (timeoutId) {
-										window.clearTimeout(timeoutId);
-									}
+									window.clearTimeout(timeoutId);
 									status = XMLHttp.status;
 									statusText = XMLHttp.statusText;
 									readyState = 4;
+									if (!status || status !== 200) {
+										throw new Error(statusText);
+									}
 									var response = /xml/i.test(responseType)? XMLHttp.responseXML : XMLHttp.responseText;
 									if (/json/i.test(responseType)) {
 										response = (typeof JSON === "object" && typeof JSON.parse === "function")? JSON.parse(response) : eval("(" + response + ")");
@@ -926,7 +927,8 @@ DOMAssistant.AJAX = function () {
 							catch (e) {
 								globalXMLHttp = XMLHttp = null;
 								if (typeof ex === "function") {
-									ex.call(elm, e.toString());
+									ex.call(elm, e);
+									ex = null;
 								}
 							}
 						};
@@ -941,7 +943,8 @@ DOMAssistant.AJAX = function () {
 									status = 408;
 									statusText = "Request timeout";
 									globalXMLHttp = XMLHttp = null;
-									ex.call(elm, statusText);
+									ex.call(elm, new Error(statusText));
+									ex = null;
 								}
 							}
 						}, timeout);
