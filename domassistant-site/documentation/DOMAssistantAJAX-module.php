@@ -114,8 +114,8 @@
 	},
 	responseType : "json",
 	timeout : 5000,
-	exception : function(err) {
-		alert("Ajax error: " + err);
+	exception : function(e) {
+		alert("Ajax error: " + (e.message || e.description));
 	}
 });</code></pre>
 							
