@@ -4,7 +4,7 @@ DOMAssistant.Content = function () {
 	var $ = DOMAssistant.$;
 	return {
 		init : function () {
-			DOMAssistant.setCaching(false);
+			DOMAssistant.setCache(false);
 		},
 
 		prev : function () {
