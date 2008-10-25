@@ -21,23 +21,21 @@ var DOMAssistant = function () {
 	};
 	var regex = {
 		rules: /\s*(,)\s*/g,
-		selector: /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+(\^|\$|\*|\||~)?(=([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.]+\]+)|(:\w+[\w\-]*))\))?)*)?(>|\+|~)?/,
+		selector: /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+\s*(\^|\$|\*|\||~)?(=\s*([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.\'\"]+\]+)|(:\w+[\w\-]*))\))?)*)?(>|\+|~)?/,
 		id: /^#([\w\u00C0-\uFFFF\-\_]+)$/,
 		tag: /^(\w+)/,
-		relation: /(>|\+|~)/,
+		relation: /^(>|\+|~)$/,
 		pseudo: /^:(\w[\w\-]*)(\((.+)\))?$/,
 		pseudos: /:(\w[\w\-]*)(\(([^\)]+)\))?/g,
-		attribs: /\[(\w+)(\^|\$|\*|\||~)?=?([\w\u00C0-\uFFFF\s\-_\.]+|"[^"]*"|'[^']*')?\]/g,
+		attribs: /\[(\w+)\s*(\^|\$|\*|\||~)?=?\s*([\w\u00C0-\uFFFF\s\-_\.]+|"[^"]*"|'[^']*')?\]/g,
 		classes: /\.([\w\u00C0-\uFFFF\-_]+)/g,
 		quoted: /^["'](.*)["']$/,
 		nth: /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n([\+\-]\d+)?)|(\-(([1-9]\d*)?)n\+(\d+)))$/
 	};
 	var pushAll = function (set1, set2) {
-		for (var j=0, jL=set2.length; j<jL; j++) {
-			set1.push(set2[j]);
-		}
+		set1.push.apply(set1, set2.slice(0));
 		return set1;
-	};
+	}
 	if (isIE) {
 		pushAll = function (set1, set2) {
 			if (set2.slice) {
@@ -177,8 +175,10 @@ var DOMAssistant = function () {
 			for (var i=0, arg, idMatch; (arg=arguments[i]); i++) {
 				if (typeof arg === "string") {
 					arg = arg.replace(/^[^#]*(#)/, "$1");
-					if (regex.id.test(arg) && (idMatch = DOMAssistant.$$(arg.substr(1), false))) {
-						elm.push(idMatch);
+					if (regex.id.test(arg)) {
+						if ((idMatch = DOMAssistant.$$(arg.substr(1), false))) {
+							elm.push(idMatch);
+						}
 					}
 					else {
 						var doc = (document.all || document.getElementsByTagName("*")).length;
