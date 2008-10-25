@@ -410,7 +410,7 @@ var DOMAssistant = function () {
 						pseudoValue = pseudoValue.replace(regex.quoted, "$1");
 						while ((previous=previousMatch[idx++])) {
 							if (!previous.added) {
-								if ((previous.innerText || previous.textContent).indexOf(pseudoValue) !== -1) {
+								if (previous.innerText.indexOf(pseudoValue) !== -1) {
 									previous.added = true;
 									matchingElms[matchingElms.length] = previous;
 								}
