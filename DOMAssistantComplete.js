@@ -316,6 +316,7 @@ var DOMAssistant = function () {
 					enabled: function(el) { return !previous.disabled && previous.type !== "hidden"; },
 					disabled: function(el) { return previous.disabled; },
 					checked: function(el) { return previous.checked; },
+					contains: function(el) { return (previous.innerText || previous.textContent || "").indexOf(pseudoValue.replace(regex.quoted, "$1")) > -1; },
 					other: function(el) { return getAttr(previous, pseudoClass) === pseudoValue; }
 				};
 				function basicMatch(key) {
@@ -382,17 +383,6 @@ var DOMAssistant = function () {
 									}
 								}
 								clearChildElms();
-							}
-						}
-						break;
-					case "contains":
-						pseudoValue = pseudoValue.replace(regex.quoted, "$1");
-						while ((previous=previousMatch[idx++])) {
-							if (!previous.added) {
-								if ((previous.innerText || previous.textContent || "").indexOf(pseudoValue) !== -1) {
-									previous.added = true;
-									matchingElms[matchingElms.length] = previous;
-								}
 							}
 						}
 						break;
