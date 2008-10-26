@@ -57,7 +57,7 @@ var DOMAssistant = function () {
 	};
 	var isDescendant = function (node, ancestor) {
 		var parent = node.parentNode;
-		return ((parent === ancestor) || (parent !== document && isDescendant(parent, ancestor)));
+		return ancestor === document || parent === ancestor || (parent !== document && isDescendant(parent, ancestor));
 	};
 	return {
 		isIE : isIE,
