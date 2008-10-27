@@ -57,7 +57,7 @@ var DOMAssistant = function () {
 	};
 	var isDescendant = function (node, ancestor) {
 		var parent = node.parentNode;
-		return ((parent === ancestor) || (parent !== document && isDescendant(parent, ancestor)));
+		return ancestor === document || parent === ancestor || (parent !== document && isDescendant(parent, ancestor));
 	};
 	return {
 		isIE : isIE,
@@ -292,23 +292,41 @@ var DOMAssistant = function () {
 					case "^": return "^" + attrVal;
 					case "$": return attrVal + "$";
 					case "*": return attrVal;
-					case "|": return "(^" + attrVal + "(\\-\\w+)*$)";
+					case "|": return "^" + attrVal + "(\\-\\w+)*$";
 					case "~": return "\\b" + attrVal + "\\b";
 					default: return attrVal? "^" + attrVal + "$" : null;
 				}
 			}
+			function getTags (tag, context) {
+				return ie5? ((tag === "*")? context.all : context.all.tags(tag)) : context.getElementsByTagName(tag);
+			}
 			function getElementsByTagName (tag, parent) {
 				tag = tag || "*";
 				parent = parent || document;
-				if (parent === document || parent.lastModified) {
-					return tagCache[tag] || (tagCache[tag] = ie5? ((tag === "*")? document.all : document.all.tags(tag)) : document.getElementsByTagName(tag));
-				}
-				return ie5? ((tag === "*")? parent.all : parent.all.tags(tag)) : parent.getElementsByTagName(tag);
+				return (parent === document || parent.lastModified)? tagCache[tag] || (tagCache[tag] = getTags(tag, document)) : getTags(tag, parent);
 			}
 			function getElementsByPseudo (previousMatch, pseudoClass, pseudoValue) {
 				prevParents = [];
 				var pseudo = pseudoClass.split("-"), matchingElms = [], idx = 0, checkNodeName, recur;
 				var prop = (checkNodeName = /\-of\-type$/.test(pseudoClass))? "nodeName" : "nodeType";
+				var match = {
+					first: function(el) { return !getPrevElm(el); },
+					last: function(el) { return !getNextElm(el); },
+					empty: function(el) { return !el.childNodes.length; },
+					enabled: function(el) { return !previous.disabled && previous.type !== "hidden"; },
+					disabled: function(el) { return previous.disabled; },
+					checked: function(el) { return previous.checked; },
+					contains: function(el) { return (previous.innerText || previous.textContent || "").indexOf(pseudoValue.replace(regex.quoted, "$1")) > -1; },
+					other: function(el) { return getAttr(previous, pseudoClass) === pseudoValue; }
+				};
+				function basicMatch(key) {
+					while ((previous=previousMatch[idx++])) {
+						if (match[key](previous)) {
+							matchingElms[matchingElms.length] = previous;
+						}
+					}
+					return matchingElms;
+				}
 				function getPrevElm(elm) {
 					var val = checkNodeName? elm.nodeName : 1;
 					while ((elm = elm.previousSibling) && elm[prop] !== val) {}
@@ -319,21 +337,11 @@ var DOMAssistant = function () {
 					while ((elm = elm.nextSibling) && elm[prop] !== val) {}
 					return elm;
 				}
-				switch (pseudo[0]) {
-					case "first":
-						while ((previous=previousMatch[idx++])) {
-							if (!getPrevElm(previous)) {
-								matchingElms[matchingElms.length] = previous;
-							}
-						}
-						break;
-					case "last":
-						while ((previous=previousMatch[idx++])) {
-							if (!getNextElm(previous)) {
-								matchingElms[matchingElms.length] = previous;
-							}
-						}
-						break;
+				var word = pseudo[0] || null;
+				if (word && match[word]) {
+					return basicMatch(word);
+				}
+				switch (word) {
 					case "only":
 						var kParent;
 						while ((previous=previousMatch[idx++])) {
@@ -375,45 +383,6 @@ var DOMAssistant = function () {
 									}
 								}
 								clearChildElms();
-							}
-						}
-						break;
-					case "empty":
-						while ((previous=previousMatch[idx++])) {
-							if (!previous.childNodes.length) {
-								matchingElms[matchingElms.length] = previous;
-							}
-						}
-						break;
-					case "enabled":
-						while ((previous=previousMatch[idx++])) {
-							if (!previous.disabled && previous.type !== "hidden") {
-								matchingElms[matchingElms.length] = previous;
-							}
-						}
-						break;
-					case "disabled":
-						while ((previous=previousMatch[idx++])) {
-							if (previous.disabled) {
-								matchingElms[matchingElms.length] = previous;
-							}
-						}
-						break;
-					case "checked":
-						while ((previous=previousMatch[idx++])) {
-							if (previous.checked) {
-								matchingElms[matchingElms.length] = previous;
-							}
-						}
-						break;
-					case "contains":
-						pseudoValue = pseudoValue.replace(regex.quoted, "$1");
-						while ((previous=previousMatch[idx++])) {
-							if (!previous.added) {
-								if (previous.innerText.indexOf(pseudoValue) !== -1) {
-									previous.added = true;
-									matchingElms[matchingElms.length] = previous;
-								}
 							}
 						}
 						break;
@@ -464,13 +433,7 @@ var DOMAssistant = function () {
 							}
 						}
 						break;
-					default:
-						while ((previous=previousMatch[idx++])) {
-							if (getAttr(previous, pseudoClass) === pseudoValue) {
-								matchingElms[matchingElms.length] = previous;
-							}
-						}
-						break;
+					default: return basicMatch("other");
 				}
 				return matchingElms;
 			}
@@ -657,15 +620,6 @@ var DOMAssistant = function () {
 					tag = /\-child$/.test(pseudoClass)? "*" : tag;
 					var xpath = "", pseudo = pseudoClass.split("-"), recur;
 					switch (pseudo[0]) {
-						case "first":
-							xpath = "not(preceding-sibling::" + tag + ")";
-							break;
-						case "last":
-							xpath = "not(following-sibling::" + tag + ")";
-							break;
-						case "only":
-							xpath = "not(preceding-sibling::" + tag + " or following-sibling::" + tag + ")";
-							break;
 						case "nth":
 							if (!/^n$/.test(pseudoValue)) {
 								var position = ((pseudo[1] === "last")? "(count(following-sibling::" : "(count(preceding-sibling::") + tag + ") + 1)";
@@ -676,22 +630,6 @@ var DOMAssistant = function () {
 								}
 							}
 							break;
-						case "empty":
-							xpath = "count(child::*) = 0 and string-length(text()) = 0";
-							break;
-						case "contains":
-							xpath = "contains(., \"" + pseudoValue.replace(regex.quoted, "$1") + "\")";
-							break;
-						case "enabled":
-							xpath = "not(@disabled) and not(@type=\"hidden\")";
-							break;
-						case "disabled":
-							xpath = "@disabled";
-							break;
-						case "target":
-							var hash = document.location.hash.slice(1);
-							xpath = "@name=\"" + hash + "\" or @id=\"" + hash + "\"";
-							break;
 						case "not":
 							var notSelector = (recur = regex.pseudo.exec(pseudoValue))?
 								pseudoToXPath(tag, recur[1]? recur[1].toLowerCase() : null, recur[3] || null) :
@@ -701,9 +639,15 @@ var DOMAssistant = function () {
 									.replace(regex.attribs, attrToXPath);
 							xpath = "not(" + notSelector + ")";
 							break;
-						default:
-							xpath = "@" + pseudoClass + "=\"" + pseudoValue + "\"";
-							break;
+						case "first": return "not(preceding-sibling::" + tag + ")";
+						case "last": return "not(following-sibling::" + tag + ")";
+						case "only": return "not(preceding-sibling::" + tag + " or following-sibling::" + tag + ")";
+						case "empty": return "count(child::*) = 0 and string-length(text()) = 0";
+						case "contains": return "contains(., \"" + pseudoValue.replace(regex.quoted, "$1") + "\")";
+						case "enabled": return "not(@disabled) and not(@type=\"hidden\")";
+						case "disabled": return "@disabled";
+						case "target": var hash = document.location.hash.slice(1); return "@name=\"" + hash + "\" or @id=\"" + hash + "\"";
+						default: return "@" + pseudoClass + "=\"" + pseudoValue + "\"";
 					}
 					return xpath;
 				}
