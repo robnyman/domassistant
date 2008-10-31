@@ -90,11 +90,14 @@ var Sizzle = window.Sizzle = function(selector, context, results) {
 	if ( !checkSet ) {
 		throw "Syntax error, unrecognized expression: " + (cur || selector);
 	}
-	
-	for ( var i = 0; checkSet[i] != null; i++ ) {
-		if ( checkSet[i] && checkSet[i].nodeType === 1 ) {
-			results.push( set[i] );
+	if ( checkSet instanceof Array ) {
+		for ( var i = 0; checkSet[i] != null; i++ ) {
+			if ( checkSet[i] && checkSet[i].nodeType === 1 ) {
+				results.push( set[i] );
+			}
 		}
+	} else {
+		makeArray( checkSet, results );
 	}
 
 	if ( extra ) {
@@ -254,25 +257,41 @@ var Expr = {
 			for ( var i = 0, l = checkSet.length; i < l; i++ ) {
 				var elem = checkSet[i];
 				if ( elem ) {
-					checkSet[i] = dir( elem, "previousSibling" );
+					var cur = elem.previousSibling;
+					while ( cur && cur.nodeType !== 1 ) {
+						cur = cur.previousSibling;
+					}
+					checkSet[i] = cur || false;
 				}
 			}
 
 			Sizzle.filter( part, checkSet, true );
 		},
 		">": function(checkSet, part){
-			for ( var i = 0, l = checkSet.length; i < l; i++ ) {
-				var elem = checkSet[i];
-				if ( elem ) {
-					checkSet[i] = elem.parentNode;
-					if ( typeof part !== "string" ) {
-						checkSet[i] = checkSet[i] == part;
+			if ( typeof part === "string" && !/\W/.test(part) ) {
+				part = part.toUpperCase();
+
+				for ( var i = 0, l = checkSet.length; i < l; i++ ) {
+					var elem = checkSet[i];
+					if ( elem ) {
+						var parent = elem.parentNode;
+						checkSet[i] = parent.nodeName === part ? parent : false;
 					}
 				}
-			}
+			} else {
+				for ( var i = 0, l = checkSet.length; i < l; i++ ) {
+					var elem = checkSet[i];
+					if ( elem ) {
+						checkSet[i] = elem.parentNode;
+						if ( typeof part !== "string" ) {
+							checkSet[i] = checkSet[i] == part;
+						}
+					}
+				}
 
-			if ( typeof part === "string" ) {
-				Sizzle.filter( part, checkSet, true );
+				if ( typeof part === "string" ) {
+					Sizzle.filter( part, checkSet, true );
+				}
 			}
 		},
 		"": function(checkSet, part){
@@ -283,11 +302,7 @@ var Expr = {
 				checkFn = dirNodeCheck;
 			}
 
-			for ( var i = 0, l = checkSet.length; i < l; i++ ) {
-				if ( checkSet[i] ) {
-					checkSet[i] = checkFn(checkSet[i], "parentNode", part, doneName, i, checkSet, nodeCheck);
-				}
-			}
+			checkFn("parentNode", part, doneName, checkSet, nodeCheck);
 		},
 		"~": function(checkSet, part){
 			var doneName = "done" + (done++), checkFn = dirCheck;
@@ -297,11 +312,7 @@ var Expr = {
 				checkFn = dirNodeCheck;
 			}
 
-			for ( var i = 0, l = checkSet.length; i < l; i++ ) {
-				if ( checkSet[i] ) {
-					checkSet[i] = checkFn(checkSet[i], "previousSibling", part, doneName, i, checkSet, nodeCheck);
-				}
-			}
+			checkFn("previousSibling", part, doneName, checkSet, nodeCheck);
 		}
 	},
 	find: {
@@ -320,7 +331,7 @@ var Expr = {
 	},
 	preFilter: {
 		CLASS: function(match){
-			return " " + match[1] + " ";
+			return new RegExp( "(?:^|\\s)" + match[1] + "(?:\\s|$)" );
 		},
 		ID: function(match){
 			return match[1];
@@ -519,7 +530,7 @@ var Expr = {
 			return (match === "*" && elem.nodeType === 1) || elem.nodeName === match;
 		},
 		CLASS: function(elem, match){
-			return (" " + elem.className + " ").indexOf( match ) > -1;
+			return match.test( elem.className );
 		},
 		ATTR: function(elem, match){
 			var result = elem[ match[1] ], value = result + "", type = match[2], check = match[4];
@@ -551,21 +562,28 @@ var Expr = {
 	}
 };
 
-function makeArray(a) {
-	return Array.prototype.slice.call( a );
+function makeArray(array, results) {
+	array = Array.prototype.slice.call( array );
+
+	if ( results ) {
+		results.push.apply( results, array );
+		return results;
+	}
+	
+	return array;
 }
 
 // TODO: Need a proper check here
 if ( document.all && !window.opera ) {
-	function makeArray(a) {
-		if ( a instanceof Array ) {
-			return Array.prototype.slice.call( a );
+	function makeArray(array, results) {
+		if ( array instanceof Array ) {
+			return Array.prototype.slice.call( array );
 		}
 
-		var ret = [];
+		var ret = results || [];
 
-		for ( var i = 0; a[i]; i++ ) {
-			ret.push( a[i] );
+		for ( var i = 0; array[i]; i++ ) {
+			ret.push( array[i] );
 		}
 
 		return ret;
@@ -610,61 +628,64 @@ if ( document.getElementsByClassName ) {
 	};
 }
 
-function dir( elem, dir ) {
-	var cur = elem[ dir ];
-	while ( cur && cur.nodeType !== 1 ) {
-		cur = cur[ dir ];
-	}
-	return cur || false;
-}
+function dirNodeCheck( dir, cur, doneName, checkSet, nodeCheck ) {
+	for ( var i = 0, l = checkSet.length; i < l; i++ ) {
+		var elem = checkSet[i];
+		if ( elem ) {
+			elem = elem[dir]
+			var match = false;
 
-function dirNodeCheck( elem, dir, cur, doneName, i, checkSet, nodeCheck ) {
-	elem = elem[dir]
-	var match = false;
+			while ( elem && elem.nodeType ) {
+				var done = elem[doneName];
+				if ( done ) {
+					match = checkSet[ done ];
+					break;
+				}
 
-	while ( elem && elem.nodeType ) {
-		if ( elem[doneName] ) {
-			match = checkSet[ elem[doneName] ];
-			break;
-		}
+				if ( elem.nodeType === 1 )
+					elem[doneName] = i;
 
-		if ( elem.nodeType === 1 )
-			elem[doneName] = i;
+				if ( elem.nodeName === cur ) {
+					match = elem;
+					break;
+				}
 
-		if ( elem.nodeName === cur ) {
-			match = elem;
-			break;
-		}
-
-		elem = elem[dir];
-	}
-
-	return match;
-}
-
-function dirCheck( elem, dir, cur, doneName, i, checkSet, nodeCheck ) {
-	elem = elem[dir]
-	var match = false;
-
-	while ( elem && elem.nodeType ) {
-		if ( elem[doneName] ) {
-			match = checkSet[ elem[doneName] ];
-			break;
-		}
-
-		if ( elem.nodeType === 1 ) {
-			elem[doneName] = i;
-
-			if ( Sizzle.filter( cur, [elem] ).length > 0 ) {
-				match = elem;
-				break;
+				elem = elem[dir];
 			}
-		}
 
-		elem = elem[dir];
+			checkSet[i] = match;
+		}
 	}
-	
-	return match;
+}
+
+function dirCheck( dir, cur, doneName, checkSet, nodeCheck ) {
+	for ( var i = 0, l = checkSet.length; i < l; i++ ) {
+		var elem = checkSet[i];
+		if ( elem ) {
+			elem = elem[dir]
+			var match = false;
+
+			while ( elem && elem.nodeType ) {
+				if ( elem[doneName] ) {
+					match = checkSet[ elem[doneName] ];
+					break;
+				}
+
+				if ( elem.nodeType === 1 ) {
+					elem[doneName] = i;
+
+					if ( Sizzle.filter( cur, [elem] ).length > 0 ) {
+						match = elem;
+						break;
+					}
+				}
+
+				elem = elem[dir];
+			}
+
+			checkSet[i] = match;
+		}
+	}
 }
 
 if ( typeof jQuery === "function") {
