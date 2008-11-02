@@ -97,7 +97,7 @@ DOMAssistant.Content = function () {
 		replaceContent : function (content) {
 			DOMAssistant.clearHandlers.apply(this);
 			this.innerHTML = "";
-			return this.addContent(content);
+			return DOMAssistant.Content.addContent.call(this, content);
 		},
 
 		replace : function (content, returnNew) {
