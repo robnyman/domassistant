@@ -18,10 +18,13 @@ if ( document.addEventListener && !document.querySelectorAll ) {
 	document.addEventListener("DOMNodeRemoved", invalidate, false);
 }
 
-var Sizzle = window.Sizzle = function(selector, context, results) {
+var Sizzle = function(selector, context, results) {
 	var doCache = !results;
 	results = results || [];
 	context = context || document;
+
+	if ( context.nodeType !== 1 && context.nodeType !== 9 )
+		return [];
 	
 	if ( !selector || typeof selector !== "string" ) {
 		return results;
@@ -91,9 +94,17 @@ var Sizzle = window.Sizzle = function(selector, context, results) {
 		throw "Syntax error, unrecognized expression: " + (cur || selector);
 	}
 	if ( checkSet instanceof Array ) {
-		for ( var i = 0; checkSet[i] != null; i++ ) {
-			if ( checkSet[i] && checkSet[i].nodeType === 1 ) {
-				results.push( set[i] );
+		if ( context.nodeType === 1 ) {
+			for ( var i = 0; checkSet[i] != null; i++ ) {
+				if ( checkSet[i] && checkSet[i].nodeType === 1 && contains(context, checkSet[i]) ) {
+					results.push( set[i] );
+				}
+			}
+		} else {
+			for ( var i = 0; checkSet[i] != null; i++ ) {
+				if ( checkSet[i] && checkSet[i].nodeType === 1 ) {
+					results.push( set[i] );
+				}
 			}
 		}
 	} else {
@@ -237,7 +248,7 @@ Sizzle.filter = function(expr, set, inplace){
 	return curLoop;
 };
 
-var Expr = {
+var Expr = Sizzle.selectors = {
 	order: [ "ID", "NAME", "TAG" ],
 	match: {
 		ID: /#((?:[\w\u0128-\uFFFF_-]|\\.)+)/,
@@ -619,6 +630,7 @@ if ( document.querySelectorAll ) (function(){
 
 	Sizzle.find = oldSizzle.find;
 	Sizzle.filter = oldSizzle.filter;
+	Sizzle.selectors = oldSizzle.selectors;
 })();
 
 if ( document.getElementsByClassName ) {
@@ -688,10 +700,18 @@ function dirCheck( dir, cur, doneName, checkSet, nodeCheck ) {
 	}
 }
 
-if ( typeof jQuery === "function") {
-	jQuery.find = Sizzle;
-	Expr.filters.hidden = jQuery.expr[":"].hidden;
-	Expr.filters.visible = jQuery.expr[":"].visible;
+if ( document.compareDocumentPosition ) {
+	function contains(a, b){
+		return a.compareDocumentPosition(b) & 16;
+	}
+} else {
+	function contains(a, b){
+		return a !== b && a.contains(b);
+	}
 }
+
+// EXPOSE
+
+window.Sizzle = Sizzle;
 
 })();
