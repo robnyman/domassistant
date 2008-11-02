@@ -1,4 +1,4 @@
-// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7.3
+// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7.4
 var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
@@ -934,7 +934,7 @@ DOMAssistant.attach(DOMAssistant.AJAX);
 DOMAssistant.CSS = function () {
 	return {
 		addClass : function (className) {
-			if (!this.hasClass(className)) {
+			if (!DOMAssistant.CSS.hasClass.call(this, className)) {
 				var currentClass = this.className;
 				this.className = currentClass + (currentClass.length? " " : "") + className;
 			}
@@ -942,7 +942,7 @@ DOMAssistant.CSS = function () {
 		},
 
 		removeClass : function (className) {
-			return this.replaceClass(className);
+			return DOMAssistant.CSS.replaceClass.call(this, className);
 		},
 
 		replaceClass : function (className, newClass) {
@@ -1105,7 +1105,7 @@ DOMAssistant.Content = function () {
 		replaceContent : function (content) {
 			DOMAssistant.clearHandlers.apply(this);
 			this.innerHTML = "";
-			return this.addContent(content);
+			return DOMAssistant.Content.addContent.call(this, content);
 		},
 
 		replace : function (content, returnNew) {
