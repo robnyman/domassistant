@@ -109,6 +109,9 @@ DOMAssistant.AJAX = function () {
 							XMLHttp.setRequestHeader("Connection", "close");
 						}
 					}
+					if (responseType === "json") {
+						XMLHttp.setRequestHeader("Accept", "application/json, text/javascript, */*");
+					}
 					for (var i in headers) {
 						if (typeof i === "string") {
 							XMLHttp.setRequestHeader(i, headers[i]);
