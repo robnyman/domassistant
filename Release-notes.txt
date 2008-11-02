@@ -1,5 +1,6 @@
 Version 2.7.4:
 =============
+- [Add] Added Accept headers for JSON requests
 - [Fix] Regression bug in addClass(), removeClass() and replaceContent()
 
 Version 2.7.3:
