@@ -1,4 +1,4 @@
-// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7.3
+// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7.4
 var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
@@ -309,6 +309,16 @@ var DOMAssistant = function () {
 				prevParents = [];
 				var pseudo = pseudoClass.split("-"), matchingElms = [], idx = 0, checkNodeName, recur;
 				var prop = (checkNodeName = /\-of\-type$/.test(pseudoClass))? "nodeName" : "nodeType";
+				function getPrevElm(elm) {
+					var val = checkNodeName? elm.nodeName : 1;
+					while ((elm = elm.previousSibling) && elm[prop] !== val) {}
+					return elm;
+				}
+				function getNextElm(elm) {
+					var val = checkNodeName? elm.nodeName : 1;
+					while ((elm = elm.nextSibling) && elm[prop] !== val) {}
+					return elm;
+				}
 				var match = {
 					first: function(el) { return !getPrevElm(el); },
 					last: function(el) { return !getNextElm(el); },
@@ -326,16 +336,6 @@ var DOMAssistant = function () {
 						}
 					}
 					return matchingElms;
-				}
-				function getPrevElm(elm) {
-					var val = checkNodeName? elm.nodeName : 1;
-					while ((elm = elm.previousSibling) && elm[prop] !== val) {}
-					return elm;
-				}
-				function getNextElm(elm) {
-					var val = checkNodeName? elm.nodeName : 1;
-					while ((elm = elm.nextSibling) && elm[prop] !== val) {}
-					return elm;
 				}
 				var word = pseudo[0] || null;
 				if (word && match[word]) {
