@@ -24,7 +24,7 @@ DOMAssistant.Content = function () {
 			if (attr) {
 				elm = elm.setAttributes(attr);
 			}
-			if (typeof content !== "undefined") {
+			if (DOMAssistant.def(content)) {
 				elm.addContent(content);
 			}
 			if (append) {

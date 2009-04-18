@@ -179,7 +179,7 @@ DOMAssistant.AJAX = function () {
 		},
 		
 		getReadyState : function () {
-			return (globalXMLHttp && typeof globalXMLHttp.readyState !== "undefined")? globalXMLHttp.readyState : readyState;
+			return (globalXMLHttp && DOMAssistant.def(globalXMLHttp.readyState))? globalXMLHttp.readyState : readyState;
 		},
 		
 		getStatus : function () {

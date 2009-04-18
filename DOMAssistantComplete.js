@@ -1,12 +1,12 @@
-// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7.4
+// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7.5
 var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
-	};
-	var isIE = /*@cc_on!@*/false;
-	var ie5 = isIE && parseFloat(navigator.appVersion) < 6;
-	var tagCache = {}, lastCache = {}, useCache = true;
-	var camel = {
+	},
+	isIE = /*@cc_on!@*/false,
+	ie5 = isIE && parseFloat(navigator.appVersion) < 6,
+	tagCache = {}, lastCache = {}, useCache = true,
+	camel = {
 		"accesskey": "accessKey",
 		"class": "className",
 		"colspan": "colSpan",
@@ -18,8 +18,8 @@ var DOMAssistant = function () {
 		"valign": "vAlign",
 		"cellspacing": "cellSpacing",
 		"cellpadding": "cellPadding"
-	};
-	var regex = {
+	},
+	regex = {
 		rules: /\s*(,)\s*/g,
 		selector: /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+\s*(\^|\$|\*|\||~)?(=\s*([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.\'\"]+\]+)|(:\w+[\w\-]*))\))?)*)?(>|\+|~)?/,
 		id: /^#([\w\u00C0-\uFFFF\-\_]+)$/,
@@ -31,6 +31,20 @@ var DOMAssistant = function () {
 		classes: /\.([\w\u00C0-\uFFFF\-_]+)/g,
 		quoted: /^["'](.*)["']$/,
 		nth: /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n([\+\-]\d+)?)|(\-(([1-9]\d*)?)n\+(\d+)))$/
+	},
+	contains = function (array, value) {
+		if (array.indexOf) { return array.indexOf(value) >= 0; }
+		for (var i=0, iL=array.length; i<iL; i++) {
+			if (array[i] === value) { return true; }
+		}
+		return false;
+	},
+	isDescendant = function (node, ancestor) {
+		var parent = node.parentNode;
+		return ancestor === document || parent === ancestor || (parent !== document && isDescendant(parent, ancestor));
+	},
+	def = function (obj) {
+		return typeof obj !== "undefined";
 	};
 	var pushAll = function (set1, set2) {
 		set1.push.apply(set1, [].slice.apply(set2));
@@ -48,20 +62,10 @@ var DOMAssistant = function () {
 			return set1;
 		};
 	}
-	var contains = function (array, value) {
-		if (array.indexOf) { return array.indexOf(value) >= 0; }
-		for (var i=0, iL=array.length; i<iL; i++) {
-			if (array[i] === value) { return true; }
-		}
-		return false;
-	};
-	var isDescendant = function (node, ancestor) {
-		var parent = node.parentNode;
-		return ancestor === document || parent === ancestor || (parent !== document && isDescendant(parent, ancestor));
-	};
 	return {
 		isIE : isIE,
 		camel : camel,
+		def : def,
 		allMethods : [],
 		publicMethods : [
 			"cssSelect",
@@ -85,7 +89,7 @@ var DOMAssistant = function () {
 				return this;
 			};
 			HTMLArray.prototype.first = function () {
-				return (typeof this[0] !== "undefined")? DOMAssistant.addMethodsToElm(this[0]) : null;
+				return def(this[0])? DOMAssistant.addMethodsToElm(this[0]) : null;
 			};
 			HTMLArray.prototype.end = function () {
 				return this.previousSet;
@@ -94,7 +98,7 @@ var DOMAssistant = function () {
 		},
 		
 		addMethods : function (name, method) {
-			if (typeof this.allMethods[name] === "undefined") {
+			if (!def(this.allMethods[name])) {
 				this.allMethods[name] = method;
 				this.addHTMLArrayPrototype(name, method);
 			}
@@ -102,7 +106,7 @@ var DOMAssistant = function () {
 		
 		addMethodsToElm : function (elm) {
 			for (var method in this.allMethods) {
-				if (typeof this.allMethods[method] !== "undefined") {
+				if (def(this.allMethods[method])) {
 					this.applyMethod.call(elm, method, this.allMethods[method]);
 				}
 			}
@@ -117,9 +121,9 @@ var DOMAssistant = function () {
 		
 		attach : function (plugin) {
 			var publicMethods = plugin.publicMethods;
-			if (typeof publicMethods === "undefined") {
+			if (!def(publicMethods)) {
 				for (var method in plugin) {
-					if (method !== "init" && typeof plugin[method] !== "undefined") {
+					if (method !== "init" && def(plugin[method])) {
 						this.addMethods(method, plugin[method]);
 					}
 				}
@@ -921,7 +925,7 @@ DOMAssistant.AJAX = function () {
 		},
 		
 		getReadyState : function () {
-			return (globalXMLHttp && typeof globalXMLHttp.readyState !== "undefined")? globalXMLHttp.readyState : readyState;
+			return (globalXMLHttp && DOMAssistant.def(globalXMLHttp.readyState))? globalXMLHttp.readyState : readyState;
 		},
 		
 		getStatus : function () {
@@ -935,6 +939,7 @@ DOMAssistant.AJAX = function () {
 }();
 DOMAssistant.attach(DOMAssistant.AJAX);
 DOMAssistant.CSS = function () {
+	var def = DOMAssistant.def;
 	return {
 		addClass : function (className) {
 			if (!DOMAssistant.CSS.hasClass.call(this, className)) {
@@ -965,10 +970,10 @@ DOMAssistant.CSS = function () {
 		},
 
 		setStyle : function (style, value) {
-			if (this.filters && (typeof style === "string"? /opacity/i.test(style) : style.opacity)) {
-				this.style.filter = "alpha(opacity=" + (value || style.opacity || 1) * 100 + ")";
+			if ("filters" in this && (typeof style === "string"? /opacity/i.test(style) : def(style.opacity))) {
+				this.style.filter = "alpha(opacity=" + (def(style.opacity)? style.opacity : value) * 100 + ")";
 			}
-			if (typeof this.style.cssText !== "undefined") {
+			if (def(this.style.cssText)) {
 				var styleToSet = this.style.cssText;
 				if (typeof style === "object") {
 					for (var i in style) {
@@ -992,9 +997,9 @@ DOMAssistant.CSS = function () {
 				val = document.defaultView.getComputedStyle(this, "").getPropertyValue(cssRule);
 			}
 			else if (this.currentStyle) {
-				if (this.filters && /^opacity$/.test(cssRule)) {
+				if ("filters" in this && /^opacity$/.test(cssRule)) {
 					var alpha = this.filters["DXImageTransform.Microsoft.Alpha"] || this.filters.alpha || {};
-					val = (alpha.opacity || 100) / 100;
+					val = def(alpha.opacity)? alpha.opacity / 100 : 1;
 				}
 				else {
 					cssRule = cssRule.replace(/^float$/, "styleFloat").replace(/\-(\w)/g, function (match, p1) {
@@ -1035,7 +1040,7 @@ DOMAssistant.Content = function () {
 			if (attr) {
 				elm = elm.setAttributes(attr);
 			}
-			if (typeof content !== "undefined") {
+			if (DOMAssistant.def(content)) {
 				elm.addContent(content);
 			}
 			if (append) {
