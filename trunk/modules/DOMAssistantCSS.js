@@ -1,6 +1,7 @@
 // Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation
 /*global DOMAssistant */
 DOMAssistant.CSS = function () {
+	var def = DOMAssistant.def;
 	return {
 		addClass : function (className) {
 			if (!DOMAssistant.CSS.hasClass.call(this, className)) {
@@ -31,10 +32,10 @@ DOMAssistant.CSS = function () {
 		},
 
 		setStyle : function (style, value) {
-			if (this.filters && (typeof style === "string"? /opacity/i.test(style) : style.opacity)) {
-				this.style.filter = "alpha(opacity=" + (value || style.opacity || 1) * 100 + ")";
+			if ("filters" in this && (typeof style === "string"? /opacity/i.test(style) : def(style.opacity))) {
+				this.style.filter = "alpha(opacity=" + (def(style.opacity)? style.opacity : value) * 100 + ")";
 			}
-			if (typeof this.style.cssText !== "undefined") {
+			if (def(this.style.cssText)) {
 				var styleToSet = this.style.cssText;
 				if (typeof style === "object") {
 					for (var i in style) {
@@ -58,9 +59,9 @@ DOMAssistant.CSS = function () {
 				val = document.defaultView.getComputedStyle(this, "").getPropertyValue(cssRule);
 			}
 			else if (this.currentStyle) {
-				if (this.filters && /^opacity$/.test(cssRule)) {
+				if ("filters" in this && /^opacity$/.test(cssRule)) {
 					var alpha = this.filters["DXImageTransform.Microsoft.Alpha"] || this.filters.alpha || {};
-					val = (alpha.opacity || 100) / 100;
+					val = def(alpha.opacity)? alpha.opacity / 100 : 1;
 				}
 				else {
 					cssRule = cssRule.replace(/^float$/, "styleFloat").replace(/\-(\w)/g, function (match, p1) {
