@@ -86,9 +86,9 @@ DOMAssistant.Content = function () {
 		addContent : function (content) {
 			var type = typeof content;
 			if (type === "string" || type === "number") {
-				var tmp = document.createElement("div"), last = null;
+				var tmp = document.createElement("div");
 				tmp.innerHTML = content;
-				for (var i=tmp.childNodes.length-1; i>=0; i--) {
+				for (var i=tmp.childNodes.length-1, last=null; i>=0; i--) {
 					last = this.insertBefore(tmp.childNodes[i], last);
 				}
 			}

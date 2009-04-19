@@ -1,12 +1,12 @@
 // Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation. Module inspiration by Dean Edwards, Matthias Miller, and John Resig: http://dean.edwards.name/weblog/2006/06/again/
 /*global DOMAssistant */
 DOMAssistant.DOMLoad = function () {
-	var DOMLoaded = false;
-	var DOMLoadTimer = null;
-	var functionsToCall = [];
-	var addedStrings = {};
-	var errorHandling = null;
-	var execFunctions = function () {
+	var DOMLoaded = false,
+	DOMLoadTimer = null,
+	functionsToCall = [],
+	addedStrings = {},
+	errorHandling = null,
+	execFunctions = function () {
 		for (var i=0, il=functionsToCall.length; i<il; i++) {
 			try {
 				functionsToCall[i]();
@@ -18,8 +18,8 @@ DOMAssistant.DOMLoad = function () {
 			}
 		}
 		functionsToCall = [];
-	};
-	var DOMHasLoaded = function () {
+	},
+	DOMHasLoaded = function () {
 		if (DOMLoaded) {
 			return;
 		}
