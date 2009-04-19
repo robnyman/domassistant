@@ -747,12 +747,12 @@ var DOMAssistant = function () {
 }();
 DOMAssistant.initCore();
 DOMAssistant.AJAX = function () {
-	var globalXMLHttp = null;
-	var readyState = 0;
-	var status = -1;
-	var statusText = "";
-	var requestPool = [];
-	var createAjaxObj = function (url, method, callback, addToContent) {
+	var globalXMLHttp = null,
+	readyState = 0,
+	status = -1,
+	statusText = "",
+	requestPool = [],
+	createAjaxObj = function (url, method, callback, addToContent) {
 		var params = null;
 		if (/POST/i.test(method)) {
 			url = url.split("?");
@@ -768,8 +768,8 @@ DOMAssistant.AJAX = function () {
 			responseType : "text",
 			addToContent : addToContent || false
 		};
-	};
-	var inProgress = function (xhr) {
+	},
+	inProgress = function (xhr) {
 		return (!!xhr && xhr.readyState >= 1 && xhr.readyState <= 3);
 	};
 	return {
@@ -782,7 +782,7 @@ DOMAssistant.AJAX = function () {
 		
 		initRequest : function () {
 			var XMLHttp = null;
-			if (!!window.XMLHttpRequest) {
+			if (!!window.XMLHttpRequest && !DOMAssistant.isIE) {
 				XMLHttp = new XMLHttpRequest();
 				DOMAssistant.AJAX.initRequest = function () {
 					return requestPool.length? requestPool.pop() : new XMLHttpRequest();
@@ -871,7 +871,7 @@ DOMAssistant.AJAX = function () {
 									status = XMLHttp.status;
 									statusText = XMLHttp.statusText;
 									readyState = 4;
-									if (!status || status !== 200) {
+									if ((status || location.protocol !== "file:") && (status < 200 || status >= 300)) {
 										throw new Error(statusText);
 									}
 									var response = /xml/i.test(responseType)? XMLHttp.responseXML : XMLHttp.responseText;
@@ -1102,9 +1102,9 @@ DOMAssistant.Content = function () {
 		addContent : function (content) {
 			var type = typeof content;
 			if (type === "string" || type === "number") {
-				var tmp = document.createElement("div"), last = null;
+				var tmp = document.createElement("div");
 				tmp.innerHTML = content;
-				for (var i=tmp.childNodes.length-1; i>=0; i--) {
+				for (var i=tmp.childNodes.length-1, last=null; i>=0; i--) {
 					last = this.insertBefore(tmp.childNodes[i], last);
 				}
 			}
@@ -1289,12 +1289,12 @@ DOMAssistant.Events = function () {
 }();
 DOMAssistant.attach(DOMAssistant.Events);
 DOMAssistant.DOMLoad = function () {
-	var DOMLoaded = false;
-	var DOMLoadTimer = null;
-	var functionsToCall = [];
-	var addedStrings = {};
-	var errorHandling = null;
-	var execFunctions = function () {
+	var DOMLoaded = false,
+	DOMLoadTimer = null,
+	functionsToCall = [],
+	addedStrings = {},
+	errorHandling = null,
+	execFunctions = function () {
 		for (var i=0, il=functionsToCall.length; i<il; i++) {
 			try {
 				functionsToCall[i]();
@@ -1306,8 +1306,8 @@ DOMAssistant.DOMLoad = function () {
 			}
 		}
 		functionsToCall = [];
-	};
-	var DOMHasLoaded = function () {
+	},
+	DOMHasLoaded = function () {
 		if (DOMLoaded) {
 			return;
 		}
