@@ -263,7 +263,7 @@ var DOMAssistant = function () {
 			function clearAdded (elm) {
 				elm = elm || prevElm;
 				for (var n=0, nl=elm.length; n<nl; n++) {
-					elm[n].added = null;
+					elm[n].removeAttribute("added");
 				}
 			}
 			function clearChildElms () {
