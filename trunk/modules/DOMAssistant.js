@@ -715,8 +715,7 @@ var DOMAssistant = function () {
 				var cssSelectionBackup = DOMAssistant.cssSelection;
 				DOMAssistant.cssSelection = function (cssRule) {
 					try {
-						var elm = new HTMLArray();
-						return pushAll(elm, this.querySelectorAll(cssRule));
+						return pushAll(new HTMLArray(), this.querySelectorAll(cssRule));
 					}
 					catch (e) {
 						return cssSelectionBackup.call(this, cssRule);

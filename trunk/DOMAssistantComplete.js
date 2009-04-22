@@ -715,8 +715,7 @@ var DOMAssistant = function () {
 				var cssSelectionBackup = DOMAssistant.cssSelection;
 				DOMAssistant.cssSelection = function (cssRule) {
 					try {
-						var elm = new HTMLArray();
-						return pushAll(elm, this.querySelectorAll(cssRule));
+						return pushAll(new HTMLArray(), this.querySelectorAll(cssRule));
 					}
 					catch (e) {
 						return cssSelectionBackup.call(this, cssRule);
@@ -875,7 +874,7 @@ DOMAssistant.AJAX = function () {
 										throw new Error(statusText);
 									}
 									var response = /xml/i.test(responseType)? XMLHttp.responseXML : XMLHttp.responseText;
-									if (/json/i.test(responseType)) {
+									if (/json/i.test(responseType) && !!response) {
 										response = (typeof JSON === "object" && typeof JSON.parse === "function")? JSON.parse(response) : eval("(" + response + ")");
 									}
 									globalXMLHttp = null;
