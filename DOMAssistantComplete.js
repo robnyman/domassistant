@@ -767,9 +767,6 @@ DOMAssistant.AJAX = function () {
 			responseType : "text",
 			addToContent : addToContent || false
 		};
-	},
-	inProgress = function (xhr) {
-		return (!!xhr && xhr.readyState >= 1 && xhr.readyState <= 3);
 	};
 	return {
 		publicMethods : [
@@ -842,7 +839,8 @@ DOMAssistant.AJAX = function () {
 						addToContent = ajaxObj.addToContent,
 						timeout = ajaxObj.timeout || null,
 						ex = ajaxObj.exception,
-						timeoutId = null;
+						timeoutId = null,
+						done = false;
 					XMLHttp.open(method, url, true);
 					XMLHttp.setRequestHeader("AJAX", "true");
 					XMLHttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
@@ -865,8 +863,9 @@ DOMAssistant.AJAX = function () {
 					if (typeof callback === "function") {
 						XMLHttp.onreadystatechange = function () {
 							try {
-								if (XMLHttp.readyState === 4) {
+								if (XMLHttp.readyState === 4 && !done) {
 									window.clearTimeout(timeoutId);
+									done = true;
 									status = XMLHttp.status;
 									statusText = XMLHttp.statusText;
 									readyState = 4;
@@ -895,8 +894,9 @@ DOMAssistant.AJAX = function () {
 					XMLHttp.send(params);
 					if (timeout) {
 						timeoutId = window.setTimeout( function () {
-							if (inProgress(XMLHttp)) {
+							if (!done) {
 								XMLHttp.abort();
+								done = true;
 								if (typeof ex === "function") {
 									readyState = 0;
 									status = 408;

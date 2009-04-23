@@ -1,6 +1,7 @@
 Version 2.7.5:
 =============
 - [Fix] Ajax does not work on local files
+- [Fix] Ajax timeouts sometimes not detected in IE
 - [Fix] Incorrect value from getStyle("opacity") in IE when opacity is 0
 - [Fix] setStyle on newly created (but not yet added to the DOM) elements fails in IE
 - [Fix] addContent when used with strings remove events and attributes
