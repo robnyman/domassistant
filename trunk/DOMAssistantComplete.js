@@ -1157,25 +1157,29 @@ DOMAssistant.Events = function () {
 			DOMAssistant.cancelBubble = this.cancelBubble;
 		},
 
-		triggerEvent : function (evt, target) {
+		triggerEvent : function (evt, target, e) {
+			// Create synthetic event
+			var event = e || {
+				type: evt,
+				target: target || this,
+				currentTarget: this,
+				bubbles: true,
+				cancelable: false,
+				preventDefault: function(){},
+				stopPropagation: function(){ this.bubbles = false; },
+				timeStamp: +new Date()
+			};
 			if (this.events && this.events[evt]) {
-				// Create synthetic event
-				var event = {
-					type: evt,
-					target: target || this,
-					currentTarget: this,
-					bubbles: false,
-					cancelable: false,
-					preventDefault: function(){},
-					stopPropagation: function(){},
-					timeStamp: +new Date()
-				};
 				for (var i=0, iL=this.events[evt].length; i<iL; i++) {
 					this.events[evt][i].call(this, event);
 				}
 			}
 			else if (typeof this["on" + evt] === "function") {
 				this["on" + evt].call(this, event);
+			}
+			var p = this.parentNode;
+			if (event.bubbles && p && p.nodeType === 1) {
+				$(p).triggerEvent(evt, target, event);
 			}
 			return this;
 		},

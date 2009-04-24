@@ -1,5 +1,6 @@
 Version 2.7.5:
 =============
+- [Chg] Events fired via triggerEvent() now bubble
 - [Fix] Ajax does not work on local files
 - [Fix] Ajax timeouts sometimes not detected in IE
 - [Fix] Incorrect value from getStyle("opacity") in IE when opacity is 0
