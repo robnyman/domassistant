@@ -966,6 +966,7 @@ DOMAssistant.CSS = function () {
 
 		setStyle : function (style, value) {
 			if ("filters" in this && (typeof style === "string"? /opacity/i.test(style) : def(style.opacity))) {
+				this.style.zoom = 1;
 				this.style.filter = "alpha(opacity=" + (def(style.opacity)? style.opacity : value) * 100 + ")";
 			}
 			if (def(this.style.cssText)) {
