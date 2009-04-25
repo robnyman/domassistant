@@ -1,23 +1,15 @@
 /* 
-   Peppy - A lightning fast CSS 3 Compliant selector engine.   	 
-   http://www.w3.org/TR/css3-selectors/#selectors
-   
-   version 0.1.2	
+   Peppy - A lightning fast CSS 3 Compliant selector engine.	 
+   http://www.w3.org/TR/css3-selectors/#selectors	
    
    Author: James Donaghue - james.donaghue@gmail.com
-
-   Copyright (c) 2008 James Donaghue (jamesdonaghue.com)	
-   Licenced under the FreeBSD (http://www.freebsd.org/copyright/freebsd-license.html) licence.
-
 */
 (function(){	
 	var doc = document;
-	var isIE = /(?!.*?opera.*?)msie(?!.*?opera.*?)/i.test( navigator.userAgent );
-	var isWebKit = /webkit/i.test( navigator.userAgent );
 	var cache = {};
-	var cacheOn = !isIE && !isWebKit;
 	var persistCache = {};		
-	var _uid = 0;		
+	var _uid = 0;
+	var iHTMLLength = -1;
 	
 	var reg = {
 		trim : /^\s+|\s+$/g,
@@ -65,9 +57,7 @@
 		return r;
 	}
 	
-	// getAttribute - inspired by EXT -> http://extjs.com
-	// Copyright(c) 2006-2008, Ext JS, LLC.
- 	// http://extjs.com/license
+	// inspired by EXT -> http://extjs.com
 	function getAttribute( e, a ) {
 		if( !e ) return null;
 		if( a === "class" || a === "className" )
@@ -183,7 +173,7 @@
 			root.uid = root.uid || _uid++;
 			var cacheKey = selector + root.uid;
 			
-			if( cacheOn && cache[ cacheKey ] ) {
+			if( cache[ cacheKey ] ) {
 				result = result.concat( cache[ cacheKey ] );
 				continue;
 			}
@@ -205,7 +195,7 @@
 	
 	peppy = {
 		query : function( selectorGroups, root, includeRoot, recursed, flat ) {
-			var elements = [];						
+			var elements = [];
 			if( !recursed ) {  // TODO: try to clean this up. 
 				selectorGroups = selectorGroups.replace( reg.trim, "" ) // get rid of leading and trailing spaces												 
 											   .replace( /(\[)\s+/g, "$1") // remove spaces around '['  of attributes
@@ -217,17 +207,22 @@
 											   .replace( /['"]/g, "") // remove all quotations
 											   .replace( /\(\s*even\s*\)/gi, "(2n)") // replace (even) with (2n) - pseudo arg (for caching)
 											   .replace( /\(\s*odd\s*\)/gi, "(2n+1)"); // replace (odd) with (2n+1) - pseudo arg (for caching)
-			}			
-			
+				if( doc.attachEvent ) {					
+					if( iHTMLLength == -1 ) {
+						iHTMLLength = doc.getElementsByTagName("*").length;
+					} else if( iHTMLLength != doc.getElementsByTagName("*").length ) {						
+					 	clearCache();
+				 	}
+				}
+			}
 			if( typeof root === "string" ) {
 				root = (root = getContextFromSequenceSelector( root, doc )).length > 0 ? root : undefined;
 			}
-
 			root = root || doc;
 			root.uid = root.uid || _uid++;
 			
 			var cacheKey = selectorGroups + root.uid;
-			if( cacheOn && cache[ cacheKey ] ) return cache[ cacheKey ];
+			if( cache[ cacheKey ] ) return cache[ cacheKey ];
 			
 			reg.quickTest.lastIndex = 0;
 			if( reg.quickTest.test( selectorGroups ) ) {
@@ -296,14 +291,14 @@
 					elements = groups.length > 1 ? elements.concat( result ) : result;							   
 					result = undefined;
 				} else {
-					result = peppy.querySelector( selector, root, includeRoot, flat );
+					result = peppy.querySelector( selector, root, includeRoot );
 					elements = groups.length > 1 ? elements.concat( result ) : result;
 				}
 			}	
 			
 			if( groups.length > 1 ) elements = filter(elements);
 			
-			return ( cache[ cacheKey ] = elements.slice(0));
+			return ( cache[ cacheKey ] = elements.slice(0) );
 		},
 		queryCombinator: function( l, r, c ) {
 			var result = [], 
@@ -339,7 +334,7 @@
 			context = getContextFromSequenceSelector( selector, root, includeRoot, flat ); 	
 			count = context.length;
 			totalCount = count - 1;			
-						
+			
 			var tests, recursive;
 			if( /:(not|has)/i.test( selector ) ) {
 				recursive = selector.match( reg.recursive );
@@ -611,8 +606,6 @@
 	}
 	
 	// From John Resig -> http://ejohn.org/blog/thoughts-on-queryselectorall/
-	// Copyright 2008, John Resig (http://ejohn.org/)
-	// released under the MIT License
 	if ( doc.querySelectorAll ) {
 		(function(){
 			var oldpeppy = peppy.query;
@@ -625,14 +618,12 @@
 					} catch(e){}
 				}
 				
-				return oldpeppy.apply(oldpeppy, arrayIt(arguments));
+				return oldpeppy(sel, context);
 			};
 		})();
 	} else {
 		// If the DOM changes we need to clear the cache because it will no longer be reliable. 
-		// Inspired by code from Sizzle -> http://github.com/jeresig/sizzle/tree/master.
-		// Copyright 2008, John Resig (http://ejohn.org/)
-		// released under the MIT License	
+		// Inspired by code from Sizzle -> http://github.com/jeresig/sizzle/tree/master.	
 		var aEvent = doc.addEventListener || doc.attachEvent;
 		function clearCache(){ cache = {}; }
 		aEvent("DOMAttrModified", clearCache, false);

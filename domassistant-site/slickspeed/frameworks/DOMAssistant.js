@@ -1,12 +1,12 @@
-// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7.4
+// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7.5
 var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
-	};
-	var isIE = /*@cc_on!@*/false;
-	var ie5 = isIE && parseFloat(navigator.appVersion) < 6;
-	var tagCache = {}, lastCache = {}, useCache = true;
-	var camel = {
+	},
+	isIE = /*@cc_on!@*/false,
+	ie5 = isIE && parseFloat(navigator.appVersion) < 6,
+	tagCache = {}, lastCache = {}, useCache = true,
+	camel = {
 		"accesskey": "accessKey",
 		"class": "className",
 		"colspan": "colSpan",
@@ -18,8 +18,8 @@ var DOMAssistant = function () {
 		"valign": "vAlign",
 		"cellspacing": "cellSpacing",
 		"cellpadding": "cellPadding"
-	};
-	var regex = {
+	},
+	regex = {
 		rules: /\s*(,)\s*/g,
 		selector: /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+\s*(\^|\$|\*|\||~)?(=\s*([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.\'\"]+\]+)|(:\w+[\w\-]*))\))?)*)?(>|\+|~)?/,
 		id: /^#([\w\u00C0-\uFFFF\-\_]+)$/,
@@ -31,6 +31,20 @@ var DOMAssistant = function () {
 		classes: /\.([\w\u00C0-\uFFFF\-_]+)/g,
 		quoted: /^["'](.*)["']$/,
 		nth: /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n([\+\-]\d+)?)|(\-(([1-9]\d*)?)n\+(\d+)))$/
+	},
+	contains = function (array, value) {
+		if (array.indexOf) { return array.indexOf(value) >= 0; }
+		for (var i=0, iL=array.length; i<iL; i++) {
+			if (array[i] === value) { return true; }
+		}
+		return false;
+	},
+	isDescendant = function (node, ancestor) {
+		var parent = node.parentNode;
+		return ancestor === document || parent === ancestor || (parent !== document && isDescendant(parent, ancestor));
+	},
+	def = function (obj) {
+		return typeof obj !== "undefined";
 	};
 	var pushAll = function (set1, set2) {
 		set1.push.apply(set1, [].slice.apply(set2));
@@ -48,20 +62,10 @@ var DOMAssistant = function () {
 			return set1;
 		};
 	}
-	var contains = function (array, value) {
-		if (array.indexOf) { return array.indexOf(value) >= 0; }
-		for (var i=0, iL=array.length; i<iL; i++) {
-			if (array[i] === value) { return true; }
-		}
-		return false;
-	};
-	var isDescendant = function (node, ancestor) {
-		var parent = node.parentNode;
-		return ancestor === document || parent === ancestor || (parent !== document && isDescendant(parent, ancestor));
-	};
 	return {
 		isIE : isIE,
 		camel : camel,
+		def : def,
 		allMethods : [],
 		publicMethods : [
 			"cssSelect",
@@ -85,7 +89,7 @@ var DOMAssistant = function () {
 				return this;
 			};
 			HTMLArray.prototype.first = function () {
-				return (typeof this[0] !== "undefined")? DOMAssistant.addMethodsToElm(this[0]) : null;
+				return def(this[0])? DOMAssistant.addMethodsToElm(this[0]) : null;
 			};
 			HTMLArray.prototype.end = function () {
 				return this.previousSet;
@@ -94,7 +98,7 @@ var DOMAssistant = function () {
 		},
 		
 		addMethods : function (name, method) {
-			if (typeof this.allMethods[name] === "undefined") {
+			if (!def(this.allMethods[name])) {
 				this.allMethods[name] = method;
 				this.addHTMLArrayPrototype(name, method);
 			}
@@ -102,7 +106,7 @@ var DOMAssistant = function () {
 		
 		addMethodsToElm : function (elm) {
 			for (var method in this.allMethods) {
-				if (typeof this.allMethods[method] !== "undefined") {
+				if (def(this.allMethods[method])) {
 					this.applyMethod.call(elm, method, this.allMethods[method]);
 				}
 			}
@@ -117,9 +121,9 @@ var DOMAssistant = function () {
 		
 		attach : function (plugin) {
 			var publicMethods = plugin.publicMethods;
-			if (typeof publicMethods === "undefined") {
+			if (!def(publicMethods)) {
 				for (var method in plugin) {
-					if (method !== "init" && typeof plugin[method] !== "undefined") {
+					if (method !== "init" && def(plugin[method])) {
 						this.addMethods(method, plugin[method]);
 					}
 				}
@@ -259,7 +263,7 @@ var DOMAssistant = function () {
 			function clearAdded (elm) {
 				elm = elm || prevElm;
 				for (var n=0, nl=elm.length; n<nl; n++) {
-					elm[n].added = null;
+					elm[n].removeAttribute("added");
 				}
 			}
 			function clearChildElms () {
@@ -711,8 +715,7 @@ var DOMAssistant = function () {
 				var cssSelectionBackup = DOMAssistant.cssSelection;
 				DOMAssistant.cssSelection = function (cssRule) {
 					try {
-						var elm = new HTMLArray();
-						return pushAll(elm, this.querySelectorAll(cssRule));
+						return pushAll(new HTMLArray(), this.querySelectorAll(cssRule));
 					}
 					catch (e) {
 						return cssSelectionBackup.call(this, cssRule);
