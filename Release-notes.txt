@@ -3,6 +3,7 @@ Version 2.7.5:
 - [Chg] Events fired via triggerEvent() now bubble
 - [Fix] Ajax does not work on local files
 - [Fix] Ajax timeouts sometimes not detected in IE
+- [Fix] setStyle("opacity") does not work in IE without hasLayout
 - [Fix] Incorrect value from getStyle("opacity") in IE when opacity is 0
 - [Fix] setStyle on newly created (but not yet added to the DOM) elements fails in IE
 - [Fix] addContent when used with strings remove events and attributes
