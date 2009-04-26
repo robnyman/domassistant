@@ -218,34 +218,33 @@ var DOMAssistant = function () {
 		
 		getSequence : function (expression) {
 			var start, add = 2, max = -1, modVal = -1,
-				pseudoValue = regex.nth.exec(expression.replace(/^0n\+/, "").replace(/^2n$/, "even").replace(/^2n+1$/, "odd"));
-			if (!pseudoValue) {
+				pseudoVal = regex.nth.exec(expression.replace(/^0n\+/, "").replace(/^2n$/, "even").replace(/^2n+1$/, "odd"));
+			if (!pseudoVal) {
 				return null;
 			}
-			if (pseudoValue[2]) {	// odd or even
-				start = (pseudoValue[2] === "odd")? 1 : 2;
+			if (pseudoVal[2]) {	// odd or even
+				start = (pseudoVal[2] === "odd")? 1 : 2;
 				modVal = (start === 1)? 1 : 0;
 			}
-			else if (pseudoValue[3]) {	// single digit
-				start = parseInt(pseudoValue[3], 10);
+			else if (pseudoVal[3]) {	// single digit
+				start = max = parseInt(pseudoVal[3], 10);
 				add = 0;
-				max = start;
 			}
-			else if (pseudoValue[4]) {	// an+b
-				add = pseudoValue[6]? parseInt(pseudoValue[6], 10) : 1;
-				start = pseudoValue[7]? parseInt(pseudoValue[7], 10) : 0;
+			else if (pseudoVal[4]) {	// an+b
+				add = pseudoVal[6]? parseInt(pseudoVal[6], 10) : 1;
+				start = pseudoVal[7]? parseInt(pseudoVal[7], 10) : 0;
 				while (start < 1) {
 					start += add;
 				}
-				modVal = (start > add)? (start - add) % add : ((start === add)? 0 : start);
+				modVal = (start >= add)? (start - add) % add : start;
 			}
-			else if (pseudoValue[8]) {	// -an+b
-				add = pseudoValue[10]? parseInt(pseudoValue[10], 10) : 1;
-				start = max = parseInt(pseudoValue[11], 10);
+			else if (pseudoVal[8]) {	// -an+b
+				add = pseudoVal[10]? parseInt(pseudoVal[10], 10) : 1;
+				start = max = parseInt(pseudoVal[11], 10);
 				while (start > add) {
 					start -= add;
 				}
-				modVal = (max > add)? (max - add) % add : ((max === add)? 0 : max);
+				modVal = (max >= add)? (max - add) % add : max;
 			}
 			return { start: start, add: add, max: max, modVal: modVal };
 		},
@@ -364,7 +363,7 @@ var DOMAssistant = function () {
 						}
 						else {
 							var direction = (pseudo[1] === "last")? ["lastChild", "previousSibling"] : ["firstChild", "nextSibling"];
-							sequence = DOMAssistant.getSequence.call(this, pseudoValue);
+							sequence = DOMAssistant.getSequence(pseudoValue);
 							if (sequence) {
 								while ((previous=previousMatch[idx++])) {
 									prevParent = previous.parentNode;
@@ -418,10 +417,7 @@ var DOMAssistant = function () {
 							var notRegExp = new RegExp(notAttr? attrToRegExp(notAttr[3], notAttr[2]) : "(^|\\s)" + (notTag? notTag[1] : notClass? notClass[1] : "") + "(\\s|$)", "i");
 							while ((notElm=previousMatch[idx++])) {
 								addElm = null;
-								if (notTag && !notRegExp.test(notElm.nodeName)) {
-									addElm = notElm;
-								}
-								else if (notClass && !notRegExp.test(notElm.className)) {
+								if (notTag && !notRegExp.test(notElm.nodeName) || notClass && !notRegExp.test(notElm.className)) {
 									addElm = notElm;
 								}
 								else if (notAttr) {
@@ -627,7 +623,7 @@ var DOMAssistant = function () {
 						case "nth":
 							if (!/^n$/.test(pseudoValue)) {
 								var position = ((pseudo[1] === "last")? "(count(following-sibling::" : "(count(preceding-sibling::") + tag + ") + 1)";
-								if ((sequence = DOMAssistant.getSequence.call(this, pseudoValue))) {
+								if ((sequence = DOMAssistant.getSequence(pseudoValue))) {
 									xpath = (sequence.start === sequence.max)?
 										position + " = " + sequence.start :
 										position + " mod " + sequence.add + " = " + sequence.modVal + ((sequence.start > 1)? " and " + position + " >= " + sequence.start : "") + ((sequence.max > 0)? " and " + position + " <= " + sequence.max: "");
