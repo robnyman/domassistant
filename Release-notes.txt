@@ -11,6 +11,7 @@ Version 2.7.5:
 - [Fix] addContent when used with strings remove events and attributes
 - [Fix] replaceClass does not work in some cases
 - [Fix] Certain selectors sometimes return less elements than expected in IE
+- [Fix] Miscellaneous performance improvement
 
 Version 2.7.4:
 =============

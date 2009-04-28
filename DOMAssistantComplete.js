@@ -202,7 +202,7 @@ var DOMAssistant = function () {
 		clearHandlers : function () {
 			var children = this.all || this.getElementsByTagName("*");
 			for (var i=0, child, attr; (child=children[i++]);) {
-				if ((attr = child.attributes)) {
+				if (child.uniqueHandlerId && (attr = child.attributes)) {
 					for (var j=0, jl=attr.length, att; j<jl; j++) {
 						att = attr[j].nodeName.toLowerCase();
 						if (typeof child[att] === "function") {
@@ -1115,7 +1115,7 @@ DOMAssistant.Content = function () {
 							elem = newElem;
 						}
 					}
-					return $(elem);
+					return elem;
 				};
 			}
 			else {
@@ -1137,10 +1137,15 @@ DOMAssistant.Content = function () {
 		addContent : function (content) {
 			var type = typeof content;
 			if (type === "string" || type === "number") {
-				var tmp = document.createElement("div");
-				tmp.innerHTML = content;
-				for (var i=tmp.childNodes.length-1, last=null; i>=0; i--) {
-					last = this.insertBefore(tmp.childNodes[i], last);
+				if (!this.childNodes.length) {
+					this.innerHTML = content;
+				}
+				else {
+					var tmp = document.createElement("div");
+					tmp.innerHTML = content;
+					for (var i=tmp.childNodes.length-1, last=null; i>=0; i--) {
+						last = this.insertBefore(tmp.childNodes[i], last);
+					}
 				}
 			}
 			else if (type === "object" || (type === "function" && !!content.nodeName)) {
