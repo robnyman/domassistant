@@ -82,9 +82,9 @@ var DOMAssistant = function () {
 				HTMLArray = Array;
 			}
 			HTMLArray.prototype = [];
-			HTMLArray.prototype.each = function (functionCall) {
+			HTMLArray.prototype.each = function (fn) {
 				for (var i=0, il=this.length; i<il; i++) {
-					functionCall.call(this[i]);
+					fn.call(this[i], i);
 				}
 				return this;
 			};
@@ -93,6 +93,49 @@ var DOMAssistant = function () {
 			};
 			HTMLArray.prototype.end = function () {
 				return this.previousSet;
+			};
+			HTMLArray.prototype.indexOf = HTMLArray.prototype.indexOf || function (elm) {
+				for (var i=0, il=this.length; i<il; i++) {
+					if (i in this && this[i] === elm) {
+						return i;
+					}
+				}
+				return -1;
+			};
+			HTMLArray.prototype.map = function (fn) {
+				var res = [];
+				for (var i=0, il=this.length; i<il; i++) {
+					if (i in this) {
+						res[i] = fn.call(this[i], i);
+					}
+				}
+				return res;
+			};
+			HTMLArray.prototype.filter = function (fn) {
+				var res = new HTMLArray();
+				res.previousSet = this;
+				for (var i=0, il=this.length; i<il; i++) {
+					if (i in this && fn.call(this[i], i)) {
+						res.push(this[i]);
+					}
+				}
+				return res;
+			};
+			HTMLArray.prototype.every = function (fn) {
+				for (var i=0, il=this.length; i<il; i++) {
+					if (i in this && !fn.call(this[i], i)) {
+						return false;
+					}
+				}
+				return true;
+			};
+			HTMLArray.prototype.some = function (fn) {
+				for (var i=0, il=this.length; i<il; i++) {
+					if (i in this && fn.call(this[i], i)) {
+						return true;
+					}
+				}
+				return false;
 			};
 			this.attach(this);
 		},

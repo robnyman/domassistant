@@ -1,5 +1,7 @@
 Version 2.7.5:
 =============
+- [Add] New methods: indexOf(), map(), filter(), every(), some()
+- [Chg] Callback function in each() gains an index param, to be consistent with the new methods
 - [Chg] Events fired via triggerEvent() now bubble
 - [Fix] Ajax does not work on local files
 - [Fix] Ajax timeouts sometimes not detected in IE
