@@ -1,6 +1,6 @@
 Version 2.8:
 =============
-- [Add] Support for event delegation through relayEvent() and unrelayEvent()
+- [Add] Event delegation through relayEvent() and unrelayEvent(), with support for focus and blur events
 - [Add] New core methods: indexOf(), map(), filter(), every() and some()
 - [Chg] Callback function in each() gains an index param, to be consistent with the new methods
 - [Chg] Events fired via triggerEvent() now bubble

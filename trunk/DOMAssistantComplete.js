@@ -1090,7 +1090,7 @@ DOMAssistant.Content = function () {
 					switch (attLower) {
 						case "name":
 						case "type":
-							return document.createElement(elm.outerHTML.replace(new RegExp(attLower + "=[a-zA-Z]+"), " ").replace(">", " " + attLower + "=" + val + ">"));
+							return $$(document.createElement(elm.outerHTML.replace(new RegExp(attLower + "=[a-zA-Z]+"), " ").replace(">", " " + attLower + "=" + val + ">")));
 						case "style":
 							elm.style.cssText = val;
 							return elm;
@@ -1186,10 +1186,11 @@ DOMAssistant.Content = function () {
 }();
 DOMAssistant.attach(DOMAssistant.Content);
 DOMAssistant.Events = function () {
-	var uniqueHandlerId = 1,
-	contains = function (a, b) {
-		return a.contains? a.contains(b) : !!((a.compareDocumentPosition(b) || 16) & 16);
-	};
+	var handler,
+		uniqueHandlerId = 1,
+		w3cMode = !!document.addEventListener,
+		useCapture = { focus: true, blur: true },
+		fix = function(evt) { return DOMAssistant.isIE? { focus: "focusin", blur: "focusout" }[evt] || evt : evt; };
 	return {
 		publicMethods : [
 			"triggerEvent",
@@ -1206,9 +1207,11 @@ DOMAssistant.Events = function () {
 			window.removeEvent = this.removeEvent;
 			DOMAssistant.preventDefault = this.preventDefault;
 			DOMAssistant.cancelBubble = this.cancelBubble;
+			handler = this.handleEvent;
 		},
 
 		triggerEvent : function (evt, target, e) {
+			evt = fix(evt);
 			// Create synthetic event
 			var event = e || {
 				type: evt,
@@ -1236,12 +1239,11 @@ DOMAssistant.Events = function () {
 		},
 
 		addEvent : function (evt, func, relay) {
-			if (/^DOM/.test(evt)) {
-				if (this.addEventListener) {
-					this.addEventListener(evt, func, false);
-				}
+			if (/^DOM/.test(evt) && w3cMode) {
+				this.addEventListener(evt, func, false);
 			}
 			else {
+				evt = fix(evt);
 				this.uniqueHandlerId = this.uniqueHandlerId || uniqueHandlerId++;
 				if (!(func.attachedElements && func.attachedElements[evt + this.uniqueHandlerId])) {
 					this.events = this.events || {};
@@ -1250,14 +1252,13 @@ DOMAssistant.Events = function () {
 						var existingEvent = this["on" + evt];
 						if (existingEvent) {
 							this.events[evt].push(existingEvent);
+							this["on" + evt] = null;
 						}
+						if (w3cMode) { this.addEventListener(evt, handler, useCapture[evt]); }
+						else { this["on" + evt] = handler; }
 					}
 					func.relay = relay;
 					this.events[evt].push(func);
-					this["on" + evt] = DOMAssistant.Events.handleEvent;
-					if (typeof this.window === "object") {
-						this.window["on" + evt] = DOMAssistant.Events.handleEvent;
-					}
 					func.attachedElements = func.attachedElements || {};
 					func.attachedElements[evt + this.uniqueHandlerId] = true;
 				}
@@ -1266,13 +1267,12 @@ DOMAssistant.Events = function () {
 		},
 
 		handleEvent : function (evt) {
-			var currentEvt = evt || event;
-			var currentTarget = currentEvt.target || currentEvt.srcElement || document;
-			while (currentTarget.nodeType !== 1 && currentTarget.parentNode) {
-				currentTarget = currentTarget.parentNode;
-			}
+			var currentEvt = evt || event,
+				type = fix(currentEvt.type),
+				currentTarget = currentEvt.target || currentEvt.srcElement || document;
+			while (currentTarget.nodeType !== 1 && currentTarget.parentNode) { currentTarget = currentTarget.parentNode; }
 			currentEvt.eventTarget = currentTarget;
-			var eventColl = this.events[currentEvt.type].slice(0), eventCollLength, eventReturn;
+			var eventColl = this.events[type].slice(0), eventCollLength, eventReturn;
 			if ((eventCollLength = eventColl.length)) {
 				for (var i=0; i<eventCollLength; i++) {
 					if (typeof eventColl[i] === "function") {
@@ -1284,6 +1284,7 @@ DOMAssistant.Events = function () {
 		},
 
 		removeEvent : function (evt, func, relay) {
+			evt = fix(evt);
 			if (this.events && this.events[evt]) {
 				var eventColl = this.events[evt];
 				for (var fn, i=eventColl.length-1; i>=0; i--) {
@@ -1295,6 +1296,10 @@ DOMAssistant.Events = function () {
 							fn.attachedElements[evt + this.uniqueHandlerId] = null;
 						}
 					}
+				}
+				if (!this.events[evt].length) {
+					if (w3cMode) { this.removeEventListener(evt, handler, useCapture[evt]); }
+					else { this["on" + evt] = null; }
 				}
 			}
 			else if (this["on" + evt] && !func && !relay) {
@@ -1308,7 +1313,7 @@ DOMAssistant.Events = function () {
 				e = e || event;
 				var target = e.target || e.srcElement, args = arguments;
 				this.cssSelect(selector).each( function() {
-					if (contains(this, target)) {
+					if (this.contains? this.contains(target) : !!((this.compareDocumentPosition(target) || 16) & 16)) {
 						return fn.apply(this, args);;
 					}
 				});
@@ -1320,31 +1325,17 @@ DOMAssistant.Events = function () {
 		},
 
 		preventDefault : function (evt) {
-			if (evt && evt.preventDefault) {
-				DOMAssistant.Events.preventDefault = function (evt) {
-					evt.preventDefault();
-				};
-			}
-			else {
-				DOMAssistant.Events.preventDefault = function (evt) {
-					event.returnValue = false;
-				};
-			}
-			return DOMAssistant.Events.preventDefault(evt);
+			return (DOMAssistant.Events.preventDefault = (evt && evt.preventDefault)
+				? function (evt) { evt.preventDefault(); }
+				: function (evt) { event.returnValue = false; }
+			)(evt);
 		},
 
 		cancelBubble : function (evt) {
-			if (evt && evt.stopPropagation) {
-				DOMAssistant.Events.cancelBubble = function (evt) {
-					evt.stopPropagation();
-				};
-			}
-			else {
-				DOMAssistant.Events.cancelBubble = function (evt) {
-					event.cancelBubble = true;
-				};
-			}
-			return DOMAssistant.Events.cancelBubble(evt);
+			return (DOMAssistant.Events.cancelBubble = (evt && evt.stopPropagation)
+				? function (evt) { evt.stopPropagation(); }
+				: function (evt) { event.cancelBubble = true; }
+			)(evt);
 		}
 	};
 }();

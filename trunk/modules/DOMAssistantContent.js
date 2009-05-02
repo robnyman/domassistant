@@ -40,7 +40,7 @@ DOMAssistant.Content = function () {
 					switch (attLower) {
 						case "name":
 						case "type":
-							return document.createElement(elm.outerHTML.replace(new RegExp(attLower + "=[a-zA-Z]+"), " ").replace(">", " " + attLower + "=" + val + ">"));
+							return $$(document.createElement(elm.outerHTML.replace(new RegExp(attLower + "=[a-zA-Z]+"), " ").replace(">", " " + attLower + "=" + val + ">")));
 						case "style":
 							elm.style.cssText = val;
 							return elm;
