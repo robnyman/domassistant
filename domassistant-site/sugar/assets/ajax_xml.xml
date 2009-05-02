@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter>
+   <title>Fixtures</title>
+   <para>Fixtures are simple classes that are used to set up a naked objects
+  system. The code for a fixture should be placed in the
+  <methodname>install</methodname> method, which is run when the system installs the
+  fixtures. Fixtures are only installed if the NakedObjectPersistor flags that
+  it is uninitialised via its <methodname>isInitialized</methodname> method. For the
+  in memory object store this will be every time it is started, and for other
+  object stores will only be when they detect they have no persistent
+  data.</para>
+   <sect1>
+      <title>Registering fixtures</title>
+   <para>Fixtures are registered with the Framework at startup via the
+  properties file, using the fixtures properties. The
+  <methodname>fixtures</methodname> property itself dictates which fixture classes
+  are to be instantiated at startup, for example:</para>
+   <programlisting>nakedobjects.fixtures = fixture.BookingsFixture, fixture.PerspectivesFixture</programlisting>
+   <para>The <methodname>prefix</methodname> property allows you specify the common
+  package name once and, hence omit them from the classes in the list. The
+  following set of properties is therefore equivalent to the previous
+  example.</para>
+   <programlisting>nakedobjects.fixtures.prefix = fixture
+nakedobjects.fixtures = BookingsFixture, PerspectivesFixture</programlisting>
+   </sect1>
+   <sect1>
+      <title>Fixture classes</title>
+   <javadoc class="AbstractFixture" comments="yes" package="???" outline="no">
+      <method-entry signature="setXXX"/>
+   </javadoc>
+   </sect1>
+</chapter>
