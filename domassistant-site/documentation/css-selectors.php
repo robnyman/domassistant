@@ -39,7 +39,7 @@
 								<dt><code>#container.item</code></dt>
 								<dd>Get an element with the id "container", if it also has the class name "item".</dd>
 								<dt><code>p.info.error</code></dt>
-								<dd>Get all <code>P</code> elements with both a class name consisting of both "info" and "item".</dd>
+								<dd>Get all <code>P</code> elements with both a class name consisting of both "info" and "error".</dd>
 								<dt><code>div p</code></dt>
 								<dd>Get all <code>P</code> elements which are descendants of any <code>DIV</code> element.</dd>
 								<dt><code>div > p</code></dt>
