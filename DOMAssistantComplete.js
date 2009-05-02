@@ -1,4 +1,4 @@
-// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7.5
+// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://domassistant.googlecode.com/, documentation: http://www.domassistant.com/documentation, version 2.8
 var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
@@ -368,7 +368,7 @@ var DOMAssistant = function () {
 				var match = {
 					first: function(el) { return !getPrevElm(el); },
 					last: function(el) { return !getNextElm(el); },
-					empty: function(el) { return !el.childNodes.length; },
+					empty: function(el) { return !el.firstChild; },
 					enabled: function(el) { return !previous.disabled && previous.type !== "hidden"; },
 					disabled: function(el) { return previous.disabled; },
 					checked: function(el) { return previous.checked; },
@@ -709,8 +709,7 @@ var DOMAssistant = function () {
 							tagRelation : cssSelector[23]
 						};
 						if (splitRule.tagRelation) {
-							var mapping = { ">": "/child::", "+": "/following-sibling::*[1]/self::", "~": "/following-sibling::" };
-							xPathExpression += mapping[splitRule.tagRelation] || "";
+							xPathExpression += { ">": "/child::", "+": "/following-sibling::*[1]/self::", "~": "/following-sibling::" }[splitRule.tagRelation] || "";
 						}
 						else {
 							xPathExpression += (j > 0 && regex.relation.test(cssSelectors[j-1]))? splitRule.tag : ("/descendant::" + splitRule.tag);
@@ -1052,7 +1051,7 @@ DOMAssistant.CSS = function () {
 }();
 DOMAssistant.attach(DOMAssistant.CSS);
 DOMAssistant.Content = function () {
-	var $ = DOMAssistant.$;
+	var $$ = DOMAssistant.$$;
 	return {
 		init : function () {
 			DOMAssistant.setCache(false);
@@ -1061,17 +1060,17 @@ DOMAssistant.Content = function () {
 		prev : function () {
 			var prevSib = this;
 			while ((prevSib = prevSib.previousSibling) && prevSib.nodeType !== 1) {}
-			return $(prevSib);
+			return $$(prevSib);
 		},
 
 		next : function () {
 			var nextSib = this;
 			while ((nextSib = nextSib.nextSibling) && nextSib.nodeType !== 1) {}
-			return $(nextSib);
+			return $$(nextSib);
 		},
 
 		create : function (name, attr, append, content) {
-			var elm = $(document.createElement(name));
+			var elm = $$(document.createElement(name));
 			if (attr) {
 				elm = elm.setAttributes(attr);
 			}
@@ -1079,7 +1078,7 @@ DOMAssistant.Content = function () {
 				elm.addContent(content);
 			}
 			if (append) {
-				DOMAssistant.Content.addContent.call(this, elm);
+				this.appendChild(elm);
 			}
 			return elm;
 		},
@@ -1137,7 +1136,7 @@ DOMAssistant.Content = function () {
 		addContent : function (content) {
 			var type = typeof content;
 			if (type === "string" || type === "number") {
-				if (!this.childNodes.length) {
+				if (!this.firstChild) {
 					this.innerHTML = content;
 				}
 				else {
@@ -1155,8 +1154,10 @@ DOMAssistant.Content = function () {
 		},
 
 		replaceContent : function (content) {
-			DOMAssistant.clearHandlers.apply(this);
-			this.innerHTML = "";
+			if (!!this.firstChild) {
+				DOMAssistant.clearHandlers.apply(this);
+				this.innerHTML = "";
+			}
 			return DOMAssistant.Content.addContent.call(this, content);
 		},
 
@@ -1164,7 +1165,7 @@ DOMAssistant.Content = function () {
 			var type = typeof content;
 			if (type === "string" || type === "number") {
 				var parent = this.parentNode;
-				var tmp = $(parent).create("div", null, false, content);
+				var tmp = DOMAssistant.Content.create.call(parent, "div", null, false, content);
 				for (var i=tmp.childNodes.length-1; i>=0; i--) {
 					parent.insertBefore(tmp.childNodes[i], this.nextSibling);
 				}
@@ -1185,12 +1186,17 @@ DOMAssistant.Content = function () {
 }();
 DOMAssistant.attach(DOMAssistant.Content);
 DOMAssistant.Events = function () {
-	var uniqueHandlerId = 1;
+	var uniqueHandlerId = 1,
+	contains = function (a, b) {
+		return a.contains? a.contains(b) : !!((a.compareDocumentPosition(b) || 16) & 16);
+	};
 	return {
 		publicMethods : [
 			"triggerEvent",
 			"addEvent",
 			"removeEvent",
+			"relayEvent",
+			"unrelayEvent",
 			"preventDefault",
 			"cancelBubble"
 		],
@@ -1224,25 +1230,21 @@ DOMAssistant.Events = function () {
 			}
 			var p = this.parentNode;
 			if (event.bubbles && p && p.nodeType === 1) {
-				$(p).triggerEvent(evt, target, event);
+				DOMAssistant.Events.triggerEvent.call(p, evt, target, event);
 			}
 			return this;
 		},
 
-		addEvent : function (evt, func) {
+		addEvent : function (evt, func, relay) {
 			if (/^DOM/.test(evt)) {
 				if (this.addEventListener) {
 					this.addEventListener(evt, func, false);
 				}
 			}
 			else {
-				if (!this.uniqueHandlerId) {
-					this.uniqueHandlerId = uniqueHandlerId++;
-				}
+				this.uniqueHandlerId = this.uniqueHandlerId || uniqueHandlerId++;
 				if (!(func.attachedElements && func.attachedElements[evt + this.uniqueHandlerId])) {
-					if (!this.events) {
-						this.events = {};
-					}
+					this.events = this.events || {};
 					if (!this.events[evt]) {
 						this.events[evt] = [];
 						var existingEvent = this["on" + evt];
@@ -1250,14 +1252,13 @@ DOMAssistant.Events = function () {
 							this.events[evt].push(existingEvent);
 						}
 					}
+					func.relay = relay;
 					this.events[evt].push(func);
 					this["on" + evt] = DOMAssistant.Events.handleEvent;
 					if (typeof this.window === "object") {
 						this.window["on" + evt] = DOMAssistant.Events.handleEvent;
 					}
-					if (!func.attachedElements) {
-						func.attachedElements = {};
-					}
+					func.attachedElements = func.attachedElements || {};
 					func.attachedElements[evt + this.uniqueHandlerId] = true;
 				}
 			}
@@ -1282,12 +1283,12 @@ DOMAssistant.Events = function () {
 			}
 		},
 
-		removeEvent : function (evt, func) {
+		removeEvent : function (evt, func, relay) {
 			if (this.events && this.events[evt]) {
 				var eventColl = this.events[evt];
 				for (var fn, i=eventColl.length-1; i>=0; i--) {
 					fn = func || eventColl[i];
-					if (eventColl[i] === fn) {
+					if (eventColl[i] === fn && (!relay && !fn.relay || relay && fn.relay)) {
 						delete eventColl[i];
 						eventColl.splice(i, 1);
 						if (fn.attachedElements) {
@@ -1296,10 +1297,26 @@ DOMAssistant.Events = function () {
 					}
 				}
 			}
-			else if (this["on" + evt] && !func) {
+			else if (this["on" + evt] && !func && !relay) {
 				this["on" + evt] = null;
 			}
 			return this;
+		},
+
+		relayEvent: function (evt, selector, fn) {
+			return DOMAssistant.Events.addEvent.call(this, evt, function(e) {
+				e = e || event;
+				var target = e.target || e.srcElement, args = arguments;
+				this.cssSelect(selector).each( function() {
+					if (contains(this, target)) {
+						return fn.apply(this, args);;
+					}
+				});
+			}, true);
+		},
+
+		unrelayEvent: function (evt) {
+			return DOMAssistant.Events.removeEvent.call(this, evt, null, true);
 		},
 
 		preventDefault : function (evt) {

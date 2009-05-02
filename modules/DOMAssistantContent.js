@@ -1,7 +1,7 @@
-// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation
+// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://domassistant.googlecode.com/, documentation: http://www.domassistant.com/documentation
 /*global DOMAssistant */
 DOMAssistant.Content = function () {
-	var $ = DOMAssistant.$;
+	var $$ = DOMAssistant.$$;
 	return {
 		init : function () {
 			DOMAssistant.setCache(false);
@@ -10,17 +10,17 @@ DOMAssistant.Content = function () {
 		prev : function () {
 			var prevSib = this;
 			while ((prevSib = prevSib.previousSibling) && prevSib.nodeType !== 1) {}
-			return $(prevSib);
+			return $$(prevSib);
 		},
 
 		next : function () {
 			var nextSib = this;
 			while ((nextSib = nextSib.nextSibling) && nextSib.nodeType !== 1) {}
-			return $(nextSib);
+			return $$(nextSib);
 		},
 
 		create : function (name, attr, append, content) {
-			var elm = $(document.createElement(name));
+			var elm = $$(document.createElement(name));
 			if (attr) {
 				elm = elm.setAttributes(attr);
 			}
@@ -28,7 +28,7 @@ DOMAssistant.Content = function () {
 				elm.addContent(content);
 			}
 			if (append) {
-				DOMAssistant.Content.addContent.call(this, elm);
+				this.appendChild(elm);
 			}
 			return elm;
 		},
@@ -86,7 +86,7 @@ DOMAssistant.Content = function () {
 		addContent : function (content) {
 			var type = typeof content;
 			if (type === "string" || type === "number") {
-				if (!this.childNodes.length) {
+				if (!this.firstChild) {
 					this.innerHTML = content;
 				}
 				else {
@@ -104,8 +104,10 @@ DOMAssistant.Content = function () {
 		},
 
 		replaceContent : function (content) {
-			DOMAssistant.clearHandlers.apply(this);
-			this.innerHTML = "";
+			if (!!this.firstChild) {
+				DOMAssistant.clearHandlers.apply(this);
+				this.innerHTML = "";
+			}
 			return DOMAssistant.Content.addContent.call(this, content);
 		},
 
@@ -113,7 +115,7 @@ DOMAssistant.Content = function () {
 			var type = typeof content;
 			if (type === "string" || type === "number") {
 				var parent = this.parentNode;
-				var tmp = $(parent).create("div", null, false, content);
+				var tmp = DOMAssistant.Content.create.call(parent, "div", null, false, content);
 				for (var i=tmp.childNodes.length-1; i>=0; i--) {
 					parent.insertBefore(tmp.childNodes[i], this.nextSibling);
 				}
