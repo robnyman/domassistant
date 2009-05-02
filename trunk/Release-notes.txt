@@ -1,6 +1,7 @@
-Version 2.7.5:
+Version 2.8:
 =============
-- [Add] New methods: indexOf(), map(), filter(), every(), some()
+- [Add] Support for event delegation through relayEvent() and unrelayEvent()
+- [Add] New core methods: indexOf(), map(), filter(), every() and some()
 - [Chg] Callback function in each() gains an index param, to be consistent with the new methods
 - [Chg] Events fired via triggerEvent() now bubble
 - [Fix] Ajax does not work on local files

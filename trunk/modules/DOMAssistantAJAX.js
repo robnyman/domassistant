@@ -1,4 +1,4 @@
-// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation
+// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://domassistant.googlecode.com/, documentation: http://www.domassistant.com/documentation
 /*global DOMAssistant */
 DOMAssistant.AJAX = function () {
 	var globalXMLHttp = null,

@@ -1,4 +1,4 @@
-// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://code.google.com/p/domassistant/, documentation: http://www.domassistant.com/documentation, version 2.7.5
+// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://domassistant.googlecode.com/, documentation: http://www.domassistant.com/documentation, version 2.8
 var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
@@ -368,7 +368,7 @@ var DOMAssistant = function () {
 				var match = {
 					first: function(el) { return !getPrevElm(el); },
 					last: function(el) { return !getNextElm(el); },
-					empty: function(el) { return !el.childNodes.length; },
+					empty: function(el) { return !el.firstChild; },
 					enabled: function(el) { return !previous.disabled && previous.type !== "hidden"; },
 					disabled: function(el) { return previous.disabled; },
 					checked: function(el) { return previous.checked; },
@@ -709,8 +709,7 @@ var DOMAssistant = function () {
 							tagRelation : cssSelector[23]
 						};
 						if (splitRule.tagRelation) {
-							var mapping = { ">": "/child::", "+": "/following-sibling::*[1]/self::", "~": "/following-sibling::" };
-							xPathExpression += mapping[splitRule.tagRelation] || "";
+							xPathExpression += { ">": "/child::", "+": "/following-sibling::*[1]/self::", "~": "/following-sibling::" }[splitRule.tagRelation] || "";
 						}
 						else {
 							xPathExpression += (j > 0 && regex.relation.test(cssSelectors[j-1]))? splitRule.tag : ("/descendant::" + splitRule.tag);
