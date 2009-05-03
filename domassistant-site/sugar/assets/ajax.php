@@ -1,0 +1,1 @@
+<SPAN>Hej <?php echo $_POST["apa"]; ?></SPAN>
