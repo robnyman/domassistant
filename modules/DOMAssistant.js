@@ -369,11 +369,11 @@ var DOMAssistant = function () {
 					first: function(el) { return !getPrevElm(el); },
 					last: function(el) { return !getNextElm(el); },
 					empty: function(el) { return !el.firstChild; },
-					enabled: function(el) { return !previous.disabled && previous.type !== "hidden"; },
-					disabled: function(el) { return previous.disabled; },
-					checked: function(el) { return previous.checked; },
-					contains: function(el) { return (previous.innerText || previous.textContent || "").indexOf(pseudoValue.replace(regex.quoted, "$1")) > -1; },
-					other: function(el) { return getAttr(previous, pseudoClass) === pseudoValue; }
+					enabled: function(el) { return !el.disabled && el.type !== "hidden"; },
+					disabled: function(el) { return el.disabled; },
+					checked: function(el) { return el.checked; },
+					contains: function(el) { return (el.innerText || el.textContent || "").indexOf(pseudoValue.replace(regex.quoted, "$1")) > -1; },
+					other: function(el) { return getAttr(el, pseudoClass) === pseudoValue; }
 				};
 				function basicMatch(key) {
 					while ((previous=previousMatch[idx++])) {
