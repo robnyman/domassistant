@@ -498,15 +498,15 @@ SugarTest()
   		this.wait(10000, function() {
 	        this.assertEqual(document.body, $('body')[0]);
 	        var selectors = { 
-	        	'div': 13, 'div p': 46, 'div > p': 37, 'div + p': 3, 'div ~ p': 75,
-	        	'div[class^=exa][class$=mple]': 9, 'div p a': 9, 'div, p, a': 366, '.note': 2, 'div.example': 9,
-	        	'ul .tocline2': 12, 'div.example, div.note': 9, '#title': 1, 'h1#title': 1, 'div #title': 1,
-	        	'ul.toc li.tocline2': 12, 'ul.toc > li.tocline2': 12, 'h1#title + div > p': 0, 'h1[id]:contains(Selectors)': 1, 'a[href][lang][class]': 1,
-	        	'div[class]': 13, 'div[class=example]': 9, 'div[class^=exa]': 9, 'div[class$=mple]': 9, 'div[class*=e]': 12,
-	        	'div[class|=dialog]': 0, 'div[class!=made_up]': 13, 'div[class~=example]': 9, 'div:not(.example)': 4, 'p:contains("selectors")': 34,
-	        	'p:nth-child(even)': 58, 'p:nth-child(2n)': 58, 'p:nth-child(odd)': 66, 'p:nth-child(2n+1)': 66, 'p:nth-child(n)': 124,
-	        	'p:only-child': 3, 'p:last-child': 9, 'p:first-child': 19, 'p:nth-last-child(-n+4)': 38, 'p:empty': 0,
-	        	'code:only-of-type': 51, 'code:first-of-type': 68, 'code:last-of-type': 68, 'code:nth-of-type(5n-3)': 17, 'code:nth-last-of-type(-3n+7)': 69
+	        	'div': 19, 'div p': 51, 'div > p': 45, 'div + p': 9, 'div ~ p': 85,
+	        	'div[class^=exa][class$=mple]': 12, 'div p a': 11, 'div, p, a': 307, '.note': 4, 'div.example': 12,
+	        	'ul .tocline2': 11, 'div.example, div.note': 12, '#title': 1, 'h1#title': 1, 'div #title': 1,
+	        	'ul.toc li.tocline2': 11, 'ul.toc > li.tocline2': 11, 'h1#title + div > p': 0, 'h1[id]:contains(Selectors)': 1, 'a[href][lang][class]': 0,
+	        	'div[class]': 19, 'div[class=example]': 12, 'div[class^=exa]': 12, 'div[class$=mple]': 12, 'div[class*=e]': 18,
+	        	'div[class|=dialog]': 0, 'div[class!=made_up]': 19, 'div[class~=example]': 12, 'div:not(.example)': 7, 'p:contains("selectors")': 26,
+	        	'p:nth-child(even)': 68, 'p:nth-child(2n)': 68, 'p:nth-child(odd)': 69, 'p:nth-child(2n+1)': 69, 'p:nth-child(n)': 137,
+	        	'p:only-child': 3, 'p:last-child': 12, 'p:first-child': 22, 'p:nth-last-child(-n+4)': 42, 'p:empty': 0,
+	        	'code:only-of-type': 23, 'code:first-of-type': 51, 'code:last-of-type': 51, 'code:nth-of-type(5n-3)': 28, 'code:nth-last-of-type(-3n+7)': 58
 	        };
 	        for (var selector in selectors) {
 	        	var elms = this.ctx.cssSelect(selector);
