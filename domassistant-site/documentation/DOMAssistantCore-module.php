@@ -188,7 +188,7 @@
 							<p class="code">
 								<code>
 									$("#navigation a").each( function(idx) {<br>
-										// Do some JavaScript magic<br>
+										alert("This is item " + idx);<br>
 									});
 								</code>
 							</p>
@@ -226,6 +226,7 @@
 							<h3>Example calls</h3>
 							<p class="code">
 								<code>
+									// Creates an array of element ID
 									var arrayID = $("div").map( function(idx) {<br>
 										return this.id;<br>
 									});

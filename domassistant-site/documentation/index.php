@@ -34,7 +34,7 @@
 							<h2>Downloadable documentation</h2>
 							<p>You can also download the documentation as a PDF file:</p>
 							<ul>
-								<li><a href="domassistant-documentation.pdf">DOMAssistant documentation in English (203kb)</a></li>
+								<li><a href="domassistant-documentation.pdf">DOMAssistant documentation in English (213kb)</a></li>
 								<li><a href="domassistant-documentation-chinese.pdf">DOMAssistant documentation in Chinese (307kb)</a></li>
 								<li><a href="domassistant-documentation-french.pdf">DOMAssistant documentation in French (215kb)</a></li>
 							</ul>

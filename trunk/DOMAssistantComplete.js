@@ -1005,7 +1005,7 @@ DOMAssistant.CSS = function () {
 		setStyle : function (style, value) {
 			if ("filters" in this && (typeof style === "string"? /opacity/i.test(style) : def(style.opacity))) {
 				this.style.zoom = 1;
-				this.style.filter = "alpha(opacity=" + (def(style.opacity)? style.opacity : value) * 100 + ")";
+				this.style.filter = (this.style.filter || "").replace(/alpha\([^)]*\)/, "") + "alpha(opacity=" + (def(style.opacity)? style.opacity : value) * 100 + ")";
 			}
 			if (def(this.style.cssText)) {
 				var styleToSet = this.style.cssText;
@@ -1032,8 +1032,8 @@ DOMAssistant.CSS = function () {
 			}
 			else if (this.currentStyle) {
 				if ("filters" in this && /^opacity$/.test(cssRule)) {
-					var alpha = this.filters["DXImageTransform.Microsoft.Alpha"] || this.filters.alpha || {};
-					val = def(alpha.opacity)? alpha.opacity / 100 : 1;
+					var f = this.style.filter;
+					val = f && f.indexOf("opacity=") >= 0? parseFloat(f.match(/opacity=([^)]*)/)[1]) / 100 : 1;
 				}
 				else {
 					cssRule = cssRule.replace(/^float$/, "styleFloat").replace(/\-(\w)/g, function (match, p1) {

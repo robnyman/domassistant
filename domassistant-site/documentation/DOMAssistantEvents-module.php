@@ -101,7 +101,7 @@
 							</p>
 							<p class="code">
 								<code>
-									$("form").relayEvent("focus", "input[type=text]", function () {<br>
+									$("form").relayEvent("focus", "input[type=text]", function() {<br>
 										this.addClass("yellow");<br>
 									});
 								</code>
