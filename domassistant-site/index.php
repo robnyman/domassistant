@@ -53,18 +53,20 @@
 							<h2>Download DOMAssistant</h2>
 							<dl>
 								<dt>
-									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCompressed-2.7.4.js">DOMAssistant 2.7.4, compressed</a><br>
+									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCompressed-2.8.js">DOMAssistant 2.8, compressed</a><br>
 									(9kb <a href="http://en.wikipedia.org/wiki/Gzip" class="small">Gzipped</a>)
 								</dt>
 								<dd>Intended for production usage.</dd>
 
 								<dt>
-									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantComplete-2.7.4.js">DOMAssistant 2.7.4, complete</a><br>
-									(43kb)
+									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantComplete-2.8.js">DOMAssistant 2.8, complete</a><br>
+									(45kb)
 								</dt>
 								<dd>Intended for learning and development usage.</dd>
 							</dl>
 							
+							<h2>Reliable & Cross-Browser</h2>
+							<p>Every release of DOMAssistant is rigorously <a href="./sugar/">tested</a> against the <a href="./about/index.php#compatibility">major browsers</a>.</p>
 							<h2>Fastest performance</h2>
 							<p>DOMAssistant has the <a href="./slickspeed/">overall fastest and most accurate CSS selector performance</a>.</p>
 							<h2>Best Unicode support</h2>

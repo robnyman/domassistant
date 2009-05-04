@@ -38,14 +38,14 @@
 							<h2>Download DOMAssistant</h2>
 							<dl>
 								<dt>
-									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCompressed-2.7.4.js">DOMAssistant 2.7.4, compressed</a><br>
+									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCompressed-2.8.js">DOMAssistant 2.8, compressed</a><br>
 									(9kb <a href="http://en.wikipedia.org/wiki/Gzip" class="small">Gzipped</a>)
 								</dt>
 								<dd>Intended for production usage.</dd>
 
 								<dt>
-									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantComplete-2.7.4.js">DOMAssistant 2.7.4, complete</a><br>
-									(43kb)
+									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantComplete-2.8.js">DOMAssistant 2.8, complete</a><br>
+									(45kb)
 								</dt>
 								<dd>Intended for learning and development usage.</dd>
 							</dl>	
