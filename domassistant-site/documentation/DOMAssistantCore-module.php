@@ -7,16 +7,16 @@
 	<div id="container">
 			<div id="header">
 				<div id="header-content">
-					<h1><a href="/"><span></span>DOMAssistant</a></h1>
+					<h1><a href="../"><span></span>DOMAssistant</a></h1>
 					<div id="navigation">
 						<ul>
-							<li><a href="/">Home</a>/</li>
-							<li><a href="/download">Download</a>/</li>
-							<li><a href="/documentation" class="selected">Documentation</a>/</li>
-							<li><a href="/plugins">Plugins</a>/</li>
-							<li><a href="/discussion-support">Discussion &amp; Support</a>/</li>
-							<li><a href="/about">About</a>/</li>
-							<li class="last"><a href="/blog">Blog</a></li>
+							<li><a href="../">Home</a>/</li>
+							<li><a href="../download">Download</a>/</li>
+							<li><a href="../documentation" class="selected">Documentation</a>/</li>
+							<li><a href="../plugins">Plugins</a>/</li>
+							<li><a href="../discussion-support">Discussion &amp; Support</a>/</li>
+							<li><a href="../about">About</a>/</li>
+							<li class="last"><a href="../blog">Blog</a></li>
 						</ul>
 					</div>
 				</div>
@@ -29,8 +29,8 @@
 							<h1>DOMAssistant Core Module</h1>
 							<p>The DOMAssistant Core module is required and it lays the groundwork for all DOMAssistant functionality. It consists of core functionality and a few important methods to work with.</p>
 
-							<h2 id="dollar"><code>$(cssSelector/elementReference)</code></h2>
-							<p>The $ method is used to get a reference to one or several elements. It supports a <a href="/documentation/css-selectors.php">CSS selector</a> as a string, an already established element reference. It will return the matching element(s) with all the extra DOMAssistant methods applied. A call of any of those methods will fail silently, if the <code>$</code> method returned an empty array.</p>
+							<h2 id="dollar"><code>$(cssSelector/elementRef)</code></h2>
+							<p>The $ method is used to get a reference to one or several elements. It supports a <a href="../documentation/css-selectors.php">CSS selector</a> as a string, an already established element reference. It will return the matching element(s) with all the extra DOMAssistant methods applied. A call of any of those methods will fail silently, if the <code>$</code> method returned an empty array.</p>
 							
 							<h3>Parameters</h3>
 							<p>Send in a CSS selector or an object reference.</p>
@@ -181,14 +181,113 @@
 							<h3>Parameters</h3>
 						 	<dl>
 								<dt>functionRef</dt>
-								<dd>Function which will be called for each item in the array of elements it's called on. Can be an anonymous function or a function reference.</dd>
+								<dd>Function which will be called for each item in the array of elements it's called on. Can be an anonymous function or a function reference. This function receives an index reference to the current item.</dd>
 							</dl>
 
 							<h3>Example calls</h3>
 							<p class="code">
 								<code>
-									$("#navigation a").each(function () {<br>
+									$("#navigation a").each( function(idx) {<br>
 										// Do some JavaScript magic<br>
+									});
+								</code>
+							</p>
+							
+							<h2 id="indexOf"><code>indexOf(elementRef)</code></h2>
+							<p>Returns the index of the first occurrence of the item within the collection of elements.</p>
+							<h3>Return value</h3>
+							<p>Zero-based index of the element if found, and -1 otherwise.</p>
+
+							<h3>Parameters</h3>
+						 	<dl>
+								<dt>elementRef</dt>
+								<dd>An element reference of the item to search for.</dd>
+							</dl>
+
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									var elm = $$("content");<br>
+									var idx = $("div").indexOf(elm);
+								</code>
+							</p>
+							
+							<h2 id="map"><code>map(functionRef)</code></h2>
+							<p>Runs a function on each item, and returns the results in an array.</p>
+							<h3>Return value</h3>
+							<p>An array of the mapped results.</p>
+
+							<h3>Parameters</h3>
+						 	<dl>
+								<dt>functionRef</dt>
+								<dd>Mapping function to be applied to each item. This function receives an index reference to the current item.</dd>
+							</dl>
+
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									var arrayID = $("div").map( function(idx) {<br>
+										return this.id;<br>
+									});
+								</code>
+							</p>
+							
+							<h2 id="filter"><code>filter(functionRef)</code></h2>
+							<p>Runs a function to filter the element collection, and returns all items where the function returned true.</p>
+							<h3>Return value</h3>
+							<p>The filtered element collection.</p>
+
+							<h3>Parameters</h3>
+						 	<dl>
+								<dt>functionRef</dt>
+								<dd>Filtering function to be applied to each item. This function receives an index reference to the current item.</dd>
+							</dl>
+
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									var oddItems = $("div").filter( function(idx) {<br>
+										return (idx % 2 === 1);<br>
+									});
+								</code>
+							</p>
+							
+							<h2 id="every"><code>every(functionRef)</code></h2>
+							<p>Runs a function on each item in the element collection, while it returns true.</p>
+							<h3>Return value</h3>
+							<p>Boolean value, true if <i>all</i> items return true on the function, false otherwise.</p>
+
+							<h3>Parameters</h3>
+						 	<dl>
+								<dt>functionRef</dt>
+								<dd>Function to be applied to each item. Returns either true or false. This function receives an index reference to the current item.</dd>
+							</dl>
+
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									var allHaveChildren = $("div").every( function(idx) {<br>
+										return (this.childNodes.length > 0);<br>
+									});
+								</code>
+							</p>
+							
+							<h2 id="some"><code>some(functionRef)</code></h2>
+							<p>Runs a function on each item in the element collection, while it returns false.</p>
+							<h3>Return value</h3>
+							<p>Boolean value, true if <i>some</i> items return true on the function, false otherwise.</p>
+
+							<h3>Parameters</h3>
+						 	<dl>
+								<dt>functionRef</dt>
+								<dd>Function to be applied to each item. Returns either true or false. This function receives an index reference to the current item.</dd>
+							</dl>
+
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									var someHaveChildren = $("div").some( function(idx) {<br>
+										return (this.childNodes.length > 0);<br>
 									});
 								</code>
 							</p>
@@ -235,6 +334,11 @@
 								<li><a href="#elmsByAttribute">elmsByAttribute</a></li>
 								<li><a href="#elmsByTag">elmsByTag</a></li>
 								<li><a href="#each">each</a></li>
+								<li><a href="#indexOf">indexOf</a> <sup>New</sup></li>
+								<li><a href="#map">map</a> <sup>New</sup></li>
+								<li><a href="#filter">filter</a> <sup>New</sup></li>
+								<li><a href="#every">every</a> <sup>New</sup></li>
+								<li><a href="#some">some</a> <sup>New</sup></li>
 								<li><a href="#first">first</a></li>
 								<li><a href="#end">end</a></li>
 							</ul>

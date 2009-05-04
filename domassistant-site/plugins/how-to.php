@@ -7,16 +7,16 @@
 	<div id="container">
 			<div id="header">
 				<div id="header-content">
-					<h1><a href="/"><span></span>DOMAssistant</a></h1>
+					<h1><a href="../"><span></span>DOMAssistant</a></h1>
 					<div id="navigation">
 						<ul>
-							<li><a href="/">Home</a>/</li>
-							<li><a href="/download">Download</a>/</li>
-							<li><a href="/documentation">Documentation</a>/</li>
-							<li><a href="/plugins" class="selected">Plugins</a>/</li>
-							<li><a href="/discussion-support">Discussion &amp; Support</a>/</li>
-							<li><a href="/about">About</a>/</li>
-							<li class="last"><a href="/blog">Blog</a></li>
+							<li><a href="../">Home</a>/</li>
+							<li><a href="../download">Download</a>/</li>
+							<li><a href="../documentation">Documentation</a>/</li>
+							<li><a href="../plugins" class="selected">Plugins</a>/</li>
+							<li><a href="../discussion-support">Discussion &amp; Support</a>/</li>
+							<li><a href="../about">About</a>/</li>
+							<li class="last"><a href="../blog">Blog</a></li>
 						</ul>
 					</div>
 				</div>
@@ -36,7 +36,7 @@
 							
 							<h2>Using an init method</h2>
 							<p>If you have a method in your plugin named <code>init</code>, it will automatically be called once your public methods have been applied to the <code>$</code> method. Please note that this doesn't necessarily mean that the document has finished loading, but just that your methods have been incorporated in the DOMAssistant functionality.</p>
-							<p>If you want to ensure that the document has finished loading before you do anything, use the <a href="/documentation/DOMAssistantLoad-module.php#DOMReady"><code>DOMReady</code></a> to accomplish that.</p>
+							<p>If you want to ensure that the document has finished loading before you do anything, use the <a href="../documentation/DOMAssistantLoad-module.php#DOMReady"><code>DOMReady</code></a> to accomplish that.</p>
 							
 							<h2>Eventual collision of method names</h2>
 							<p>Say for example that you have named a method something which already exists in the core DOMAssistant or any other plugin included in the page before your plugin. What happens then?</p>
@@ -121,16 +121,16 @@ DOMAssistant.MyPlugIn = function () {
 */
 DOMAssistant.attach(DOMAssistant.MyPlugIn);</code></pre>
 							<h2>Download an example</h2>
-							<p>Just <a href="/plugins/categories/example/DOMAssistantMyPlugIn.js">download an example plugin</a> and you're ready to get going creating fantastic DOMAssistant plugins!</p>
+							<p>Just <a href="./categories/example/DOMAssistantMyPlugIn.js">download an example plugin</a> and you're ready to get going creating fantastic DOMAssistant plugins!</p>
 						</div>
 						
 						<div id="sidebar">
 							<h3>Plugins options</h3>
 							<ul>
-								<li><a href="/plugins">All plugin categories</a></li>
-								<li><a href="/plugins/how-to.php">How to create a plugin</a></li>
-								<li><a href="/plugins/categories/example">Download plugin example</a></li>
-								<li><a href="/plugins/submit-plugin.php">Submit a plugin</a></li>
+								<li><a href="./">All plugin categories</a></li>
+								<li><a href="./how-to.php">How to create a plugin</a></li>
+								<li><a href="./categories/example">Download plugin example</a></li>
+								<li><a href="./submit-plugin.php">Submit a plugin</a></li>
 							</ul>
 						</div>
 					</div>

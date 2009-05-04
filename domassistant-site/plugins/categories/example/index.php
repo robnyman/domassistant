@@ -7,16 +7,16 @@
 	<div id="container">
 			<div id="header">
 				<div id="header-content">
-					<h1><a href="/"><span></span>DOMAssistant</a></h1>
+					<h1><a href="../../../"><span></span>DOMAssistant</a></h1>
 					<div id="navigation">
 						<ul>
-							<li><a href="/">Home</a>/</li>
-							<li><a href="/download">Download</a>/</li>
-							<li><a href="/documentation">Documentation</a>/</li>
-							<li><a href="/plugins" class="selected">Plugins</a>/</li>
-							<li><a href="/discussion-support">Discussion &amp; Support</a>/</li>
-							<li><a href="/about">About</a>/</li>
-							<li class="last"><a href="/blog">Blog</a></li>
+							<li><a href="../../../">Home</a>/</li>
+							<li><a href="../../../download">Download</a>/</li>
+							<li><a href="../../../documentation">Documentation</a>/</li>
+							<li><a href="../../../plugins" class="selected">Plugins</a>/</li>
+							<li><a href="../../../discussion-support">Discussion &amp; Support</a>/</li>
+							<li><a href="../../../about">About</a>/</li>
+							<li class="last"><a href="../../../blog">Blog</a></li>
 						</ul>
 					</div>
 				</div>
@@ -47,7 +47,7 @@
 									</tr>
 									<tr>
 										<th>Prerequisites:</th>
-										<td>Complete DOMAssistant (DOMAssistantComplete.js/DOMAssistantComressed.js) or the <a href="/documentation/DOMAssistantCore-module.php">DOMAssistant Core module</a>.</td>
+										<td>Complete DOMAssistant (DOMAssistantComplete.js/DOMAssistantComressed.js) or the <a href="../../../documentation/DOMAssistantCore-module.php">DOMAssistant Core module</a>.</td>
 									</tr>
 								</table>
 							</div>
@@ -56,10 +56,10 @@
 						<div id="sidebar">
 							<h3>Plugins options</h3>
 							<ul>
-								<li><a href="/plugins">All plugin categories</a></li>
-								<li><a href="/plugins/how-to.php">How to create a plugin</a></li>
-								<li><a href="/plugins/categories/example">Download plugin example</a></li>
-								<li><a href="/plugins/submit-plugin.php">Submit a plugin</a></li>
+								<li><a href="../../">All plugin categories</a></li>
+								<li><a href="../../how-to.php">How to create a plugin</a></li>
+								<li><a href="../../categories/example">Download plugin example</a></li>
+								<li><a href="../../submit-plugin.php">Submit a plugin</a></li>
 							</ul>	
 						</div>
 					</div>

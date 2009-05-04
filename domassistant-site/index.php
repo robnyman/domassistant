@@ -7,16 +7,16 @@
 	<div id="container">
 			<div id="header">
 				<div id="header-content">
-					<h1><a href="/"><span></span>DOMAssistant</a></h1>
+					<h1><a href="./"><span></span>DOMAssistant</a></h1>
 					<div id="navigation">
 						<ul>
-							<li><a href="/" class="selected">Home</a>/</li>
-							<li><a href="/download">Download</a>/</li>
-							<li><a href="/documentation">Documentation</a>/</li>
-							<li><a href="/plugins">Plugins</a>/</li>
-							<li><a href="/discussion-support">Discussion &amp; Support</a>/</li>
-							<li><a href="/about">About</a>/</li>
-							<li class="last"><a href="/blog">Blog</a></li>
+							<li><a href="./" class="selected">Home</a>/</li>
+							<li><a href="./download">Download</a>/</li>
+							<li><a href="./documentation">Documentation</a>/</li>
+							<li><a href="./plugins">Plugins</a>/</li>
+							<li><a href="./discussion-support">Discussion &amp; Support</a>/</li>
+							<li><a href="./about">About</a>/</li>
+							<li class="last"><a href="./blog">Blog</a></li>
 						</ul>
 					</div>
 				</div>
@@ -46,7 +46,7 @@
 							<p>DOMAssistant is completely modular, in the sense that it is only dependent on one single core JavaScript file, <code>DOMAssistant.js</code>. All other modules are optional, and you can choose to only use the ones you find necessary in your application. The reasoning behind this is to make the file size as small as possible, while at the same time addressing any potential bandwidth issues.</p>
 							
 							<h2>Multi-language documentation</h2>
-							<p>The <a href="http://www.domassistant.com/documentation/">documentation</a> is offered online in English, and there is also complete downloadable documentation available in English, French and Chinese.</p>
+							<p>The <a href="./documentation">documentation</a> is offered online in English, and there is also complete downloadable documentation available in English, French and Chinese.</p>
 						</div>
 						
 						<div id="sidebar">
@@ -66,9 +66,9 @@
 							</dl>
 							
 							<h2>Fastest performance</h2>
-							<p>DOMAssistant has the <a href="http://www.domassistant.com/slickspeed/">overall fastest and most accurate CSS selector performance</a>.</p>
+							<p>DOMAssistant has the <a href="./slickspeed/">overall fastest and most accurate CSS selector performance</a>.</p>
 							<h2>Best Unicode support</h2>
-							<p>DOMAssistant is the only JavaScript library with <a href="http://www.domassistant.com/slickspeed-unicode/">complete Unicode support</a>!</p>
+							<p>DOMAssistant is the only JavaScript library with <a href="./slickspeed-unicode/">complete Unicode support</a>!</p>
 						</div>
 					</div>
 					<?php include "get-your-copy.php" ?>

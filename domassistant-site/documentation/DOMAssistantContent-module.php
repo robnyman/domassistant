@@ -7,16 +7,16 @@
 	<div id="container">
 			<div id="header">
 				<div id="header-content">
-					<h1><a href="/"><span></span>DOMAssistant</a></h1>
+					<h1><a href="../"><span></span>DOMAssistant</a></h1>
 					<div id="navigation">
 						<ul>
-							<li><a href="/">Home</a>/</li>
-							<li><a href="/download">Download</a>/</li>
-							<li><a href="/documentation" class="selected">Documentation</a>/</li>
-							<li><a href="/plugins">Plugins</a>/</li>
-							<li><a href="/discussion-support">Discussion &amp; Support</a>/</li>
-							<li><a href="/about">About</a>/</li>
-							<li class="last"><a href="/blog">Blog</a></li>
+							<li><a href="../">Home</a>/</li>
+							<li><a href="../download">Download</a>/</li>
+							<li><a href="../documentation" class="selected">Documentation</a>/</li>
+							<li><a href="../plugins">Plugins</a>/</li>
+							<li><a href="../discussion-support">Discussion &amp; Support</a>/</li>
+							<li><a href="../about">About</a>/</li>
+							<li class="last"><a href="../blog">Blog</a></li>
 						</ul>
 					</div>
 				</div>
@@ -30,7 +30,7 @@
 							<p>The DOMAssistantContent module offers various methods for adding and removing content and elements to the page.</p>
 
 							<h2 id="prev"><code>prev()</code></h2>
-							<p>Gets a reference to the previous HTML element, automatically bypassing any text nodes that might in between.</p>
+							<p>Gets a reference to the previous HTML element, automatically bypassing any text nodes that might be in between.</p>
 							<h3>Parameters</h3>
 							<p>None.</p>
 							
@@ -45,7 +45,7 @@
 							</p>
 
 							<h2 id="next"><code>next()</code></h2>
-							<p>Gets a reference to the next HTML element, automatically bypassing any text nodes that might in between.</p>
+							<p>Gets a reference to the next HTML element, automatically bypassing any text nodes that might be in between.</p>
 							<h3>Parameters</h3>
 							<p>None.</p>
 							
@@ -130,7 +130,7 @@
 							<h3>Parameters</h3>
 							<dl>
 								<dt>content</dt>
-								<dd>Can either be a string, which will then be applied using <code>innerHTML</code>, or an HTML object that will be applied using <code>appendChild</code>.</dd>
+								<dd>Can either be a string, a number, or an HTML object.</dd>
 							</dl>
 							
 							<h3>Return value</h3>
@@ -152,7 +152,7 @@
 							<h3>Parameters</h3>
 							<dl>
 								<dt>newContent</dt>
-								<dd>Can either be a string, which will then be applied using <code>innerHTML</code>, or a HTML object that will be applied using <code>appendChild</code>.</dd>
+								<dd>Can either be a string, a number, or a HTML object.</dd>
 							</dl>
 
 							<h3>Return value</h3>

@@ -7,16 +7,16 @@
 	<div id="container">
 			<div id="header">
 				<div id="header-content">
-					<h1><a href="/"><span></span>DOMAssistant</a></h1>
+					<h1><a href="../"><span></span>DOMAssistant</a></h1>
 					<div id="navigation">
 						<ul>
-							<li><a href="/">Home</a>/</li>
-							<li><a href="/download">Download</a>/</li>
-							<li><a href="/documentation">Documentation</a>/</li>
-							<li><a href="/plugins">Plugins</a>/</li>
-							<li><a href="/discussion-support">Discussion &amp; Support</a>/</li>
-							<li><a href="/about" class="selected">About</a>/</li>
-							<li class="last"><a href="/blog">Blog</a></li>
+							<li><a href="../">Home</a>/</li>
+							<li><a href="../download">Download</a>/</li>
+							<li><a href="../documentation">Documentation</a>/</li>
+							<li><a href="../plugins">Plugins</a>/</li>
+							<li><a href="../discussion-support">Discussion &amp; Support</a>/</li>
+							<li><a href="../about" class="selected">About</a>/</li>
+							<li class="last"><a href="../blog">Blog</a></li>
 						</ul>
 					</div>
 				</div>
@@ -49,9 +49,10 @@
 							<p>DOMAssistant has been tested and verified to work in these web browsers, but for most web browsers, it is fair to assume a long backwards compatibility:</p>
 							<ul>
 								<li>Internet Explorer 5.5+</li>
-								<li>Firefox 1.5+</li>
-								<li>Safari 2</li>
-								<li>Opera 9</li>
+								<li>Firefox 1+</li>
+								<li>Chrome 1+</li>
+								<li>Safari 3+</li>
+								<li>Opera 9.5+</li>
 							</ul>
 							
 							<h2 id="adaptions">DOMAssistant Adaptions</h2>
