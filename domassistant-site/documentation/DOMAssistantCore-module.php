@@ -173,6 +173,36 @@
 								</code>
 							</p>
 							
+							<h2 id="prev"><code>prev()</code></h2>
+							<p>Gets a reference to the previous HTML element, automatically bypassing any text nodes that might be in between.</p>
+							<h3>Parameters</h3>
+							<p>None.</p>
+							
+							<h3>Return value</h3>
+							<p>Element's previous sibling element.</p>
+
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									$("container").prev();
+								</code>
+							</p>
+
+							<h2 id="next"><code>next()</code></h2>
+							<p>Gets a reference to the next HTML element, automatically bypassing any text nodes that might be in between.</p>
+							<h3>Parameters</h3>
+							<p>None.</p>
+							
+							<h3>Return value</h3>
+							<p>Element's next sibling element.</p>
+
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									$("container").next();
+								</code>
+							</p>
+
 							<h2 id="each"><code>each(functionRef)</code></h2>
 							<p>For running a function on each of the items in a returned array element reference collection.</p>
 							<h3>Return value</h3>
@@ -334,6 +364,8 @@
 								<li><a href="#elmsByClass">elmsByClass</a></li>
 								<li><a href="#elmsByAttribute">elmsByAttribute</a></li>
 								<li><a href="#elmsByTag">elmsByTag</a></li>
+								<li><a href="#prev">prev</a></li>
+								<li><a href="#next">next</a></li>
 								<li><a href="#each">each</a></li>
 								<li><a href="#indexOf">indexOf</a> <sup>New</sup></li>
 								<li><a href="#map">map</a> <sup>New</sup></li>

@@ -126,12 +126,12 @@ DOMAssistant.Events = function () {
 		relayEvent: function (evt, selector, fn) {
 			return DOMAssistant.Events.addEvent.call(this, evt, function(e) {
 				e = e || event;
-				var target = e.target || e.srcElement, args = arguments;
-				this.cssSelect(selector).each( function() {
-					if (this.contains? this.contains(target) : !!((this.compareDocumentPosition(target) || 16) & 16)) {
-						return fn.apply(this, args);;
+				var target = e.target || e.srcElement, args = arguments, i = 0, elm, elms = this.cssSelect(selector);
+				while ((elm = elms[i++])) {
+					if (elm.contains? elm.contains(target) : !!((elm.compareDocumentPosition(target) || 16) & 16)) {
+						return fn.apply(elm, args);
 					}
-				});
+				}
 			}, true);
 		},
 
@@ -140,17 +140,11 @@ DOMAssistant.Events = function () {
 		},
 
 		preventDefault : function (evt) {
-			return (DOMAssistant.Events.preventDefault = (evt && evt.preventDefault)
-				? function (evt) { evt.preventDefault(); }
-				: function (evt) { event.returnValue = false; }
-			)(evt);
+			return (DOMAssistant.Events.preventDefault = (evt && evt.preventDefault) ? function (evt) { evt.preventDefault(); } : function (evt) { event.returnValue = false; })(evt);
 		},
 
 		cancelBubble : function (evt) {
-			return (DOMAssistant.Events.cancelBubble = (evt && evt.stopPropagation)
-				? function (evt) { evt.stopPropagation(); }
-				: function (evt) { event.cancelBubble = true; }
-			)(evt);
+			return (DOMAssistant.Events.cancelBubble = (evt && evt.stopPropagation) ? function (evt) { evt.stopPropagation(); } : function (evt) { event.cancelBubble = true; })(evt);
 		}
 	};
 }();

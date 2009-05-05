@@ -2,8 +2,10 @@ Version 2.8:
 =============
 - [Add] Event delegation through relayEvent() and unrelayEvent(), with support for focus and blur
 - [Add] New core methods: indexOf(), map(), filter(), every() and some()
-- [Chg] Callback function in each() gains an index param, to be consistent with the new methods
+- [Chg] Callback function in each() receives an index reference, to be consistent with the new methods
 - [Chg] Events fired via triggerEvent() now bubble
+- [Chg] Moved prev() and next() methods to the core module
+- [Fix] Comment nodes not skipped in IE5.5
 - [Fix] Ajax does not work on local files
 - [Fix] Ajax timeouts sometimes not detected in IE
 - [Fix] setStyle("opacity") does not work in IE without hasLayout

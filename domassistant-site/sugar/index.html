@@ -102,6 +102,17 @@ SugarTest()
       this.assertEqual('abc_2', elm.innerText || elm.textContent);
       this.assertNull($$('03abc'));
     })
+    .it('All methods attached to elements correctly', function() {
+      var methods = 'each first end indexOf map filter every some prev next cssSelect elmsByClass elmsByAttribute elmsByTag ajax get post load addClass removeClass replaceClass hasClass setStyle getStyle create setAttributes addContent replaceContent replace remove triggerEvent addEvent removeEvent relayEvent unrelayEvent preventDefault cancelBubble'.split(' ');
+      var elms = $('div');
+      for (var i=0; i<methods.length; i++) {
+	      this.assertRespondsTo(methods[i], elms);
+      }
+      var elm = $$('01abc');
+      for (var i=8; i<methods.length; i++) {
+	      this.assertRespondsTo(methods[i], elm);
+      }
+    })
     .describe('CSS -')
     .it('Class manipulation', function() {
       var elm = $(document.getElementById('01abc'));

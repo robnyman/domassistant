@@ -7,18 +7,6 @@ DOMAssistant.Content = function () {
 			DOMAssistant.setCache(false);
 		},
 
-		prev : function () {
-			var prevSib = this;
-			while ((prevSib = prevSib.previousSibling) && prevSib.nodeType !== 1) {}
-			return $$(prevSib);
-		},
-
-		next : function () {
-			var nextSib = this;
-			while ((nextSib = nextSib.nextSibling) && nextSib.nodeType !== 1) {}
-			return $$(nextSib);
-		},
-
 		create : function (name, attr, append, content) {
 			var elm = $$(document.createElement(name));
 			if (attr) {

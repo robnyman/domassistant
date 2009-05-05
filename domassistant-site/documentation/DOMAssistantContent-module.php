@@ -29,36 +29,6 @@
 							<h1>DOMAssistantContent Module</h1>
 							<p>The DOMAssistantContent module offers various methods for adding and removing content and elements to the page.</p>
 
-							<h2 id="prev"><code>prev()</code></h2>
-							<p>Gets a reference to the previous HTML element, automatically bypassing any text nodes that might be in between.</p>
-							<h3>Parameters</h3>
-							<p>None.</p>
-							
-							<h3>Return value</h3>
-							<p>Element's previous sibling element.</p>
-
-							<h3>Example calls</h3>
-							<p class="code">
-								<code>
-									$("container").prev();
-								</code>
-							</p>
-
-							<h2 id="next"><code>next()</code></h2>
-							<p>Gets a reference to the next HTML element, automatically bypassing any text nodes that might be in between.</p>
-							<h3>Parameters</h3>
-							<p>None.</p>
-							
-							<h3>Return value</h3>
-							<p>Element's next sibling element.</p>
-
-							<h3>Example calls</h3>
-							<p class="code">
-								<code>
-									$("container").next();
-								</code>
-							</p>
-
 							<h2 id="create"><code>create(name, attr, append, content)</code></h2>
 							<p>Creates an element, and optionally sets attributes on it, appends it to the current element and adds content to it.</p>
 							<h3>Parameters</h3>
@@ -211,8 +181,6 @@
 						<div id="sidebar">
 							<h3>DOMAssistantContent methods</h3>
 							<ul>
-								<li><a href="#prev">prev</a></li>
-								<li><a href="#next">next</a></li>
 								<li><a href="#create">create</a></li>
 								<li><a href="#setAttributes">setAttributes</a></li>
 								<li><a href="#addContent">addContent</a></li>
