@@ -43,6 +43,11 @@ var DOMAssistant = function () {
 		var parent = node.parentNode;
 		return ancestor === document || parent === ancestor || (parent !== document && isDescendant(parent, ancestor));
 	},
+	navigate = function (node, direction, checkTagName) {
+		var oldName = node.tagName;
+		while ((node = node[direction + "Sibling"]) && (node.nodeType !== 1 || (checkTagName? node.tagName !== oldName : node.tagName === "!"))) {}
+		return node;
+	},
 	def = function (obj) {
 		return typeof obj !== "undefined";
 	};
@@ -68,6 +73,8 @@ var DOMAssistant = function () {
 		def : def,
 		allMethods : [],
 		publicMethods : [
+			"prev",
+			"next",
 			"cssSelect",
 			"elmsByClass",
 			"elmsByAttribute",
@@ -259,6 +266,14 @@ var DOMAssistant = function () {
 			return elm;
 		},
 		
+		prev : function () {
+			return DOMAssistant.$$(navigate(this, "previous"));
+		},
+
+		next : function () {
+			return DOMAssistant.$$(navigate(this, "next"));
+		},
+
 		getSequence : function (expression) {
 			var start, add = 2, max = -1, modVal = -1,
 				pseudoVal = regex.nth.exec(expression.replace(/^0n\+/, "").replace(/^2n$/, "even").replace(/^2n+1$/, "odd"));
@@ -353,21 +368,10 @@ var DOMAssistant = function () {
 			}
 			function getElementsByPseudo (previousMatch, pseudoClass, pseudoValue) {
 				prevParents = [];
-				var pseudo = pseudoClass.split("-"), matchingElms = [], idx = 0, checkNodeName, recur;
-				var prop = (checkNodeName = /\-of\-type$/.test(pseudoClass))? "nodeName" : "nodeType";
-				function getPrevElm(elm) {
-					var val = checkNodeName? elm.nodeName : 1;
-					while ((elm = elm.previousSibling) && elm[prop] !== val) {}
-					return elm;
-				}
-				function getNextElm(elm) {
-					var val = checkNodeName? elm.nodeName : 1;
-					while ((elm = elm.nextSibling) && elm[prop] !== val) {}
-					return elm;
-				}
-				var match = {
-					first: function(el) { return !getPrevElm(el); },
-					last: function(el) { return !getNextElm(el); },
+				var pseudo = pseudoClass.split("-"), matchingElms = [], idx = 0, checkNodeName = /\-of\-type$/.test(pseudoClass), recur,
+				match = {
+					first: function(el) { return !navigate(el, "previous", checkNodeName); },
+					last: function(el) { return !navigate(el, "next", checkNodeName); },
 					empty: function(el) { return !el.firstChild; },
 					enabled: function(el) { return !el.disabled && el.type !== "hidden"; },
 					disabled: function(el) { return el.disabled; },
@@ -393,7 +397,7 @@ var DOMAssistant = function () {
 						while ((previous=previousMatch[idx++])) {
 							prevParent = previous.parentNode;
 							if (prevParent !== kParent) {
-								if (!getPrevElm(previous) && !getNextElm(previous)) {
+								if (match.first(previous) && match.last(previous)) {
 									matchingElms[matchingElms.length] = previous;
 								}
 								kParent = prevParent;
@@ -416,7 +420,7 @@ var DOMAssistant = function () {
 										childElm = prevParent[direction[0]];
 										while (childElm && (sequence.max < 0 || iteratorNext <= sequence.max)) {
 											var c = childElm.nodeName;
-											if ((checkNodeName && c === p) || (!checkNodeName && childElm.nodeType === 1)) {
+											if ((checkNodeName && c === p) || (!checkNodeName && childElm.nodeType === 1 && c !== "!")) {
 												if (++childCount === iteratorNext) {
 													if (c === p) { matchingElms[matchingElms.length] = childElm; }
 													iteratorNext += sequence.add;
@@ -507,8 +511,7 @@ var DOMAssistant = function () {
 										}
 										break;
 									case "+":
-										while ((prevRef = prevRef.nextSibling) && prevRef.nodeType !== 1) {}
-										if (prevRef) {
+										if ((prevRef = navigate(prevRef, "next"))) {
 											if ((idElm && idElm[0] === prevRef) || (!idElm && (!nextTag || nextRegExp.test(prevRef.nodeName)))) {
 												matchingElms[matchingElms.length] = prevRef;
 											}
@@ -1057,18 +1060,6 @@ DOMAssistant.Content = function () {
 			DOMAssistant.setCache(false);
 		},
 
-		prev : function () {
-			var prevSib = this;
-			while ((prevSib = prevSib.previousSibling) && prevSib.nodeType !== 1) {}
-			return $$(prevSib);
-		},
-
-		next : function () {
-			var nextSib = this;
-			while ((nextSib = nextSib.nextSibling) && nextSib.nodeType !== 1) {}
-			return $$(nextSib);
-		},
-
 		create : function (name, attr, append, content) {
 			var elm = $$(document.createElement(name));
 			if (attr) {
@@ -1311,12 +1302,12 @@ DOMAssistant.Events = function () {
 		relayEvent: function (evt, selector, fn) {
 			return DOMAssistant.Events.addEvent.call(this, evt, function(e) {
 				e = e || event;
-				var target = e.target || e.srcElement, args = arguments;
-				this.cssSelect(selector).each( function() {
-					if (this.contains? this.contains(target) : !!((this.compareDocumentPosition(target) || 16) & 16)) {
-						return fn.apply(this, args);;
+				var target = e.target || e.srcElement, args = arguments, i = 0, elm, elms = this.cssSelect(selector);
+				while ((elm = elms[i++])) {
+					if (elm.contains? elm.contains(target) : !!((elm.compareDocumentPosition(target) || 16) & 16)) {
+						return fn.apply(elm, args);
 					}
-				});
+				}
 			}, true);
 		},
 
@@ -1325,17 +1316,11 @@ DOMAssistant.Events = function () {
 		},
 
 		preventDefault : function (evt) {
-			return (DOMAssistant.Events.preventDefault = (evt && evt.preventDefault)
-				? function (evt) { evt.preventDefault(); }
-				: function (evt) { event.returnValue = false; }
-			)(evt);
+			return (DOMAssistant.Events.preventDefault = (evt && evt.preventDefault) ? function (evt) { evt.preventDefault(); } : function (evt) { event.returnValue = false; })(evt);
 		},
 
 		cancelBubble : function (evt) {
-			return (DOMAssistant.Events.cancelBubble = (evt && evt.stopPropagation)
-				? function (evt) { evt.stopPropagation(); }
-				: function (evt) { event.cancelBubble = true; }
-			)(evt);
+			return (DOMAssistant.Events.cancelBubble = (evt && evt.stopPropagation) ? function (evt) { evt.stopPropagation(); } : function (evt) { event.cancelBubble = true; })(evt);
 		}
 	};
 }();
