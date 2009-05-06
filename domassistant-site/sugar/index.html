@@ -192,6 +192,14 @@ SugarTest()
       this.assertEqual('11px', elm.getStyle('font-size'));
       this.assertEqual('1px', elm.getStyle('border-top-width'));
       this.assertEqual('dotted', elm.getStyle('border-left-style'));
+      
+      // Box dimensions - does not work correctly. A 'real' dimensions module is needed.
+      /*
+      var newDiv = $(document.body).create('div');
+      newDiv.setStyle({position:'absolute', display:'block', top:'0px', left: '0px', width: '105px', height: '58px'});
+      this.assertEqual('105px', newDiv.getStyle('width'));
+      this.assertEqual('58px', newDiv.getStyle('height'));
+      */
     })
     .end()
     .describe('Content manipulation -')
@@ -381,7 +389,7 @@ SugarTest()
       .it('Simple post', function() {
       	this.ctx.innerHTML = '';
       	this.assertEqual('', this.ctx.innerHTML);
-      	this.ctx.post('assets/ajax.php', function(response) {
+      	this.ctx.post('assets/ajax.php?arg=abc', function(response) {
       		this.innerHTML = response;
       	});
       	this.wait(this.ajaxtimeout, function() {
