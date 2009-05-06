@@ -67,13 +67,11 @@ DOMAssistant.AJAX = function () {
 		},
 		
 		get : function (url, callback, addToContent) {
-			var ajaxObj = createAjaxObj(url, "GET", callback, addToContent);
-			return DOMAssistant.AJAX.makeCall.call(this, ajaxObj);
+			return DOMAssistant.AJAX.makeCall.call(this, createAjaxObj(url, "GET", callback, addToContent));
 		},
 		
 		post : function (url, callback) {
-			var ajaxObj = createAjaxObj(url, "POST", callback);
-			return DOMAssistant.AJAX.makeCall.call(this, ajaxObj);
+			return DOMAssistant.AJAX.makeCall.call(this, createAjaxObj(url, "POST", callback));
 		},
 		
 		load : function (url, addToContent) {
@@ -100,9 +98,8 @@ DOMAssistant.AJAX = function () {
 					XMLHttp.setRequestHeader("AJAX", "true");
 					XMLHttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 					if (method === "POST") {
-						var contentLength = params? params.length : 0;
 						XMLHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-						XMLHttp.setRequestHeader("Content-length", contentLength);
+						XMLHttp.setRequestHeader("Content-length", params? params.length : 0);
 						if (XMLHttp.overrideMimeType) {
 							XMLHttp.setRequestHeader("Connection", "close");
 						}

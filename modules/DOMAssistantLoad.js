@@ -29,16 +29,14 @@ DOMAssistant.DOMLoad = function () {
 	/* Internet Explorer */
 	/*@cc_on
 	@if (@_win32 || @_win64)
-		if (document.getElementById) {
-			document.write("<script id=\"ieScriptLoad\" defer src=\"//:\"><\/script>");
-			document.getElementById("ieScriptLoad").onreadystatechange = function() {
-				if (this.readyState === "complete") {
-					DOMHasLoaded();
-				}
-			};
-		}
+		document.write("<script id=\"ieScriptLoad\" defer src=\"//:\"><\/script>");
+		document.getElementById("ieScriptLoad").onreadystatechange = function() {
+			if (this.readyState === "complete") {
+				DOMHasLoaded();
+			}
+		};
 	@end @*/
-	/* Mozilla/Opera 9 */
+	/* Mozilla, Chrome, Opera */
 	if (document.addEventListener) {
 		document.addEventListener("DOMContentLoaded", DOMHasLoaded, false);
 	}
