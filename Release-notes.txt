@@ -4,6 +4,7 @@ Version 2.8:
 - [Add] New core methods: indexOf(), map(), filter(), every() and some()
 - [Chg] Callback function in each() receives an index reference, to be consistent with the new methods
 - [Chg] Events fired via triggerEvent() now bubble
+- [Chg] Bubbling events can be stopped either by calling DOMAssistant.cancelBubble or returning false at the event handler
 - [Chg] Moved prev() and next() methods to the core module
 - [Fix] Comment nodes not skipped in IE5.5
 - [Fix] Ajax does not work on local files
@@ -14,6 +15,7 @@ Version 2.8:
 - [Fix] addContent when used with strings remove events and attributes
 - [Fix] replaceClass does not work in some cases
 - [Fix] Certain selectors sometimes return less elements than expected in IE
+- [Fix] removeEvent fails in older versions of Opera when multiple handlers exist for an event on an element
 - [Fix] Miscellaneous performance improvement
 
 Version 2.7.4:

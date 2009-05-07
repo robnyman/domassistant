@@ -40,7 +40,7 @@ DOMAssistant.Events = function () {
 			};
 			if (this.events && this.events[evt]) {
 				for (var i=0, iL=this.events[evt].length; i<iL; i++) {
-					this.events[evt][i].call(this, event);
+					if (this.events[evt][i].call(this, event) === false) { event.bubbles = false; }
 				}
 			}
 			else if (typeof this["on" + evt] === "function") {
@@ -94,6 +94,7 @@ DOMAssistant.Events = function () {
 						eventReturn = eventColl[i].call(this, currentEvt);
 					}
 				}
+				if (eventReturn === false) { DOMAssistant.cancelBubble(currentEvt); }
 				return eventReturn;
 			}
 		},
@@ -105,7 +106,6 @@ DOMAssistant.Events = function () {
 				for (var fn, i=eventColl.length-1; i>=0; i--) {
 					fn = func || eventColl[i];
 					if (eventColl[i] === fn && (!relay && !fn.relay || relay && fn.relay)) {
-						delete eventColl[i];
 						eventColl.splice(i, 1);
 						if (fn.attachedElements) {
 							fn.attachedElements[evt + this.uniqueHandlerId] = null;
