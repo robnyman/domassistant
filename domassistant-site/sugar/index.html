@@ -792,6 +792,22 @@ SugarTest()
 		this.assertEqual(1, normal);
 		this.assertEqual(3, inline);
   	})
+    .it('Remove event handlers from within themselves', function() {
+        var elm = $$('test_06'), count = 0;
+        var add = function () {
+        	count++;
+        	
+        };
+        elm.addEvent('customEvent', function() {
+        	count++;
+        	this.removeEvent('customEvent');
+        });
+        elm.triggerEvent('customEvent');
+        this.assertEqual(1, count);
+        elm.triggerEvent('customEvent');
+        this.assertEqual(1, count);
+        this.assertEqual(0, elm.events['customEvent'].length);
+  	})
   	/*
   	// DOMAssistant does not support this feature as of v2.8
     .it('remove events without parameters', function() {
