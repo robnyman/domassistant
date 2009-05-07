@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>DOMAssistant Unit Test</title>
+  <title>DOMAssistant Test Suite</title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <link rel="stylesheet" href="assets/unittest.css" type="text/css" />
   <!--[if lt IE 6]>
@@ -28,14 +28,14 @@
 <div id="content">
 
   <div id="header">
-    <h1>DOMAssistant 2.8 - Unit Test</h1>
+    <h1>DOMAssistant 2.8 Test Suite</h1>
     <!--
     <p>
       This test is built with <a href="http://sugartest.scriptia.net/">SugarTest</a>.
     </p>
     -->
     <p>
-    	<strong>Verified on:</strong> IE 5.5+, Firefox 1+, Opera 9.5+, Chrome 1+, Safari 3+, Netscape 7.2+
+    	<strong>Verified on:</strong> IE 5.5+, Firefox 1+, Opera 9+, Chrome 1+, Safari 3+, Netscape 7.2+
     </p>
   </div>
 
@@ -69,7 +69,7 @@
 		<ul>
 			<li>one</li>
 			<li>two</li>
-			<li>three</li>
+			<li onclick="inline_add();">three</li>
 		<ul>
 		<span id="outer" class"delegation">
 			<span id="inner">
@@ -87,6 +87,10 @@
 
 <script type="text/javascript">
 // <![CDATA[
+var inline = 0,
+	inline_add = function() {
+		inline++;
+	};
 
 SugarTest()
   .before(function() {
@@ -180,9 +184,9 @@ SugarTest()
       this.assertEqual(0, elm.getStyle('opacity'));
       elm.setStyle('font-size', '15px');
       this.assertEqual('15px', elm.getStyle('font-size'));
-      elm.setStyle({ 'height': '40px', 'font-size': '14px' });
+      elm.setStyle({ 'text-decoration': 'underline', 'font-size': '14px' });
       this.assertEqual('14px', elm.getStyle('font-size'));
-      this.assertEqual('40px', elm.getStyle('height'));
+      this.assertEqual('underline', elm.getStyle('text-decoration'));
       elm.setStyle({ 'float': 'right', 'border-top-width': '2px', 'opacity': 0.23 });
       this.assertEqual('2px', elm.getStyle('border-top-width'));
       this.assertEqual('right', elm.getStyle('float'));
@@ -594,8 +598,18 @@ SugarTest()
 			DOMAssistant.cancelBubble(evt);
 			stopped = true;
 		}
+		function innerObserver2(evt) {
+			stopped = true;
+			return false;
+		}
         inner.addEvent('customEvent', innerObserver);
         outer.addEvent('customEvent', outerObserver);
+        span.triggerEvent('customEvent');
+      	this.assert(stopped, 'event has not stopped at inner');
+      	this.assert(!fired), 'event has wrongly triggered on outer';
+		
+		fired = stopped = false;
+        inner.removeEvent('customEvent').addEvent('customEvent', innerObserver2);
         span.triggerEvent('customEvent');
       	this.assert(stopped, 'event has not stopped at inner');
       	this.assert(!fired), 'event has wrongly triggered on outer';
@@ -690,7 +704,41 @@ SugarTest()
 		elm.unrelayEvent('blur');
 		
   	})
-    .it('Mixing normal and delegated events', function() {
+    .it('Prevent delegated events from bubbling', function() {
+        var a = 0, b = 0;
+        var add_a = function () {
+        	a++;
+        };
+        var add_b = function () {
+        	b++;
+        };
+        var add_b_cancelbubble = function (e) {
+        	b++;
+        	DOMAssistant.cancelBubble(e);
+        };
+        var add_b_return_false = function (e) {
+        	b++;
+        	return false;
+        };
+        $$('outer').relayEvent('click', 'span', add_a);
+        $$('inner').relayEvent('click', 'span', add_b);
+        
+        $$('test_06_span_01').triggerEvent('click');
+        this.assertEqual(1, b);
+        this.assertEqual(1, a);
+        
+        $$('inner').unrelayEvent('click').relayEvent('click', 'span', add_b_cancelbubble);
+        $$('test_06_span_01').triggerEvent('click');
+        this.assertEqual(2, b);
+        this.assertEqual(1, a, 'Events should not fire at outer since cancelBubble is called');
+
+        $$('inner').unrelayEvent('click').relayEvent('click', 'span', add_b_return_false);
+        $$('test_06_span_01').triggerEvent('click');
+        this.assertEqual(3, b);
+        this.assertEqual(1, a, 'Events should not fire at outer since handler returns false');
+
+  	})
+    .it('Mixing traditional, delegated and inline events', function() {
         var elm = $$('test_06'), relayed = 0, normal = 0;
         var relayed_add = function () {
         	relayed++;
@@ -723,6 +771,26 @@ SugarTest()
         this.assertEqual(3, relayed);
         this.assertEqual(2, normal);
 		
+		normal = inline = 0;
+		var li = $('#test_06 li:nth-of-type(3)');
+		li.triggerEvent('click');
+		this.assertEqual(0, normal);
+		this.assertEqual(1, inline);
+		
+		li.addEvent('click', normal_add);
+		li.triggerEvent('click');
+		this.assertEqual(1, normal);
+		this.assertEqual(2, inline);
+
+		li.removeEvent('click', normal_add);
+		li.triggerEvent('click');
+		this.assertEqual(1, normal);
+		this.assertEqual(3, inline);
+
+		li.removeEvent('click');
+		li.triggerEvent('click');
+		this.assertEqual(1, normal);
+		this.assertEqual(3, inline);
   	})
   	/*
   	// DOMAssistant does not support this feature as of v2.8

@@ -56,13 +56,13 @@
 									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCompressed-2.8.js">DOMAssistant 2.8, compressed</a><br>
 									(9kb <a href="http://en.wikipedia.org/wiki/Gzip" class="small">Gzipped</a>)
 								</dt>
-								<dd>Intended for production usage.</dd>
+								<dd>Intended for production.</dd>
 
 								<dt>
 									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantComplete-2.8.js">DOMAssistant 2.8, complete</a><br>
 									(45kb)
 								</dt>
-								<dd>Intended for learning and development usage.</dd>
+								<dd>Intended for learning and development.</dd>
 							</dl>
 							
 							<h2>Reliable & Cross-Browser</h2>

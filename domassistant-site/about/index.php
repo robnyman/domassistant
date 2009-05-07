@@ -52,7 +52,7 @@
 								<li>Firefox 1+</li>
 								<li>Chrome 1+</li>
 								<li>Safari 3+</li>
-								<li>Opera 9.5+</li>
+								<li>Opera 9+</li>
 							</ul>
 							
 							<h2 id="adaptions">DOMAssistant Adaptions</h2>

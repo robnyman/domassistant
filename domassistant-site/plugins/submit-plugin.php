@@ -32,7 +32,7 @@
 							<ul>
 								<li>It needs to be released under some sort of open source license (e.g. <a href="http://www.opensource.org/licenses/mit-license.php">MIT License</a>, <a href="http://www.gnu.org/licenses/lgpl.html">LGPL</a>).</li>
 								<li>To reach maximum compatibility, it should pass a <a href="http://www.jslint.com/">JSLint</a> validation.</li>
-								<li>You need to test that it work in the most common web browsers (IE 6+, Firefox 1.5+, Safari 3+, Opera 9.5+).</li>
+								<li>You need to test that it work in the most common web browsers (IE 6+, Firefox 1.5+, Safari 3+, Opera 9+).</li>
 								<li>Create documentation explaining the different methods, what they do and which parameters they accept.</li>
 							</ul>
 							
