@@ -999,16 +999,17 @@ DOMAssistant.CSS = function () {
 		},
 
 		hasClass : function (className) {
-			return new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i").test(this.className);
+			return (" " + this.className + " ").indexOf(className) > -1;
 		},
 
 		setStyle : function (style, value) {
+			var css = this.style;
 			if ("filters" in this && (typeof style === "string"? /opacity/i.test(style) : def(style.opacity))) {
-				this.style.zoom = 1;
-				this.style.filter = (this.style.filter || "").replace(/alpha\([^)]*\)/, "") + "alpha(opacity=" + (def(style.opacity)? style.opacity : value) * 100 + ")";
+				css.zoom = 1;
+				css.filter = (css.filter || "").replace(/alpha\([^)]*\)/, "") + "alpha(opacity=" + (def(style.opacity)? style.opacity : value) * 100 + ")";
 			}
-			if (def(this.style.cssText)) {
-				var styleToSet = this.style.cssText;
+			if (def(css.cssText)) {
+				var styleToSet = css.cssText;
 				if (typeof style === "object") {
 					for (var i in style) {
 						if (typeof i === "string") {
@@ -1019,7 +1020,7 @@ DOMAssistant.CSS = function () {
 				else {
 					styleToSet += ";" + style + ":" + value;
 				}
-				this.style.cssText = styleToSet;
+				css.cssText = styleToSet;
 			}
 			return this;
 		},
