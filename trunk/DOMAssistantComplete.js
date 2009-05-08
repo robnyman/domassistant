@@ -192,15 +192,8 @@ var DOMAssistant = function () {
 			HTMLArray.prototype[name] = function () {
 				var elmsToReturn = new HTMLArray();
 				elmsToReturn.previousSet = this;
-				var elms;
 				for (var i=0, il=this.length; i<il; i++) {
-					elms = method.apply(this[i], arguments);
-					if (!!elms && elms.constructor === Array) {
-						elmsToReturn = pushAll(elmsToReturn, elms);
-					}
-					else {
-						elmsToReturn.push(elms);
-					}
+					elmsToReturn.push(method.apply(this[i], arguments));
 				}
 				return elmsToReturn;
 			};
