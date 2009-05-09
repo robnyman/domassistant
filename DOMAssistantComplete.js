@@ -32,17 +32,6 @@ var DOMAssistant = function () {
 		quoted: /^["'](.*)["']$/,
 		nth: /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n([\+\-]\d+)?)|(\-(([1-9]\d*)?)n\+(\d+)))$/
 	},
-	contains = function (array, value) {
-		if (array.indexOf) { return array.indexOf(value) >= 0; }
-		for (var i=0, iL=array.length; i<iL; i++) {
-			if (array[i] === value) { return true; }
-		}
-		return false;
-	},
-	isDescendant = function (node, ancestor) {
-		var parent = node.parentNode;
-		return ancestor === document || parent === ancestor || (parent !== document && isDescendant(parent, ancestor));
-	},
 	navigate = function (node, direction, checkTagName) {
 		var oldName = node.tagName;
 		while ((node = node[direction + "Sibling"]) && (node.nodeType !== 1 || (checkTagName? node.tagName !== oldName : node.tagName === "!"))) {}
@@ -75,6 +64,7 @@ var DOMAssistant = function () {
 		publicMethods : [
 			"prev",
 			"next",
+			"hasChild",
 			"cssSelect",
 			"elmsByClass",
 			"elmsByAttribute",
@@ -265,6 +255,10 @@ var DOMAssistant = function () {
 
 		next : function () {
 			return DOMAssistant.$$(navigate(this, "next"));
+		},
+		
+		hasChild: function (elm, assumeInDoc) {
+			return (assumeInDoc && this === document) || this !== elm && (this.contains? this.contains(elm) : !!(this.compareDocumentPosition(elm) & 16));
 		},
 
 		getSequence : function (expression) {
@@ -478,7 +472,7 @@ var DOMAssistant = function () {
 				return matchingElms;
 			}
 			for (var a=0; (currentRule=cssRules[a]); a++) {
-				if (a && contains(cssRules.slice(0, a), currentRule)) { continue; }
+				if (a && cssRules.slice(0, a).indexOf(currentRule) > -1) { continue; }
 				prevElm = [this];
 				cssSelectors = currentRule.match(selectorSplitRegExp);
 				for (var i=0, rule; (rule=cssSelectors[i]); i++) {
@@ -540,8 +534,8 @@ var DOMAssistant = function () {
 					if (splitRule.id) {
 						var u = 0, DOMElm = document.getElementById(splitRule.id.replace(/#/, ""));
 						if (DOMElm) {
-							while (prevElm[u] && !isDescendant(DOMElm, prevElm[u])) { u++; }
-							matchingElms = (u < prevElm.length)? [DOMElm] : [];
+							while (prevElm[u] && !DOMAssistant.hasChild.call(prevElm[u], DOMElm, true)) { u++; }
+							matchingElms = u < prevElm.length? [DOMElm] : [];
 						}
 						prevElm = matchingElms;
 					}
@@ -574,7 +568,7 @@ var DOMAssistant = function () {
 							if (elmClass && elmClass.length) {
 								elmClass = elmClass.split(" ");
 								for (var o=0, ol=allClasses.length; o<ol; o++) {
-									if (!contains(elmClass, allClasses[o])) {
+									if (elmClass.indexOf(allClasses[o]) < 0) {
 										matchCls = false;
 										break;
 									}
@@ -691,7 +685,7 @@ var DOMAssistant = function () {
 					return xpath;
 				}
 				for (var i=0; (currentRule=cssRules[i]); i++) {
-					if (i && contains(cssRules.slice(0, i), currentRule)) { continue; }
+					if (i && elm.indexOf.call(cssRules.slice(0, i), currentRule) > -1) { continue; }
 					cssSelectors = currentRule.match(selectorSplitRegExp);
 					xPathExpression = ".";
 					for (var j=0, jl=cssSelectors.length; j<jl; j++) {
@@ -1295,7 +1289,7 @@ DOMAssistant.Events = function () {
 				e = e || event;
 				var target = e.target || e.srcElement, args = arguments, i = 0, elm, elms = this.cssSelect(selector);
 				while ((elm = elms[i++])) {
-					if (elm.contains? elm.contains(target) : !!((elm.compareDocumentPosition(target) || 16) & 16)) {
+					if (elm === target || DOMAssistant.hasChild.call(elm, target)) {
 						return fn.apply(elm, args);
 					}
 				}
