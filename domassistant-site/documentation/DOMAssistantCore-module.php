@@ -173,6 +173,25 @@
 								</code>
 							</p>
 							
+							<h2 id="hasChild"><code>hasChild(elementRef)</code></h2>
+							<p>Returns true if elementRef is a descendant of the current element.</p>
+							<h3>Return value</h3>
+							<p>True if elementRef is a child (direct or non-direct), false otherwise.</p>
+
+							<h3>Parameters</h3>
+						 	<dl>
+								<dt>elementRef</dt>
+								<dd>An element reference of the item to test for.</dd>
+							</dl>
+
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									if (outerElm.hasChild(innerElm))<br> 
+										alert("innerElm is a child of outerElm!");
+								</code>
+							</p>
+							
 							<h2 id="prev"><code>prev()</code></h2>
 							<p>Gets a reference to the previous HTML element, automatically bypassing any text nodes that might be in between.</p>
 							<h3>Parameters</h3>
@@ -364,6 +383,7 @@
 								<li><a href="#elmsByClass">elmsByClass</a></li>
 								<li><a href="#elmsByAttribute">elmsByAttribute</a></li>
 								<li><a href="#elmsByTag">elmsByTag</a></li>
+								<li><a href="#hasChild">hasChild</a> <sup>New</sup></li>
 								<li><a href="#prev">prev</a></li>
 								<li><a href="#next">next</a></li>
 								<li><a href="#each">each</a></li>

@@ -128,7 +128,7 @@ DOMAssistant.Events = function () {
 				e = e || event;
 				var target = e.target || e.srcElement, args = arguments, i = 0, elm, elms = this.cssSelect(selector);
 				while ((elm = elms[i++])) {
-					if (elm.contains? elm.contains(target) : !!((elm.compareDocumentPosition(target) || 16) & 16)) {
+					if (elm === target || DOMAssistant.hasChild.call(elm, target)) {
 						return fn.apply(elm, args);
 					}
 				}
