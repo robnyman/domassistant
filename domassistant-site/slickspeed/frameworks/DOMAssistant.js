@@ -39,6 +39,9 @@ var DOMAssistant = function () {
 	},
 	def = function (obj) {
 		return typeof obj !== "undefined";
+	},
+	sortDocumentOrder = function (elmArray) {
+		return elmArray.sort(elmArray[0].sourceIndex? function (a, b) { return a.sourceIndex - b.sourceIndex; } : function (a, b) { return 3 - (a.compareDocumentPosition(b) & 6); });
 	};
 	var pushAll = function (set1, set2) {
 		set1.push.apply(set1, [].slice.apply(set2));
@@ -257,8 +260,8 @@ var DOMAssistant = function () {
 			return DOMAssistant.$$(navigate(this, "next"));
 		},
 		
-		hasChild: function (elm, assumeInDoc) {
-			return (assumeInDoc && this === document) || this !== elm && (this.contains? this.contains(elm) : !!(this.compareDocumentPosition(elm) & 16));
+		hasChild: function (elm) {
+			return this === document || this !== elm && (this.contains? this.contains(elm) : !!(this.compareDocumentPosition(elm) & 16));
 		},
 
 		getSequence : function (expression) {
@@ -534,7 +537,7 @@ var DOMAssistant = function () {
 					if (splitRule.id) {
 						var u = 0, DOMElm = document.getElementById(splitRule.id.replace(/#/, ""));
 						if (DOMElm) {
-							while (prevElm[u] && !DOMAssistant.hasChild.call(prevElm[u], DOMElm, true)) { u++; }
+							while (prevElm[u] && !DOMAssistant.hasChild.call(prevElm[u], DOMElm)) { u++; }
 							matchingElms = u < prevElm.length? [DOMElm] : [];
 						}
 						prevElm = matchingElms;
@@ -618,7 +621,7 @@ var DOMAssistant = function () {
 				}
 				elm = pushAll(elm, prevElm);
 			}
-			return elm;
+			return (elm.length && cssRules.length > 1)? sortDocumentOrder(elm) : elm;
 		},
 		
 		cssByXpath : function (cssRule) {
@@ -636,18 +639,15 @@ var DOMAssistant = function () {
 				var currentRule, cssSelectors, xPathExpression, cssSelector, splitRule, sequence;
 				var selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
 				function attrToXPath (match, p1, p2, p3) {
-					p3 = p3? p3.replace(regex.quoted, "$1") : p3;
+					p3 = (p3 || "").replace(regex.quoted, "$1");
 					switch (p2) {
-						case "^": return "starts-with(@" + p1 + ", \"" + p3 + "\")";
-						case "$": return "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = \"" + p3 + "\"";
-						case "*": return "contains(concat(\" \", @" + p1 + ", \" \"), \"" + p3 + "\")";
-						case "|": return "(@" + p1 + "=\"" + p3 + "\" or starts-with(@" + p1 + ", \"" + p3 + "-\"))";
-						case "~": return "contains(concat(\" \", @" + p1 + ", \" \"), \" " + p3 + " \")";
-						default: return "@" + p1 + (p3? "=\"" + p3 + "\"" : "");
+						case "^": return "[starts-with(@" + p1 + ", \"" + p3 + "\")]";
+						case "$": return "[substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = \"" + p3 + "\"]";
+						case "*": return "[contains(concat(\" \", @" + p1 + ", \" \"), \"" + p3 + "\")]";
+						case "|": return "[@" + p1 + "=\"" + p3 + "\" or starts-with(@" + p1 + ", \"" + p3 + "-\")]";
+						case "~": return "[contains(concat(\" \", @" + p1 + ", \" \"), \" " + p3 + " \")]";
+						default: return "[@" + p1 + (p3.length? "=\"" + p3 + "\"" : "") + "]";
 					}
-				}
-				function attrToXPathB (match, p1, p2, p3) {
-					return "[" + attrToXPath(match, p1, p2, p3) + "]";
 				}
 				function pseudoToXPath (tag, pseudoClass, pseudoValue) {
 					tag = /\-child$/.test(pseudoClass)? "*" : tag;
@@ -687,7 +687,7 @@ var DOMAssistant = function () {
 				for (var i=0; (currentRule=cssRules[i]); i++) {
 					if (i && elm.indexOf.call(cssRules.slice(0, i), currentRule) > -1) { continue; }
 					cssSelectors = currentRule.match(selectorSplitRegExp);
-					xPathExpression = ".";
+					xPathExpression = xPathExpression? xPathExpression + " | ." : ".";
 					for (var j=0, jl=cssSelectors.length; j<jl; j++) {
 						cssSelector = regex.selector.exec(cssSelectors[j]);
 						splitRule = {
@@ -698,41 +698,33 @@ var DOMAssistant = function () {
 							allPseudos : cssSelector[11],
 							tagRelation : cssSelector[23]
 						};
-						if (splitRule.tagRelation) {
-							xPathExpression += { ">": "/child::", "+": "/following-sibling::*[1]/self::", "~": "/following-sibling::" }[splitRule.tagRelation] || "";
-						}
-						else {
-							xPathExpression += (j > 0 && regex.relation.test(cssSelectors[j-1]))? splitRule.tag : ("/descendant::" + splitRule.tag);
-						}
-						if (splitRule.id) {
-							xPathExpression += "[@id = \"" + splitRule.id.replace(/^#/, "") + "\"]";
-						}
-						if (splitRule.allClasses) {
-							xPathExpression += splitRule.allClasses.replace(regex.classes, "[contains(concat(\" \", @class, \" \"), \" $1 \")]");
-						}
-						if (splitRule.allAttr) {
-							xPathExpression += splitRule.allAttr.replace(regex.attribs, attrToXPathB);
-						}
+						xPathExpression +=
+							(splitRule.tagRelation? ({ ">": "/", "+": "/following-sibling::*[1]/self::", "~": "/following-sibling::" }[splitRule.tagRelation] || "") : ((j > 0 && regex.relation.test(cssSelectors[j-1]))? splitRule.tag : ("//" + splitRule.tag))) +
+							(splitRule.id || "").replace(regex.id, "[@id = \"$1\"]") +
+							(splitRule.allClasses || "").replace(regex.classes, "[contains(concat(\" \", @class, \" \"), \" $1 \")]") +
+							(splitRule.allAttr || "").replace(regex.attribs, attrToXPath);
 						if (splitRule.allPseudos) {
 							var allPseudos = splitRule.allPseudos.match(regex.pseudos);
 							for (var k=0, kl=allPseudos.length; k<kl; k++) {
 								regex.pseudos.lastIndex = 0;
-								var pseudo = regex.pseudos.exec(allPseudos[k]);
-								var pseudoClass = pseudo[1]? pseudo[1].toLowerCase() : null;
-								var pseudoValue = pseudo[3] || null;
-								var xpath = pseudoToXPath(splitRule.tag, pseudoClass, pseudoValue);
+								var pseudo = regex.pseudos.exec(allPseudos[k]),
+									pseudoClass = pseudo[1]? pseudo[1].toLowerCase() : null,
+									pseudoValue = pseudo[3] || null,
+									xpath = pseudoToXPath(splitRule.tag, pseudoClass, pseudoValue);
 								if (xpath.length) {
 									xPathExpression += "[" + xpath + "]";
 								}
 							}
 						}
 					}
+				}
+				if (xPathExpression) {
 					var xPathNodes = document.evaluate(xPathExpression, this, nsResolver, 0, null), node;
 					while ((node = xPathNodes.iterateNext())) {
 						elm.push(node);
 					}
 				}
-				return elm;
+				return (elm.length && cssRules.length > 1)? sortDocumentOrder(elm) : elm;
 			};
 			return DOMAssistant.cssByXpath.call(this, cssRule);
 		},

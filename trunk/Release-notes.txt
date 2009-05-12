@@ -4,6 +4,7 @@ Version 2.8:
 - [Add] New method hasChild() to allow testing for descendant
 - [Add] New core methods: indexOf(), map(), filter(), every() and some()
 - [Chg] Callback function in each() receives an index reference, to be consistent with the new methods
+- [Chg] Selector engine now returns elements in the order they appear in the document
 - [Chg] Events fired via triggerEvent() now bubble
 - [Chg] Bubbling events can be stopped either by calling DOMAssistant.cancelBubble or returning false at the event handler
 - [Chg] Moved prev() and next() methods to the core module
