@@ -724,7 +724,7 @@ var DOMAssistant = function () {
 						elm.push(node);
 					}
 				}
-				return (elm.length && cssRules.length > 1)? sortDocumentOrder(elm) : elm;
+				return (window.opera && elm.length && cssRules.length > 1)? sortDocumentOrder(elm) : elm;
 			};
 			return DOMAssistant.cssByXpath.call(this, cssRule);
 		},
