@@ -8,7 +8,12 @@ Version 2.8:
 - [Chg] Events fired via triggerEvent() now bubble
 - [Chg] Bubbling events can be stopped either by calling DOMAssistant.cancelBubble or returning false at the event handler
 - [Chg] Moved prev() and next() methods to the core module
-- [Fix] Comment nodes not skipped in IE5.5
+- [Fix] Invalid selectors throw error
+- [Fix] :checked, [selected] and [multiple] buggy in many browsers
+- [Fix] tag#id incorrectly returns the element even when its tagname does not match
+- [Fix] Multi-selectors return duplicated elements in IE
+- [Fix] Certain selectors sometimes return less elements than expected in IE
+- [Fix] Comment nodes not skipped in IE 5.5
 - [Fix] Ajax does not work on local files
 - [Fix] Ajax timeouts sometimes not detected in IE
 - [Fix] setStyle("opacity") does not work in IE without hasLayout
@@ -16,7 +21,6 @@ Version 2.8:
 - [Fix] setStyle on newly created (but not yet added to the DOM) elements fails in IE
 - [Fix] addContent when used with strings remove events and attributes
 - [Fix] replaceClass does not work in some cases
-- [Fix] Certain selectors sometimes return less elements than expected in IE
 - [Fix] removeEvent fails in older versions of Opera when multiple handlers exist for an event on an element
 - [Fix] Miscellaneous performance improvement
 
