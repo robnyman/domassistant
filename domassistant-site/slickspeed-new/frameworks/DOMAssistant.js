@@ -4,7 +4,8 @@ var DOMAssistant = function () {
 		// Constructor
 	},
 	isIE = /*@cc_on!@*/false,
-	ie5 = isIE && parseFloat(navigator.appVersion) < 6,
+	isIE5 = isIE && parseFloat(navigator.appVersion) < 6,
+	isWebkit = /webkit/i.test(navigator.userAgent),
 	tagCache = {}, lastCache = {}, useCache = true,
 	camel = {
 		"accesskey": "accessKey",
@@ -356,7 +357,7 @@ var DOMAssistant = function () {
 				}
 			}
 			function getTags (tag, context) {
-				return ie5? ((tag === "*")? context.all : context.all.tags(tag)) : context.getElementsByTagName(tag);
+				return isIE5? ((tag === "*")? context.all : context.all.tags(tag)) : context.getElementsByTagName(tag);
 			}
 			function getElementsByTagName (tag, parent) {
 				tag = tag || "*";
@@ -735,7 +736,7 @@ var DOMAssistant = function () {
 					var xPathNodes = document.evaluate(xPathExpression, this, nsResolver, 0, null), node;
 					while ((node = xPathNodes.iterateNext())) { elm.push(node); }
 				} catch (e) {}
-				return (window.opera && elm.length && cssRules.length > 1)? sortDocumentOrder(elm) : elm;
+				return (elm.length && (cssRules.length > 1 || isWebkit))? sortDocumentOrder(elm) : elm;
 			};
 			return DOMAssistant.cssByXpath.call(this, cssRule);
 		},

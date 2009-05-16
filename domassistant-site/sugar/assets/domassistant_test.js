@@ -642,6 +642,9 @@ SugarTest()
         this.assertEnumEqual(["select1", "select2"], this.get("#form select:not([multiple])"), ":not() Existing attribute");
         this.assertEnumEqual(["select2", "select3"], this.get("#form select:not([name=select1])"), ":not() Equals attribute");
         this.assertEnumEqual(["select2", "select3"], this.get("#form select:not([name='select1'])"), ":not() Equals quoted attribute");
+
+        this.assertEnumEqual(["T2"], this.get("#testForm input[readonly]"), "Select inputs via [readonly]");
+        this.assertEqual(16, $("#testForm input:not([readonly])").length, "Select inputs via :not([readonly])");
   	})
     .it('pseudos', function() {
         this.assertEnumEqual(["firstp","sndp"], this.get("p:first-child"), "First Child");
