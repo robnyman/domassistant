@@ -21,16 +21,17 @@ var DOMAssistant = function () {
 	},
 	regex = {
 		rules: /\s*(,)\s*/g,
-		selector: /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+\s*(\^|\$|\*|\||~)?(=\s*([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.\'\"]+\]+)|(:\w+[\w\-]*))\))?)*)?(>|\+|~)?/,
+		selector: /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+\s*(\^|\$|\*|\||~)?(=\s*([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.\'\"]+\]+)|(:\w+[\w\-]*\(.+\)))\))?)*)?(>|\+|~)?/,
 		id: /^#([\w\u00C0-\uFFFF\-\_]+)$/,
 		tag: /^(\w+)/,
 		relation: /^(>|\+|~)$/,
 		pseudo: /^:(\w[\w\-]*)(\((.+)\))?$/,
-		pseudos: /:(\w[\w\-]*)(\(([^\)]+)\))?/g,
+		pseudos: /:(\w[\w\-]*)(\((.+)\))?/g,
 		attribs: /\[(\w+)\s*(\^|\$|\*|\||~)?=?\s*([\w\u00C0-\uFFFF\s\-_\.]+|"[^"]*"|'[^']*')?\]/g,
 		classes: /\.([\w\u00C0-\uFFFF\-_]+)/g,
 		quoted: /^["'](.*)["']$/,
-		nth: /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n([\+\-]\d+)?)|(\-(([1-9]\d*)?)n\+(\d+)))$/
+		nth: /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n([\+\-]\d+)?)|(\-(([1-9]\d*)?)n\+(\d+)))$/,
+		special: /(:check|:enabl|\bselect)ed\b/
 	},
 	navigate = function (node, direction, checkTagName) {
 		var oldName = node.tagName;
@@ -41,7 +42,12 @@ var DOMAssistant = function () {
 		return typeof obj !== "undefined";
 	},
 	sortDocumentOrder = function (elmArray) {
-		return elmArray.sort(elmArray[0].sourceIndex? function (a, b) { return a.sourceIndex - b.sourceIndex; } : function (a, b) { return 3 - (a.compareDocumentPosition(b) & 6); });
+		return (sortDocumentOrder = elmArray[0].sourceIndex? function (elmArray) { return elmArray.sort( function (a, b) { return a.sourceIndex - b.sourceIndex; } ) } :
+			elmArray[0].compareDocumentPosition? function (elmArray) { return elmArray.sort( function (a, b) { return 3 - (a.compareDocumentPosition(b) & 6); } ) } :
+			function (elmArray) { return elmArray.sort( function (a, b) {
+				var all = [].slice.apply(document.getElementsByTagName("*"));
+				return all.indexOf(a) - all.indexOf(b); 
+			} ) })(elmArray);
 	};
 	var pushAll = function (set1, set2) {
 		set1.push.apply(set1, [].slice.apply(set2));
@@ -299,7 +305,7 @@ var DOMAssistant = function () {
 		
 		cssByDOM : function (cssRule) {
 			var cssRules = cssRule.replace(regex.rules, "$1").split(",");
-			var elm = new HTMLArray(), prevElm = [], matchingElms = [];
+			var elm = new HTMLArray(), index = elm.indexOf, prevElm = [], matchingElms = [];
 			var selectorSplitRegExp, prevParents, currentRule, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, current, previous, prevParent, notElm, addElm, iteratorNext, childElm, sequence;
 			try {
 				selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
@@ -310,6 +316,7 @@ var DOMAssistant = function () {
 			function clearAdded (elm) {
 				elm = elm || prevElm;
 				for (var n=0, nl=elm.length; n<nl; n++) {
+					elm[n].added = null;
 					elm[n].removeAttribute("added");
 				}
 			}
@@ -335,7 +342,7 @@ var DOMAssistant = function () {
 				return arr1;
 			}
 			function getAttr (elm, attr) {
-				return isIE? elm[camel[attr.toLowerCase()] || attr] : elm.getAttribute(attr, 2);
+				return (isIE || regex.special.test(attr))? elm[camel[attr.toLowerCase()] || attr] : elm.getAttribute(attr, 2);
 			}
 			function attrToRegExp (attrVal, substrOperator) {
 				attrVal = attrVal? attrVal.replace(regex.quoted, "$1").replace(/\./g, "\\.") : null;
@@ -459,7 +466,7 @@ var DOMAssistant = function () {
 								}
 								else if (notAttr) {
 									var att = getAttr(notElm, notAttr[1]);
-									if (!att || !notRegExp.test(att)) {
+									if (!att || att !== true && !notRegExp.test(att)) {
 										addElm = notElm;
 									}
 								}
@@ -474,10 +481,18 @@ var DOMAssistant = function () {
 				}
 				return matchingElms;
 			}
-			for (var a=0; (currentRule=cssRules[a]); a++) {
-				if (a && cssRules.slice(0, a).indexOf(currentRule) > -1) { continue; }
+			function pushUnique(set1, set2) {
+				var i=0, s=set1, item;
+				while ((item = set2[i++])) {
+					if (!s.length || s.indexOf(item) < 0) {
+						set1.push(item);
+					}
+				}
+				return set1;
+			}
+			for (var a=0, tagBin=[]; (currentRule=cssRules[a]); a++) {
+				if (!(cssSelectors = currentRule.match(selectorSplitRegExp)) || a && index.call(cssRules.slice(0, a), currentRule) > -1) { continue; }
 				prevElm = [this];
-				cssSelectors = currentRule.match(selectorSplitRegExp);
 				for (var i=0, rule; (rule=cssSelectors[i]); i++) {
 					matchingElms = [];
 					if (i > 0 && regex.relation.test(rule)) {
@@ -526,8 +541,8 @@ var DOMAssistant = function () {
 							prevElm.skipTag = true;
 						}
 					}
-					var cssSelector = regex.selector.exec(rule);
-					var splitRule = {
+					var cssSelector = regex.selector.exec(rule),
+					splitRule = {
 						tag : (!cssSelector[1] || cssSelector[3] === "*")? "*" : cssSelector[1],
 						id : (cssSelector[3] !== "*")? cssSelector[2] : null,
 						allClasses : cssSelector[4],
@@ -535,10 +550,10 @@ var DOMAssistant = function () {
 						allPseudos : cssSelector[11]
 					};
 					if (splitRule.id) {
-						var u = 0, DOMElm = document.getElementById(splitRule.id.replace(/#/, ""));
+						var u = 0, DOMElm = document.getElementById(splitRule.id.slice(1));
 						if (DOMElm) {
 							while (prevElm[u] && !DOMAssistant.hasChild.call(prevElm[u], DOMElm)) { u++; }
-							matchingElms = u < prevElm.length? [DOMElm] : [];
+							matchingElms = (u < prevElm.length && (splitRule.tag === "*" || splitRule.tag === DOMElm.tagName.toLowerCase()))? [DOMElm] : [];
 						}
 						prevElm = matchingElms;
 					}
@@ -619,35 +634,34 @@ var DOMAssistant = function () {
 						prevElm = matchingElms;
 					}
 				}
-				elm = pushAll(elm, prevElm);
+				elm = ((tagBin.length && (splitRule.tag === "*" || index.call(tagBin, splitRule.tag) >= 0 || index.call(tagBin, "*") >= 0))? pushUnique : pushAll)(elm, prevElm);
+				tagBin.push(splitRule.tag);
 			}
 			return (elm.length && cssRules.length > 1)? sortDocumentOrder(elm) : elm;
 		},
 		
 		cssByXpath : function (cssRule) {
-			var ns = { xhtml: "http://www.w3.org/1999/xhtml" };
-			var prefix = (document.documentElement.namespaceURI === ns.xhtml)? "xhtml:" : "";
-			var nsResolver = function lookupNamespaceURI (prefix) {
-				return ns[prefix] || null;
-			};
+			var ns = { xhtml: "http://www.w3.org/1999/xhtml" },
+				prefix = (document.documentElement.namespaceURI === ns.xhtml)? "xhtml:" : "",
+				nsResolver = function lookupNamespaceURI (prefix) {
+					return ns[prefix] || null;
+				};
 			DOMAssistant.cssByXpath = function (cssRule) {
-				if (/:checked/.test(cssRule)) {
-					return DOMAssistant.cssByDOM.call(this, cssRule);
-				}
-				var cssRules = cssRule.replace(regex.rules, "$1").split(",");
-				var elm = new HTMLArray();
-				var currentRule, cssSelectors, xPathExpression, cssSelector, splitRule, sequence;
-				var selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
+				var currentRule, cssSelectors, xPathExpression, cssSelector, splitRule, sequence,
+					elm = new HTMLArray(), cssRules = cssRule.replace(regex.rules, "$1").split(","),
+					selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
 				function attrToXPath (match, p1, p2, p3) {
 					p3 = (p3 || "").replace(regex.quoted, "$1");
-					switch (p2) {
-						case "^": return "[starts-with(@" + p1 + ", \"" + p3 + "\")]";
-						case "$": return "[substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = \"" + p3 + "\"]";
-						case "*": return "[contains(concat(\" \", @" + p1 + ", \" \"), \"" + p3 + "\")]";
-						case "|": return "[@" + p1 + "=\"" + p3 + "\" or starts-with(@" + p1 + ", \"" + p3 + "-\")]";
-						case "~": return "[contains(concat(\" \", @" + p1 + ", \" \"), \" " + p3 + " \")]";
-						default: return "[@" + p1 + (p3.length? "=\"" + p3 + "\"" : "") + "]";
-					}
+					return {
+						"^": "starts-with(@" + p1 + ", \"" + p3 + "\")",
+						"$": "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p3.length - 1) + "), " + p3.length + ") = \"" + p3 + "\"",
+						"*": "contains(concat(\" \", @" + p1 + ", \" \"), \"" + p3 + "\")",
+						"|": "@" + p1 + "=\"" + p3 + "\" or starts-with(@" + p1 + ", \"" + p3 + "-\")",
+						"~": "contains(concat(\" \", @" + p1 + ", \" \"), \" " + p3 + " \")"
+					}[p2] || ("@" + p1 + (p3.length? "=\"" + p3 + "\"" : ""));
+				}
+				function attrToXPathB (match, p1, p2, p3) {
+					return "[" + attrToXPath(match, p1, p2, p3) + "]";
 				}
 				function pseudoToXPath (tag, pseudoClass, pseudoValue) {
 					tag = /\-child$/.test(pseudoClass)? "*" : tag;
@@ -685,24 +699,23 @@ var DOMAssistant = function () {
 					return xpath;
 				}
 				for (var i=0; (currentRule=cssRules[i]); i++) {
-					if (i && elm.indexOf.call(cssRules.slice(0, i), currentRule) > -1) { continue; }
-					cssSelectors = currentRule.match(selectorSplitRegExp);
+					if (!(cssSelectors = currentRule.match(selectorSplitRegExp)) || i && elm.indexOf.call(cssRules.slice(0, i), currentRule) > -1) { continue; }
 					xPathExpression = xPathExpression? xPathExpression + " | ." : ".";
 					for (var j=0, jl=cssSelectors.length; j<jl; j++) {
 						cssSelector = regex.selector.exec(cssSelectors[j]);
 						splitRule = {
-							tag : prefix + ((!cssSelector[1] || cssSelector[3] === "*")? "*" : cssSelector[1]),
-							id : (cssSelector[3] !== "*")? cssSelector[2] : null,
-							allClasses : cssSelector[4],
-							allAttr : cssSelector[6],
-							allPseudos : cssSelector[11],
-							tagRelation : cssSelector[23]
+							tag: prefix + ((!cssSelector[1] || cssSelector[3] === "*")? "*" : cssSelector[1]),
+							id: (cssSelector[3] !== "*")? cssSelector[2] : null,
+							allClasses: cssSelector[4],
+							allAttr: cssSelector[6],
+							allPseudos: cssSelector[11],
+							tagRelation: cssSelector[23]
 						};
 						xPathExpression +=
 							(splitRule.tagRelation? ({ ">": "/", "+": "/following-sibling::*[1]/self::", "~": "/following-sibling::" }[splitRule.tagRelation] || "") : ((j > 0 && regex.relation.test(cssSelectors[j-1]))? splitRule.tag : ("//" + splitRule.tag))) +
 							(splitRule.id || "").replace(regex.id, "[@id = \"$1\"]") +
 							(splitRule.allClasses || "").replace(regex.classes, "[contains(concat(\" \", @class, \" \"), \" $1 \")]") +
-							(splitRule.allAttr || "").replace(regex.attribs, attrToXPath);
+							(splitRule.allAttr || "").replace(regex.attribs, attrToXPathB);
 						if (splitRule.allPseudos) {
 							var allPseudos = splitRule.allPseudos.match(regex.pseudos);
 							for (var k=0, kl=allPseudos.length; k<kl; k++) {
@@ -718,31 +731,23 @@ var DOMAssistant = function () {
 						}
 					}
 				}
-				if (xPathExpression) {
+				try {
 					var xPathNodes = document.evaluate(xPathExpression, this, nsResolver, 0, null), node;
-					while ((node = xPathNodes.iterateNext())) {
-						elm.push(node);
-					}
-				}
+					while ((node = xPathNodes.iterateNext())) { elm.push(node); }
+				} catch (e) {}
 				return (window.opera && elm.length && cssRules.length > 1)? sortDocumentOrder(elm) : elm;
 			};
 			return DOMAssistant.cssByXpath.call(this, cssRule);
 		},
 		
 		cssSelection : function (cssRule) {
-			DOMAssistant.cssSelection = document.evaluate? DOMAssistant.cssByXpath : DOMAssistant.cssByDOM;
-			if (document.querySelectorAll) {
-				var cssSelectionBackup = DOMAssistant.cssSelection;
-				DOMAssistant.cssSelection = function (cssRule) {
-					try {
-						return pushAll(new HTMLArray(), this.querySelectorAll(cssRule));
-					}
-					catch (e) {
-						return cssSelectionBackup.call(this, cssRule);
-					}
-				};
-			}
-			return DOMAssistant.cssSelection.call(this, cssRule);
+			var special = regex.special.test(cssRule);
+			try {
+				if (document.querySelectorAll && !special) {
+					return pushAll(new HTMLArray(), this.querySelectorAll(cssRule));
+				}
+			} catch (e) {}
+			return ((document.evaluate && !special)? DOMAssistant.cssByXpath : DOMAssistant.cssByDOM).call(this, cssRule);
 		},
 		
 		cssSelect : function (cssRule) {
