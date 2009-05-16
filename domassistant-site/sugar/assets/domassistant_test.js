@@ -108,6 +108,10 @@ SugarTest()
       this.assertEqual('1px', elm.getStyle('border-top-width'));
       this.assertEqual('dotted', elm.getStyle('border-left-style'));
       
+      this.assertEqual(0, $$('foo').getStyle('opacity'), 'get opacity set via stylesheet');
+      $$('foo').setStyle({ opacity: 0.6 });
+      this.assertEqual(0.6, $$('foo').getStyle('opacity'), 'get opacity set via setStyle()');
+
       // Box dimensions - does not work correctly. A 'real' dimensions module is needed.
       /*
       var newDiv = $(document.body).create('div');

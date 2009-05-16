@@ -51,15 +51,14 @@ DOMAssistant.CSS = function () {
 		},
 
 		getStyle : function (cssRule) {
-			var val = "";
+			var val = "", f;
 			cssRule = cssRule.toLowerCase();
 			if (document.defaultView && document.defaultView.getComputedStyle) {
 				val = document.defaultView.getComputedStyle(this, "").getPropertyValue(cssRule);
 			}
 			else if (this.currentStyle) {
-				if ("filters" in this && /^opacity$/.test(cssRule)) {
-					var f = this.style.filter;
-					val = f && f.indexOf("opacity=") >= 0? parseFloat(f.match(/opacity=([^)]*)/)[1]) / 100 : 1;
+				if ("filters" in this && cssRule === "opacity") {
+					val = (f = this.style.filter || this.currentStyle.filter) && f.indexOf("opacity=") >= 0? parseFloat(f.match(/opacity=([^)]*)/)[1]) / 100 : 1;
 				}
 				else {
 					cssRule = cssRule.replace(/^float$/, "styleFloat").replace(/\-(\w)/g, function (match, p1) {
