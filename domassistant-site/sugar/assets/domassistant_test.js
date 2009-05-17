@@ -653,6 +653,15 @@ SugarTest()
 
         this.assertEnumEqual(["T2"], this.get("#testForm input[readonly]"), "Select inputs via [readonly]");
         this.assertEqual(16, $("#testForm input:not([readonly])").length, "Select inputs via :not([readonly])");
+        
+        this.assertEnumEqual(["text1"], this.get("input[name=action]"), "Name selector");
+        this.assertEnumEqual(["text1"], this.get("input[name=\"action\"]"), "Name selector with double quotes");
+        this.assertEnumEqual(["length", "fx-queue"], this.get("[name=test]"), "Name selector non-input");
+        this.assertEnumEqual(["fadein"], this.get("[name=div]"), "Name selector non-input");
+        this.assertEnumEqual(["iframe"], this.get("*[name=iframe]"), "Name selector non-input");
+
+        this.assertEnumEqual(["labelT2"], this.get("label[for=T2]"), "Select label by 'for' attribute");
+        this.assertEnumEqual(["labelT2"], this.get("label[for='T2']"), "Select label by 'for' attribute with quotes");
   	})
     .it('pseudos', function() {
         this.assertEnumEqual(["firstp","sndp"], this.get("p:first-child"), "First Child");
