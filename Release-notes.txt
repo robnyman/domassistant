@@ -10,6 +10,7 @@ Version 2.8:
 - [Chg] Moved prev() and next() methods to the core module
 - [Fix] Invalid selectors throw error
 - [Fix] :checked, [selected] and [multiple] buggy in many browsers
+- [Fix] attribute selector with empty value (eg. [value='']) does not work
 - [Fix] tag#id incorrectly returns the element even when its tagname does not match
 - [Fix] Multi-selectors return duplicated elements in IE
 - [Fix] Certain selectors sometimes return less elements than expected in IE
