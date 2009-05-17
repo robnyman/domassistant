@@ -525,15 +525,6 @@ SugarTest()
         this.assert($('#length').length);
         this.assert($('#lengthtest input').length);
       })
-    .it('broken', function() {
-        this.assertElementMatches([], $('['), 'Broken Selector');
-        this.assertElementMatches([], $('('), 'Broken Selector');
-        this.assertElementMatches([], $('{'), 'Broken Selector');
-        this.assertElementMatches([], $('<'), 'Broken Selector');
-        this.assertElementMatches([], $('()'), 'Broken Selector');
-        this.assertElementMatches([], $('<>'), 'Broken Selector');
-        this.assertElementMatches([], $('{}'), 'Broken Selector');
-  	})
     .it('id', function() {
         this.assertEnumEqual(['body'], $('#body').map(this.fn), 'ID Selector');
         this.assertEnumEqual(['body'], $('body#body').map(this.fn), 'ID Selector w/ Element');
