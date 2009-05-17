@@ -634,8 +634,12 @@ SugarTest()
         this.assertEnumEqual(["台北"], this.get("span[lang=中文]"), "Attribute selector using UTF8");
 
         this.assertEnumEqual(["google","yahoo"], this.get("a[href ^= 'http://www']"), "Attribute Begins With");
-        this.assertEnumEqual(["mark"], this.get("a[href $= 'org/']"), "Attribute Begins With");
+        this.assertEnumEqual(["mark"], this.get("a[href $= 'org/']"), "Attribute Ends With");
         this.assertEnumEqual(["google","groups"], this.get("a[href *= 'google']"), "Attribute Contains");
+        this.assertEnumEqual(["google","groups","anchor1"], this.get("#ap a:not([hreflang='en'])"), "Attribute Is Not Equal");
+		
+        this.assertEnumEqual(["option1a"], this.get("#select1 option[value='']"), "Empty values");
+        this.assertEnumEqual(["option1b","option1c","option1d"], this.get("#select1 option:not([value=\"\"])"), "Empty values");
 		
         this.assertEnumEqual(["option1a"], this.get("#select1 option[selected]"), "Select options via [selected]");
         this.assertEnumEqual(["option2d"], this.get("#select2 option[selected]"), "Select options via [selected]");

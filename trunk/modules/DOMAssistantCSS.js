@@ -24,7 +24,7 @@ DOMAssistant.CSS = function () {
 		},
 
 		hasClass : function (className) {
-			return (" " + this.className + " ").indexOf(className) > -1;
+			return (" " + this.className + " ").indexOf(" " + className + " ") > -1;
 		},
 
 		setStyle : function (style, value) {
