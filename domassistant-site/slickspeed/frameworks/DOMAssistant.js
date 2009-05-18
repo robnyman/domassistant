@@ -45,8 +45,8 @@ var DOMAssistant = function () {
 		return typeof obj !== "undefined";
 	},
 	sortDocumentOrder = function (elmArray) {
-		return (sortDocumentOrder = elmArray[0].sourceIndex? function (elmArray) { return elmArray.sort( function (a, b) { return a.sourceIndex - b.sourceIndex; } ) } :
-			elmArray[0].compareDocumentPosition? function (elmArray) { return elmArray.sort( function (a, b) { return 3 - (a.compareDocumentPosition(b) & 6); } ) } :
+		return (sortDocumentOrder = elmArray[0].compareDocumentPosition? function (elmArray) { return elmArray.sort( function (a, b) { return 3 - (a.compareDocumentPosition(b) & 6); } ) } :
+			elmArray[0].sourceIndex? function (elmArray) { return elmArray.sort( function (a, b) { return a.sourceIndex - b.sourceIndex; } ) } :
 			function (elmArray) { return elmArray.sort( function (a, b) {
 				var all = slice.apply(document.getElementsByTagName("*"));
 				return all.indexOf(a) - all.indexOf(b); 
