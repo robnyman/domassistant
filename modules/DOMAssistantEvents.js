@@ -103,7 +103,7 @@ DOMAssistant.Events = function () {
 			evt = fix(evt);
 			if (this.events && this.events[evt]) {
 				var eventColl = this.events[evt];
-				for (var fn, i=eventColl.length-1; i>=0; i--) {
+				for (var fn, i=eventColl.length; i--;) {
 					fn = func || eventColl[i];
 					if (eventColl[i] === fn && (!relay && !fn.relay || relay && fn.relay)) {
 						eventColl.splice(i, 1);

@@ -7,6 +7,7 @@ var DOMAssistant = function () {
 	isIE5 = isIE && parseFloat(navigator.appVersion) < 6,
 	isWebkit = /webkit/i.test(navigator.userAgent),
 	tagCache = {}, lastCache = {}, useCache = true,
+	slice = Array.prototype.slice,
 	camel = {
 		"accesskey": "accessKey",
 		"class": "className",
@@ -23,6 +24,7 @@ var DOMAssistant = function () {
 	regex = {
 		rules: /\s*(,)\s*/g,
 		selector: /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+\s*(\^|\$|\*|\||~)?(=\s*([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.\'\"]+\]+)|(:\w+[\w\-]*\(.+\)))\))?)*)?(>|\+|~)?/,
+		selectorSplit: /(?:\[[^\[]*\]|\(.*\)|[^\s\+>~\[\(])+|[\+>~]/g,
 		id: /^#([\w\u00C0-\uFFFF\-\_]+)$/,
 		tag: /^(\w+)/,
 		relation: /^(>|\+|~)$/,
@@ -46,12 +48,12 @@ var DOMAssistant = function () {
 		return (sortDocumentOrder = elmArray[0].sourceIndex? function (elmArray) { return elmArray.sort( function (a, b) { return a.sourceIndex - b.sourceIndex; } ) } :
 			elmArray[0].compareDocumentPosition? function (elmArray) { return elmArray.sort( function (a, b) { return 3 - (a.compareDocumentPosition(b) & 6); } ) } :
 			function (elmArray) { return elmArray.sort( function (a, b) {
-				var all = [].slice.apply(document.getElementsByTagName("*"));
+				var all = slice.apply(document.getElementsByTagName("*"));
 				return all.indexOf(a) - all.indexOf(b); 
 			} ) })(elmArray);
 	};
 	var pushAll = function (set1, set2) {
-		set1.push.apply(set1, [].slice.apply(set2));
+		set1.push.apply(set1, slice.apply(set2));
 		return set1;
 	};
 	if (isIE) {
@@ -91,7 +93,9 @@ var DOMAssistant = function () {
 			HTMLArray.prototype = [];
 			HTMLArray.prototype.each = function (fn) {
 				for (var i=0, il=this.length; i<il; i++) {
-					fn.call(this[i], i);
+					if (fn.call(this[i], i) === false) {
+						break;
+					}
 				}
 				return this;
 			};
@@ -102,7 +106,7 @@ var DOMAssistant = function () {
 				return this.previousSet;
 			};
 			HTMLArray.prototype.indexOf = HTMLArray.prototype.indexOf || function (elm) {
-				for (var i=0, il=this.length; i<il; i++) {
+				for (var i=this.length; i--;) {
 					if (i in this && this[i] === elm) {
 						return i;
 					}
@@ -203,7 +207,7 @@ var DOMAssistant = function () {
 			var children = this.all || this.getElementsByTagName("*");
 			for (var i=0, child, attr; (child=children[i++]);) {
 				if (child.uniqueHandlerId && (attr = child.attributes)) {
-					for (var j=0, jl=attr.length, att; j<jl; j++) {
+					for (var att, j=attr.length; j--;) {
 						att = attr[j].nodeName.toLowerCase();
 						if (typeof child[att] === "function") {
 							child[att] = null;
@@ -222,7 +226,7 @@ var DOMAssistant = function () {
 			if (arguments.length === 1 && (typeof obj === "object" || (typeof obj === "function" && !!obj.nodeName))) {
 				return DOMAssistant.$$(obj);
 			}
-			var elm = new HTMLArray();
+			var elm = !!obj? new HTMLArray() : null;
 			for (var i=0, arg, idMatch; (arg=arguments[i]); i++) {
 				if (typeof arg === "string") {
 					arg = arg.replace(/^[^#]*(#)/, "$1");
@@ -305,24 +309,17 @@ var DOMAssistant = function () {
 		},
 		
 		cssByDOM : function (cssRule) {
-			var cssRules = cssRule.replace(regex.rules, "$1").split(",");
-			var elm = new HTMLArray(), index = elm.indexOf, prevElm = [], matchingElms = [];
-			var selectorSplitRegExp, prevParents, currentRule, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, current, previous, prevParent, notElm, addElm, iteratorNext, childElm, sequence;
-			try {
-				selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
-			}
-			catch (e) {
-				selectorSplitRegExp = /[^\s]+/g;
-			}
+			var prevParents, currentRule, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, current, previous, prevParent, notElm, addElm, iteratorNext, childElm, sequence,
+				elm = new HTMLArray(), index = elm.indexOf, prevElm = [], matchingElms = [], cssRules = cssRule.replace(regex.rules, "$1").split(",");
 			function clearAdded (elm) {
 				elm = elm || prevElm;
-				for (var n=0, nl=elm.length; n<nl; n++) {
+				for (var n=elm.length; n--;) {
 					elm[n].added = null;
 					elm[n].removeAttribute("added");
 				}
 			}
 			function clearChildElms () {
-				for (var n=0, nl=prevParents.length; n<nl; n++) {
+				for (var n=prevParents.length; n--;) {
 					prevParents[n].childElms = null;
 				}
 			}
@@ -356,7 +353,7 @@ var DOMAssistant = function () {
 				}[substrOperator] || (attrVal !== null? "^" + attrVal + "$" : attrVal);
 			}
 			function getTags (tag, context) {
-				return isIE5? ((tag === "*")? context.all : context.all.tags(tag)) : context.getElementsByTagName(tag);
+				return isIE5? (tag === "*"? context.all : context.all.tags(tag)) : context.getElementsByTagName(tag);
 			}
 			function getElementsByTagName (tag, parent) {
 				tag = tag || "*";
@@ -490,8 +487,11 @@ var DOMAssistant = function () {
 				}
 				return set1;
 			}
+			function notComment() {
+				return this.tagName !== "!";
+			}
 			for (var a=0, tagBin=[]; (currentRule=cssRules[a]); a++) {
-				if (!(cssSelectors = currentRule.match(selectorSplitRegExp)) || a && index.call(cssRules.slice(0, a), currentRule) > -1) { continue; }
+				if (!(cssSelectors = currentRule.match(regex.selectorSplit)) || a && index.call(cssRules.slice(0, a), currentRule) > -1) { continue; }
 				prevElm = [this];
 				for (var i=0, rule; (rule=cssSelectors[i]); i++) {
 					matchingElms = [];
@@ -585,7 +585,7 @@ var DOMAssistant = function () {
 							var matchCls = true, elmClass = current.className;
 							if (elmClass && elmClass.length) {
 								elmClass = elmClass.split(" ");
-								for (var o=0, ol=allClasses.length; o<ol; o++) {
+								for (var o=allClasses.length; o--;) {
 									if (elmClass.indexOf(allClasses[o]) < 0) {
 										matchCls = false;
 										break;
@@ -636,6 +636,7 @@ var DOMAssistant = function () {
 				}
 				elm = ((tagBin.length && (splitRule.tag === "*" || index.call(tagBin, splitRule.tag) >= 0 || index.call(tagBin, "*") >= 0))? pushUnique : pushAll)(elm, prevElm);
 				tagBin.push(splitRule.tag);
+				if (isIE && /\*$/.test(currentRule)) { elm = elm.filter(notComment); }
 			}
 			return (elm.length && cssRules.length > 1)? sortDocumentOrder(elm) : elm;
 		},
@@ -648,8 +649,7 @@ var DOMAssistant = function () {
 				};
 			DOMAssistant.cssByXpath = function (cssRule) {
 				var currentRule, cssSelectors, xPathExpression, cssSelector, splitRule, sequence,
-					elm = new HTMLArray(), cssRules = cssRule.replace(regex.rules, "$1").split(","),
-					selectorSplitRegExp = new RegExp("(?:\\[[^\\[]*\\]|\\(.*\\)|[^\\s\\+>~\\[\\(])+|[\\+>~]", "g");
+					elm = new HTMLArray(), cssRules = cssRule.replace(regex.rules, "$1").split(",");
 				function attrToXPath (match, p1, p2, p3, p4) {
 					p4 = (p4 || "").replace(regex.quoted, "$1");
 					return {
@@ -679,10 +679,9 @@ var DOMAssistant = function () {
 						case "target": return "@name=\"" + (hash = document.location.hash.slice(1)) + "\" or @id=\"" + hash + "\"";
 						default: return "@" + pseudoClass + "=\"" + pseudoValue + "\"";
 					}
-					return xpath;
 				}
 				for (var i=0; (currentRule=cssRules[i]); i++) {
-					if (!(cssSelectors = currentRule.match(selectorSplitRegExp)) || i && elm.indexOf.call(cssRules.slice(0, i), currentRule) > -1) { continue; }
+					if (!(cssSelectors = currentRule.match(regex.selectorSplit)) || i && elm.indexOf.call(cssRules.slice(0, i), currentRule) > -1) { continue; }
 					xPathExpression = xPathExpression? xPathExpression + " | ." : ".";
 					for (var j=0, jl=cssSelectors.length; j<jl; j++) {
 						cssSelector = regex.selector.exec(cssSelectors[j]);
@@ -724,6 +723,7 @@ var DOMAssistant = function () {
 		},
 		
 		cssSelection : function (cssRule) {
+			if (!cssRule) { return null; }
 			var special = regex.special.test(cssRule);
 			try {
 				if (document.querySelectorAll && !special) {
@@ -1121,7 +1121,7 @@ DOMAssistant.Content = function () {
 			if (type === "string" || type === "number") {
 				var parent = this.parentNode;
 				var tmp = DOMAssistant.Content.create.call(parent, "div", null, false, content);
-				for (var i=tmp.childNodes.length-1; i>=0; i--) {
+				for (var i=tmp.childNodes.length; i--;) {
 					parent.insertBefore(tmp.childNodes[i], this.nextSibling);
 				}
 				content = this.nextSibling;
@@ -1243,7 +1243,7 @@ DOMAssistant.Events = function () {
 			evt = fix(evt);
 			if (this.events && this.events[evt]) {
 				var eventColl = this.events[evt];
-				for (var fn, i=eventColl.length-1; i>=0; i--) {
+				for (var fn, i=eventColl.length; i--;) {
 					fn = func || eventColl[i];
 					if (eventColl[i] === fn && (!relay && !fn.relay || relay && fn.relay)) {
 						eventColl.splice(i, 1);
