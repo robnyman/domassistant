@@ -5,29 +5,46 @@
 
 SugarTest()
   .before(function() {
-    //this.extra = 'extrawadus';
     this.ajaxtimeout = 500;
   })
   .context('')
-    .before(function() {
-      //this.wadus = 'w';
-    })
-    .it('Selects id correctly', function() {
-      var elm = $$('01abc');
-      this.assertEqual('abc_2', elm.innerText || elm.textContent);
-      this.assertNull($$('03abc'));
-    })
-    .it('All methods attached to elements correctly', function() {
-      var methods = 'each first end indexOf map filter every some hasChild prev next cssSelect elmsByClass elmsByAttribute elmsByTag ajax get post load addClass removeClass replaceClass hasClass setStyle getStyle create setAttributes addContent replaceContent replace remove triggerEvent addEvent removeEvent relayEvent unrelayEvent preventDefault cancelBubble'.split(' ');
-      var elms = $('div');
-      for (var i=0; i<methods.length; i++) {
-	      this.assertRespondsTo(methods[i], elms);
-      }
-      var elm = $$('01abc');
-      for (var i=8; i<methods.length; i++) {
-	      this.assertRespondsTo(methods[i], elm);
-      }
-    })
+  	.describe('Basic -')
+	    .it('Selects element correctly', function() {
+	      var elm = document.getElementById('test_01');
+	      this.assertIdentical(elm, $(elm), 'Passing object to $');
+	      this.assertIdentical(elm, $$(elm), 'Passing object to $$');
+	      this.assertIdentical(elm, $('#test_01')[0], 'Passing id to $');
+	      this.assertIdentical(elm, $$('test_01'), 'Passing id to $$');
+	      this.assertNull($$('03abc'));
+	    })
+	    .it('Falsy argument', function() {
+	      var elm = $(document.getElementById('01abc'));
+	      this.assertNull($(null), 'null');
+	      this.assertNull($(undefined), 'undefined');
+	      this.assertNull($(false), 'false');
+	      this.assertNull($(), '<nothing>');
+	      this.assertNull($$(null), 'null');
+	      this.assertNull($$(undefined), 'undefined');
+	      this.assertNull($$(false), 'false');
+	      this.assertNull($$(), '<nothing>');
+	      this.assertNull($$('nonexist'), 'nonexist');
+	      this.assertNull(elm.cssSelect(null), 'null');
+	      this.assertNull(elm.cssSelect(undefined), 'undefined');
+	      this.assertNull(elm.cssSelect(false), 'false');
+	      this.assertNull(elm.cssSelect(), '<nothing>');
+	    })
+	    .it('All methods attached to elements correctly', function() {
+	      var methods = 'each first end indexOf map filter every some hasChild prev next cssSelect elmsByClass elmsByAttribute elmsByTag ajax get post load addClass removeClass replaceClass hasClass setStyle getStyle create setAttributes addContent replaceContent replace remove triggerEvent addEvent removeEvent relayEvent unrelayEvent preventDefault cancelBubble'.split(' ');
+	      var elms = $('div');
+	      for (var i=0; i<methods.length; i++) {
+		      this.assertRespondsTo(methods[i], elms, methods[i] + ' is callable on HTMLArray');
+	      }
+	      var elm = $$('01abc');
+	      for (var i=8; i<methods.length; i++) {
+		      this.assertRespondsTo(methods[i], elm, methods[i] + ' is callable on HTMLElement');
+	      }
+	    })
+    .end()
     .describe('CSS -')
     .it('Class manipulation', function() {
       var elm = $(document.getElementById('01abc'));
@@ -281,15 +298,20 @@ SugarTest()
         this.assertEqual(1, $('#test_03 span span span').length);
       })
       .it('Loops through each element', function() {
-      	$('#test_03 span').each( function() {
+      	var elms = $('#test_03 span');
+      	elms.each( function() {
       		this.addClass('klassX');
       		this.setStyle('opacity', 0.5);
       	});
-      	var elms = $('#test_03 span');
       	for (var i=0, iL=elms.length; i<iL; i++) {
       		this.assertHasClass(elms[i], 'klassX');
       		this.assertEqual(0.5, elms[i].getStyle('opacity'));
       	}
+      	elms.each( function() {
+      		this.setAttributes({ name: 'first' });
+      		return false;
+      	});
+      	this.assertEqual(1, $('#test_03 span[name]').length);
       })
     .end()
     .describe('Ajax -')
@@ -518,12 +540,16 @@ SugarTest()
         		good = false;
         	}
         }
+        this.assert(good, 'Select all elements, no comment nodes');
         this.assertEnumEqual(['firstp','ap','sndp','en','sap','first'], this.get('p'), 'Element selector');
         this.assertEnumEqual(['body'], $('body').map(this.fn), 'Element selector');
         this.assertEnumEqual(['html'], $('html').map(this.fn), 'Element selector');
         this.assertEnumEqual(['firstp','ap','sndp','en','sap','first'], this.get('div p'), 'Parent Element');
         this.assert($('#length').length);
         this.assert($('#lengthtest input').length);
+        this.assertEqual(1, $('#nonnodes *').length, '* must not return text nor comment nodes');
+        this.assertEqual(1, $$('nonnodes').cssSelect('*').length, '* must not return text nor comment nodes');
+        this.assertEnumEqual(['hi'], $('#nonnodes *, #nonnodes span, #hi, *[id=hi]').map(this.fn), 'Must not return duplicates');
       })
     .it('id', function() {
         this.assertEnumEqual(['body'], $('#body').map(this.fn), 'ID Selector');
@@ -1005,40 +1031,6 @@ SugarTest()
         });
   	})
   .end()
-   /*
-   .describe('when nested having a setup function')
-      .before(function() {
-        this.wadus += 'a';
-      })
-      .it('runs both setup functions', function() {
-        this.assertEqual('wa', this.wadus);
-      })
-      .describe('with more than a nesting level')
-        .before(function() {
-          this.wadus += 'd';
-        })
-        .it('runs setup methods in order', function() {
-          this.assertEqual('wad', this.wadus);
-        })
-      .end()
-    .end()
-    .describe('that creates a DOM node')
-      .before(function() {
-        document.body.appendChild(document.createElement('h6'));
-      })
-      .after(function() {
-        var h6 = document.getElementsByTagName('h6')[1];
-        h6.parentNode.removeChild(h6);
-      })
-      .it('yes, really, creates the node added', function() {
-        this.assertEqual(2, document.getElementsByTagName('h6').length);
-      })
-    .end()
-    .describe('whose previous context had an after function defined')
-      .should('find that the function was invoked', function() {
-        this.assertEqual(1, document.getElementsByTagName('h6').length);
-      })
-      */
   .root()
   .it('DOMAssistant rules', function() {
     this.assert(DOMAssistant);

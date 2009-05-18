@@ -104,7 +104,7 @@ DOMAssistant.Content = function () {
 			if (type === "string" || type === "number") {
 				var parent = this.parentNode;
 				var tmp = DOMAssistant.Content.create.call(parent, "div", null, false, content);
-				for (var i=tmp.childNodes.length-1; i>=0; i--) {
+				for (var i=tmp.childNodes.length; i--;) {
 					parent.insertBefore(tmp.childNodes[i], this.nextSibling);
 				}
 				content = this.nextSibling;
