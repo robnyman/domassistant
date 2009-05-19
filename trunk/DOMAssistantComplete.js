@@ -46,10 +46,16 @@ var DOMAssistant = function () {
 	},
 	sortDocumentOrder = function (elmArray) {
 		return (sortDocumentOrder = elmArray[0].compareDocumentPosition? function (elmArray) { return elmArray.sort( function (a, b) { return 3 - (a.compareDocumentPosition(b) & 6); } ) } :
-			elmArray[0].sourceIndex? function (elmArray) { return elmArray.sort( function (a, b) { return a.sourceIndex - b.sourceIndex; } ) } :
+			isIE? function (elmArray) { return elmArray.sort( function (a, b) { return a.sourceIndex - b.sourceIndex; } ) } :
+			window.opera? function (elmArray) { return elmArray.sort( function (a, b) { var all = slice.apply(document.getElementsByTagName("*")); return all.indexOf(a) - all.indexOf(b); } ) } :
 			function (elmArray) { return elmArray.sort( function (a, b) {
-				var all = slice.apply(document.getElementsByTagName("*"));
-				return all.indexOf(a) - all.indexOf(b); 
+				var range1 = document.createRange();
+				range1.selectNode(a);
+				range1.collapse(true);
+				var range2 = document.createRange();
+				range2.selectNode(b);
+				range2.collapse(true);
+				return range1.compareBoundaryPoints(Range.START_TO_END, range2); 
 			} ) })(elmArray);
 	};
 	var pushAll = function (set1, set2) {
