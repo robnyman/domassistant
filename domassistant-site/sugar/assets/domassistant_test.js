@@ -662,7 +662,7 @@ SugarTest()
         this.assertEnumEqual(["option2d"], this.get("#select2 option[selected]"), "Select options via [selected]");
         this.assertEnumEqual(["option3b", "option3c"], this.get("#select3 option[selected]"), "Select options via [selected]");
 
-        //this.assertEnumEqual(["hidden2"], this.get("input[name='foo[bar]']"), "Grouped Form Elements");
+        this.assertEnumEqual(["hidden2"], this.get("input[name='foo[bar]']"), "Grouped Form Elements");
         
         this.assertEnumEqual(["select1", "select2"], this.get("#form select:not([multiple])"), ":not() Existing attribute");
         this.assertEnumEqual(["select2", "select3"], this.get("#form select:not([name=select1])"), ":not() Equals attribute");
