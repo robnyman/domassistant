@@ -5,7 +5,6 @@ var DOMAssistant = function () {
 	},
 	isIE = /*@cc_on!@*/false,
 	isIE5 = isIE && parseFloat(navigator.appVersion) < 6,
-	isWebkit = /webkit/i.test(navigator.userAgent),
 	tagCache = {}, lastCache = {}, useCache = true,
 	slice = Array.prototype.slice,
 	camel = {
@@ -47,7 +46,6 @@ var DOMAssistant = function () {
 	sortDocumentOrder = function (elmArray) {
 		return (sortDocumentOrder = elmArray[0].compareDocumentPosition? function (elmArray) { return elmArray.sort( function (a, b) { return 3 - (a.compareDocumentPosition(b) & 6); } ) } :
 			isIE? function (elmArray) { return elmArray.sort( function (a, b) { return a.sourceIndex - b.sourceIndex; } ) } :
-			window.opera? function (elmArray) { return elmArray.sort( function (a, b) { var all = slice.apply(document.getElementsByTagName("*")); return all.indexOf(a) - all.indexOf(b); } ) } :
 			function (elmArray) { return elmArray.sort( function (a, b) {
 				var range1 = document.createRange();
 				range1.selectNode(a);
@@ -55,7 +53,7 @@ var DOMAssistant = function () {
 				var range2 = document.createRange();
 				range2.selectNode(b);
 				range2.collapse(true);
-				return range1.compareBoundaryPoints(Range.START_TO_END, range2); 
+				return range1.compareBoundaryPoints(Range.START_TO_END, range2);
 			} ) })(elmArray);
 	};
 	var pushAll = function (set1, set2) {
@@ -112,7 +110,7 @@ var DOMAssistant = function () {
 				return this.previousSet;
 			};
 			HTMLArray.prototype.indexOf = HTMLArray.prototype.indexOf || function (elm) {
-				for (var i=this.length; i--;) {
+				for (var i=0, il=this.length; i<il; i++) {
 					if (i in this && this[i] === elm) {
 						return i;
 					}
@@ -720,10 +718,10 @@ var DOMAssistant = function () {
 					}
 				}
 				try {
-					var xPathNodes = document.evaluate(xPathExpression, this, nsResolver, 0, null), node;
-					while ((node = xPathNodes.iterateNext())) { elm.push(node); }
+					var xPathNodes = document.evaluate(xPathExpression, this, nsResolver, 7, null), node, i=0;
+					while ((node = xPathNodes.snapshotItem(i++))) { elm.push(node); }
 				} catch (e) {}
-				return (elm.length && (cssRules.length > 1 || isWebkit))? sortDocumentOrder(elm) : elm;
+				return elm;
 			};
 			return DOMAssistant.cssByXpath.call(this, cssRule);
 		},
