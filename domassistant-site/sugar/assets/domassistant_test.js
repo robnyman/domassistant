@@ -545,8 +545,8 @@ SugarTest()
         this.assertEnumEqual(['body'], $('body').map(this.fn), 'Element selector');
         this.assertEnumEqual(['html'], $('html').map(this.fn), 'Element selector');
         this.assertEnumEqual(['firstp','ap','sndp','en','sap','first'], this.get('div p'), 'Parent Element');
-        this.assert($('#length').length);
-        this.assert($('#lengthtest input').length);
+        this.assertEnumEqual(['length'], $('#length').map(this.fn), "form with input named 'length'");
+        this.assertEnumEqual(['length','idTest'], $('#lengthtest input').map(this.fn), "form with input named 'length'");
         this.assertEqual(1, $('#nonnodes *').length, '* must not return text nor comment nodes');
         this.assertEqual(1, $$('nonnodes').cssSelect('*').length, '* must not return text nor comment nodes');
         this.assertEnumEqual(['hi'], $('#nonnodes *, #nonnodes span, #hi, *[id=hi]').map(this.fn), 'Must not return duplicates');
@@ -571,7 +571,8 @@ SugarTest()
         $($$('test_98').parentNode).addContent('<a name="tName1">tName1 A</a><a name="tName2">tName2 A</a><div id="tName1">tName1 Div</div>');
         this.assertEqual('tName1', $('#tName1')[0].id, 'ID selector with same value for a name attribute');
         this.assertEqual(0, $('#tName2').length, 'ID selector non-existing but name attribute on an A tag');
-        //this.assertEnumEqual(['lengthtest'], $('#lengthtest').map(this.fn), 'ID Selector on Form with an input that has a name of \'id\''); 
+        this.assertIdentical(document.getElementById('lengthtest'), $('#lengthtest')[0], 'ID Selector on Form with an input that has a name of \'id\''); 
+        this.assertIdentical(document.getElementById('lengthtest'), $$('lengthtest'), 'ID Selector on Form with an input that has a name of \'id\''); 
         this.assertEnumEqual([], this.get('#asdfasdf #foobar'), 'ID selector with non-existant ancestor');
   	})
     .it('class', function() {

@@ -1,8 +1,8 @@
 Version 2.8:
 =============
-- [Add] Event delegation through relayEvent() and unrelayEvent(), with support for focus and blur
-- [Add] New method hasChild() to allow testing for descendant
-- [Add] New core methods: indexOf(), map(), filter(), every() and some()
+- [New] Event delegation through relayEvent() and unrelayEvent(), with support for focus and blur
+- [New] New method hasChild() to allow testing for descendant
+- [New] New core methods: indexOf(), map(), filter(), every() and some()
 - [Chg] Callback function in each() receives an index reference, to be consistent with the new methods
 - [Chg] each() can now be terminated when the callback function returns false
 - [Chg] Selector engine now returns elements in the order they appear in the document
@@ -15,6 +15,7 @@ Version 2.8:
 - [Fix] attribute selector with empty value (eg. [value='']) does not work
 - [Fix] attribute selector with square brackets (eg. [name='foo[bar]']) does not work
 - [Fix] tag#id incorrectly returns the element even when its tagname does not match
+- [Fix] Unable to get form by $() when it contains field with name="id"
 - [Fix] Multi-selectors return duplicated elements in IE
 - [Fix] Certain selectors sometimes return less elements than expected in IE
 - [Fix] Comment nodes not skipped in IE

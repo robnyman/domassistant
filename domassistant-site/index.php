@@ -54,7 +54,7 @@
 							<dl>
 								<dt>
 									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCompressed-2.8.js">DOMAssistant 2.8, compressed</a><br>
-									(9kb <a href="http://en.wikipedia.org/wiki/Gzip" class="small">Gzipped</a>)
+									(10kb <a href="http://en.wikipedia.org/wiki/Gzip" class="small">Gzipped</a>)
 								</dt>
 								<dd>Intended for production.</dd>
 
