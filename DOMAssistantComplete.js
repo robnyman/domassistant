@@ -250,12 +250,13 @@ var DOMAssistant = function () {
 		},
 		
 		$$ : function (id, addMethods) {
-			var elm = (typeof id === "object" || (typeof id === "function" && !!id.nodeName))? id : document.getElementById(id);
-			var applyMethods = addMethods || true;
-			if (typeof id === "string" && elm && elm.id !== id) {
+			var elm = (typeof id === "object" || typeof id === "function" && !!id.nodeName)? id : document.getElementById(id),
+				applyMethods = addMethods || true,
+				getId = function(el) { var eid = el.id; return typeof eid !== "object"? eid : el.attributes['id'].nodeValue; };
+			if (typeof id === "string" && elm && getId(elm) !== id) {
 				elm = null;
 				for (var i=0, item; (item=document.all[i]); i++) {
-					if (item.id === id) {
+					if (getId(item) === id) {
 						elm = item;
 						break;
 					}
