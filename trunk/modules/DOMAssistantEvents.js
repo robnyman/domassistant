@@ -86,7 +86,8 @@ DOMAssistant.Events = function () {
 				type = fix(currentEvt.type),
 				currentTarget = currentEvt.target || currentEvt.srcElement || document;
 			while (currentTarget.nodeType !== 1 && currentTarget.parentNode) { currentTarget = currentTarget.parentNode; }
-			currentEvt.eventTarget = currentTarget;
+			if (!currentEvt.target) { currentEvt.target = evtTarget; }
+			if (!currentEvt.currentTarget) { currentEvt.currentTarget = this; }
 			var eventColl = this.events[type].slice(0), eventCollLength, eventReturn;
 			if ((eventCollLength = eventColl.length)) {
 				for (var i=0; i<eventCollLength; i++) {

@@ -1228,9 +1228,10 @@ DOMAssistant.Events = function () {
 		handleEvent : function (evt) {
 			var currentEvt = evt || event,
 				type = fix(currentEvt.type),
-				currentTarget = currentEvt.target || currentEvt.srcElement || document;
-			while (currentTarget.nodeType !== 1 && currentTarget.parentNode) { currentTarget = currentTarget.parentNode; }
-			currentEvt.eventTarget = currentTarget;
+				evtTarget = currentEvt.target || currentEvt.srcElement || document;
+			while (evtTarget.nodeType !== 1 && evtTarget.parentNode) { evtTarget = evtTarget.parentNode; }
+			if (!currentEvt.target) { currentEvt.target = evtTarget; }
+			if (!currentEvt.currentTarget) { currentEvt.currentTarget = this; }
 			var eventColl = this.events[type].slice(0), eventCollLength, eventReturn;
 			if ((eventCollLength = eventColl.length)) {
 				for (var i=0; i<eventCollLength; i++) {

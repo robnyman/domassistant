@@ -708,16 +708,19 @@ SugarTest()
    .end()
    .describe('Events -')
     .it('Custom events triggering', function() {
-        var elm = $$('test_06'), fired = false, target = null;
+        var elm = $$('test_06'), fired = false, target = null, currentTarget = null;
         elm.addEvent('somethingHappened', function(evt) {
         	target = evt.target;
+        	currentTarget = evt.currentTarget;
         	fired = true;
         });
         elm.triggerEvent('somethingHappened');
       	this.assertEqual(elm, target);
+      	this.assertEqual(elm, currentTarget);
       	this.assert(fired);
         elm.triggerEvent('somethingHappened', $('#test_06 a').first());
       	this.assertEqual($('#test_06 a').first(), target);
+      	this.assertEqual(elm, currentTarget);
       	fired = false;
       	elm.triggerEvent('somethingElseHappened');
       	this.assert(!fired);
@@ -726,12 +729,16 @@ SugarTest()
       	this.assert(!fired);
   	})
     .it('Custom events bubbling', function() {
-        var span = $$('test_06_span_01'), outer = $$('outer'), fired = false;
+        var span = $$('test_06_span_01'), outer = $$('outer'), fired = false, target = null, currentTarget = null;
         outer.addEvent('somethingHappened', function(evt) {
+        	target = evt.target;
+        	currentTarget = evt.currentTarget;
         	fired = true;
         });
         span.triggerEvent('somethingHappened');
       	this.assert(fired);
+      	this.assertEqual(span, target);
+      	this.assertEqual(outer, currentTarget);
       	fired = false;
       	outer.removeEvent('somethingHappened');
       	span.triggerEvent('somethingHappened');

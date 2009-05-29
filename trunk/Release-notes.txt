@@ -1,6 +1,7 @@
 Version 2.8:
 =============
 - [New] Event delegation through relayEvent() and unrelayEvent(), with support for focus and blur
+- [New] Cross-browser support for event.target and event.currentTarget in event callback functions
 - [New] New method hasChild() to allow testing for descendant
 - [New] New core methods: indexOf(), map(), filter(), every() and some()
 - [Chg] Callback function in each() receives an index reference, to be consistent with the new methods
