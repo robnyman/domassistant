@@ -47,12 +47,11 @@ var DOMAssistant = function () {
 		return (sortDocumentOrder = elmArray[0].compareDocumentPosition? function (elmArray) { return elmArray.sort( function (a, b) { return 3 - (a.compareDocumentPosition(b) & 6); } ) } :
 			isIE? function (elmArray) { return elmArray.sort( function (a, b) { return a.sourceIndex - b.sourceIndex; } ) } :
 			function (elmArray) { return elmArray.sort( function (a, b) {
-				var range1 = document.createRange();
-				range1.selectNode(a);
-				range1.collapse(true);
-				var range2 = document.createRange();
-				range2.selectNode(b);
-				range2.collapse(true);
+				var range1 = document.createRange(), range2 = document.createRange();
+				range1.setStart(a, 0);
+				range1.setEnd(a, 0);
+				range2.setStart(b, 0);
+				range2.setEnd(b, 0);
 				return range1.compareBoundaryPoints(Range.START_TO_END, range2);
 			} ) })(elmArray);
 	};
@@ -655,25 +654,25 @@ var DOMAssistant = function () {
 			DOMAssistant.cssByXpath = function (cssRule) {
 				var currentRule, cssSelectors, xPathExpression, cssSelector, splitRule, sequence,
 					elm = new HTMLArray(), cssRules = cssRule.replace(regex.rules, "$1").split(",");
-				function attrToXPath (match, p1, p2, p3, p4) {
-					p4 = (p4 || "").replace(regex.quoted, "$1");
-					return {
-						"^": "starts-with(@" + p1 + ", \"" + p4 + "\")",
-						"$": "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p4.length - 1) + "), " + p4.length + ") = \"" + p4 + "\"",
-						"*": "contains(concat(\" \", @" + p1 + ", \" \"), \"" + p4 + "\")",
-						"|": "@" + p1 + "=\"" + p4 + "\" or starts-with(@" + p1 + ", \"" + p4 + "-\")",
-						"~": "contains(concat(\" \", @" + p1 + ", \" \"), \" " + p4 + " \")"
-					}[p2] || ("@" + p1 + (p3? "=\"" + p4 + "\"" : ""));
-				}
-				function attrToXPathB (match, p1, p2, p3, p4) {
-					return "[" + attrToXPath(match, p1, p2, p3, p4) + "]";
+				function attrToXPath (wrap) {
+					var pre = wrap? "[" : "", post = wrap? "]" : "";
+					return function (match, p1, p2, p3, p4) {
+						p4 = (p4 || "").replace(regex.quoted, "$1");
+						return pre + ({
+							"^": "starts-with(@" + p1 + ", \"" + p4 + "\")",
+							"$": "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p4.length - 1) + "), " + p4.length + ") = \"" + p4 + "\"",
+							"*": "contains(concat(\" \", @" + p1 + ", \" \"), \"" + p4 + "\")",
+							"|": "@" + p1 + "=\"" + p4 + "\" or starts-with(@" + p1 + ", \"" + p4 + "-\")",
+							"~": "contains(concat(\" \", @" + p1 + ", \" \"), \" " + p4 + " \")"
+						}[p2] || ("@" + p1 + (p3? "=\"" + p4 + "\"" : ""))) + post;
+					}
 				}
 				function pseudoToXPath (tag, pseudoClass, pseudoValue) {
 					tag = /\-child$/.test(pseudoClass)? "*" : tag;
 					var pseudo = pseudoClass.split("-"), position = ((pseudo[1] === "last")? "(count(following-sibling::" : "(count(preceding-sibling::") + tag + ") + 1)", recur, hash;
 					switch (pseudo[0]) {
 						case "nth": return (pseudoValue !== "n" && (sequence = DOMAssistant.getSequence(pseudoValue)))? ((sequence.start === sequence.max)? position + " = " + sequence.start : position + " mod " + sequence.add + " = " + sequence.modVal + ((sequence.start > 1)? " and " + position + " >= " + sequence.start : "") + ((sequence.max > 0)? " and " + position + " <= " + sequence.max: "")) : "";
-						case "not": return "not(" + ((recur = regex.pseudo.exec(pseudoValue))? pseudoToXPath(tag, recur[1]? recur[1].toLowerCase() : null, recur[3] || null) : pseudoValue.replace(regex.id, "[id=$1]").replace(regex.tag, "self::$1").replace(regex.classes, "contains(concat(\" \", @class, \" \"), \" $1 \")").replace(regex.attribs, attrToXPath)) + ")";
+						case "not": return "not(" + ((recur = regex.pseudo.exec(pseudoValue))? pseudoToXPath(tag, recur[1]? recur[1].toLowerCase() : null, recur[3] || null) : pseudoValue.replace(regex.id, "[id=$1]").replace(regex.tag, "self::$1").replace(regex.classes, "contains(concat(\" \", @class, \" \"), \" $1 \")").replace(regex.attribs, attrToXPath())) + ")";
 						case "first": return "not(preceding-sibling::" + tag + ")";
 						case "last": return "not(following-sibling::" + tag + ")";
 						case "only": return "not(preceding-sibling::" + tag + " or following-sibling::" + tag + ")";
@@ -702,7 +701,7 @@ var DOMAssistant = function () {
 							(splitRule.tagRelation? ({ ">": "/", "+": "/following-sibling::*[1]/self::", "~": "/following-sibling::" }[splitRule.tagRelation] || "") : ((j > 0 && regex.relation.test(cssSelectors[j-1]))? splitRule.tag : ("//" + splitRule.tag))) +
 							(splitRule.id || "").replace(regex.id, "[@id = \"$1\"]") +
 							(splitRule.allClasses || "").replace(regex.classes, "[contains(concat(\" \", @class, \" \"), \" $1 \")]") +
-							(splitRule.allAttr || "").replace(regex.attribs, attrToXPathB);
+							(splitRule.allAttr || "").replace(regex.attribs, attrToXPath(true));
 						if (splitRule.allPseudos) {
 							var allPseudos = splitRule.allPseudos.match(regex.pseudos);
 							for (var k=0, kl=allPseudos.length; k<kl; k++) {
@@ -1176,13 +1175,13 @@ DOMAssistant.Events = function () {
 			var event = e || {
 				type: evt,
 				target: target || this,
-				currentTarget: this,
 				bubbles: true,
 				cancelable: false,
 				preventDefault: function(){},
 				stopPropagation: function(){ this.bubbles = false; },
 				timeStamp: +new Date()
 			};
+			event.currentTarget = this;
 			if (this.events && this.events[evt]) {
 				for (var i=0, iL=this.events[evt].length; i<iL; i++) {
 					if (this.events[evt][i].call(this, event) === false) { event.bubbles = false; }
@@ -1273,7 +1272,7 @@ DOMAssistant.Events = function () {
 				e = e || event;
 				var target = e.target || e.srcElement, args = arguments, i = 0, elm, elms = this.cssSelect(selector);
 				while ((elm = elms[i++])) {
-					if (elm === target || DOMAssistant.hasChild.call(elm, target)) {
+					if ((elm === target || DOMAssistant.hasChild.call(elm, target)) && !elm.disabled) {
 						return fn.apply(elm, args);
 					}
 				}

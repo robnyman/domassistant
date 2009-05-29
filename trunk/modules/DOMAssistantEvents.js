@@ -31,13 +31,13 @@ DOMAssistant.Events = function () {
 			var event = e || {
 				type: evt,
 				target: target || this,
-				currentTarget: this,
 				bubbles: true,
 				cancelable: false,
 				preventDefault: function(){},
 				stopPropagation: function(){ this.bubbles = false; },
 				timeStamp: +new Date()
 			};
+			event.currentTarget = this;
 			if (this.events && this.events[evt]) {
 				for (var i=0, iL=this.events[evt].length; i<iL; i++) {
 					if (this.events[evt][i].call(this, event) === false) { event.bubbles = false; }
@@ -128,7 +128,7 @@ DOMAssistant.Events = function () {
 				e = e || event;
 				var target = e.target || e.srcElement, args = arguments, i = 0, elm, elms = this.cssSelect(selector);
 				while ((elm = elms[i++])) {
-					if (elm === target || DOMAssistant.hasChild.call(elm, target)) {
+					if ((elm === target || DOMAssistant.hasChild.call(elm, target)) && !elm.disabled) {
 						return fn.apply(elm, args);
 					}
 				}
