@@ -991,7 +991,7 @@ SugarTest()
         	return this.id;
         });
         this.assertEnumEqual(['outer', 'inner', 'test_06_span_01'], arr);
-        arr = $('#test_06 span').map( function(idx) {
+        arr = $('#test_06 span').map( function(elm, idx) {
         	return idx * 2;
         });
         this.assertEnumEqual([0, 2, 4], arr);
