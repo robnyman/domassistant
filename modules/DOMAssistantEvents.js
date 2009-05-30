@@ -126,8 +126,7 @@ DOMAssistant.Events = function () {
 
 		relayEvent: function (evt, selector, fn) {
 			return DOMAssistant.Events.addEvent.call(this, evt, function(e) {
-				e = e || event;
-				var target = e.target || e.srcElement, args = arguments, i = 0, elm, elms = this.cssSelect(selector);
+				var target = e.target, args = arguments, i = 0, elm, elms = this.cssSelect(selector);
 				while ((elm = elms[i++])) {
 					if ((elm === target || DOMAssistant.hasChild.call(elm, target)) && !elm.disabled) {
 						return fn.apply(elm, args);

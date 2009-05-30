@@ -44,8 +44,8 @@ var DOMAssistant = function () {
 		return typeof obj !== "undefined";
 	},
 	sortDocumentOrder = function (elmArray) {
-		return (sortDocumentOrder = elmArray[0].compareDocumentPosition? function (elmArray) { return elmArray.sort( function (a, b) { return 3 - (a.compareDocumentPosition(b) & 6); } ) } :
-			isIE? function (elmArray) { return elmArray.sort( function (a, b) { return a.sourceIndex - b.sourceIndex; } ) } :
+		return (sortDocumentOrder = elmArray[0].compareDocumentPosition? function (elmArray) { return elmArray.sort( function (a, b) { return 3 - (a.compareDocumentPosition(b) & 6); } ); } :
+			isIE? function (elmArray) { return elmArray.sort( function (a, b) { return a.sourceIndex - b.sourceIndex; } ); } :
 			function (elmArray) { return elmArray.sort( function (a, b) {
 				var range1 = document.createRange(), range2 = document.createRange();
 				range1.setStart(a, 0);
@@ -53,7 +53,7 @@ var DOMAssistant = function () {
 				range2.setStart(b, 0);
 				range2.setEnd(b, 0);
 				return range1.compareBoundaryPoints(Range.START_TO_END, range2);
-			} ) })(elmArray);
+			} ); })(elmArray);
 	};
 	var pushAll = function (set1, set2) {
 		set1.push.apply(set1, slice.apply(set2));
@@ -94,63 +94,65 @@ var DOMAssistant = function () {
 				HTMLArray = Array;
 			}
 			HTMLArray.prototype = [];
-			HTMLArray.prototype.each = function (fn) {
-				for (var i=0, il=this.length; i<il; i++) {
-					if (fn.call(this[i], i) === false) {
-						break;
+			(function (H) {
+				H.each = function (fn, context) {
+					for (var i=0, il=this.length; i<il; i++) {
+						if (fn.call(context || this[i], this[i], i, this) === false) {
+							break;
+						}
 					}
-				}
-				return this;
-			};
-			HTMLArray.prototype.first = function () {
-				return def(this[0])? DOMAssistant.addMethodsToElm(this[0]) : null;
-			};
-			HTMLArray.prototype.end = function () {
-				return this.previousSet;
-			};
-			HTMLArray.prototype.indexOf = HTMLArray.prototype.indexOf || function (elm) {
-				for (var i=0, il=this.length; i<il; i++) {
-					if (i in this && this[i] === elm) {
-						return i;
+					return this;
+				};
+				H.first = function () {
+					return def(this[0])? DOMAssistant.addMethodsToElm(this[0]) : null;
+				};
+				H.end = function () {
+					return this.previousSet;
+				};
+				H.indexOf = H.indexOf || function (elm) {
+					for (var i=0, il=this.length; i<il; i++) {
+						if (i in this && this[i] === elm) {
+							return i;
+						}
 					}
-				}
-				return -1;
-			};
-			HTMLArray.prototype.map = function (fn) {
-				var res = [];
-				for (var i=0, il=this.length; i<il; i++) {
-					if (i in this) {
-						res[i] = fn.call(this[i], i);
+					return -1;
+				};
+				H.map = function (fn, context) {
+					var res = [];
+					for (var i=0, il=this.length; i<il; i++) {
+						if (i in this) {
+							res[i] = fn.call(context || this[i], this[i], i, this);
+						}
 					}
-				}
-				return res;
-			};
-			HTMLArray.prototype.filter = function (fn) {
-				var res = new HTMLArray();
-				res.previousSet = this;
-				for (var i=0, il=this.length; i<il; i++) {
-					if (i in this && fn.call(this[i], i)) {
-						res.push(this[i]);
+					return res;
+				};
+				H.filter = function (fn, context) {
+					var res = new HTMLArray();
+					res.previousSet = this;
+					for (var i=0, il=this.length; i<il; i++) {
+						if (i in this && fn.call(context || this[i], this[i], i, this)) {
+							res.push(this[i]);
+						}
 					}
-				}
-				return res;
-			};
-			HTMLArray.prototype.every = function (fn) {
-				for (var i=0, il=this.length; i<il; i++) {
-					if (i in this && !fn.call(this[i], i)) {
-						return false;
+					return res;
+				};
+				H.every = function (fn, context) {
+					for (var i=0, il=this.length; i<il; i++) {
+						if (i in this && !fn.call(context || this[i], this[i], i, this)) {
+							return false;
+						}
 					}
-				}
-				return true;
-			};
-			HTMLArray.prototype.some = function (fn) {
-				for (var i=0, il=this.length; i<il; i++) {
-					if (i in this && fn.call(this[i], i)) {
-						return true;
+					return true;
+				};
+				H.some = function (fn, context) {
+					for (var i=0, il=this.length; i<il; i++) {
+						if (i in this && fn.call(context || this[i], this[i], i, this)) {
+							return true;
+						}
 					}
-				}
-				return false;
-			};
+					return false;
+				};
+			})(HTMLArray.prototype);
 			this.attach(this);
 		},
 		
@@ -251,7 +253,7 @@ var DOMAssistant = function () {
 		$$ : function (id, addMethods) {
 			var elm = (typeof id === "object" || typeof id === "function" && !!id.nodeName)? id : document.getElementById(id),
 				applyMethods = addMethods || true,
-				getId = function(el) { var eid = el.id; return typeof eid !== "object"? eid : el.attributes['id'].nodeValue; };
+				getId = function(el) { var eid = el.id; return typeof eid !== "object"? eid : el.attributes.id.nodeValue; };
 			if (typeof id === "string" && elm && getId(elm) !== id) {
 				elm = null;
 				for (var i=0, item; (item=document.all[i]); i++) {
@@ -665,7 +667,7 @@ var DOMAssistant = function () {
 							"|": "@" + p1 + "=\"" + p4 + "\" or starts-with(@" + p1 + ", \"" + p4 + "-\")",
 							"~": "contains(concat(\" \", @" + p1 + ", \" \"), \" " + p4 + " \")"
 						}[p2] || ("@" + p1 + (p3? "=\"" + p4 + "\"" : ""))) + post;
-					}
+					};
 				}
 				function pseudoToXPath (tag, pseudoClass, pseudoValue) {
 					tag = /\-child$/.test(pseudoClass)? "*" : tag;
@@ -718,8 +720,8 @@ var DOMAssistant = function () {
 					}
 				}
 				try {
-					var xPathNodes = document.evaluate(xPathExpression, this, nsResolver, 7, null), node, i=0;
-					while ((node = xPathNodes.snapshotItem(i++))) { elm.push(node); }
+					var xPathNodes = document.evaluate(xPathExpression, this, nsResolver, 7, null), node, p=0;
+					while ((node = xPathNodes.snapshotItem(p++))) { elm.push(node); }
 				} catch (e) {}
 				return elm;
 			};
@@ -1270,8 +1272,7 @@ DOMAssistant.Events = function () {
 
 		relayEvent: function (evt, selector, fn) {
 			return DOMAssistant.Events.addEvent.call(this, evt, function(e) {
-				e = e || event;
-				var target = e.target || e.srcElement, args = arguments, i = 0, elm, elms = this.cssSelect(selector);
+				var target = e.target, args = arguments, i = 0, elm, elms = this.cssSelect(selector);
 				while ((elm = elms[i++])) {
 					if ((elm === target || DOMAssistant.hasChild.call(elm, target)) && !elm.disabled) {
 						return fn.apply(elm, args);
