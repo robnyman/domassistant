@@ -978,7 +978,7 @@ SugarTest()
         this.assertEqual(1, count, 'customEvent should be triggered');
         elm.triggerEvent('customEvent');
         this.assertEqual(1, count, 'customEvent has been removed, should not be triggered');
-        this.assertEqual(0, elm.events['customEvent'].length);
+        this.assertEqual(0, elm.retrieve('_events')['customEvent'].length, 'There should no longer be any customEvent handlers in the _events storage');
   	})
   	/*
   	// DOMAssistant does not support this feature as of v2.8
@@ -1054,6 +1054,45 @@ SugarTest()
         $('#test_06 span').each( function() {
         	sugar.assertEqual(0.2, this.getStyle('opacity'));
         });
+  	})
+  .end()
+   .describe('Element storage -')
+    .before(function() {
+    	var tmp_uid;
+  	})
+    .it('Retrieving element unique ID', function() {
+    	var elm1_uid = $$('test_04').retrieve();
+    	var elm2_uid = $$('test_05').retrieve();
+    	tmp_uid = elm1_uid;
+        this.assertIdentical('number', typeof elm1_uid);
+        this.assertIdentical('number', typeof elm2_uid);
+        this.assertIdentical(elm2_uid, elm1_uid + 1);
+  	})
+    .it('Storing and retrieving data', function() {
+    	var elm = $$('test_04');
+    	elm.store('foo', 'bar');
+        this.assertIdentical('bar', elm.retrieve('foo'), 'store and retrieve');
+    	elm.store('foo', 888);
+        this.assertIdentical(888, elm.retrieve('foo'), 'reset and retrieve');
+        elm.store({ 'qwe': 'rty', 'yui': 'asd', 'fgh': 666 });
+        this.assertIdentical('rty', elm.retrieve('qwe'), 'storing multiple data at once');
+        this.assertIdentical('asd', elm.retrieve('yui'), 'storing multiple data at once');
+        this.assertIdentical(666, elm.retrieve('fgh'), 'storing multiple data at once');
+        
+        this.assertUndefined(elm.retrieve('notset'), 'retrieve data not being set');
+  	})
+    .it('Unstoring data', function() {
+    	var elm = $$('test_04');
+        this.assertIdentical(888, elm.retrieve('foo'), 'data should persist');
+        this.assertIdentical('rty', elm.retrieve('qwe'), 'data should persist');
+        elm.unstore('foo1');
+        this.assertUndefined(elm.retrieve('foo1'), 'unstore data that was not stored (should not throw error)');
+    	elm.unstore('foo');
+        this.assertUndefined(elm.retrieve('foo'), 'unstore data');
+        elm.unstore();
+        this.assertUndefined(elm.retrieve('qwe'), 'unstore everything');
+        this.assertUndefined(elm.retrieve('yui'), 'unstore everything');
+        this.assertIdentical(tmp_uid, elm.retrieve(), 'unstore must preserve uid');
   	})
   .end()
   .root()
