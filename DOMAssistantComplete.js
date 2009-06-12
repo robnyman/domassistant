@@ -759,6 +759,47 @@ var DOMAssistant = function () {
 	};
 }();
 DOMAssistant.initCore();
+DOMAssistant.Storage = function () {
+	var uniqueId = 1, data = [], expando = "_da" + +new Date();
+	return {
+		retrieve : function (key) {
+			if (!DOMAssistant.def(key)) {
+				return this[expando] || (this[expando] = uniqueId++);
+			}
+			if (!this[expando] || !data[this[expando]]) { return; }
+			return data[this[expando]][key];
+		},
+		
+		store : function (key, val) {
+			var uid = this[expando] || (this[expando] = uniqueId++);
+			data[uid] = data[uid] || {};
+			if (typeof key === "object") {
+				for (var i in key) {
+					if (typeof i === "string") {
+						data[uid][i] = key[i];
+					}
+				}
+			}
+			else {
+				data[uid][key] = val;
+			}
+			return this;
+		},
+		
+		unstore : function (key) {
+			var uid = this[expando] || (this[expando] = uniqueId++);
+			if (data[uid]) {
+				if (DOMAssistant.def(key)) {
+					delete data[uid][key];
+				}
+				else {
+					data[uid] = null;
+				}
+			}
+		}
+	};
+}();
+DOMAssistant.attach(DOMAssistant.Storage);
 DOMAssistant.AJAX = function () {
 	var globalXMLHttp = null,
 	readyState = 0,
@@ -1148,7 +1189,7 @@ DOMAssistant.Content = function () {
 DOMAssistant.attach(DOMAssistant.Content);
 DOMAssistant.Events = function () {
 	var handler,
-		uniqueHandlerId = 1,
+		key = "_events",
 		w3cMode = !!document.addEventListener,
 		useCapture = { focus: true, blur: true },
 		fix = function (e) {
@@ -1214,11 +1255,12 @@ DOMAssistant.Events = function () {
 
 		triggerEvent : function (evt, target, e) {
 			evt = fix(evt);
-			var event = e || createEvent(e, evt, target || this);
+			var events = this.retrieve(key),
+				event = e || createEvent(e, evt, target || this);
 			event.currentTarget = this;
-			if (this.events && this.events[evt]) {
-				for (var i=0, iL=this.events[evt].length; i<iL; i++) {
-					if (this.events[evt][i].call(this, event) === false) { event.stopPropagation(); }
+			if (events && events[evt]) {
+				for (var i=0, iL=events[evt].length; i<iL; i++) {
+					if (events[evt][i].call(this, event) === false) { event.stopPropagation(); }
 				}
 			}
 			else if (typeof this["on" + evt] === "function") {
@@ -1236,24 +1278,24 @@ DOMAssistant.Events = function () {
 				this.addEventListener(evt, func, false);
 			}
 			else {
-				evt = fix(evt);
-				this.uniqueHandlerId = this.uniqueHandlerId || uniqueHandlerId++;
-				if (!(func.attachedElements && func.attachedElements[evt + this.uniqueHandlerId])) {
-					this.events = this.events || {};
-					if (!this.events[evt]) {
-						this.events[evt] = [];
+				var uid = (evt = fix(evt)) + this.retrieve();
+				if (!(func.attachedElements && func.attachedElements[uid])) {
+					var events = this.retrieve(key) || {};
+					if (!events[evt]) {
+						events[evt] = [];
 						var existingEvent = this["on" + evt];
 						if (existingEvent) {
-							this.events[evt].push(existingEvent);
+							events[evt].push(existingEvent);
 							this["on" + evt] = null;
 						}
 						if (w3cMode) { this.addEventListener(evt, handler, useCapture[evt]); }
 						else { this["on" + evt] = handler; }
 					}
 					func.relay = relay;
-					this.events[evt].push(func);
+					events[evt].push(func);
 					func.attachedElements = func.attachedElements || {};
-					func.attachedElements[evt + this.uniqueHandlerId] = true;
+					func.attachedElements[uid] = true;
+					this.store(key, events);
 				}
 			}
 			return this;
@@ -1262,7 +1304,7 @@ DOMAssistant.Events = function () {
 		handleEvent : function (evt) {
 			var currentEvt = createEvent(evt),
 				type = fix(currentEvt.type),
-				eventColl = this.events[type].slice(0), eventCollLength, eventReturn;
+				eventColl = this.retrieve(key)[type].slice(0), eventCollLength, eventReturn;
 			if ((eventCollLength = eventColl.length)) {
 				for (var i=0; i<eventCollLength; i++) {
 					if (typeof eventColl[i] === "function") {
@@ -1275,19 +1317,20 @@ DOMAssistant.Events = function () {
 		},
 
 		removeEvent : function (evt, func, relay) {
-			evt = fix(evt);
-			if (this.events && this.events[evt]) {
-				var eventColl = this.events[evt];
+			var uid = (evt = fix(evt)) + this.retrieve(),
+				events = this.retrieve(key);
+			if (events && events[evt]) {
+				var eventColl = events[evt];
 				for (var fn, i=eventColl.length; i--;) {
 					fn = func || eventColl[i];
 					if (eventColl[i] === fn && (!relay && !fn.relay || relay && fn.relay)) {
 						eventColl.splice(i, 1);
 						if (fn.attachedElements) {
-							fn.attachedElements[evt + this.uniqueHandlerId] = null;
+							fn.attachedElements[uid] = null;
 						}
 					}
 				}
-				if (!this.events[evt].length) {
+				if (!events[evt].length) {
 					if (w3cMode) { this.removeEventListener(evt, handler, useCapture[evt]); }
 					else { this["on" + evt] = null; }
 				}

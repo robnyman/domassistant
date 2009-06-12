@@ -759,3 +759,44 @@ var DOMAssistant = function () {
 	};
 }();
 DOMAssistant.initCore();
+DOMAssistant.Storage = function () {
+	var uniqueId = 1, data = [], expando = "_da" + +new Date();
+	return {
+		retrieve : function (key) {
+			if (!DOMAssistant.def(key)) {
+				return this[expando] || (this[expando] = uniqueId++);
+			}
+			if (!this[expando] || !data[this[expando]]) { return; }
+			return data[this[expando]][key];
+		},
+		
+		store : function (key, val) {
+			var uid = this[expando] || (this[expando] = uniqueId++);
+			data[uid] = data[uid] || {};
+			if (typeof key === "object") {
+				for (var i in key) {
+					if (typeof i === "string") {
+						data[uid][i] = key[i];
+					}
+				}
+			}
+			else {
+				data[uid][key] = val;
+			}
+			return this;
+		},
+		
+		unstore : function (key) {
+			var uid = this[expando] || (this[expando] = uniqueId++);
+			if (data[uid]) {
+				if (DOMAssistant.def(key)) {
+					delete data[uid][key];
+				}
+				else {
+					data[uid] = null;
+				}
+			}
+		}
+	};
+}();
+DOMAssistant.attach(DOMAssistant.Storage);
