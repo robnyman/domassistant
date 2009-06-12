@@ -263,7 +263,7 @@ var DOMAssistant = function () {
 					}
 				}
 			}
-			if (elm && applyMethods) {
+			if (elm && applyMethods && !elm.next) {
 				DOMAssistant.addMethodsToElm(elm);
 			}
 			return elm;
