@@ -827,20 +827,28 @@ SugarTest()
       	this.assertEqual(5, count);
   	})
     .it('Event Delegation', function() {
-        var elm = $$('test_06'), count = 0;
-        var add = function () {
+        var elm = $$('test_06'), count = 0, target = null, currentTarget = null;
+        var add = function (evt) {
         	count++;
+        	target = evt.target;
+        	currentTarget = evt.currentTarget;
         };
         elm.relayEvent('click', '.delegation', add);
         
         $$('outer').addClass('delegation').triggerEvent('click');
         this.assertEqual(1, count);
+        this.assertEqual('outer', target.id);
+        this.assertEqual('outer', currentTarget.id);
         $('#test_06 li').first().triggerEvent('click');
         this.assertEqual(1, count);
         $$('inner').triggerEvent('click');
         this.assertEqual(2, count);
+        this.assertEqual('inner', target.id);
+        this.assertEqual('outer', currentTarget.id);
         $$('test_06_span_01').triggerEvent('click');
         this.assertEqual(3, count);
+        this.assertEqual('test_06_span_01', target.id);
+        this.assertEqual('outer', currentTarget.id);
         elm.triggerEvent('click');
         this.assertEqual(3, count);
 
@@ -858,6 +866,15 @@ SugarTest()
 		this.assertEqual(2, count);
 		elm.unrelayEvent('blur');
 		
+		// Test this, target and currentTarget are correct
+		var runner = this;
+		elm.relayEvent('click', '.delegation', function(e) {
+			runner.assertEqual('outer', this.id, 'Check the this within a relayed event handler');
+			runner.assertEqual('outer', e.currentTarget.id, 'Check the event.currentTarget within a relayed event handler');
+			runner.assertEqual('test_06_span_01', e.target.id, 'Check the event.target within a relayed event handler');
+		});
+		$$('test_06_span_01').triggerEvent('click');
+		elm.unrelayEvent('click');
   	})
     .it('Prevent delegated events from bubbling', function() {
         var a = 0, b = 0;
@@ -958,9 +975,9 @@ SugarTest()
         	this.removeEvent('customEvent');
         });
         elm.triggerEvent('customEvent');
-        this.assertEqual(1, count);
+        this.assertEqual(1, count, 'customEvent should be triggered');
         elm.triggerEvent('customEvent');
-        this.assertEqual(1, count);
+        this.assertEqual(1, count, 'customEvent has been removed, should not be triggered');
         this.assertEqual(0, elm.events['customEvent'].length);
   	})
   	/*
