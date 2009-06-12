@@ -48,7 +48,7 @@ window.tests = {
     },
 
     "addclass-odd" : function(){
-		return $('div').addClass('added').filter( function(idx) { return (idx % 2 === 1); }).addClass('odd').length;
+		return $('div').addClass('added').filter( function(elm, idx) { return (idx % 2 === 1); }).addClass('odd').length;
     },
 
     "style" : function(){
