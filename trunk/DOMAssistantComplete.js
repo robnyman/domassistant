@@ -202,7 +202,7 @@ var DOMAssistant = function () {
 				var elmsToReturn = new HTMLArray();
 				elmsToReturn.previousSet = this;
 				for (var i=0, il=this.length; i<il; i++) {
-					elmsToReturn.push(method.apply(this[i], arguments));
+					elmsToReturn.push(method.apply(DOMAssistant.$$(this[i]), arguments));
 				}
 				return elmsToReturn;
 			};
@@ -834,7 +834,7 @@ DOMAssistant.AJAX = function () {
 		},
 		
 		load : function (url, addToContent) {
-			DOMAssistant.AJAX.get.call(this, url, DOMAssistant.AJAX.replaceWithAJAXContent, addToContent);
+			this.get(url, DOMAssistant.AJAX.replaceWithAJAXContent, addToContent);
 		},
 		
 		makeCall : function (ajaxObj) {
@@ -952,7 +952,7 @@ DOMAssistant.CSS = function () {
 	var def = DOMAssistant.def;
 	return {
 		addClass : function (className) {
-			if (!DOMAssistant.CSS.hasClass.call(this, className)) {
+			if (!this.hasClass(className)) {
 				var currentClass = this.className;
 				this.className = currentClass + (currentClass.length? " " : "") + className;
 			}
@@ -960,7 +960,7 @@ DOMAssistant.CSS = function () {
 		},
 
 		removeClass : function (className) {
-			return DOMAssistant.CSS.replaceClass.call(this, className);
+			return this.replaceClass(className);
 		},
 
 		replaceClass : function (className, newClass) {
@@ -1119,7 +1119,7 @@ DOMAssistant.Content = function () {
 				DOMAssistant.clearHandlers.apply(this);
 				this.innerHTML = "";
 			}
-			return DOMAssistant.Content.addContent.call(this, content);
+			return this.addContent(content);
 		},
 
 		replace : function (content, returnNew) {
@@ -1151,7 +1151,48 @@ DOMAssistant.Events = function () {
 		uniqueHandlerId = 1,
 		w3cMode = !!document.addEventListener,
 		useCapture = { focus: true, blur: true },
-		fix = function(evt) { return DOMAssistant.isIE? { focus: "focusin", blur: "focusout" }[evt] || evt : evt; };
+		fix = function (e) {
+			return DOMAssistant.isIE? { focus: "focusin", blur: "focusout" }[e] || e : e;
+		},
+		createEvent = function (e, type, target) {
+			e = e || window.event || {};
+			var event = {
+				event: e,
+				type: type || e.type,
+				bubbles: e.bubbles || true,
+				cancelable: e.cancelable || false,
+				target: target || e.target || e.srcElement,
+				altKey: e.altKey || false,
+				ctrlKey: e.ctrlKey || false,
+				shiftKey: e.shiftKey || false,
+				clientX: e.clientX || null,
+				clientY: e.clientY || null,
+				button: e.button || null,
+				timeStamp: +new Date(),
+				preventDefault: function() {
+					if (e.preventDefault) { e.preventDefault(); }
+					this.returnValue = false;
+				},
+				stopPropagation: function() {
+					if (e.stopPropagation) { e.stopPropagation(); }
+					this.cancelBubble = true;
+				}
+			};
+			event.currentTarget = event.target;
+			if (event.target.nodeType === 3) { // Safari textnode bug
+				event.target = event.target.parentNode;	
+			}
+			if ("number" === typeof e.which) {
+				event.keyCode = e.keyCode;
+				event.charCode = e.which;
+			}
+			else if (e.keyCode) {
+				event.keyCode = 0;
+				event.charCode = e.keyCode;
+			}
+			return event;
+		};
+
 	return {
 		publicMethods : [
 			"triggerEvent",
@@ -1173,28 +1214,19 @@ DOMAssistant.Events = function () {
 
 		triggerEvent : function (evt, target, e) {
 			evt = fix(evt);
-			// Create synthetic event
-			var event = e || {
-				type: evt,
-				target: target || this,
-				bubbles: true,
-				cancelable: false,
-				preventDefault: function(){},
-				stopPropagation: function(){ this.bubbles = false; },
-				timeStamp: +new Date()
-			};
+			var event = e || createEvent(e, evt, target || this);
 			event.currentTarget = this;
 			if (this.events && this.events[evt]) {
 				for (var i=0, iL=this.events[evt].length; i<iL; i++) {
-					if (this.events[evt][i].call(this, event) === false) { event.bubbles = false; }
+					if (this.events[evt][i].call(this, event) === false) { event.stopPropagation(); }
 				}
 			}
 			else if (typeof this["on" + evt] === "function") {
 				this["on" + evt].call(this, event);
 			}
-			var p = this.parentNode;
-			if (event.bubbles && p && p.nodeType === 1) {
-				DOMAssistant.Events.triggerEvent.call(p, evt, target, event);
+			var p = DOMAssistant.$$(this.parentNode);
+			if (!event.cancelBubble && p && p.nodeType === 1) {
+				p.triggerEvent(evt, target, event);
 			}
 			return this;
 		},
@@ -1228,20 +1260,16 @@ DOMAssistant.Events = function () {
 		},
 
 		handleEvent : function (evt) {
-			var currentEvt = evt || event,
+			var currentEvt = createEvent(evt),
 				type = fix(currentEvt.type),
-				evtTarget = currentEvt.target || currentEvt.srcElement || document;
-			while (evtTarget.nodeType !== 1 && evtTarget.parentNode) { evtTarget = evtTarget.parentNode; }
-			if (!currentEvt.target) { currentEvt.target = evtTarget; }
-			if (!currentEvt.currentTarget) { currentEvt.currentTarget = this; }
-			var eventColl = this.events[type].slice(0), eventCollLength, eventReturn;
+				eventColl = this.events[type].slice(0), eventCollLength, eventReturn;
 			if ((eventCollLength = eventColl.length)) {
 				for (var i=0; i<eventCollLength; i++) {
 					if (typeof eventColl[i] === "function") {
 						eventReturn = eventColl[i].call(this, currentEvt);
 					}
 				}
-				if (eventReturn === false) { DOMAssistant.cancelBubble(currentEvt); }
+				if (eventReturn === false) { currentEvt.stopPropagation(); }
 				return eventReturn;
 			}
 		},
@@ -1271,10 +1299,12 @@ DOMAssistant.Events = function () {
 		},
 
 		relayEvent: function (evt, selector, fn) {
-			return DOMAssistant.Events.addEvent.call(this, evt, function(e) {
+			return this.addEvent(evt, function(e) {
+				e = createEvent(e);
 				var target = e.target, args = arguments, i = 0, elm, elms = this.cssSelect(selector);
 				while ((elm = elms[i++])) {
 					if ((elm === target || DOMAssistant.hasChild.call(elm, target)) && !elm.disabled) {
+						e.currentTarget = elm;
 						return fn.apply(elm, args);
 					}
 				}
@@ -1282,15 +1312,17 @@ DOMAssistant.Events = function () {
 		},
 
 		unrelayEvent: function (evt) {
-			return DOMAssistant.Events.removeEvent.call(this, evt, null, true);
+			return this.removeEvent(evt, null, true);
 		},
 
 		preventDefault : function (evt) {
-			return (DOMAssistant.Events.preventDefault = (evt && evt.preventDefault) ? function (evt) { evt.preventDefault(); } : function (evt) { event.returnValue = false; })(evt);
+			if (evt.preventDefault) { evt.preventDefault(); }
+			evt.returnValue = false;
 		},
 
 		cancelBubble : function (evt) {
-			return (DOMAssistant.Events.cancelBubble = (evt && evt.stopPropagation) ? function (evt) { evt.stopPropagation(); } : function (evt) { event.cancelBubble = true; })(evt);
+			if (evt.stopPropagation) { evt.stopPropagation(); }
+			evt.cancelBubble = true;
 		}
 	};
 }();

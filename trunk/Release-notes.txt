@@ -4,7 +4,6 @@ Version 2.8:
 - [New] Cross-browser support for event.target and event.currentTarget in event callback functions
 - [New] New method hasChild() to allow testing for descendant
 - [New] New core methods: indexOf(), map(), filter(), every() and some()
-- [Chg] Callback function in each() receives an index reference, to be consistent with the new methods
 - [Chg] each() can now be terminated when the callback function returns false
 - [Chg] Selector engine now returns elements in the order they appear in the document
 - [Chg] Events fired via triggerEvent() now bubble

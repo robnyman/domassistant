@@ -202,7 +202,7 @@ var DOMAssistant = function () {
 				var elmsToReturn = new HTMLArray();
 				elmsToReturn.previousSet = this;
 				for (var i=0, il=this.length; i<il; i++) {
-					elmsToReturn.push(method.apply(this[i], arguments));
+					elmsToReturn.push(method.apply(DOMAssistant.$$(this[i]), arguments));
 				}
 				return elmsToReturn;
 			};
