@@ -75,7 +75,7 @@ DOMAssistant.AJAX = function () {
 		},
 		
 		load : function (url, addToContent) {
-			DOMAssistant.AJAX.get.call(this, url, DOMAssistant.AJAX.replaceWithAJAXContent, addToContent);
+			this.get(url, DOMAssistant.AJAX.replaceWithAJAXContent, addToContent);
 		},
 		
 		makeCall : function (ajaxObj) {

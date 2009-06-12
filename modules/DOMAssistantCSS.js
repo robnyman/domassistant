@@ -4,7 +4,7 @@ DOMAssistant.CSS = function () {
 	var def = DOMAssistant.def;
 	return {
 		addClass : function (className) {
-			if (!DOMAssistant.CSS.hasClass.call(this, className)) {
+			if (!this.hasClass(className)) {
 				var currentClass = this.className;
 				this.className = currentClass + (currentClass.length? " " : "") + className;
 			}
@@ -12,7 +12,7 @@ DOMAssistant.CSS = function () {
 		},
 
 		removeClass : function (className) {
-			return DOMAssistant.CSS.replaceClass.call(this, className);
+			return this.replaceClass(className);
 		},
 
 		replaceClass : function (className, newClass) {
