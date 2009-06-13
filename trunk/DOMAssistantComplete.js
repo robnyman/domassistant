@@ -796,6 +796,7 @@ DOMAssistant.Storage = function () {
 					data[uid] = null;
 				}
 			}
+			return this;
 		}
 	};
 }();
