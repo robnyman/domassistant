@@ -34,7 +34,7 @@ SugarTest()
 	      this.assertNull(elm.cssSelect(), '<nothing>');
 	    })
 	    .it('All methods attached to elements correctly', function() {
-	      var methods = 'each first end indexOf map filter every some hasChild prev next cssSelect elmsByClass elmsByAttribute elmsByTag ajax get post load addClass removeClass replaceClass hasClass setStyle getStyle create setAttributes addContent replaceContent replace remove triggerEvent addEvent removeEvent relayEvent unrelayEvent preventDefault cancelBubble'.split(' ');
+	      var methods = 'each first end indexOf map filter every some hasChild prev next store retrieve unstore cssSelect elmsByClass elmsByAttribute elmsByTag ajax get post load addClass removeClass replaceClass hasClass setStyle getStyle create setAttributes addContent replaceContent replace remove triggerEvent addEvent removeEvent relayEvent unrelayEvent preventDefault cancelBubble'.split(' ');
 	      var elms = $('div');
 	      for (var i=0; i<methods.length; i++) {
 		      this.assertRespondsTo(methods[i], elms, methods[i] + ' is callable on HTMLArray');
@@ -1080,6 +1080,11 @@ SugarTest()
         this.assertIdentical(666, elm.retrieve('fgh'), 'storing multiple data at once');
         
         this.assertUndefined(elm.retrieve('notset'), 'retrieve data not being set');
+        
+        var spans = $('#test_06 span');
+        spans.store('type', 'span');
+        this.assertIdentical('span', $$('inner').retrieve('type'), 'calling store() on element collection');
+        this.assertIdentical('span', $$('outer').retrieve('type'), 'calling store() on element collection');
   	})
     .it('Unstoring data', function() {
     	var elm = $$('test_04');
@@ -1094,6 +1099,11 @@ SugarTest()
         this.assertUndefined(elm.retrieve('yui'), 'unstore everything');
         this.assertIdentical(tmp_uid, elm.retrieve(), 'unstore must preserve uid');
         this.assertIdentical(elm2, elm, 'unstore should return the element itself');
+        
+        var spans = $('#test_06 span');
+        spans.unstore('type');
+        this.assertUndefined($$('inner').retrieve('type'), 'calling unstore() on element collection');
+        this.assertUndefined($$('outer').retrieve('type'), 'calling unstore() on element collection');
   	})
   .end()
   .root()
