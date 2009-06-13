@@ -1089,10 +1089,11 @@ SugarTest()
         this.assertUndefined(elm.retrieve('foo1'), 'unstore data that was not stored (should not throw error)');
     	elm.unstore('foo');
         this.assertUndefined(elm.retrieve('foo'), 'unstore data');
-        elm.unstore();
+        var elm2 = elm.unstore();
         this.assertUndefined(elm.retrieve('qwe'), 'unstore everything');
         this.assertUndefined(elm.retrieve('yui'), 'unstore everything');
         this.assertIdentical(tmp_uid, elm.retrieve(), 'unstore must preserve uid');
+        this.assertIdentical(elm2, elm, 'unstore should return the element itself');
   	})
   .end()
   .root()
