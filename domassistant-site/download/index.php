@@ -45,7 +45,7 @@
 
 								<dt>
 									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantComplete-2.8.js">DOMAssistant 2.8, complete</a><br>
-									(45kb)
+									(47kb)
 								</dt>
 								<dd>Intended for learning and development.</dd>
 							</dl>

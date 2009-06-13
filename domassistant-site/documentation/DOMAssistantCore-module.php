@@ -30,7 +30,7 @@
 							<p>The DOMAssistant Core module is required and it lays the groundwork for all DOMAssistant functionality. It consists of core functionality and a few important methods to work with.</p>
 
 							<h2 id="dollar"><code>$(cssSelector/elementRef)</code></h2>
-							<p>The $ method is used to get a reference to one or several elements. It supports a <a href="../documentation/css-selectors.php">CSS selector</a> as a string, an already established element reference. It will return the matching element(s) with all the extra DOMAssistant methods applied. A call of any of those methods will fail silently, if the <code>$</code> method returned an empty array.</p>
+							<p>The $ method is used to get a reference to one or several elements. It supports a <a href="../documentation/css-selectors.php">CSS selector</a> as a string, or an already established element reference. It will return the matching element(s) with all the extra DOMAssistant methods applied. A call of any of those methods will fail silently, if the <code>$</code> method returned an empty array.</p>
 							
 							<h3>Parameters</h3>
 							<p>Send in a CSS selector or an object reference.</p>
@@ -230,14 +230,15 @@
 							<h3>Parameters</h3>
 						 	<dl>
 								<dt>functionRef</dt>
-								<dd>Function which will be called for each item in the array of elements it's called on. Can be an anonymous function or a function reference. This function receives an index reference to the current item.</dd>
+								<dd>Function which will be called for each item in the array of elements it's called on. Can be an anonymous function or a function reference. Traversal can be terminated by returning false in the function. This function is invoked with three arguments: the current item, the index of the item, and the element collection being traversed.</dd>
 							</dl>
 
 							<h3>Example calls</h3>
 							<p class="code">
 								<code>
-									$("#navigation a").each( function(idx) {<br>
+									$("#navigation a").each( function(elm, idx, set) {<br>
 										alert("This is item " + idx);<br>
+										if (idx === 5) return false; //Stop counting after 5<br>
 									});
 								</code>
 							</p>
@@ -269,14 +270,14 @@
 							<h3>Parameters</h3>
 						 	<dl>
 								<dt>functionRef</dt>
-								<dd>Mapping function to be applied to each item. This function receives an index reference to the current item.</dd>
+								<dd>Mapping function to be applied to each item. This function is invoked with three arguments: the current item, the index of the item, and the element collection being traversed.</dd>
 							</dl>
 
 							<h3>Example calls</h3>
 							<p class="code">
 								<code>
 									// Creates an array of element ID
-									var arrayID = $("div").map( function(idx) {<br>
+									var arrayID = $("div").map( function(elm, idx, set) {<br>
 										return this.id;<br>
 									});
 								</code>
@@ -290,13 +291,13 @@
 							<h3>Parameters</h3>
 						 	<dl>
 								<dt>functionRef</dt>
-								<dd>Filtering function to be applied to each item. This function receives an index reference to the current item.</dd>
+								<dd>Filtering function to be applied to each item. This function is invoked with three arguments: the current item, the index of the item, and the element collection being traversed.</dd>
 							</dl>
 
 							<h3>Example calls</h3>
 							<p class="code">
 								<code>
-									var oddItems = $("div").filter( function(idx) {<br>
+									var oddItems = $("div").filter( function(elm, idx, set) {<br>
 										return (idx % 2 === 1);<br>
 									});
 								</code>
@@ -310,13 +311,13 @@
 							<h3>Parameters</h3>
 						 	<dl>
 								<dt>functionRef</dt>
-								<dd>Function to be applied to each item. Returns either true or false. This function receives an index reference to the current item.</dd>
+								<dd>Function to be applied to each item. Returns either true or false. This function is invoked with three arguments: the current item, the index of the item, and the element collection being traversed.</dd>
 							</dl>
 
 							<h3>Example calls</h3>
 							<p class="code">
 								<code>
-									var allHaveChildren = $("div").every( function(idx) {<br>
+									var allHaveChildren = $("div").every( function(elm, idx, set) {<br>
 										return (this.childNodes.length > 0);<br>
 									});
 								</code>
@@ -330,13 +331,13 @@
 							<h3>Parameters</h3>
 						 	<dl>
 								<dt>functionRef</dt>
-								<dd>Function to be applied to each item. Returns either true or false. This function receives an index reference to the current item.</dd>
+								<dd>Function to be applied to each item. Returns either true or false. This function is invoked with three arguments: the current item, the index of the item, and the element collection being traversed.</dd>
 							</dl>
 
 							<h3>Example calls</h3>
 							<p class="code">
 								<code>
-									var someHaveChildren = $("div").some( function(idx) {<br>
+									var someHaveChildren = $("div").some( function(elm, idx, set) {<br>
 										return (this.childNodes.length > 0);<br>
 									});
 								</code>
@@ -372,6 +373,67 @@
 									$("#navigation a").create("span", null, true).end();
 								</code>
 							</p>
+							
+							<h2 id="store"><code>store(key, value)</code></h2>
+							<p>To store arbitrary data to the current element.</p>
+							<h3>Return value</h3>
+							<p>Element which called the method.</p>
+
+							<h3>Parameters</h3>
+							<dl>
+								<dt>key</dt>
+								<dd>Name of the data being stored. Can be a string, and is then used in conjunction with the value, or as an object with several key-value pairs. Required.</dd>
+								<dt>value</dt>
+								<dd>The value of the data being stored, if the key parameter is a string. Optional.</dd>
+							</dl>
+
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									$$("elem").store("foo", "bar");<br>
+									$$("child").store( { "name": "Tom", "age": 6, "sex": "M" } );
+								</code>
+							</p>
+							
+							<h2 id="retrieve"><code>retrieve(key)</code></h2>
+							<p>To retrieve data that has previously been stored to the current element.</p>
+							<h3>Return value</h3>
+							<p>Value of the key if it is specified, otherwise the unique ID of the element.</p>
+
+							<h3>Parameters</h3>
+							<dl>
+								<dt>key</dt>
+								<dd>Name of the data to be retrieved. Optional. If unspecified, the unique ID of the current element is returned.</dd>
+							</dl>
+
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									var foo = $$("elem").retrieve("foo");   //bar<br>
+									var age = $$("child").retrieve("age");  //6<br>
+									alert("Unique ID is " + $$("child").retrieve());
+								</code>
+							</p>
+
+							<h2 id="unstore"><code>unstore(key)</code></h2>
+							<p>To remove data that has previously been stored to the current element.</p>
+							<h3>Return value</h3>
+							<p>Element which called the method.</p>
+
+							<h3>Parameters</h3>
+							<dl>
+								<dt>key</dt>
+								<dd>Name of the data to be removed. Optional. If unspecified, all data associated with the current element is removed.</dd>
+							</dl>
+
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									$$("elem").unstore("foo");<br>
+									$$("child").unstore();   //Removes all data<br>
+								</code>
+							</p>
+							
 						</div>
 						
 						<div id="sidebar">
@@ -394,6 +456,9 @@
 								<li><a href="#some">some</a> <sup>New</sup></li>
 								<li><a href="#first">first</a></li>
 								<li><a href="#end">end</a></li>
+								<li><a href="#store">store</a> <sup>New</sup></li>
+								<li><a href="#retrieve">retrieve</a> <sup>New</sup></li>
+								<li><a href="#unstore">unstore</a> <sup>New</sup></li>
 							</ul>
 							<?php include "domassistant-module-nav.php" ?>
 						</div>
