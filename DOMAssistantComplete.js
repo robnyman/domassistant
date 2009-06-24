@@ -1204,20 +1204,21 @@ DOMAssistant.Events = function () {
 				bubbles: e.bubbles || true,
 				cancelable: e.cancelable || false,
 				target: target || e.target || e.srcElement,
+				relatedTarget: e.relatedTarget || (e.fromElement === e.target? e.toElement : e.fromElement) || null,
 				altKey: e.altKey || false,
 				ctrlKey: e.ctrlKey || false,
 				shiftKey: e.shiftKey || false,
-				clientX: e.clientX || null,
-				clientY: e.clientY || null,
+				clientX: e.pageX || (e.clientX + document.documentElement.scrollLeft),
+				clientY: e.pageY || (e.clientY + document.documentElement.scrollTop),
 				button: e.button || null,
 				timeStamp: +new Date(),
 				preventDefault: function() {
 					if (e.preventDefault) { e.preventDefault(); }
-					this.returnValue = false;
+					this.returnValue = e.returnValue = false;
 				},
 				stopPropagation: function() {
 					if (e.stopPropagation) { e.stopPropagation(); }
-					this.cancelBubble = true;
+					this.cancelBubble = e.cancelBubble = true;
 				}
 			};
 			event.currentTarget = event.target;
