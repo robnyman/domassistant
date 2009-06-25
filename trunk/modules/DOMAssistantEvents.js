@@ -39,11 +39,10 @@ DOMAssistant.Events = function () {
 			}
 			if ("number" === typeof e.which) {
 				event.keyCode = e.keyCode;
-				event.charCode = e.which;
+				event.charCode = event.which = e.which;
 			}
 			else if (e.keyCode) {
-				event.keyCode = 0;
-				event.charCode = e.keyCode;
+				event.keyCode = event.charCode = e.keyCode;
 			}
 			return event;
 		};
