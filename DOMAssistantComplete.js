@@ -316,7 +316,7 @@ var DOMAssistant = function () {
 		
 		cssByDOM : function (cssRule) {
 			var prevParents, currentRule, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, current, previous, prevParent, notElm, addElm, iteratorNext, childElm, sequence,
-				elm = new HTMLArray(), index = elm.indexOf, prevElm = [], matchingElms = [], cssRules = cssRule.replace(regex.rules, "$1").split(",");
+				elm = new HTMLArray(), index = elm.indexOf, prevElm = [], matchingElms = [], cssRules = cssRule.replace(regex.rules, "$1").split(","), splitRule = {};
 			function clearAdded (elm) {
 				elm = elm || prevElm;
 				for (var n=elm.length; n--;) {
@@ -501,7 +501,7 @@ var DOMAssistant = function () {
 				prevElm = [this];
 				for (var i=0, rule; (rule=cssSelectors[i]); i++) {
 					matchingElms = [];
-					if (i > 0 && regex.relation.test(rule)) {
+					if (regex.relation.test(rule)) {
 						if ((childOrSiblingRef = regex.relation.exec(rule))) {
 							var idElm = null, nextWord = cssSelectors[i+1];
 							if ((nextTag = regex.tag.exec(nextWord))) {
@@ -547,7 +547,7 @@ var DOMAssistant = function () {
 							prevElm.skipTag = true;
 						}
 					}
-					var cssSelector = regex.selector.exec(rule),
+					var cssSelector = regex.selector.exec(rule);
 					splitRule = {
 						tag : (!cssSelector[1] || cssSelector[3] === "*")? "*" : cssSelector[1],
 						id : (cssSelector[3] !== "*")? cssSelector[2] : null,
