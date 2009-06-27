@@ -525,8 +525,8 @@ SugarTest()
         this.fn = function() {
         	return this.id;
         }
-        this.get = function(selector) {
-        	return $$('test_98').cssSelect(selector).map(this.fn);
+        this.get = function(selector, context) {
+        	return $$(context || 'test_98').cssSelect(selector).map(this.fn);
         };
       })
       .after(function() {
@@ -616,6 +616,15 @@ SugarTest()
         
         this.assertEnumEqual(["text2"], this.get('#main form#form > *:nth-child(2)'), 'Nth-child');
         this.assertEnumEqual(["text2"], this.get('#main form#form > :nth-child(2)'), 'Nth-child');
+
+		var more = $$('moretests');
+        this.assertEnumEqual(["nonnodes","t2037"], this.get('> div', more), 'Child');
+        this.assertEnumEqual(["hi"], this.get('> div span', more), 'Child');
+        this.assertEnumEqual([], this.get('> #checkedtest', more), 'Child');
+        
+        var fx = $$('fx-queue');
+        this.assertEnumEqual(["fx-tests"], this.get('+ div', fx), 'Adjacent');
+        this.assertEnumEqual(["fx-tests","moretests"], this.get('~ div', fx), 'Siblings');
 
         this.assertEnumEqual(["option1c"], this.get('#form select:first-of-type option:nth-child(3)'), 'Nth-child');
         this.assertEnumEqual(["option1c"], this.get('#form select:first-of-type option:nth-child(0n+3)'), 'Nth-child');
