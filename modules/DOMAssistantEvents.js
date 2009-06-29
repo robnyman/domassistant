@@ -20,8 +20,6 @@ DOMAssistant.Events = function () {
 				altKey: e.altKey || false,
 				ctrlKey: e.ctrlKey || false,
 				shiftKey: e.shiftKey || false,
-				clientX: e.pageX || (e.clientX + document.documentElement.scrollLeft),
-				clientY: e.pageY || (e.clientY + document.documentElement.scrollTop),
 				button: e.button || null,
 				timeStamp: +new Date(),
 				preventDefault: function() {
@@ -36,6 +34,15 @@ DOMAssistant.Events = function () {
 			event.currentTarget = event.target;
 			if (event.target.nodeType === 3) { // Safari textnode bug
 				event.target = event.target.parentNode;	
+			}
+			if ("number" === typeof e.pageX) {
+				event.clientX = event.pageX = e.pageX;
+				event.clientY = event.pageY = e.pageY;
+			}
+			else {
+				var de = document.documentElement, b = document.body;
+				event.clientX = e.clientX + (de.scrollLeft || b.scrollLeft) - (de.clientLeft || 0);
+				event.clientY = e.clientY + (de.scrollTop || b.scrollTop) - (de.clientTop || 0);
 			}
 			if ("number" === typeof e.which) {
 				event.keyCode = e.keyCode;
