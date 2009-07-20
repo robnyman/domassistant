@@ -1220,7 +1220,7 @@ DOMAssistant.Events = function () {
 				}
 			};
 			event.currentTarget = event.target;
-			if (event.target.nodeType === 3) { // Safari textnode bug
+			if (event.target && 3 === event.target.nodeType) { // Safari textnode bug
 				event.target = event.target.parentNode;	
 			}
 			if ("number" === typeof e.pageX) {
@@ -1301,6 +1301,7 @@ DOMAssistant.Events = function () {
 					}
 					func.relay = relay;
 					events[evt].push(func);
+					if (typeof this.window === "object") { this.window["on" + evt] = handler; }
 					func.attachedElements = func.attachedElements || {};
 					func.attachedElements[uid] = true;
 					this.store(key, events);
