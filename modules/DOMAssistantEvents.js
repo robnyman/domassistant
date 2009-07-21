@@ -108,6 +108,8 @@ DOMAssistant.Events = function () {
 							events[evt].push(existingEvent);
 							this["on" + evt] = null;
 						}
+					}
+					if (!events[evt].length) {
 						if (w3cMode) { this.addEventListener(evt, handler, useCapture[evt]); }
 						else { this["on" + evt] = handler; }
 					}
