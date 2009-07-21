@@ -991,7 +991,8 @@ DOMAssistant.AJAX = function () {
 }();
 DOMAssistant.attach(DOMAssistant.AJAX);
 DOMAssistant.CSS = function () {
-	var def = DOMAssistant.def;
+	var def = DOMAssistant.def,
+		direct = { display: true };
 	return {
 		addClass : function (className) {
 			if (!this.hasClass(className)) {
@@ -1028,11 +1029,13 @@ DOMAssistant.CSS = function () {
 				if (typeof style === "object") {
 					for (var i in style) {
 						if (typeof i === "string") {
+							if (direct[i]) { css[i] = style[i]; }
 							styleToSet += ";" + i + ":" + style[i];
 						}
 					}
 				}
 				else {
+					if (direct[style]) { css[style] = value; }
 					styleToSet += ";" + style + ":" + value;
 				}
 				css.cssText = styleToSet;
