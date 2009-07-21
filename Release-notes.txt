@@ -25,6 +25,7 @@ Version 2.8:
 - [Fix] Ajax timeouts sometimes not detected in IE
 - [Fix] Multiple issues with getting and setting opacity in IE
 - [Fix] setStyle on newly created (but not yet added to the DOM) elements fails in IE
+- [Fix] setStyle('display', 'none') does not work properly in IE when the element is relatively positioned
 - [Fix] addContent when used with strings remove events and attributes
 - [Fix] replaceClass does not work in some cases
 - [Fix] removeEvent fails in older versions of Opera when multiple handlers exist for an event on an element
