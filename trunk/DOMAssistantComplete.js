@@ -1197,7 +1197,7 @@ DOMAssistant.Events = function () {
 		w3cMode = !!document.addEventListener,
 		useCapture = { focus: true, blur: true },
 		fix = function (e) {
-			return DOMAssistant.isIE? { focus: "focusin", blur: "focusout" }[e] || e : e;
+			return DOMAssistant.isIE? { focus: "activate", blur: "deactivate" }[e] || e : e;
 		},
 		createEvent = function (e, type, target) {
 			e = e || window.event || {};
