@@ -18,9 +18,6 @@
   		background-color: green;
   		display: block;
   	}
-  	.klassHidden {
-  		visibility: hidden;
-  	}
   	#foo {
   		opacity: 0;
   		filter:Alpha(opacity=0);
@@ -45,7 +42,7 @@
 
   <div id="testlog"></div>
 
-<div id="testdata" class="klassHidden">
+<div id="testdata" style="height:1px;overflow:hidden;">
 
 	<div id="test_01">
 		<span name="01abc">abc_1</span>
@@ -101,8 +98,8 @@
 				<h3 id="h3b">level 3</h3>
 	</div>
 	
-	<blockquote id="test_98" style="display:none">
-	<div id="main" style="display:none;">
+	<blockquote id="test_98">
+	<div id="main">
 		<p id="firstp">See <a id="simon1" href="http://simon.incutio.com/archive/2003/03/25/#getElementsBySelector" rel="bookmark">this blog entry</a> for more information.</p>
 
 		<p id="ap">

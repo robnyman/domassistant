@@ -989,6 +989,27 @@ SugarTest()
         this.assertEqual(1, count, 'customEvent has been removed, should not be triggered');
         this.assertEqual(0, elm.retrieve('_events')['customEvent'].length, 'There should no longer be any customEvent handlers in the _events storage');
   	})
+    .it('Special events bubbling', function() {
+        var elm = $$('form'), countA = 0, countB = 0;
+        var addA = function () {
+        	countA++;
+        	
+        };
+        var addB = function () {
+        	countB++;
+        	
+        };
+        elm.relayEvent('focus', 'input[type=text]', addA).relayEvent('blur', 'input[type=text]', addB);
+        this.assertEqual(0, countA, 'Initial value should be 0');
+        this.assertEqual(0, countB, 'Initial value should be 0');
+        $$('name').focus();
+        this.assertEqual(1, countA, 'focus event should bubble from the input field to the form');
+        this.assertEqual(0, countB, 'onblur not yet being triggered');
+        $$('check2').focus();
+        this.assertEqual(1, countA, 'onfocus does not get retriggered');
+        this.assertEqual(1, countB, 'blur event should bubble from the input field to the form');
+        elm.unrelayEvent('focus').unrelayEvent('blur');
+  	})
   	/*
   	// DOMAssistant does not support this feature as of v2.8
     .it('remove events without parameters', function() {
@@ -1119,5 +1140,8 @@ SugarTest()
   .it('DOMAssistant rules', function() {
     this.assert(DOMAssistant);
 	$$('testdata').remove();
+  })
+  .after( function() {
+  	  window.scrollTo(0,0);
   })
 .run();

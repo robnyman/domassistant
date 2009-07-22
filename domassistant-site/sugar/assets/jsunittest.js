@@ -371,7 +371,7 @@ JsUnitTest.Unit.Logger.prototype.getMessageCell = function() {
 };
 
 JsUnitTest.Unit.Logger.prototype._createLogTable = function() {
-  var html = '<div class="logsummary">running...</div>' +
+  var html = '<div class="logsummary">Please stay "focused" in this window while the tests run...</div>' +
   '<table class="logtable">' +
   '<thead><tr><th>Status</th><th>Test</th><th>Message</th></tr></thead>' +
   '<tbody class="loglines"></tbody>' +
