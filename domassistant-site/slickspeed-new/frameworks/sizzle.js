@@ -144,6 +144,8 @@ Sizzle.uniqueSort = function(results){
 			}
 		}
 	}
+
+	return results;
 };
 
 Sizzle.matches = function(expr, set){
@@ -332,7 +334,7 @@ var Expr = Sizzle.selectors = {
 		"": function(checkSet, part, isXML){
 			var doneName = done++, checkFn = dirCheck;
 
-			if ( !part.match(/\W/) ) {
+			if ( !/\W/.test(part) ) {
 				var nodeCheck = part = isXML ? part : part.toUpperCase();
 				checkFn = dirNodeCheck;
 			}
@@ -342,7 +344,7 @@ var Expr = Sizzle.selectors = {
 		"~": function(checkSet, part, isXML){
 			var doneName = done++, checkFn = dirCheck;
 
-			if ( typeof part === "string" && !part.match(/\W/) ) {
+			if ( typeof part === "string" && !/\W/.test(part) ) {
 				var nodeCheck = part = isXML ? part : part.toUpperCase();
 				checkFn = dirNodeCheck;
 			}
@@ -435,7 +437,7 @@ var Expr = Sizzle.selectors = {
 		PSEUDO: function(match, curLoop, inplace, result, not){
 			if ( match[1] === "not" ) {
 				// If we're dealing with a complex expression, or a simple one
-				if ( match[3].match(chunker).length > 1 || /^\w/.test(match[3]) ) {
+				if ( chunker.exec(match[3]).length > 1 || /^\w/.test(match[3]) ) {
 					match[3] = Sizzle(match[3], null, null, curLoop);
 				} else {
 					var ret = Sizzle.filter(match[3], curLoop, inplace, true ^ not);
@@ -551,7 +553,7 @@ var Expr = Sizzle.selectors = {
 			} else if ( name === "not" ) {
 				var not = match[3];
 
-				for ( i = 0, l = not.length; i < l; i++ ) {
+				for ( var i = 0, l = not.length; i < l; i++ ) {
 					if ( not[i] === elem ) {
 						return false;
 					}
@@ -661,7 +663,7 @@ for ( var type in Expr.match ) {
 }
 
 var makeArray = function(array, results) {
-	array = Array.prototype.slice.call( array );
+	array = Array.prototype.slice.call( array, 0 );
 
 	if ( results ) {
 		results.push.apply( results, array );
@@ -674,7 +676,7 @@ var makeArray = function(array, results) {
 // Perform a simple check to determine if the browser is capable of
 // converting a NodeList to an array using builtin methods.
 try {
-	Array.prototype.slice.call( document.documentElement.childNodes );
+	Array.prototype.slice.call( document.documentElement.childNodes, 0 );
 
 // Provide a fallback method if it does not work
 } catch(e){
@@ -703,6 +705,13 @@ var sortOrder;
 
 if ( document.documentElement.compareDocumentPosition ) {
 	sortOrder = function( a, b ) {
+		if ( !a.compareDocumentPosition || !b.compareDocumentPosition ) {
+			if ( a == b ) {
+				hasDuplicate = true;
+			}
+			return 0;
+		}
+
 		var ret = a.compareDocumentPosition(b) & 4 ? -1 : a === b ? 0 : 1;
 		if ( ret === 0 ) {
 			hasDuplicate = true;
@@ -711,6 +720,13 @@ if ( document.documentElement.compareDocumentPosition ) {
 	};
 } else if ( "sourceIndex" in document.documentElement ) {
 	sortOrder = function( a, b ) {
+		if ( !a.sourceIndex || !b.sourceIndex ) {
+			if ( a == b ) {
+				hasDuplicate = true;
+			}
+			return 0;
+		}
+
 		var ret = a.sourceIndex - b.sourceIndex;
 		if ( ret === 0 ) {
 			hasDuplicate = true;
@@ -719,6 +735,13 @@ if ( document.documentElement.compareDocumentPosition ) {
 	};
 } else if ( document.createRange ) {
 	sortOrder = function( a, b ) {
+		if ( !a.ownerDocument || !b.ownerDocument ) {
+			if ( a == b ) {
+				hasDuplicate = true;
+			}
+			return 0;
+		}
+
 		var aRange = a.ownerDocument.createRange(), bRange = b.ownerDocument.createRange();
 		aRange.selectNode(a);
 		aRange.collapse(true);
