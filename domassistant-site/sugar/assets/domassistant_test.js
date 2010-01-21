@@ -725,7 +725,8 @@ SugarTest()
         this.assertEnumEqual(["check1"], this.get("#form input[type=checkbox]:checked"), "Form element checkbox:checked");
         this.assertEnumEqual(["radio2", "check1"], this.get("#form input[type=checkbox]:checked, #form input[type=radio]:checked"), "Form element checkbox:checked, radio:checked");
 
-        this.assertEnumEqual(["dt1", "dt4", "dd1", "dd4"], this.get("#extra > :nth-of-type(3n+1)"), "nth-of-type with non-specific tag");
+        this.assertEqual(4, this.get("#extra1 > :nth-of-type(3n+1)").length, "nth-of-type with non-specific tag");
+        this.assertEnumEqual(["add1"], this.get("#extra2 > :only-of-type"), "only-of-type with non-specific tag");
   	})
    .end()
    .describe('Events -')
