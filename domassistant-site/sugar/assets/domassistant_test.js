@@ -155,12 +155,23 @@ SugarTest()
         p.setAttributes({'foo': 'foo'});
         this.assertEqual('foo', p.getAttribute('foo'));
       })
-      .it('Creates all possible types of new elements', function() {
+      .it('Creates all XHTML new elements', function() {
 	      var XHTML_TAGS = 'a abbr acronym address area b bdo big blockquote br button caption cite code col colgroup dd del dfn div dl dt em fieldset form h1 h2 h3 h4 h5 h6 hr i iframe img input ins kbd label legend li map object ol optgroup option p param pre q samp script select small span strong style sub sup table tbody td textarea tfoot th thead tr tt ul var'.split(' ');
 	      var parent = $$('test_04');
 	      for (var i=0, iL=XHTML_TAGS.length; i<iL; i++) {
 	      	var id = XHTML_TAGS[i] + '_' + i, elm = parent.create(XHTML_TAGS[i], {id: id}, true);
 			this.assertEqual(XHTML_TAGS[i], elm.tagName.toLowerCase());
+			this.assertEqual(elm, parent.lastChild);
+			this.assertEqual(id, elm.id);
+			this.assertRespondsTo('cssSelect', elm);
+	      }
+	  })
+      .it('Creates all HTML5 new elements', function() {
+	      var HTML5_TAGS = 'article aside audio canvas command datalist details dialog embed figure footer header hgroup keygen mark meter nav output progress rp rt ruby section source time video'.split(' ');
+	      var parent = $$('test_04');
+	      for (var i=0, iL=HTML5_TAGS.length; i<iL; i++) {
+	      	var id = HTML5_TAGS[i] + '_' + i, elm = parent.create(HTML5_TAGS[i], {id: id}, true);
+			this.assertEqual(HTML5_TAGS[i], elm.tagName.toLowerCase());
 			this.assertEqual(elm, parent.lastChild);
 			this.assertEqual(id, elm.id);
 			this.assertRespondsTo('cssSelect', elm);
@@ -713,6 +724,8 @@ SugarTest()
         this.assertEnumEqual(["radio2"], this.get("#form input[type=radio]:checked"), "Form element radio:checked");
         this.assertEnumEqual(["check1"], this.get("#form input[type=checkbox]:checked"), "Form element checkbox:checked");
         this.assertEnumEqual(["radio2", "check1"], this.get("#form input[type=checkbox]:checked, #form input[type=radio]:checked"), "Form element checkbox:checked, radio:checked");
+
+        this.assertEnumEqual(["dt1", "dt4", "dd1", "dd4"], this.get("#extra > :nth-of-type(3n+1)"), "nth-of-type with non-specific tag");
   	})
    .end()
    .describe('Events -')
