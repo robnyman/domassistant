@@ -13,11 +13,12 @@ Version 2.8:
 - [Chg] Dropped support for IE 5.0
 - [Fix] Invalid selectors throw error
 - [Fix] :checked, [selected] and [multiple] buggy in many browsers
-- [Fix] :nth-of-type buggy in IE
+- [Fix] :nth-of-type, :only-of-type buggy in IE
 - [Fix] attribute selector with empty value (eg. [value='']) does not work
 - [Fix] attribute selector with square brackets (eg. [name='foo[bar]']) does not work
 - [Fix] tag#id incorrectly returns the element even when its tagname does not match
 - [Fix] Unable to get form by $() when it contains field with name="id"
+- [Fix] Negated pseudo-classes do not work
 - [Fix] Selectors that start with >, + and ~ do not work in IE
 - [Fix] Multi-selectors return duplicated elements in IE
 - [Fix] Certain selectors sometimes return less elements than expected in IE
