@@ -22,7 +22,7 @@ var DOMAssistant = function () {
 	},
 	regex = {
 		rules: /\s*(,)\s*/g,
-		selector: /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+\s*(\^|\$|\*|\||~)?(=\s*([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.\'\"]+\]+)|(:\w+[\w\-]*\(.+\)))\))?)*)?(>|\+|~)?/,
+		selector: /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+\s*(\^|\$|\*|\||~)?(=\s*([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[:?#?\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.\'\"]+\]+)|(:\w+[\w\-]*\(.+\)))\))?)*)?(>|\+|~)?/,
 		selectorSplit: /(?:\[.*\]|\(.*\)|[^\s\+>~\[\(])+|[\+>~]/g,
 		id: /^#([\w\u00C0-\uFFFF\-\_]+)$/,
 		tag: /^(\w+)/,
@@ -234,7 +234,7 @@ var DOMAssistant = function () {
 			var elm = !!obj? new HTMLArray() : null;
 			for (var i=0, arg, idMatch; (arg=arguments[i]); i++) {
 				if (typeof arg === "string") {
-					arg = arg.replace(/^[^#]*(#)/, "$1");
+					arg = arg.replace(/^[^#\(]*(#)/, "$1");
 					if (regex.id.test(arg)) {
 						if ((idMatch = DOMAssistant.$$(arg.substr(1), false))) {
 							elm.push(idMatch);
@@ -393,14 +393,16 @@ var DOMAssistant = function () {
 				}
 				switch (word) {
 					case "only":
-						var kParent;
+						var kParent, kTag;
 						while ((previous=previousMatch[idx++])) {
 							prevParent = previous.parentNode;
-							if (prevParent !== kParent) {
+							var p = previous.nodeName;
+							if (prevParent !== kParent || p !== kTag) {
 								if (match.first(previous) && match.last(previous)) {
 									matchingElms[matchingElms.length] = previous;
 								}
 								kParent = prevParent;
+								kTag = p;
 							}
 						}
 						break;
