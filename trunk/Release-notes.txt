@@ -13,6 +13,7 @@ Version 2.8:
 - [Chg] Dropped support for IE 5.0
 - [Fix] Invalid selectors throw error
 - [Fix] :checked, [selected] and [multiple] buggy in many browsers
+- [Fix] :nth-of-type buggy in IE
 - [Fix] attribute selector with empty value (eg. [value='']) does not work
 - [Fix] attribute selector with square brackets (eg. [name='foo[bar]']) does not work
 - [Fix] tag#id incorrectly returns the element even when its tagname does not match

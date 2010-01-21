@@ -414,8 +414,10 @@ var DOMAssistant = function () {
 							if (sequence) {
 								while ((previous=previousMatch[idx++])) {
 									prevParent = previous.parentNode;
-									if (!prevParent.childElms) {
-										var childCount = 0, p = previous.nodeName;
+									prevParent.childElms = prevParent.childElms || {};
+									var p = previous.nodeName;
+									if (!prevParent.childElms[p]) {
+										var childCount = 0;
 										iteratorNext = sequence.start;
 										childElm = prevParent[direction[0]];
 										while (childElm && (sequence.max < 0 || iteratorNext <= sequence.max)) {
@@ -428,7 +430,7 @@ var DOMAssistant = function () {
 											}
 											childElm = childElm[direction[1]];
 										}
-										prevParent.childElms = true;
+										prevParent.childElms[p] = true;
 										prevParents[prevParents.length] = prevParent;
 									}
 								}
