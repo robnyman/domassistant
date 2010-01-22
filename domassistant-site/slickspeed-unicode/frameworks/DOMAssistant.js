@@ -5,7 +5,7 @@ var DOMAssistant = function () {
 	},
 	isIE = /*@cc_on!@*/false,
 	isIE5 = isIE && parseFloat(navigator.appVersion) < 6,
-	tagCache = {}, lastCache = {}, useCache = true,
+	sort, tagCache = {}, lastCache = {}, useCache = true,
 	slice = Array.prototype.slice,
 	camel = {
 		"accesskey": "accessKey",
@@ -432,6 +432,7 @@ var DOMAssistant = function () {
 											}
 											childElm = childElm[direction[1]];
 										}
+										sort++;
 										prevParent.childElms[p] = true;
 										prevParents[prevParents.length] = prevParent;
 									}
@@ -500,6 +501,7 @@ var DOMAssistant = function () {
 			function notComment() {
 				return this.tagName !== "!";
 			}
+			sort = -1;
 			for (var a=0, tagBin=[]; (currentRule=cssRules[a]); a++) {
 				if (!(cssSelectors = currentRule.match(regex.selectorSplit)) || a && index.call(cssRules.slice(0, a), currentRule) > -1) { continue; }
 				prevElm = [this];
@@ -648,7 +650,7 @@ var DOMAssistant = function () {
 				tagBin.push(splitRule.tag);
 				if (isIE && /\*$/.test(currentRule)) { elm = elm.filter(notComment); }
 			}
-			return (elm.length && cssRules.length > 1)? sortDocumentOrder(elm) : elm;
+			return ((elm.length && cssRules.length > 1) || sort)? sortDocumentOrder(elm) : elm;
 		},
 		
 		cssByXpath : function (cssRule) {

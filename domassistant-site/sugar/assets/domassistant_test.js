@@ -725,8 +725,13 @@ SugarTest()
         this.assertEnumEqual(["check1"], this.get("#form input[type=checkbox]:checked"), "Form element checkbox:checked");
         this.assertEnumEqual(["radio2", "check1"], this.get("#form input[type=checkbox]:checked, #form input[type=radio]:checked"), "Form element checkbox:checked, radio:checked");
 
-        this.assertEqual(4, this.get("#extra1 > :nth-of-type(3n+1)").length, "nth-of-type with non-specific tag");
-        this.assertEnumEqual(["add1"], this.get("#extra2 :only-of-type"), "only-of-type with non-specific tag");
+        this.assertEnumEqual(["dt1", "dd1", "dt4", "dd4"], this.get("#extra1 > :nth-of-type(3n+1)"), ":nth-of-type with non-specific tag");
+        this.assertEnumEqual(["dt3", "dd3", "dt6", "dd6"], this.get("#extra1 > :nth-last-of-type(3n+1)"), ":nth-last-of-type with non-specific tag");
+        this.assertEnumEqual(["add1"], this.get("#extra2 :only-of-type"), ":only-of-type with non-specific tag");
+        this.assertEnumEqual(["p1", "p2"], this.get("#extra2 *:not(#add1)"), "Negated ID selector");
+        this.assertEnumEqual(["dt2", "dd2", "dt3", "dd3", "dt5", "dd5", "dt6", "dd6"], this.get("#extra1 > :not(:nth-of-type(3n+1))"), "Negated :nth-of-type selector");
+        this.assertEnumEqual(["dt1", "dd1", "dt2", "dd2", "dt4", "dd4", "dt5", "dd5"], this.get("#extra1 > :not(:nth-last-of-type(3n+1))"), "Negated :nth-last-of-type selector");
+        this.assertEnumEqual(["dt2", "dd2", "dt5", "dd5"], this.get("#extra1 > :not(:nth-of-type(3n+1)):not(:nth-last-of-type(3n+1))"), "Multiple negated pseudo-classes");
   	})
    .end()
    .describe('Events -')
