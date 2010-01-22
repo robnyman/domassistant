@@ -22,13 +22,13 @@ var DOMAssistant = function () {
 	},
 	regex = {
 		rules: /\s*(,)\s*/g,
-		selector: /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+\s*(\^|\$|\*|\||~)?(=\s*([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.\'\"]+\]+)|(:\w+[\w\-]*\(.+\)))\))?)*)?(>|\+|~)?/,
+		selector: /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+\s*(\^|\$|\*|\||~)?(=\s*([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[:?#?\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.\'\"]+\]+)|(:\w+[\w\-]*\(.+\)))\))?)*)?(>|\+|~)?/,
 		selectorSplit: /(?:\[.*\]|\(.*\)|[^\s\+>~\[\(])+|[\+>~]/g,
 		id: /^#([\w\u00C0-\uFFFF\-\_]+)$/,
 		tag: /^(\w+)/,
 		relation: /^(>|\+|~)$/,
 		pseudo: /^:(\w[\w\-]*)(\((.+)\))?$/,
-		pseudos: /:(\w[\w\-]*)(\((.+)\))?/g,
+		pseudos: /:(\w[\w\-]*)(\((([^(]+)|([^(]+\([^(]+)\))\))?/g,
 		attribs: /\[(\w+)\s*(\^|\$|\*|\||~)?(=)?\s*([^\[\]]*|"[^\"]*"|'[^\']*')?\](?=$|\[|\:|\s)/g,
 		classes: /\.([\w\u00C0-\uFFFF\-_]+)/g,
 		quoted: /^["'](.*)["']$/,
@@ -234,7 +234,7 @@ var DOMAssistant = function () {
 			var elm = !!obj? new HTMLArray() : null;
 			for (var i=0, arg, idMatch; (arg=arguments[i]); i++) {
 				if (typeof arg === "string") {
-					arg = arg.replace(/^[^#]*(#)/, "$1");
+					arg = arg.replace(/^[^#\(]*(#)/, "$1");
 					if (regex.id.test(arg)) {
 						if ((idMatch = DOMAssistant.$$(arg.substr(1), false))) {
 							elm.push(idMatch);
@@ -393,14 +393,16 @@ var DOMAssistant = function () {
 				}
 				switch (word) {
 					case "only":
-						var kParent;
+						var kParent, kTag;
 						while ((previous=previousMatch[idx++])) {
 							prevParent = previous.parentNode;
-							if (prevParent !== kParent) {
+							var p = previous.nodeName;
+							if (prevParent !== kParent || p !== kTag) {
 								if (match.first(previous) && match.last(previous)) {
 									matchingElms[matchingElms.length] = previous;
 								}
 								kParent = prevParent;
+								kTag = p;
 							}
 						}
 						break;
@@ -414,8 +416,10 @@ var DOMAssistant = function () {
 							if (sequence) {
 								while ((previous=previousMatch[idx++])) {
 									prevParent = previous.parentNode;
-									if (!prevParent.childElms) {
-										var childCount = 0, p = previous.nodeName;
+									prevParent.childElms = prevParent.childElms || {};
+									var p = previous.nodeName;
+									if (!prevParent.childElms[p]) {
+										var childCount = 0;
 										iteratorNext = sequence.start;
 										childElm = prevParent[direction[0]];
 										while (childElm && (sequence.max < 0 || iteratorNext <= sequence.max)) {
@@ -428,7 +432,7 @@ var DOMAssistant = function () {
 											}
 											childElm = childElm[direction[1]];
 										}
-										prevParent.childElms = true;
+										prevParent.childElms[p] = true;
 										prevParents[prevParents.length] = prevParent;
 									}
 								}
