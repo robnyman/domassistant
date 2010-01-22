@@ -315,7 +315,7 @@ var DOMAssistant = function () {
 		},
 		
 		cssByDOM : function (cssRule) {
-			var prevParents, currentRule, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, current, previous, prevParent, notElm, addElm, iteratorNext, childElm, sequence,
+			var prevParents, currentRule, cssSelectors, childOrSiblingRef, nextTag, nextRegExp, current, previous, prevParent, notElm, addElm, iteratorNext, childElm, sequence, anyTag,
 				elm = new HTMLArray(), index = elm.indexOf, prevElm = [], matchingElms = [], cssRules = cssRule.replace(regex.rules, "$1").split(","), splitRule = {};
 			function clearAdded (elm) {
 				elm = elm || prevElm;
@@ -407,7 +407,7 @@ var DOMAssistant = function () {
 						}
 						break;
 					case "nth":
-						if (/^n$/.test(pseudoValue)) {
+						if (pseudoValue === "n") {
 							matchingElms = previousMatch;
 						}
 						else {
@@ -432,7 +432,7 @@ var DOMAssistant = function () {
 											}
 											childElm = childElm[direction[1]];
 										}
-										sort++;
+										if (anyTag) { sort++; }
 										prevParent.childElms[p] = true;
 										prevParents[prevParents.length] = prevParent;
 									}
@@ -561,11 +561,12 @@ var DOMAssistant = function () {
 						allAttr : cssSelector[6],
 						allPseudos : cssSelector[11]
 					};
+					anyTag = (splitRule.tag === "*");
 					if (splitRule.id) {
 						var u = 0, DOMElm = document.getElementById(splitRule.id.slice(1));
 						if (DOMElm) {
 							while (prevElm[u] && !DOMAssistant.hasChild.call(prevElm[u], DOMElm)) { u++; }
-							matchingElms = (u < prevElm.length && (splitRule.tag === "*" || splitRule.tag === DOMElm.tagName.toLowerCase()))? [DOMElm] : [];
+							matchingElms = (u < prevElm.length && (anyTag || splitRule.tag === DOMElm.tagName.toLowerCase()))? [DOMElm] : [];
 						}
 						prevElm = matchingElms;
 					}
@@ -646,11 +647,11 @@ var DOMAssistant = function () {
 						prevElm = matchingElms;
 					}
 				}
-				elm = ((tagBin.length && (splitRule.tag === "*" || index.call(tagBin, splitRule.tag) >= 0 || index.call(tagBin, "*") >= 0))? pushUnique : pushAll)(elm, prevElm);
+				elm = ((tagBin.length && (anyTag || index.call(tagBin, splitRule.tag) >= 0 || index.call(tagBin, "*") >= 0))? pushUnique : pushAll)(elm, prevElm);
 				tagBin.push(splitRule.tag);
 				if (isIE && /\*$/.test(currentRule)) { elm = elm.filter(notComment); }
 			}
-			return ((elm.length && cssRules.length > 1) || sort)? sortDocumentOrder(elm) : elm;
+			return ((elm.length > 1 && cssRules.length > 1) || sort > 0)? sortDocumentOrder(elm) : elm;
 		},
 		
 		cssByXpath : function (cssRule) {
