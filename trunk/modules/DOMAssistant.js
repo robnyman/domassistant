@@ -358,6 +358,9 @@ var DOMAssistant = function () {
 					"~": "\\b" + attrVal + "\\b"
 				}[substrOperator] || (attrVal !== null? "^" + attrVal + "$" : attrVal);
 			}
+			function notComment(el) {
+				return (el || this).tagName !== "!";
+			}
 			function getTags (tag, context) {
 				return isIE5? (tag === "*"? context.all : context.all.tags(tag)) : context.getElementsByTagName(tag);
 			}
@@ -396,13 +399,13 @@ var DOMAssistant = function () {
 						var kParent, kTag;
 						while ((previous=previousMatch[idx++])) {
 							prevParent = previous.parentNode;
-							var p = previous.nodeName;
-							if (prevParent !== kParent || p !== kTag) {
+							var q = previous.nodeName;
+							if (prevParent !== kParent || q !== kTag) {
 								if (match.first(previous) && match.last(previous)) {
 									matchingElms[matchingElms.length] = previous;
 								}
 								kParent = prevParent;
-								kTag = p;
+								kTag = q;
 							}
 						}
 						break;
@@ -497,9 +500,6 @@ var DOMAssistant = function () {
 					}
 				}
 				return set1;
-			}
-			function notComment(el) {
-				return (el || this).tagName !== "!";
 			}
 			sort = -1;
 			for (var a=0, tagBin=[]; (currentRule=cssRules[a]); a++) {
@@ -612,7 +612,7 @@ var DOMAssistant = function () {
 						prevElm = matchingElms = matchingClassElms;
 					}
 					if (splitRule.allAttr) {
-						var r = 0, regExpAttributes = [], matchingAttributeElms = [], allAttr = splitRule.allAttr.match(regex.attribs);
+						var matchAttr, r = 0, regExpAttributes = [], matchingAttributeElms = [], allAttr = splitRule.allAttr.match(regex.attribs);
 						for (var q=0, ql=allAttr.length, attributeMatch, attrVal; q<ql; q++) {
 							regex.attribs.lastIndex = 0;
 							attributeMatch = regex.attribs.exec(allAttr[q]);
@@ -621,7 +621,8 @@ var DOMAssistant = function () {
 						}
 						while ((current = matchingElms[r++])) {
 							for (var s=0, sl=regExpAttributes.length; s<sl; s++) {
-								var matchAttr = true, attributeRegExp = regExpAttributes[s][0], currentAttr = getAttr(current, regExpAttributes[s][1]);
+								var attributeRegExp = regExpAttributes[s][0], currentAttr = getAttr(current, regExpAttributes[s][1]);
+								matchAttr = true;
 								if (!attributeRegExp && currentAttr === true) { continue; }
 								if ((!attributeRegExp && (!currentAttr || typeof currentAttr !== "string" || !currentAttr.length)) || (!!attributeRegExp && !attributeRegExp.test(currentAttr))) {
 									matchAttr = false;
