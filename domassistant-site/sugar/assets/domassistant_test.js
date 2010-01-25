@@ -732,6 +732,14 @@ SugarTest()
         this.assertEnumEqual(["dt2", "dd2", "dt3", "dd3", "dt5", "dd5", "dt6", "dd6"], this.get("#extra1 > :not(:nth-of-type(3n+1))"), "Negated :nth-of-type selector");
         this.assertEnumEqual(["dt1", "dd1", "dt2", "dd2", "dt4", "dd4", "dt5", "dd5"], this.get("#extra1 > :not(:nth-last-of-type(3n+1))"), "Negated :nth-last-of-type selector");
         this.assertEnumEqual(["dt2", "dd2", "dt5", "dd5"], this.get("#extra1 > :not(:nth-of-type(3n+1)):not(:nth-last-of-type(3n+1))"), "Multiple negated pseudo-classes");
+        this.assertEnumEqual(["dt1"], this.get("#extra1 :first-child"), ":first-child with first element being a comment node");
+        this.assertEnumEqual(["dd6"], this.get("#extra1 :last-child"), ":last-child with last element being a comment node");
+        this.assertEqual(0, this.get("#extra3 :only-child").length, ":only-child with the lone node being a comment");
+        this.assertEqual(0, this.get("#extra3 :first-child").length, ":first-child with the lone node being a comment");
+        this.assertEqual(0, this.get("#extra3 :last-child").length, ":last-child with the lone node being a comment");
+        this.assertEqual(0, this.get("#extra3 :nth-child(n)").length, ":nth-child(n) with the lone node being a comment");
+        this.assertEqual(0, this.get("#extra3 :nth-of-type(n)").length, ":nth-of-type(n) with the lone node being a comment");
+        this.assertEqual(0, this.get("#extra3 :only-of-type").length, ":only-of-type with the lone node being a comment");
   	})
    .end()
    .describe('Events -')

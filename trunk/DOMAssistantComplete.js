@@ -22,9 +22,9 @@ var DOMAssistant = function () {
 	},
 	regex = {
 		rules: /\s*(,)\s*/g,
-		selector: /^(\w+)?(#[\w\u00C0-\uFFFF\-\_]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+\s*(\^|\$|\*|\||~)?(=\s*([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[:?#?\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.\'\"]+\]+)|(:\w+[\w\-]*\(.+\)))\))?)*)?(>|\+|~)?/,
+		selector: /^(\w+)?(#[\w\u00C0-\uFFFF\-_=]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+\s*(\^|\$|\*|\||~)?(=\s*([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[:?#?\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.\'\"]+\]+)|(:\w+[\w\-]*\(.+\)))\))?)*)?(>|\+|~)?/,
 		selectorSplit: /(?:\[.*\]|\(.*\)|[^\s\+>~\[\(])+|[\+>~]/g,
-		id: /^#([\w\u00C0-\uFFFF\-\_]+)$/,
+		id: /^#([\w\u00C0-\uFFFF\-_=]+)$/,
 		tag: /^(\w+)/,
 		relation: /^(>|\+|~)$/,
 		pseudo: /^:(\w[\w\-]*)(\((.+)\))?$/,
@@ -381,7 +381,7 @@ var DOMAssistant = function () {
 				};
 				function basicMatch(key) {
 					while ((previous=previousMatch[idx++])) {
-						if (match[key](previous)) {
+						if (notComment(previous) && match[key](previous)) {
 							matchingElms[matchingElms.length] = previous;
 						}
 					}
@@ -498,8 +498,8 @@ var DOMAssistant = function () {
 				}
 				return set1;
 			}
-			function notComment() {
-				return this.tagName !== "!";
+			function notComment(el) {
+				return (el || this).tagName !== "!";
 			}
 			sort = -1;
 			for (var a=0, tagBin=[]; (currentRule=cssRules[a]); a++) {
@@ -649,7 +649,7 @@ var DOMAssistant = function () {
 				}
 				elm = ((tagBin.length && (anyTag || index.call(tagBin, splitRule.tag) >= 0 || index.call(tagBin, "*") >= 0))? pushUnique : pushAll)(elm, prevElm);
 				tagBin.push(splitRule.tag);
-				if (isIE && /\*$/.test(currentRule)) { elm = elm.filter(notComment); }
+				if (isIE && anyTag) { elm = elm.filter(notComment); }
 			}
 			return ((elm.length > 1 && cssRules.length > 1) || sort > 0)? sortDocumentOrder(elm) : elm;
 		},
