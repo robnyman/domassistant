@@ -66,8 +66,6 @@ DOMAssistant.Events = function () {
 		],
 
 		init : function () {
-			window.addEvent = this.addEvent;
-			window.removeEvent = this.removeEvent;
 			DOMAssistant.preventDefault = this.preventDefault;
 			DOMAssistant.cancelBubble = this.cancelBubble;
 			handler = this.handleEvent;

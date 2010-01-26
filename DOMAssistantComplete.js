@@ -3,6 +3,7 @@ var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
 	},
+	_$ = window.$, _$$ = window.$$,
 	isIE = /*@cc_on!@*/false,
 	isIE5 = isIE && parseFloat(navigator.appVersion) < 6,
 	sort, tagCache = {}, lastCache = {}, useCache = true,
@@ -85,6 +86,12 @@ var DOMAssistant = function () {
 			"elmsByAttribute",
 			"elmsByTag"
 		],
+		
+		harmonize : function () {
+			window.$ = _$;
+			window.$$ = _$$;
+			return this;
+		},
 		
 		initCore : function () {
 			this.applyMethod.call(window, "$", this.$);
@@ -1077,14 +1084,14 @@ DOMAssistant.CSS = function () {
 }();
 DOMAssistant.attach(DOMAssistant.CSS);
 DOMAssistant.Content = function () {
-	var $$ = DOMAssistant.$$;
+	var D$ = DOMAssistant.$$;
 	return {
 		init : function () {
 			DOMAssistant.setCache(false);
 		},
 
 		create : function (name, attr, append, content) {
-			var elm = $$(document.createElement(name));
+			var elm = D$(document.createElement(name));
 			if (attr) {
 				elm = elm.setAttributes(attr);
 			}
@@ -1104,7 +1111,7 @@ DOMAssistant.Content = function () {
 					switch (attLower) {
 						case "name":
 						case "type":
-							return $$(document.createElement(elm.outerHTML.replace(new RegExp(attLower + "=[a-zA-Z]+"), " ").replace(">", " " + attLower + "=" + val + ">")));
+							return D$(document.createElement(elm.outerHTML.replace(new RegExp(attLower + "=[a-zA-Z]+"), " ").replace(">", " " + attLower + "=" + val + ">")));
 						case "style":
 							elm.style.cssText = val;
 							return elm;
@@ -1265,8 +1272,6 @@ DOMAssistant.Events = function () {
 		],
 
 		init : function () {
-			window.addEvent = this.addEvent;
-			window.removeEvent = this.removeEvent;
 			DOMAssistant.preventDefault = this.preventDefault;
 			DOMAssistant.cancelBubble = this.cancelBubble;
 			handler = this.handleEvent;

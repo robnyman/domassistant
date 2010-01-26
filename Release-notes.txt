@@ -1,5 +1,6 @@
 Version 2.8:
 =============
+- [New] Ability to avoid global namespace collision of $ and $$ with DOMAssistant.harmonize()
 - [New] Element storage through retrieve(), store() and unstore()
 - [New] Event delegation through relayEvent() and unrelayEvent(), with support for focus and blur
 - [New] Cross-browser support for event.target and event.currentTarget in event callback functions
