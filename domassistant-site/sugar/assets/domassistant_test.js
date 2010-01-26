@@ -1166,7 +1166,12 @@ SugarTest()
   .root()
   .it('DOMAssistant rules', function() {
     this.assert(DOMAssistant);
-	$$('testdata').remove();
+    this.assert($, '$ should be found in global namespace');
+    this.assert($$, '$$ should be found in global namespace');
+    DOMAssistant.harmonize();
+    this.assertUndefined($, '$ should be undefined in global namespace');
+    this.assertUndefined($$, '$$ should be undefined in global namespace');
+	DOMAssistant.$$('testdata').remove();
   })
   .after( function() {
   	  window.scrollTo(0,0);
