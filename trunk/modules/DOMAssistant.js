@@ -3,6 +3,7 @@ var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
 	},
+	_$ = window.$, _$$ = window.$$,
 	isIE = /*@cc_on!@*/false,
 	isIE5 = isIE && parseFloat(navigator.appVersion) < 6,
 	sort, tagCache = {}, lastCache = {}, useCache = true,
@@ -85,6 +86,12 @@ var DOMAssistant = function () {
 			"elmsByAttribute",
 			"elmsByTag"
 		],
+		
+		harmonize : function () {
+			window.$ = _$;
+			window.$$ = _$$;
+			return this;
+		},
 		
 		initCore : function () {
 			this.applyMethod.call(window, "$", this.$);

@@ -1,14 +1,14 @@
 // Developed by Robert Nyman/DOMAssistant team, code/licensing: http://domassistant.googlecode.com/, documentation: http://www.domassistant.com/documentation
 /*global DOMAssistant */
 DOMAssistant.Content = function () {
-	var $$ = DOMAssistant.$$;
+	var D$ = DOMAssistant.$$;
 	return {
 		init : function () {
 			DOMAssistant.setCache(false);
 		},
 
 		create : function (name, attr, append, content) {
-			var elm = $$(document.createElement(name));
+			var elm = D$(document.createElement(name));
 			if (attr) {
 				elm = elm.setAttributes(attr);
 			}
@@ -28,7 +28,7 @@ DOMAssistant.Content = function () {
 					switch (attLower) {
 						case "name":
 						case "type":
-							return $$(document.createElement(elm.outerHTML.replace(new RegExp(attLower + "=[a-zA-Z]+"), " ").replace(">", " " + attLower + "=" + val + ">")));
+							return D$(document.createElement(elm.outerHTML.replace(new RegExp(attLower + "=[a-zA-Z]+"), " ").replace(">", " " + attLower + "=" + val + ">")));
 						case "style":
 							elm.style.cssText = val;
 							return elm;
