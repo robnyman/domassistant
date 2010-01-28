@@ -19,6 +19,7 @@ Version 2.8:
 - [Fix] attribute selector with square brackets (eg. [name='foo[bar]']) does not work
 - [Fix] tag#id incorrectly returns the element even when its tagname does not match
 - [Fix] Unable to get form by $() when it contains field with name="id"
+- [Fix] ID selectors containing $ and = do not work
 - [Fix] Negated pseudo-classes do not work
 - [Fix] Selectors that start with >, + and ~ do not work in IE
 - [Fix] Multi-selectors return duplicated elements in IE
@@ -31,6 +32,7 @@ Version 2.8:
 - [Fix] setStyle('display', 'none') does not work properly in IE when the element is relatively positioned
 - [Fix] addContent when used with strings remove events and attributes
 - [Fix] replaceClass does not work in some cases
+- [Fix] Some events cannot be removed via removeEvent, such as mutation events
 - [Fix] removeEvent fails in older versions of Opera when multiple handlers exist for an event on an element
 - [Fix] Miscellaneous performance improvement
 

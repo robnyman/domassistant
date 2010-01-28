@@ -92,38 +92,33 @@ DOMAssistant.Events = function () {
 		},
 
 		addEvent : function (evt, func, relay) {
-			if (/^DOM/.test(evt) && w3cMode) {
-				this.addEventListener(evt, func, false);
-			}
-			else {
-				var uid = (evt = fix(evt)) + this.retrieve();
-				if (!(func.attachedElements && func.attachedElements[uid])) {
-					var events = this.retrieve(key) || {};
-					if (!events[evt]) {
-						events[evt] = [];
-						var existingEvent = this["on" + evt];
-						if (existingEvent) {
-							events[evt].push(existingEvent);
-							this["on" + evt] = null;
-						}
+			var uid = (evt = fix(evt)) + this.retrieve();
+			if (!(func.attachedElements && func.attachedElements[uid])) {
+				var events = this.retrieve(key) || {};
+				if (!events[evt]) {
+					events[evt] = [];
+					var existingEvent = this["on" + evt];
+					if (existingEvent) {
+						events[evt].push(existingEvent);
+						this["on" + evt] = null;
 					}
-					if (!events[evt].length) {
-						if (w3cMode) { this.addEventListener(evt, handler, useCapture[evt]); }
-						else { this["on" + evt] = handler; }
-					}
-					func.relay = relay;
-					events[evt].push(func);
-					if (typeof this.window === "object") { this.window["on" + evt] = handler; }
-					func.attachedElements = func.attachedElements || {};
-					func.attachedElements[uid] = true;
-					this.store(key, events);
 				}
+				if (!events[evt].length) {
+					if (w3cMode) { this.addEventListener(evt, handler, useCapture[evt]); }
+					else { this["on" + evt] = handler; }
+				}
+				func.relay = relay;
+				events[evt].push(func);
+				if (typeof this.window === "object") { this.window["on" + evt] = handler; }
+				func.attachedElements = func.attachedElements || {};
+				func.attachedElements[uid] = true;
+				this.store(key, events);
 			}
 			return this;
 		},
 
 		handleEvent : function (evt) {
-			var currentEvt = createEvent(evt),
+			var currentEvt = (evt && /^DOM/.test(evt.type) && w3cMode)? evt : createEvent(evt),
 				type = fix(currentEvt.type),
 				eventColl = this.retrieve(key)[type].slice(0), eventCollLength, eventReturn;
 			if ((eventCollLength = eventColl.length)) {
