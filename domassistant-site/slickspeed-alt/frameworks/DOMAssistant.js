@@ -3,7 +3,7 @@ var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
 	},
-	_$ = window.$, _$$ = window.$$,
+	w = window, _$ = w.$, _$$ = w.$$,
 	isIE = /*@cc_on!@*/false,
 	isIE5 = isIE && parseFloat(navigator.appVersion) < 6,
 	sort, tagCache = {}, lastCache = {}, useCache = true,
@@ -23,9 +23,9 @@ var DOMAssistant = function () {
 	},
 	regex = {
 		rules: /\s*(,)\s*/g,
-		selector: /^(\w+)?(#[\w\u00C0-\uFFFF\-_=]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+\s*(\^|\$|\*|\||~)?(=\s*([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[:?#?\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.\'\"]+\]+)|(:\w+[\w\-]*\(.+\)))\))?)*)?(>|\+|~)?/,
+		selector: /^(\w+)?(#[\w\u00C0-\uFFFF\-_=\$]+|(\*))?((\.[\w\u00C0-\uFFFF\-_]+)*)?((\[\w+\s*(\^|\$|\*|\||~)?(=\s*([\w\u00C0-\uFFFF\s\-\_\.]+|"[^"]*"|'[^']*'))?\]+)*)?(((:\w+[\w\-]*)(\((odd|even|\-?\d*n?((\+|\-)\d+)?|[:?#?\w\u00C0-\uFFFF\-_\.]+|"[^"]*"|'[^']*'|((\w*\.[\w\u00C0-\uFFFF\-_]+)*)?|(\[#?\w+(\^|\$|\*|\||~)?=?[\w\u00C0-\uFFFF\s\-\_\.\'\"]+\]+)|(:\w+[\w\-]*\(.+\)))\))?)*)?(>|\+|~)?/,
 		selectorSplit: /(?:\[.*\]|\(.*\)|[^\s\+>~\[\(])+|[\+>~]/g,
-		id: /^#([\w\u00C0-\uFFFF\-_=]+)$/,
+		id: /^#([\w\u00C0-\uFFFF\-_=\$]+)$/,
 		tag: /^(\w+)/,
 		relation: /^(>|\+|~)$/,
 		pseudo: /^:(\w[\w\-]*)(\((.+)\))?$/,
@@ -88,15 +88,15 @@ var DOMAssistant = function () {
 		],
 		
 		harmonize : function () {
-			window.$ = _$;
-			window.$$ = _$$;
+			w.$ = _$;
+			w.$$ = _$$;
 			return this;
 		},
 		
 		initCore : function () {
-			this.applyMethod.call(window, "$", this.$);
-			this.applyMethod.call(window, "$$", this.$$);
-			window.DOMAssistant = this;
+			this.applyMethod.call(w, "$", this.$);
+			this.applyMethod.call(w, "$$", this.$$);
+			w.DOMAssistant = this;
 			if (isIE) {
 				HTMLArray = Array;
 			}
@@ -259,7 +259,7 @@ var DOMAssistant = function () {
 		
 		$$ : function (id, addMethods) {
 			var elm = (typeof id === "object" || typeof id === "function" && !!id.nodeName)? id : document.getElementById(id),
-				applyMethods = addMethods || true,
+				applyMethods = def(addMethods)? addMethods : true,
 				getId = function(el) { var eid = el.id; return typeof eid !== "object"? eid : el.attributes.id.nodeValue; };
 			if (typeof id === "string" && elm && getId(elm) !== id) {
 				elm = null;
