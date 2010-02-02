@@ -49,7 +49,7 @@
 							</p>
 							<p class="code">
 								<code>
-									$("container").addEvent("click", function (){<br>
+									$("container").addEvent("dblclick", function () {<br>
 										alert("Hello darling!");<br>
 									});
 								</code>
@@ -60,7 +60,7 @@
 							<h3>Parameters</h3>
 							<dl>
 								<dt>evt</dt>
-								<dd>Event to remove, specified as a string, without the "on" prefix.</dd>
+								<dd>Event to remove, specified as a string, without the "on" prefix. Optional. If unspecified, handlers for all events (including inline events) will be removed.</dd>
 								<dt>func</dt>
 								<dd>Function to stop from handling the event, specified as a function reference (without parentheses). Optional. If unspecified, all handlers (including inline event handlers) for the event will be removed.</dd>
 							</dl>
@@ -75,7 +75,11 @@
 							</p>
 							<p class="code">
 								<code>
-									$("tr:nth-child(odd)").removeEvent("mouseover").removeEvent("mouseout");
+									// To remove all events bound to the odd row, either do this<br>
+									$("tr:nth-child(odd)").removeEvent("mouseover").removeEvent("mouseout");<br>
+									<br>
+									// Or do this<br>
+									$("tr:nth-child(odd)").removeEvent();
 								</code>	
 							</p>
 

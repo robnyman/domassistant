@@ -434,6 +434,31 @@
 								</code>
 							</p>
 							
+							<h2 id="harmonize"><code>harmonize()</code></h2>
+							<p>Allows DOMAssistant to co-exist in harmony with other Javascript libraries, by avoiding global namespace collision of $ and $$. The dollar methods are still accessible via DOMAssistant.$ and DOMAssistant.$$</p>
+							<h3>Return value</h3>
+							<p>None</p>
+
+							<h3>Parameters</h3>
+							<p>None</p>
+
+							<h3>Example calls</h3>
+							<p class="code">
+								<code>
+									&lt;script type="text/javascript" src="OtherLib.js"&gt; &lt;/script&gt;<br>
+									&lt;script type="text/javascript" src="DOMAssistantCompressed.js"&gt; &lt;/script&gt;<br>
+									&lt;script type="text/javascript"&gt;<br>
+									&nbsp;&nbsp;&nbsp;&nbsp;DOMAssistant.DOMReady( function() {<br>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Your DOMAssistant code<br>
+									&nbsp;&nbsp;&nbsp;&nbsp;} );<br>
+									&nbsp;&nbsp;&nbsp;&nbsp;DOMAssistant.harmonize();<br>
+									<br>
+									&nbsp;&nbsp;&nbsp;&nbsp;// Other library's code here<br>
+									<br>
+									&lt;/script&gt;<br>
+								</code>
+							</p>
+							
 						</div>
 						
 						<div id="sidebar">
@@ -459,6 +484,7 @@
 								<li><a href="#store">store</a> <sup>New</sup></li>
 								<li><a href="#retrieve">retrieve</a> <sup>New</sup></li>
 								<li><a href="#unstore">unstore</a> <sup>New</sup></li>
+								<li><a href="#harmonize">harmonize</a> <sup>New</sup></li>
 							</ul>
 							<?php include "domassistant-module-nav.php" ?>
 						</div>
