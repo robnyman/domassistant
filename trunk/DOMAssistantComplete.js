@@ -215,18 +215,13 @@ var DOMAssistant = function () {
 			};
 		},
 		
-		clearHandlers : function () {
+		cleanUp : function () {
 			var children = this.all || this.getElementsByTagName("*");
-			for (var i=0, child, attr; (child=children[i++]);) {
-				if (child.uniqueHandlerId && (attr = child.attributes)) {
-					for (var att, j=attr.length; j--;) {
-						att = attr[j].nodeName.toLowerCase();
-						if (typeof child[att] === "function") {
-							child[att] = null;
-						}
-					}
-				}
+			for (var i=0, child; (child=children[i++]);) {
+				if (child.unstore) { child.unstore(); }
+				if (child.removeEvent) { child.removeEvent(); }
 			}
+			this.innerHTML = "";
 		},
 		
 		setCache : function (cache) {
@@ -986,7 +981,7 @@ DOMAssistant.AJAX = function () {
 				this.innerHTML += content;
 			}
 			else {
-				DOMAssistant.clearHandlers.apply(this);
+				DOMAssistant.cleanUp.apply(this);
 				this.innerHTML = content;
 			}
 		},
@@ -1175,10 +1170,7 @@ DOMAssistant.Content = function () {
 		},
 
 		replaceContent : function (content) {
-			if (!!this.firstChild) {
-				DOMAssistant.clearHandlers.apply(this);
-				this.innerHTML = "";
-			}
+			DOMAssistant.cleanUp.apply(this);
 			return this.addContent(content);
 		},
 
@@ -1200,7 +1192,9 @@ DOMAssistant.Content = function () {
 		},
 
 		remove : function () {
+			DOMAssistant.cleanUp.apply(this);
 			this.unstore();
+			if (this.removeEvent) { this.removeEvent(); }
 			this.parentNode.removeChild(this);
 			return null;
 		}
@@ -1299,24 +1293,26 @@ DOMAssistant.Events = function () {
 		},
 
 		addEvent : function (evt, func, relay) {
-			var uid = (evt = fix(evt)) + this.retrieve();
+			var existingEvent,
+				uid = (evt = fix(evt)) + this.retrieve(),
+				onevt = "on" + evt;
 			if (!(func.attachedElements && func.attachedElements[uid])) {
 				var events = this.retrieve(key) || {};
 				if (!events[evt]) {
 					events[evt] = [];
-					var existingEvent = this["on" + evt];
-					if (existingEvent) {
-						events[evt].push(existingEvent);
-						this["on" + evt] = null;
-					}
+					existingEvent = this[onevt];
+					this[onevt] = null;
 				}
 				if (!events[evt].length) {
 					if (w3cMode) { this.addEventListener(evt, handler, useCapture[evt]); }
-					else { this["on" + evt] = handler; }
+					else { this[onevt] = handler; }
+				}
+				if (existingEvent) {
+					events[evt].push(existingEvent);
 				}
 				func.relay = relay;
 				events[evt].push(func);
-				if (typeof this.window === "object") { this.window["on" + evt] = handler; }
+				if (typeof this.window === "object") { this.window[onevt] = handler; }
 				func.attachedElements = func.attachedElements || {};
 				func.attachedElements[uid] = true;
 				this.store(key, events);
@@ -1341,8 +1337,21 @@ DOMAssistant.Events = function () {
 
 		removeEvent : function (evt, func, relay) {
 			var uid = (evt = fix(evt)) + this.retrieve(),
-				events = this.retrieve(key);
-			if (events && events[evt]) {
+				events = this.retrieve(key),
+				onevt = "on" + evt;
+			if (events && !evt) {
+				for (var ev in events) {
+					if (events[ev].length) { this.removeEvent(ev); }
+				}
+				var attr = this.attributes;
+				for (var att, j=attr.length; j--;) {
+					att = attr[j].nodeName.toLowerCase();
+					if (typeof this[att] === "function") {
+						this[att] = null;
+					}
+				}
+			}
+			else if (events && events[evt]) {
 				var eventColl = events[evt];
 				for (var fn, i=eventColl.length; i--;) {
 					fn = func || eventColl[i];
@@ -1355,11 +1364,11 @@ DOMAssistant.Events = function () {
 				}
 				if (!events[evt].length) {
 					if (w3cMode) { this.removeEventListener(evt, handler, useCapture[evt]); }
-					else { this["on" + evt] = null; }
+					else { this[onevt] = null; }
 				}
 			}
-			else if (this["on" + evt] && !func && !relay) {
-				this["on" + evt] = null;
+			else if (this[onevt] && !func && !relay) {
+				this[onevt] = null;
 			}
 			return this;
 		},

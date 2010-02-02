@@ -92,10 +92,7 @@ DOMAssistant.Content = function () {
 		},
 
 		replaceContent : function (content) {
-			if (!!this.firstChild) {
-				DOMAssistant.clearHandlers.apply(this);
-				this.innerHTML = "";
-			}
+			DOMAssistant.cleanUp.apply(this);
 			return this.addContent(content);
 		},
 
@@ -117,7 +114,9 @@ DOMAssistant.Content = function () {
 		},
 
 		remove : function () {
+			DOMAssistant.cleanUp.apply(this);
 			this.unstore();
+			if (this.removeEvent) { this.removeEvent(); }
 			this.parentNode.removeChild(this);
 			return null;
 		}

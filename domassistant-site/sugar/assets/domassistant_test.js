@@ -201,7 +201,8 @@ SugarTest()
       	this.assertEqual('', elm.innerHTML);
       	elm.replaceContent($(document).create('span', null, false, 'inner content'))
       	this.assertEqual('inner content', elm.firstChild.innerText || elm.firstChild.textContent);
-      	elm.replaceContent(987)
+      	elm.innerHTML = '';
+      	elm.replaceContent(987);
       	this.assertEqual('987', elm.innerText || elm.textContent);
       })
       .it('Replaces current element', function() {
@@ -980,7 +981,7 @@ SugarTest()
         this.assertEqual(2, normal);
 		
 		normal = inline = 0;
-		var li = $('#test_06 li:nth-of-type(3)');
+		var li = $('#test_06 li:nth-of-type(3)').first();
 		li.triggerEvent('click');
 		this.assertEqual(0, normal);
 		this.assertEqual(1, inline);
@@ -989,16 +990,19 @@ SugarTest()
 		li.triggerEvent('click');
 		this.assertEqual(1, normal);
 		this.assertEqual(2, inline);
+        this.assertEqual(2, li.retrieve('_events')['click'].length, 'There should be two handlers here');
 
 		li.removeEvent('click', normal_add);
 		li.triggerEvent('click');
 		this.assertEqual(1, normal);
 		this.assertEqual(3, inline);
+        this.assertEqual(1, li.retrieve('_events')['click'].length, 'There should be one handler left');
 
 		li.removeEvent('click');
 		li.triggerEvent('click');
 		this.assertEqual(1, normal);
 		this.assertEqual(3, inline);
+        this.assertEqual(0, li.retrieve('_events')['click'].length, 'There should be no handlers left');
   	})
     .it('Remove event handlers from within themselves', function() {
         var elm = $$('test_06'), count = 0;
@@ -1037,22 +1041,24 @@ SugarTest()
         this.assertEqual(1, countB, 'blur event should bubble from the input field to the form');
         elm.unrelayEvent('focus').unrelayEvent('blur');
   	})
-  	/*
-  	// DOMAssistant does not support this feature as of v2.8
-    .it('remove events without parameters', function() {
-        var elm = $$('test_06_span_01'), count = 0;
+    .it('Remove all events', function() {
+        var elm = $$('test_07');
+        inline = 0;
         var add = function () {
-        	count++;
+        	inline++;
         };
         elm.addEvent('somethingHappened', add);
         elm.addEvent('somethingElseHappened', add);
+        elm.triggerEvent('somethingHappened').triggerEvent('somethingHappened').triggerEvent('click');
+      	this.assertEqual(3, inline);
         elm.removeEvent();
         elm.triggerEvent('somethingHappened');
-      	this.assertEqual(0, count);
+      	this.assertEqual(3, inline);
         elm.triggerEvent('somethingElseHappened');
-      	this.assertEqual(0, count);
+      	this.assertEqual(3, inline);
+        elm.triggerEvent('click');
+      	this.assertEqual(3, inline, 'Inline event should also be removed');
   	})
-  	*/
    .end()
    .describe('Core methods -')
     .it('indexOf', function() {

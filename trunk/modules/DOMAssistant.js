@@ -215,18 +215,13 @@ var DOMAssistant = function () {
 			};
 		},
 		
-		clearHandlers : function () {
+		cleanUp : function () {
 			var children = this.all || this.getElementsByTagName("*");
-			for (var i=0, child, attr; (child=children[i++]);) {
-				if (child.uniqueHandlerId && (attr = child.attributes)) {
-					for (var att, j=attr.length; j--;) {
-						att = attr[j].nodeName.toLowerCase();
-						if (typeof child[att] === "function") {
-							child[att] = null;
-						}
-					}
-				}
+			for (var i=0, child; (child=children[i++]);) {
+				if (child.unstore) { child.unstore(); }
+				if (child.removeEvent) { child.removeEvent(); }
 			}
+			this.innerHTML = "";
 		},
 		
 		setCache : function (cache) {
