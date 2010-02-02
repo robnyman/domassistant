@@ -1200,6 +1200,7 @@ DOMAssistant.Content = function () {
 		},
 
 		remove : function () {
+			this.unstore();
 			this.parentNode.removeChild(this);
 			return null;
 		}
