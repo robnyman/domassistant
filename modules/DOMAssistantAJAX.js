@@ -170,7 +170,7 @@ DOMAssistant.AJAX = function () {
 				this.innerHTML += content;
 			}
 			else {
-				DOMAssistant.cleanUp.apply(this);
+				DOMAssistant.cleanUp(this);
 				this.innerHTML = content;
 			}
 		},

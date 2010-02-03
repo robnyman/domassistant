@@ -215,13 +215,15 @@ var DOMAssistant = function () {
 			};
 		},
 		
-		cleanUp : function () {
-			var children = this.all || this.getElementsByTagName("*");
+		cleanUp : function (elm) {
+			var children = elm.all || elm.getElementsByTagName("*");
 			for (var i=0, child; (child=children[i++]);) {
-				if (child.unstore) { child.unstore(); }
-				if (child.removeEvent) { child.removeEvent(); }
+				if (child.hasData && child.hasData()) {
+					if (child.removeEvent) { child.removeEvent(); }
+					child.unstore();
+				}
 			}
-			this.innerHTML = "";
+			elm.innerHTML = "";
 		},
 		
 		setCache : function (cache) {
@@ -772,6 +774,10 @@ DOMAssistant.initCore();
 DOMAssistant.Storage = function () {
 	var uniqueId = 1, data = [], expando = "_da" + +new Date();
 	return {
+		hasData : function () {
+			var uid = this[expando];
+			return !!uid && !!data[uid];
+		},
 		retrieve : function (key) {
 			if (!DOMAssistant.def(key)) {
 				return this[expando] || (this[expando] = uniqueId++);
@@ -981,7 +987,7 @@ DOMAssistant.AJAX = function () {
 				this.innerHTML += content;
 			}
 			else {
-				DOMAssistant.cleanUp.apply(this);
+				DOMAssistant.cleanUp(this);
 				this.innerHTML = content;
 			}
 		},
@@ -1170,7 +1176,7 @@ DOMAssistant.Content = function () {
 		},
 
 		replaceContent : function (content) {
-			DOMAssistant.cleanUp.apply(this);
+			DOMAssistant.cleanUp(this);
 			return this.addContent(content);
 		},
 
@@ -1192,9 +1198,11 @@ DOMAssistant.Content = function () {
 		},
 
 		remove : function () {
-			DOMAssistant.cleanUp.apply(this);
-			this.unstore();
-			if (this.removeEvent) { this.removeEvent(); }
+			DOMAssistant.cleanUp(this);
+			if (this.hasData()) {
+				if (this.removeEvent) { this.removeEvent(); }
+				this.unstore();
+			}
 			this.parentNode.removeChild(this);
 			return null;
 		}
@@ -1346,7 +1354,7 @@ DOMAssistant.Events = function () {
 				var attr = this.attributes;
 				for (var att, j=attr.length; j--;) {
 					att = attr[j].nodeName.toLowerCase();
-					if (typeof this[att] === "function") {
+					if (/^on/i.test(att) && typeof this[att] === "function") {
 						this[att] = null;
 					}
 				}

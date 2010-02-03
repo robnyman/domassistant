@@ -145,7 +145,7 @@ DOMAssistant.Events = function () {
 				var attr = this.attributes;
 				for (var att, j=attr.length; j--;) {
 					att = attr[j].nodeName.toLowerCase();
-					if (typeof this[att] === "function") {
+					if (/^on/i.test(att) && typeof this[att] === "function") {
 						this[att] = null;
 					}
 				}
