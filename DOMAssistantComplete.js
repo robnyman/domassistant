@@ -617,9 +617,9 @@ var DOMAssistant = function () {
 					}
 					if (splitRule.allAttr) {
 						var matchAttr, r = 0, regExpAttributes = [], matchingAttributeElms = [], allAttr = splitRule.allAttr.match(regex.attribs);
-						for (var q=0, ql=allAttr.length, attributeMatch, attrVal; q<ql; q++) {
+						for (var specialStrip = /^\[(selected|readonly)(\s*=.+)?\]$/, q=0, ql=allAttr.length, attributeMatch, attrVal; q<ql; q++) {
 							regex.attribs.lastIndex = 0;
-							attributeMatch = regex.attribs.exec(allAttr[q]);
+							attributeMatch = regex.attribs.exec(allAttr[q].replace(specialStrip, "[$1]"));
 							attrVal = attrToRegExp(attributeMatch[4], attributeMatch[2] || null);
 							regExpAttributes[q] = [(attrVal? new RegExp(attrVal) : null), attributeMatch[1]];
 						}
