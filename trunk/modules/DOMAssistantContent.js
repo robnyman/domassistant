@@ -92,7 +92,7 @@ DOMAssistant.Content = function () {
 		},
 
 		replaceContent : function (content) {
-			DOMAssistant.cleanUp.apply(this);
+			DOMAssistant.cleanUp(this);
 			return this.addContent(content);
 		},
 
@@ -114,9 +114,11 @@ DOMAssistant.Content = function () {
 		},
 
 		remove : function () {
-			DOMAssistant.cleanUp.apply(this);
-			this.unstore();
-			if (this.removeEvent) { this.removeEvent(); }
+			DOMAssistant.cleanUp(this);
+			if (this.hasData()) {
+				if (this.removeEvent) { this.removeEvent(); }
+				this.unstore();
+			}
 			this.parentNode.removeChild(this);
 			return null;
 		}

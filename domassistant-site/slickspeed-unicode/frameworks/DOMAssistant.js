@@ -215,13 +215,15 @@ var DOMAssistant = function () {
 			};
 		},
 		
-		cleanUp : function () {
-			var children = this.all || this.getElementsByTagName("*");
+		cleanUp : function (elm) {
+			var children = elm.all || elm.getElementsByTagName("*");
 			for (var i=0, child; (child=children[i++]);) {
-				if (child.unstore) { child.unstore(); }
-				if (child.removeEvent) { child.removeEvent(); }
+				if (child.hasData && child.hasData()) {
+					if (child.removeEvent) { child.removeEvent(); }
+					child.unstore();
+				}
 			}
-			this.innerHTML = "";
+			elm.innerHTML = "";
 		},
 		
 		setCache : function (cache) {
@@ -772,6 +774,10 @@ DOMAssistant.initCore();
 DOMAssistant.Storage = function () {
 	var uniqueId = 1, data = [], expando = "_da" + +new Date();
 	return {
+		hasData : function () {
+			var uid = this[expando];
+			return !!uid && !!data[uid];
+		},
 		retrieve : function (key) {
 			if (!DOMAssistant.def(key)) {
 				return this[expando] || (this[expando] = uniqueId++);
