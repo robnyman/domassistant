@@ -683,6 +683,10 @@ SugarTest()
         this.assertEnumEqual(["option1a"], this.get("#select1 option[selected]"), "Select options via [selected]");
         this.assertEnumEqual(["option2d"], this.get("#select2 option[selected]"), "Select options via [selected]");
         this.assertEnumEqual(["option3b", "option3c"], this.get("#select3 option[selected]"), "Select options via [selected]");
+        this.assertEnumEqual(["option1a","option2d","option3b","option3c"], this.get("#form [selected]"), "Select options via [selected] without tagname");
+        this.assertEnumEqual(["option1a","option2d","option3b","option3c"], this.get("#form [selected=selected]"), "Select options via [selected=selected] without tagname");
+        this.assertEnumEqual(["option1a","option2d","option3b","option3c"], this.get("#form [selected='selected']"), "Select options via [selected='selected'] without tagname");
+        this.assertEnumEqual(["option1a","option2d","option3b","option3c"], this.get("#form [selected = 'selected']"), "Select options via [selected='selected'] without tagname");
 
         this.assertEnumEqual(["hidden2"], this.get("input[name='foo[bar]']"), "Grouped Form Elements");
         
@@ -691,7 +695,13 @@ SugarTest()
         this.assertEnumEqual(["select2", "select3"], this.get("#form select:not([name='select1'])"), ":not() Equals quoted attribute");
 
         this.assertEnumEqual(["T2"], this.get("#testForm input[readonly]"), "Select inputs via [readonly]");
+        this.assertEnumEqual(["T2"], this.get("#testForm [readonly]"), "Select inputs via [readonly] without tagname");
+        this.assertEnumEqual(["T2"], this.get("#testForm [readonly=readonly]"), "Select inputs via [readonly=readonly] without tagname");
+        this.assertEnumEqual(["T2"], this.get("#testForm [readonly='readonly']"), "Select inputs via [readonly='readonly'] without tagname");
+        this.assertEnumEqual(["T2"], this.get("#testForm [readonly = 'readonly']"), "Select inputs via [readonly = 'readonly'] without tagname");
         this.assertEqual(16, $("#testForm input:not([readonly])").length, "Select inputs via :not([readonly])");
+        this.assertEqual(16, $("#testForm input:not([readonly=readonly])").length, "Select inputs via :not([readonly=readonly])");
+        this.assertEqual(16, $("#testForm input:not([readonly='readonly'])").length, "Select inputs via :not([readonly='readonly'])");
         
         this.assertEnumEqual(["text1"], this.get("input[name=action]"), "Name selector");
         this.assertEnumEqual(["text1"], this.get("input[name=\"action\"]"), "Name selector with double quotes");
@@ -710,7 +720,6 @@ SugarTest()
         this.assertEnumEqual(["text1","radio1","radio2","check1","check2","hidden2","name"], this.get("#form input:enabled"), "Enabled UI Element");
         this.assertEnumEqual(["text2"], this.get("#form input:disabled"), "Disabled UI Element");
         this.assertEnumEqual(["radio2","check1"], this.get("#form input:checked"), "Checked UI Element");
-        this.assertEnumEqual(["option1a","option2d","option3b","option3c"], this.get("#form option[selected]"), "Selected Option Element");
         this.assertEnumEqual(["google","groups"], this.get("a:contains('Google')"), "Text Contains");
         this.assertEnumEqual(["groups"], this.get("a:contains('Google Groups')"), "Text Contains");
         this.assertEnumEqual(["foo","fx-queue","fx-tests", "moretests"], this.get("p ~ div"), "Element Preceded By");
@@ -1049,7 +1058,7 @@ SugarTest()
         };
         elm.addEvent('somethingHappened', add);
         elm.addEvent('somethingElseHappened', add);
-        elm.triggerEvent('somethingHappened').triggerEvent('somethingHappened').triggerEvent('click');
+        elm.triggerEvent('somethingHappened').triggerEvent('somethingElseHappened').triggerEvent('click');
       	this.assertEqual(3, inline);
         elm.removeEvent();
         elm.triggerEvent('somethingHappened');
