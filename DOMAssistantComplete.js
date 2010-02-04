@@ -1216,7 +1216,7 @@ DOMAssistant.Events = function () {
 		useCapture = { focus: true, blur: true },
 		regex = {
 			special: /^(submit|reset|change|select)$/i,
-			mouse: /^mouseo(ver|ut)/i,
+			mouseenterleave: /^mouse(enter|leave)$/i,
 			dom: /^DOM/,
 			on: /^on/i
 		},
@@ -1345,18 +1345,21 @@ DOMAssistant.Events = function () {
 			var currentEvt = (evt && regex.dom.test(evt.type) && w3cMode)? evt : createEvent(evt),
 				type = fix(currentEvt.type),
 				relatedTarg = currentEvt.relatedTarget,
-				eventColl = this.retrieve(key)[type].slice(0), eventCollLength, eventReturn;
-			if (!regex.mouse.test(type) || !(relatedTarg && (this == relatedTarg || this.hasChild(relatedTarg)))) {
-				if ((eventCollLength = eventColl.length)) {
-					for (var i=0; i<eventCollLength; i++) {
-						if (typeof eventColl[i] === "function") {
-							if (eventColl[i].evt && eventColl[i].evt !== type) { currentEvt.type = eventColl[i].evt; }
-							eventReturn = eventColl[i].call(this, currentEvt);
+				eventColl = this.retrieve(key)[type].slice(0), eventCollLength, eventReturn, oevt;
+			if ((eventCollLength = eventColl.length)) {
+				for (var i=0; i<eventCollLength; i++) {
+					if (typeof eventColl[i] === "function") {
+						if ((oevt = eventColl[i].evt) && oevt !== type) {
+							currentEvt.type = oevt;
+							if (regex.mouseenterleave.test(oevt) && (!relatedTarg || this === relatedTarg || this.hasChild(relatedTarg))) {
+								continue;
+							}
 						}
+						eventReturn = eventColl[i].call(this, currentEvt);
 					}
-					if (eventReturn === false) { currentEvt.stopPropagation(); }
-					return eventReturn;
 				}
+				if (eventReturn === false) { currentEvt.stopPropagation(); }
+				return eventReturn;
 			}
 		},
 
