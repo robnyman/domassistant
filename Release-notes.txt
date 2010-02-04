@@ -3,7 +3,8 @@ Version 2.8:
 - [New] Ability to avoid global namespace collision of $ and $$ with DOMAssistant.harmonize()
 - [New] Element storage through retrieve(), store() and unstore()
 - [New] Event delegation through relayEvent() and unrelayEvent(), with support for focus/blur/submit/reset/change/select
-- [New] Cross-browser support for event.target and event.currentTarget in event callback functions
+- [New] Cross-browser support for mouseenter and mouseleave events
+- [New] Availability of event.target and event.currentTarget in event callback functions
 - [New] New method hasChild() to allow testing for descendant
 - [New] New core methods: indexOf(), map(), filter(), every() and some()
 - [Chg] each() can now be terminated when the callback function returns false
