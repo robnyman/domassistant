@@ -84,7 +84,7 @@
 							</p>
 
 							<h2 id="relayEvent"><code>relayEvent(evt, selector, func)</code></h2>
-							<p>Adds a centralized event handler to the current element. Events that occur on elements matching the selector bubble up and get handled in the current element. Most bubbling events are supported, including focus and blur.</p>
+							<p>Adds a centralized event handler to the current element. Events that occur on elements matching the selector bubble up and get handled in the current element. Other than traditionally bubbling events, others like focus, blur, submit, reset, change and select are also supported.</p>
 							<h3>Parameters</h3>
 							<dl>
 								<dt>evt</dt>

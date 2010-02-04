@@ -37,7 +37,7 @@ Version 2.8:
 - [Fix] Unable to add event if the same event already exists inline
 - [Fix] Some events cannot be removed via removeEvent, such as mutation events
 - [Fix] removeEvent fails in older versions of Opera when multiple handlers exist for an event on an element
-- [Fix] Memory leaks related to data storage and events
+- [Fix] Memory leaks associated with data storage and events
 - [Fix] Miscellaneous performance improvement
 
 Version 2.7.4:
