@@ -1214,11 +1214,17 @@ DOMAssistant.Events = function () {
 		key = "_events",
 		w3cMode = !!document.addEventListener,
 		useCapture = { focus: true, blur: true },
+		regex = {
+			special: /^(submit|reset|change|select)$/i,
+			mouse: /^mouseo(ver|ut)/i,
+			dom: /^DOM/,
+			on: /^on/i
+		},
 		special = function (e) {
-			return DOMAssistant.isIE && /^(submit|reset|change|select)$/i.test(e);
+			return DOMAssistant.isIE && regex.special.test(e);
 		},
 		fix = function (e) {
-			return DOMAssistant.isIE? { focus: "activate", blur: "deactivate" }[e] || e : e;
+			return (DOMAssistant.isIE? { focus: "activate", blur: "deactivate" } : { mouseenter: "mouseover", mouseleave: "mouseout" })[e] || e;
 		},
 		createEvent = function (e, type, target) {
 			e = e || window.event || {};
@@ -1284,47 +1290,49 @@ DOMAssistant.Events = function () {
 		},
 
 		triggerEvent : function (evt, target, e) {
-			evt = fix(evt);
-			var events = this.retrieve(key),
-				event = e || createEvent(e, evt, target || this);
+			var fevt = fix(evt),
+				events = this.retrieve(key),
+				event = e || createEvent(e, fevt, target || this);
 			event.currentTarget = this;
-			if (events && events[evt]) {
-				for (var i=0, iL=events[evt].length; i<iL; i++) {
-					if (events[evt][i].call(this, event) === false) { event.stopPropagation(); }
+			if (events && events[fevt]) {
+				for (var i=0, iL=events[fevt].length; i<iL; i++) {
+					if (events[fevt][i].call(this, event) === false) { event.stopPropagation(); }
 				}
 			}
-			else if (typeof this["on" + evt] === "function") {
-				this["on" + evt].call(this, event);
+			else if (typeof this["on" + fevt] === "function") {
+				this["on" + fevt].call(this, event);
 			}
 			var p = DOMAssistant.$$(this.parentNode);
 			if (!event.cancelBubble && p && p.nodeType === 1) {
-				p.triggerEvent(evt, target, event);
+				p.triggerEvent(fevt, target, event);
 			}
 			return this;
 		},
 
 		addEvent : function (evt, func, relay, proxy, selector) {
 			var existingEvent,
-				uid = (evt = fix(evt)) + this.retrieve(),
-				onevt = "on" + evt;
+				fevt = fix(evt),
+				uid = fevt + this.retrieve(),
+				onevt = "on" + fevt;
 			if (!(func.attachedElements && func.attachedElements[uid])) {
 				var events = this.retrieve(key) || {};
-				if (!events[evt]) {
-					events[evt] = [];
+				if (!events[fevt]) {
+					events[fevt] = [];
 					existingEvent = this[onevt];
 					this[onevt] = null;
 				}
-				if (!events[evt].length) {
-					if (w3cMode) { this.addEventListener(evt, handler, useCapture[evt]); }
+				if (!events[fevt].length) {
+					if (w3cMode) { this.addEventListener(fevt, handler, useCapture[fevt]); }
 					else { this[onevt] = handler; }
 				}
 				if (existingEvent) {
-					events[evt].push(existingEvent);
+					events[fevt].push(existingEvent);
 				}
+				if (fevt !== evt) { func.evt = evt; }
 				func.relay = relay;
 				func.proxy = proxy;
 				func.selector = selector;
-				events[evt].push(func);
+				events[fevt].push(func);
 				if (typeof this.window === "object") { this.window[onevt] = handler; }
 				func.attachedElements = func.attachedElements || {};
 				func.attachedElements[uid] = true;
@@ -1334,17 +1342,21 @@ DOMAssistant.Events = function () {
 		},
 
 		handleEvent : function (evt) {
-			var currentEvt = (evt && /^DOM/.test(evt.type) && w3cMode)? evt : createEvent(evt),
+			var currentEvt = (evt && regex.dom.test(evt.type) && w3cMode)? evt : createEvent(evt),
 				type = fix(currentEvt.type),
+				relatedTarg = currentEvt.relatedTarget,
 				eventColl = this.retrieve(key)[type].slice(0), eventCollLength, eventReturn;
-			if ((eventCollLength = eventColl.length)) {
-				for (var i=0; i<eventCollLength; i++) {
-					if (typeof eventColl[i] === "function") {
-						eventReturn = eventColl[i].call(this, currentEvt);
+			if (!regex.mouse.test(type) || !(relatedTarg && (this == relatedTarg || this.hasChild(relatedTarg)))) {
+				if ((eventCollLength = eventColl.length)) {
+					for (var i=0; i<eventCollLength; i++) {
+						if (typeof eventColl[i] === "function") {
+							if (eventColl[i].evt && eventColl[i].evt !== type) { currentEvt.type = eventColl[i].evt; }
+							eventReturn = eventColl[i].call(this, currentEvt);
+						}
 					}
+					if (eventReturn === false) { currentEvt.stopPropagation(); }
+					return eventReturn;
 				}
-				if (eventReturn === false) { currentEvt.stopPropagation(); }
-				return eventReturn;
 			}
 		},
 
@@ -1359,7 +1371,7 @@ DOMAssistant.Events = function () {
 				var attr = this.attributes;
 				for (var att, j=attr.length; j--;) {
 					att = attr[j].nodeName.toLowerCase();
-					if (/^on/i.test(att) && typeof this[att] === "function") {
+					if (regex.on.test(att) && typeof this[att] === "function") {
 						this[att] = null;
 					}
 				}

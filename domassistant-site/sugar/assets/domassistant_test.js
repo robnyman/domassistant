@@ -1122,14 +1122,14 @@ SugarTest()
         this.assertEqual(0, elm.retrieve('_events')['customEvent'].length, 'There should no longer be any customEvent handlers in the _events storage');
   	})
     .it('Special events bubbling', function() {
-        var elm = $$('form'), countA = 0, countB = 0;
-        var addA = function () {
+        var evttype, elm = $$('form'), countA = 0, countB = 0;
+        var addA = function (e) {
         	countA++;
-        	
+        	evttype = e.type;
         };
-        var addB = function () {
+        var addB = function (e) {
         	countB++;
-        	
+        	evttype = e.type;
         };
         elm.relayEvent('focus', 'input[type=text]', addA).relayEvent('blur', 'input[type=text]', addB);
         this.assertEqual(0, countA, 'Initial value should be 0');
@@ -1137,9 +1137,11 @@ SugarTest()
         $$('name').focus();
         this.assertEqual(1, countA, 'focus event should bubble from the input field to the form');
         this.assertEqual(0, countB, 'onblur not yet being triggered');
+        this.assertEqual('focus', evttype, 'event type should be focus');
         $$('check2').focus();
         this.assertEqual(1, countA, 'onfocus does not get retriggered');
         this.assertEqual(1, countB, 'blur event should bubble from the input field to the form');
+        this.assertEqual('blur', evttype, 'event type should be blur');
         elm.unrelayEvent('focus').unrelayEvent('blur');
   	})
     .it('Remove all events', function() {
