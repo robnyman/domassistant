@@ -872,7 +872,7 @@ SugarTest()
       	elm.triggerEvent('click');
       	this.assertEqual(5, count);
   	})
-    .it('Event Delegation', function() {
+    .it('Event delegation', function() {
         var elm = $$('test_06'), count = 0, target = null, currentTarget = null;
         var add = function (evt) {
         	count++;
@@ -921,6 +921,98 @@ SugarTest()
 		});
 		$$('test_06_span_01').triggerEvent('click');
 		elm.unrelayEvent('click');
+  	})
+    .it('Event delegation for form events', function() {
+    	
+    	var count_submit = 0, count_reset = 0, count_change = 0, count_select = 0;
+    	var bd = $$(document.body), fm1 = $$('form1');
+    	var btn, target, currentTarget, type;
+    	
+  		bd.relayEvent('submit', 'form', function(evt) {
+ 			count_submit++;
+ 			type = evt.type;
+  			target = evt.target;
+  			currentTarget = evt.currentTarget;
+  			return false;
+  		}).relayEvent('reset', 'form', function(evt) {
+  			count_reset++;
+ 			type = evt.type;
+  			target = evt.target;
+  			currentTarget = evt.currentTarget;
+  			return false;
+  		}).relayEvent('change', 'input, select', function(evt) {
+  			count_change++;
+ 			type = evt.type;
+  			target = evt.target;
+  			currentTarget = evt.currentTarget;
+  		}).relayEvent('select', 'input', function(evt) {
+  			count_select++;
+ 			type = evt.type;
+   			target = evt.target;
+  			currentTarget = evt.currentTarget;
+ 		});
+
+        btn = fm1.cssSelect('input[type=submit]').first();
+        btn.focus();
+        btn.click();
+        this.assertEqual(1, count_submit);
+        this.assertEqual('submit', type);
+        this.assertEqual('form1', target.id);
+        this.assertEqual('form1', currentTarget.id);
+        
+        btn = fm1.cssSelect('input[type=reset]').first();
+        btn.focus();
+        fm1.triggerEvent('reset');
+        this.assertEqual(1, count_reset);
+        this.assertEqual('reset', type);
+        this.assertEqual('form1', target.id);
+        this.assertEqual('form1', currentTarget.id);
+        
+        btn = fm1.cssSelect('input[type=text]').first();
+        btn.focus();
+        btn.triggerEvent('change');
+        btn.blur();
+        this.assertEqual(1, count_change);
+        this.assertEqual('change', type);
+        this.assertEqual('txtABC', target.id);
+        this.assertEqual('txtABC', currentTarget.id);
+        
+        btn = fm1.cssSelect('input[type=text]').first();
+        btn.focus();
+        btn.triggerEvent('select');
+        btn.blur();
+        this.assertEqual(1, count_select);
+        this.assertEqual('select', type);
+        this.assertEqual('txtABC', target.id);
+        this.assertEqual('txtABC', currentTarget.id);
+        
+        bd.unrelayEvent('submit').unrelayEvent('reset').unrelayEvent('change').unrelayEvent('select');
+
+		// This can't be tested because it will cause the page to submit
+		/*
+        btn = fm1.cssSelect('input[type=submit]').first();
+        btn.focus();
+        btn.click();
+        this.assertEqual(1, count_submit, 'submit handler should be gone');
+        */
+        
+        btn = fm1.cssSelect('input[type=reset]').first();
+        btn.focus();
+        fm1.triggerEvent('reset');
+        this.assertEqual(1, count_reset, 'reset handler should be gone');
+        
+        btn = fm1.cssSelect('input[type=text]').first();
+        btn.focus();
+        btn.triggerEvent('change');
+        btn.blur();
+        this.assertEqual(1, count_change, 'change handler should be gone');
+        
+        btn = fm1.cssSelect('input[type=text]').first();
+        btn.focus();
+        btn.triggerEvent('select');
+        btn.blur();
+        this.assertEqual(1, count_select, 'select handler should be gone');
+
   	})
     .it('Prevent delegated events from bubbling', function() {
         var a = 0, b = 0;
