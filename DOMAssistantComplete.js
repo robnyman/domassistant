@@ -1214,6 +1214,9 @@ DOMAssistant.Events = function () {
 		key = "_events",
 		w3cMode = !!document.addEventListener,
 		useCapture = { focus: true, blur: true },
+		special = function (e) {
+			return DOMAssistant.isIE && /^(submit|reset|change|select)$/i.test(e);
+		},
 		fix = function (e) {
 			return DOMAssistant.isIE? { focus: "activate", blur: "deactivate" }[e] || e : e;
 		},
@@ -1300,7 +1303,7 @@ DOMAssistant.Events = function () {
 			return this;
 		},
 
-		addEvent : function (evt, func, relay) {
+		addEvent : function (evt, func, relay, proxy, selector) {
 			var existingEvent,
 				uid = (evt = fix(evt)) + this.retrieve(),
 				onevt = "on" + evt;
@@ -1319,6 +1322,8 @@ DOMAssistant.Events = function () {
 					events[evt].push(existingEvent);
 				}
 				func.relay = relay;
+				func.proxy = proxy;
+				func.selector = selector;
 				events[evt].push(func);
 				if (typeof this.window === "object") { this.window[onevt] = handler; }
 				func.attachedElements = func.attachedElements || {};
@@ -1343,7 +1348,7 @@ DOMAssistant.Events = function () {
 			}
 		},
 
-		removeEvent : function (evt, func, relay) {
+		removeEvent : function (evt, func, relay, proxy) {
 			var uid = (evt = fix(evt)) + this.retrieve(),
 				events = this.retrieve(key),
 				onevt = "on" + evt;
@@ -1363,8 +1368,11 @@ DOMAssistant.Events = function () {
 				var eventColl = events[evt];
 				for (var fn, i=eventColl.length; i--;) {
 					fn = func || eventColl[i];
-					if (eventColl[i] === fn && (!relay && !fn.relay || relay && fn.relay)) {
+					if (eventColl[i] === fn && relay === fn.relay && proxy === fn.proxy) {
 						eventColl.splice(i, 1);
+						if (!!proxy && fn.selector) {
+							this.cssSelect(fn.selector).removeEvent(proxy);
+						}
 						if (fn.attachedElements) {
 							fn.attachedElements[uid] = null;
 						}
@@ -1381,20 +1389,35 @@ DOMAssistant.Events = function () {
 			return this;
 		},
 
-		relayEvent: function (evt, selector, fn) {
+		relayEvent: function (evt, selector, fn, proxy) {
+			if (special(evt)) {
+				this.relayEvent("focus", selector, function() {
+					DOMAssistant.$$(this).removeEvent(evt).addEvent(evt, function(e) {
+						return fn.call(this, createEvent(e));
+					});
+				}, evt).relayEvent("blur", selector, function() {
+					DOMAssistant.$$(this).removeEvent(evt);
+				}, evt);
+				return this;
+			}
 			return this.addEvent(evt, function(e) {
 				e = createEvent(e);
 				var target = e.target, args = arguments, i = 0, elm, elms = this.cssSelect(selector);
 				while ((elm = elms[i++])) {
 					if ((elm === target || DOMAssistant.hasChild.call(elm, target)) && !elm.disabled) {
 						e.currentTarget = elm;
-						return fn.apply(elm, args);
+						var retVal = fn.apply(elm, args);
+						if (!retVal) { e.preventDefault(); }
+						return retVal;
 					}
 				}
-			}, true);
+			}, true, proxy, selector);
 		},
 
 		unrelayEvent: function (evt) {
+			if (special(evt)) {
+				return this.removeEvent("focus", null, true, evt).removeEvent("blur", null, true, evt);
+			}
 			return this.removeEvent(evt, null, true);
 		},
 
