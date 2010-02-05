@@ -5,6 +5,7 @@ DOMAssistant.Events = function () {
 		key = "_events",
 		w3cMode = !!document.addEventListener,
 		useCapture = { focus: true, blur: true },
+		translate = DOMAssistant.isIE? { focus: "activate", blur: "deactivate", mouseenter: "mouseover", mouseleave: "mouseout" } : { mouseenter: "mouseover", mouseleave: "mouseout" },
 		regex = {
 			special: /^(submit|reset|change|select)$/i,
 			mouseenterleave: /^mouse(enter|leave)$/i,
@@ -15,17 +16,17 @@ DOMAssistant.Events = function () {
 			return DOMAssistant.isIE && regex.special.test(e);
 		},
 		fix = function (e) {
-			return (DOMAssistant.isIE? { focus: "activate", blur: "deactivate" } : { mouseenter: "mouseover", mouseleave: "mouseout" })[e] || e;
+			return translate[e] || e;
 		},
 		createEvent = function (e, type, target) {
 			e = e || window.event || {};
+			if (e.event) { return e; }
 			var event = {
 				event: e,
 				type: type || e.type,
 				bubbles: e.bubbles || true,
 				cancelable: e.cancelable || false,
 				target: target || e.target || e.srcElement,
-				relatedTarget: e.relatedTarget || (e.fromElement === e.target? e.toElement : e.fromElement) || null,
 				altKey: e.altKey || false,
 				ctrlKey: e.ctrlKey || false,
 				shiftKey: e.shiftKey || false,
@@ -44,6 +45,7 @@ DOMAssistant.Events = function () {
 			if (event.target && 3 === event.target.nodeType) { // Safari textnode bug
 				event.target = event.target.parentNode;	
 			}
+			event.relatedTarget = e.relatedTarget || (e.fromElement === event.target? e.toElement : e.fromElement) || null;
 			if ("number" === typeof e.pageX) {
 				event.clientX = event.pageX = e.pageX;
 				event.clientY = event.pageY = e.pageY;
@@ -135,6 +137,7 @@ DOMAssistant.Events = function () {
 		handleEvent : function (evt) {
 			var currentEvt = (evt && regex.dom.test(evt.type) && w3cMode)? evt : createEvent(evt),
 				type = fix(currentEvt.type),
+				targ = currentEvt.target,
 				relatedTarg = currentEvt.relatedTarget,
 				eventColl = this.retrieve(key)[type].slice(0), eventCollLength, eventReturn, oevt;
 			if ((eventCollLength = eventColl.length)) {
@@ -142,8 +145,12 @@ DOMAssistant.Events = function () {
 					if (typeof eventColl[i] === "function") {
 						if ((oevt = eventColl[i].evt) && oevt !== type) {
 							currentEvt.type = oevt;
-							if (regex.mouseenterleave.test(oevt) && (!relatedTarg || this === relatedTarg || this.hasChild(relatedTarg))) {
-								continue;
+							if (relatedTarg && regex.mouseenterleave.test(oevt)) {
+								if (eventColl[i].relay) {
+									var elms = eventColl[i].elms || (eventColl[i].elms = this.cssSelect(eventColl[i].selector));
+									if (elms.indexOf(targ) < 0 || !DOMAssistant.hasChild.call(relatedTarg, targ)) { continue; }
+								}
+								else if (this === relatedTarg || this.hasChild(relatedTarg)) { continue; }
 							}
 						}
 						eventReturn = eventColl[i].call(this, currentEvt);
