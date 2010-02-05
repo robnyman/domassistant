@@ -872,6 +872,18 @@ SugarTest()
       	elm.triggerEvent('click');
       	this.assertEqual(5, count);
   	})
+    .it('Order of events should be maintained', function() {
+        var elm = $$('test_06_span_01'), log = [], check = [];
+        for ( var i = 0; i < 100; i++ ) ( function (i) {
+        	elm.addEvent('click', function () {
+        		log.push(i);
+        	});
+        	check.push(i);
+        })(i);
+        elm.triggerEvent('click');
+      	this.assertEqual(log.join(','), check.join(','), 'Order of events should be maintained');
+      	elm.removeEvent('click');
+  	})
     .it('Event delegation', function() {
         var elm = $$('test_06'), count = 0, target = null, currentTarget = null;
         var add = function (evt) {
