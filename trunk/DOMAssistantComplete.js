@@ -1216,7 +1216,7 @@ DOMAssistant.Events = function () {
 		useCapture = { focus: true, blur: true },
 		translate = DOMAssistant.isIE? { focus: "activate", blur: "deactivate", mouseenter: "mouseover", mouseleave: "mouseout" } : { mouseenter: "mouseover", mouseleave: "mouseout" },
 		regex = {
-			special: /^(submit|reset|change|select)$/i,
+			special: /^submit|reset|change|select$/i,
 			mouseenterleave: /^mouse(enter|leave)$/i,
 			dom: /^DOM/,
 			on: /^on/i
