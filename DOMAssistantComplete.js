@@ -1236,6 +1236,8 @@ DOMAssistant.Events = function () {
 				bubbles: e.bubbles || true,
 				cancelable: e.cancelable || false,
 				target: target || e.target || e.srcElement,
+				clientX: e.clientX || 0,
+				clientY: e.clientY || 0,
 				altKey: e.altKey || false,
 				ctrlKey: e.ctrlKey || false,
 				shiftKey: e.shiftKey || false,
@@ -1250,20 +1252,14 @@ DOMAssistant.Events = function () {
 					this.cancelBubble = e.cancelBubble = true;
 				}
 			};
-			event.currentTarget = event.target;
 			if (event.target && 3 === event.target.nodeType) { // Safari textnode bug
 				event.target = event.target.parentNode;	
 			}
+			event.currentTarget = event.target;
 			event.relatedTarget = e.relatedTarget || (e.fromElement === event.target? e.toElement : e.fromElement) || null;
-			if ("number" === typeof e.pageX) {
-				event.clientX = event.pageX = e.pageX;
-				event.clientY = event.pageY = e.pageY;
-			}
-			else {
-				var de = document.documentElement, b = document.body;
-				event.clientX = e.clientX + (de.scrollLeft || b.scrollLeft) - (de.clientLeft || 0);
-				event.clientY = e.clientY + (de.scrollTop || b.scrollTop) - (de.clientTop || 0);
-			}
+			var de = document.documentElement, b = document.body;
+			event.pageX = DOMAssistant.def(e.pageX)? e.pageX : (event.clientX + (de.scrollLeft || b.scrollLeft) - (de.clientLeft || 0));
+			event.pageY = DOMAssistant.def(e.pageY)? e.pageY : (event.clientY + (de.scrollTop || b.scrollTop) - (de.clientTop || 0));
 			if ("number" === typeof e.which) {
 				event.keyCode = e.keyCode;
 				event.charCode = event.which = e.which;
