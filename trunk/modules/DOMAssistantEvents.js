@@ -110,7 +110,8 @@ DOMAssistant.Events = function () {
 					existingEvent = this[onevt];
 					this[onevt] = null;
 				}
-				if (!events[fevt].length) {
+				if (typeof this.window === "object") { this.window[onevt] = handler; }
+				else if (!events[fevt].length) {
 					if (w3cMode) { this.addEventListener(fevt, handler, useCapture[fevt]); }
 					else { this[onevt] = handler; }
 				}
@@ -121,10 +122,9 @@ DOMAssistant.Events = function () {
 				func.relay = relay;
 				func.proxy = proxy;
 				func.selector = selector;
-				events[fevt].push(func);
-				if (typeof this.window === "object") { this.window[onevt] = handler; }
 				func.attachedElements = func.attachedElements || {};
 				func.attachedElements[uid] = true;
+				events[fevt].push(func);
 				this.store(key, events);
 			}
 			return this;
