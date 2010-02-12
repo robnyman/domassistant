@@ -672,6 +672,7 @@ var DOMAssistant = function () {
 					var pre = wrap? "[" : "", post = wrap? "]" : "";
 					return function (match, p1, p2, p3, p4) {
 						p4 = (p4 || "").replace(regex.quoted, "$1");
+						if (p1 === p4 && p1 === "readonly") { p3 = null; }
 						return pre + ({
 							"^": "starts-with(@" + p1 + ", \"" + p4 + "\")",
 							"$": "substring(@" + p1 + ", (string-length(@" + p1 + ") - " + (p4.length - 1) + "), " + p4.length + ") = \"" + p4 + "\"",
@@ -690,7 +691,7 @@ var DOMAssistant = function () {
 						case "first": return "not(preceding-sibling::" + tag + ")";
 						case "last": return "not(following-sibling::" + tag + ")";
 						case "only": return "not(preceding-sibling::" + tag + " or following-sibling::" + tag + ")";
-						case "empty": return "count(child::*) = 0 and string-length(text()) = 0";
+						case "empty": return "not(child::*) and not(text())";
 						case "contains": return "contains(., \"" + pseudoValue.replace(regex.quoted, "$1") + "\")";
 						case "enabled": return "not(@disabled) and not(@type=\"hidden\")";
 						case "disabled": return "@disabled";
@@ -748,7 +749,7 @@ var DOMAssistant = function () {
 					return pushAll(new HTMLArray(), this.querySelectorAll(cssRule));
 				}
 			} catch (e) {}
-			return ((document.evaluate && !special)? DOMAssistant.cssByXpath : DOMAssistant.cssByDOM).call(this, cssRule);
+			return ((document.evaluate && !special && !/-of-type/.test(cssRule))? DOMAssistant.cssByXpath : DOMAssistant.cssByDOM).call(this, cssRule);
 		},
 		
 		cssSelect : function (cssRule) {
