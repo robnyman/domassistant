@@ -17,7 +17,7 @@ Version 2.8:
 - [Fix] Invalid selectors throw error
 - [Fix] :checked, [selected] and [multiple] buggy in many browsers
 - [Fix] [selected=selected], [readonly=readonly] now work the same as [selected], [readonly]
-- [Fix] :nth-of-type, :only-of-type buggy in IE
+- [Fix] :xxx-of-type selectors buggy in both DOM traversal and XPath implementations
 - [Fix] attribute selector with empty value (eg. [value='']) does not work
 - [Fix] attribute selector with square brackets (eg. [name='foo[bar]']) does not work
 - [Fix] tag#id incorrectly returns the element even when its tagname does not match
