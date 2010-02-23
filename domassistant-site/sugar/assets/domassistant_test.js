@@ -711,6 +711,21 @@ SugarTest()
 
         this.assertEnumEqual(["labelT2"], this.get("label[for=T2]"), "Select label by 'for' attribute");
         this.assertEnumEqual(["labelT2"], this.get("label[for='T2']"), "Select label by 'for' attribute with quotes");
+
+        // Dynamically created and manipulated form elements
+        var testdyn = $$('testdata').create('form', { id:'testdyn' }, true);
+        var selDyn = testdyn.create('select', { id:'selDyn' }, true);
+        selDyn.create('option', { id:'optDyn1' }, true, 'opt 1');
+        selDyn.create('option', { id:'optDyn2' }, true, 'opt 2');
+        selDyn.create('option', { id:'optDyn3', selected:'selected' }, true, 'opt 3');
+        selDyn.create('option', { id:'optDyn4' }, true, 'opt 4');
+        this.assertEnumEqual(["optDyn3"], this.get("#testdyn option[selected]", $$('testdata')), "[selected] on dynamically created <select> (initial state)");
+        this.assertEqual(0, $("#testdyn [readonly]").length, "[readonly] on dynamically created <select> (initial state)");
+        selDyn.setAttributes({ readonly: 'readonly' });
+        this.assertEqual(1, $("#testdyn [readonly]").length, "[readonly] on dynamically created <select> (set as readonly with setAttributes)");
+        selDyn.removeAttribute('readOnly');
+        this.assertEqual(0, $("#testdyn [readonly]").length, "[readonly] on dynamically created <select> (disable readonly with removeAttribute)");
+        testdyn.remove();
   	})
     .it('pseudos', function() {
         this.assertEnumEqual(["firstp","sndp"], this.get("p:first-child"), "First Child");
@@ -750,6 +765,23 @@ SugarTest()
         this.assertEqual(0, this.get("#extra3 :nth-child(n)").length, ":nth-child(n) with the lone node being a comment");
         this.assertEqual(0, this.get("#extra3 :nth-of-type(n)").length, ":nth-of-type(n) with the lone node being a comment");
         this.assertEqual(0, this.get("#extra3 :only-of-type").length, ":only-of-type with the lone node being a comment");
+
+        // Dynamically created and manipulated form elements
+        var testdyn = $$('testdata').create('form', { id:'testdyn' }, true);
+        testdyn.create('input', { type:'checkbox', id:'chkDyn' }, true);
+        this.assertEqual(0, $("#testdyn :checked").length, ":checked on dynamically created checkbox (unchecked)");
+        this.assertEqual(1, $("#testdyn :enabled").length, ":enabled on dynamically created checkbox (default enabled state)");
+        this.assertEqual(0, $("#testdyn :disabled").length, ":disabled on dynamically created checkbox (default enabled state)");
+        $$('chkDyn').setAttributes({ checked: 'checked', disabled: 'disabled' });
+        this.assertEqual(1, $("#testdyn :checked").length, ":checked on dynamically created checkbox (checked with setAttributes)");
+        this.assertEqual(0, $("#testdyn :enabled").length, ":enabled on dynamically created checkbox (disabled with setAttributes)");
+        this.assertEqual(1, $("#testdyn :disabled").length, ":disabled on dynamically created checkbox (disabled with setAttributes)");
+        $$('chkDyn').checked = false;
+        $$('chkDyn').disabled = false;
+        this.assertEqual(0, $("#testdyn :checked").length, ":checked on dynamically created checkbox (unchecked with .checked = false)");
+        this.assertEqual(1, $("#testdyn :enabled").length, ":enabled on dynamically created checkbox (enabled with .disabled = false)");
+        this.assertEqual(0, $("#testdyn :disabled").length, ":disabled on dynamically created checkbox (enabled with .disabled = false)");
+        testdyn.remove();
   	})
    .end()
    .describe('Events -')
