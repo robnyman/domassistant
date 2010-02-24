@@ -725,6 +725,16 @@ SugarTest()
         this.assertEqual(1, $("#testdyn [readonly]").length, "[readonly] on dynamically created <select> (set as readonly with setAttributes)");
         selDyn.removeAttribute('readOnly');
         this.assertEqual(0, $("#testdyn [readonly]").length, "[readonly] on dynamically created <select> (disable readonly with removeAttribute)");
+		testdyn.innerHTML = '';
+		
+        selDyn = testdyn.create('select', { id:'selDyn', multiple:'multiple', size:'4' }, true);
+        selDyn.create('option', { id:'optDyn1', selected:'selected' }, true, 'opt 1');
+        selDyn.create('option', { id:'optDyn2' }, true, 'opt 2');
+        selDyn.create('option', { id:'optDyn3', selected:'selected' }, true, 'opt 3');
+        selDyn.create('option', { id:'optDyn4' }, true, 'opt 4');
+        this.assertEnumEqual(["optDyn1","optDyn3"], this.get("#testdyn option[selected]", $$('testdata')), "[selected] on dynamically created <select multiple> (initial state)");
+		$$('optDyn4').selected = true;
+        this.assertEnumEqual(["optDyn1","optDyn3","optDyn4"], this.get("#testdyn option[selected]", $$('testdata')), "[selected] on dynamically created <select multiple> (manually select another opt)");
         testdyn.remove();
   	})
     .it('pseudos', function() {
@@ -765,7 +775,7 @@ SugarTest()
         this.assertEqual(0, this.get("#extra3 :nth-child(n)").length, ":nth-child(n) with the lone node being a comment");
         this.assertEqual(0, this.get("#extra3 :nth-of-type(n)").length, ":nth-of-type(n) with the lone node being a comment");
         this.assertEqual(0, this.get("#extra3 :only-of-type").length, ":only-of-type with the lone node being a comment");
-
+        
         // Dynamically created and manipulated form elements
         var testdyn = $$('testdata').create('form', { id:'testdyn' }, true);
         testdyn.create('input', { type:'checkbox', id:'chkDyn' }, true);
