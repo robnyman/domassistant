@@ -1111,7 +1111,8 @@ DOMAssistant.Content = function () {
 					switch (attLower) {
 						case "name":
 						case "type":
-							return D$(document.createElement(elm.outerHTML.replace(new RegExp(attLower + "=[a-zA-Z]+"), " ").replace(">", " " + attLower + "=" + val + ">")));
+						case "multiple":
+							return D$(document.createElement(elm.outerHTML.replace(new RegExp(attLower + "(=[a-zA-Z]+)?"), " ").replace(">", " " + attLower + "=" + val + ">")));
 						case "style":
 							elm.style.cssText = val;
 							return elm;

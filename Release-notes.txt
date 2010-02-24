@@ -33,6 +33,7 @@ Version 2.8:
 - [Fix] Multiple issues with getting and setting opacity in IE
 - [Fix] setStyle on newly created (but not yet added to the DOM) elements fails in IE
 - [Fix] setStyle('display', 'none') does not work properly in IE when the element is relatively positioned
+- [Fix] Issue in IE with creating multi-selectable list
 - [Fix] addContent when used with strings remove events and attributes
 - [Fix] replaceClass does not work in some cases
 - [Fix] Unable to add event if the same event already exists inline
