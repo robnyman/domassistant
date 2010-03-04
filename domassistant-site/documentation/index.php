@@ -35,10 +35,8 @@
 							<p>You can also download the documentation as a PDF file:</p>
 							<ul>
 								<li><a href="domassistant-documentation.pdf">DOMAssistant documentation in English (188kb)</a></li>
-								<!-- Docs in other languages are not updated to v2.8 yet
 								<li><a href="domassistant-documentation-chinese.pdf">DOMAssistant documentation in Chinese (307kb)</a></li>
 								<li><a href="domassistant-documentation-french.pdf">DOMAssistant documentation in French (215kb)</a></li>
-								-->
 							</ul>
 						</div>
 						
