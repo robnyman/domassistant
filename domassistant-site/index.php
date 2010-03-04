@@ -51,7 +51,7 @@
 						
 						<div id="sidebar">
 							<h2>Download DOMAssistant</h2>
-							<dl>
+							<dl class="dl">
 								<dt>
 									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCompressed-2.8.js">DOMAssistant 2.8, compressed</a><br>
 									(10kb <a href="http://en.wikipedia.org/wiki/Gzip" class="small">Gzipped</a>)
