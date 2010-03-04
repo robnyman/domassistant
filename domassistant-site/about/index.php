@@ -46,7 +46,7 @@
 							<p>If you're interested in discussing features or getting support, please visit the <a href="http://groups.google.com/group/domassistant">DOMAssistant Discussion Group</a>.</p>
 							
 							<h2 id="compatibility">DOMAssistant Compatibility</h2>
-							<p>DOMAssistant has been tested and verified to work in these web browsers, but for most web browsers, it is fair to assume a long backwards compatibility:</p>
+							<p>DOMAssistant has been <a href="../sugar/">rigorously tested</a> and verified to work in these web browsers, but for most web browsers, it is fair to assume a long backwards compatibility:</p>
 							<ul>
 								<li>Internet Explorer 5.5+</li>
 								<li>Firefox 1+</li>

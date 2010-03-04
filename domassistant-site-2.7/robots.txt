@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /phpmyadmin_da/
+Disallow: /images/
+Disallow: /css/
+Disallow: /slickspeed backups/

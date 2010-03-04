@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+<url>
+  <loc>http://www.domassistant.com/</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/download/</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/documentation/</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/plugins/</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/discussion-support/</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/about/</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/blog/</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/slickspeed/</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/documentation/domassistant-documentation.pdf</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/documentation/DOMAssistantCore-module.php</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/documentation/DOMAssistantAJAX-module.php</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/documentation/DOMAssistantContent-module.php</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/documentation/DOMAssistantCSS-module.php</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/documentation/DOMAssistantEvents-module.php</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/documentation/DOMAssistantLoad-module.php</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/documentation/css-selectors.php</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/plugins/categories/example/</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/plugins/how-to.php</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/plugins/submit-plugin.php</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/blog/2008/02/20/releasing-domassistant-26-overall-fastest-css-selectors-plugins-and-more/</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/blog/2008/02/18/the-slickspeed-test/</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/blog/2008/02/15/queryselectorall-in-webkitsafari/</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/blog/2008/02/13/the-dev-blog-is-up-and-running/</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/blog/feed/</loc>
+  <priority>0.7</priority>
+  <lastmod>2008-02-20T15:11:04+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/blog/comments/feed/</loc>
+  <priority>0.7</priority>
+  <lastmod>2008-02-20T14:54:36+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/blog/archives/</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>http://www.domassistant.com/blog/2008/02/</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
+</urlset>
