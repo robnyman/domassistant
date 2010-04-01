@@ -36,7 +36,7 @@
 							<ul>
 								<li><a href="domassistant-documentation.pdf">DOMAssistant documentation in English (188kb)</a></li>
 								<li><a href="domassistant-documentation-chinese.pdf">DOMAssistant documentation in Chinese (307kb)</a></li>
-								<li><a href="domassistant-documentation-french.pdf">DOMAssistant documentation in French (215kb)</a></li>
+								<li><a href="domassistant-documentation-french.pdf">DOMAssistant documentation in French (230kb)</a></li>
 							</ul>
 						</div>
 						
