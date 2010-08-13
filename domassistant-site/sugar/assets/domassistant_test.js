@@ -672,12 +672,15 @@ SugarTest()
 
         this.assertEnumEqual(["台北"], this.get("span[lang=中文]"), "Attribute selector using UTF8");
 
-        this.assertEnumEqual(["google","yahoo"], this.get("a[href ^= 'http://www']"), "Attribute Begins With");
+        this.assertEnumEqual(["simon1","simon"], this.get("a[href ^= 'http://simon']"), "Attribute Begins With");
         this.assertEnumEqual(["mark"], this.get("a[href $= 'org/']"), "Attribute Ends With");
         this.assertEnumEqual(["google","groups"], this.get("a[href *= 'google']"), "Attribute Contains");
         this.assertEnumEqual(["google","groups","anchor1"], this.get("#ap a:not([hreflang='en'])"), "Attribute Is Not Equal");
 		
         this.assertEnumEqual(["option1a"], this.get("#select1 option[value='']"), "Empty values");
+        this.assertEnumEqual([], this.get("#select1 option[value^='']"), "Start with empty values");
+        this.assertEnumEqual([], this.get("#select1 option[value*='']"), "Contains empty values");
+        this.assertEnumEqual([], this.get("#select1 option[value$='']"), "Ends with empty values");
         this.assertEnumEqual(["option1b","option1c","option1d"], this.get("#select1 option:not([value=\"\"])"), "Empty values");
 		
         this.assertEnumEqual(["option1a"], this.get("#select1 option[selected]"), "Select options via [selected]");
@@ -722,9 +725,9 @@ SugarTest()
         this.assertEnumEqual(["optDyn3"], this.get("#testdyn option[selected]", $$('testdata')), "[selected] on dynamically created <select> (initial state)");
         this.assertEqual(0, $("#testdyn [readonly]").length, "[readonly] on dynamically created <select> (initial state)");
         selDyn.setAttributes({ readonly: 'readonly' });
-        this.assertEqual(1, $("#testdyn [readonly]").length, "[readonly] on dynamically created <select> (set as readonly with setAttributes)");
+        this.assertEqual(1, $("#testdyn  [readonly]").length, "[readonly] on dynamically created <select> (set as readonly with setAttributes)");
         selDyn.removeAttribute('readOnly');
-        this.assertEqual(0, $("#testdyn [readonly]").length, "[readonly] on dynamically created <select> (disable readonly with removeAttribute)");
+        this.assertEqual(0, $("#testdyn   [readonly]").length, "[readonly] on dynamically created <select> (disable readonly with removeAttribute)");
 		testdyn.innerHTML = '';
 		
         selDyn = testdyn.create('select', { id:'selDyn', multiple:'multiple', size:'4' }, true);

@@ -1,3 +1,7 @@
+Version 2.8.1:
+=============
+- [Fix] attribute selector [value*=''], [value^=''] and [value$=''] do not work in IE
+
 Version 2.8:
 =============
 - [New] Ability to avoid global namespace collision of $ and $$ with DOMAssistant.harmonize()
