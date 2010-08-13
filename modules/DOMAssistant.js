@@ -1,4 +1,4 @@
-// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://domassistant.googlecode.com/, documentation: http://www.domassistant.com/documentation, version 2.8
+// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://domassistant.googlecode.com/, documentation: http://www.domassistant.com/documentation, version 2.8.1
 var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
@@ -34,7 +34,7 @@ var DOMAssistant = function () {
 		classes: /\.([-\w\u00C0-\uFFFF]+)/g,
 		quoted: /^["'](.*)["']$/,
 		nth: /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n([-+]\d+)?)|(-(([1-9]\d*)?)n\+(\d+)))$/,
-		special: /(:check|:enabl|\bselect)ed\b/
+		special: /((:check|:enabl|\bselect)ed\b)|[*^$]=\s*(""|'')/
 	},
 	navigate = function (node, direction, checkTagName) {
 		var oldName = node.tagName;
@@ -354,13 +354,13 @@ var DOMAssistant = function () {
 			}
 			function attrToRegExp (attrVal, substrOperator) {
 				attrVal = attrVal? attrVal.replace(regex.quoted, "$1").replace(/(\.|\[|\])/g, "\\$1") : null;
-				return {
+				return substrOperator? {
 					"^": "^" + attrVal,
 					"$": attrVal + "$",
 					"*": attrVal,
 					"|": "^" + attrVal + "(\\-\\w+)*$",
 					"~": "\\b" + attrVal + "\\b"
-				}[substrOperator] || (attrVal !== null? "^" + attrVal + "$" : attrVal);
+				}[substrOperator] : (attrVal !== null? "^" + attrVal + "$" : attrVal);
 			}
 			function notComment(el) {
 				return (el || this).tagName !== "!";
@@ -614,19 +614,19 @@ var DOMAssistant = function () {
 						prevElm = matchingElms = matchingClassElms;
 					}
 					if (splitRule.allAttr) {
-						var matchAttr, r = 0, regExpAttributes = [], matchingAttributeElms = [], allAttr = splitRule.allAttr.match(regex.attribs);
+						var matchAttr, r = 0, regExpAttributes = [], matchingAttributeElms = [], allAttr = splitRule.allAttr.match(regex.attribs), emptyAttrRegExp = /^[$^]?$/;
 						for (var specialStrip = /^\[(selected|readonly)(\s*=.+)?\]$/, q=0, ql=allAttr.length, attributeMatch, attrVal; q<ql; q++) {
 							regex.attribs.lastIndex = 0;
 							attributeMatch = regex.attribs.exec(allAttr[q].replace(specialStrip, "[$1]"));
 							attrVal = attrToRegExp(attributeMatch[4], attributeMatch[2] || null);
-							regExpAttributes[q] = [(attrVal? new RegExp(attrVal) : null), attributeMatch[1]];
+							regExpAttributes[q] = [attrVal, attributeMatch[1]];
 						}
 						while ((current = matchingElms[r++])) {
 							for (var s=0, sl=regExpAttributes.length; s<sl; s++) {
-								var attributeRegExp = regExpAttributes[s][0], currentAttr = getAttr(current, regExpAttributes[s][1]);
+								var attributeRE = regExpAttributes[s][0], attributeRegExp = attributeRE? new RegExp(attributeRE) : null, currentAttr = getAttr(current, regExpAttributes[s][1]);
 								matchAttr = true;
 								if (!attributeRegExp && currentAttr === true) { continue; }
-								if ((!attributeRegExp && (!currentAttr || typeof currentAttr !== "string" || !currentAttr.length)) || (!!attributeRegExp && !attributeRegExp.test(currentAttr))) {
+								if (emptyAttrRegExp.test(attributeRE) || (!attributeRegExp && (!currentAttr || typeof currentAttr !== "string" || !currentAttr.length)) || (!!attributeRegExp && !attributeRegExp.test(currentAttr))) {
 									matchAttr = false;
 									break;
 								}
