@@ -379,7 +379,12 @@ var DOMAssistant = function () {
 				match = {
 					first: function(el) { return !navigate(el, "previous", checkNodeName); },
 					last: function(el) { return !navigate(el, "next", checkNodeName); },
-					empty: function(el) { return !el.firstChild; },
+					empty: function(el) {
+						for (var node=el.firstChild; node!==null; node=node.nextSibling) {
+							if (node.nodeType === 1 && node.nodeName !== "!" || node.nodeType === 3) { return false; }
+						}
+						return true;
+					},
 					enabled: function(el) { return !el.disabled && el.type !== "hidden"; },
 					disabled: function(el) { return el.disabled; },
 					checked: function(el) { return el.checked; },
