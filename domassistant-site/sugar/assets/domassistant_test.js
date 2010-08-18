@@ -744,7 +744,7 @@ SugarTest()
         this.assertEnumEqual(["firstp","sndp"], this.get("p:first-child"), "First Child");
         this.assertEnumEqual(["sap"], this.get("p:last-child"), "Last Child");
         this.assertEnumEqual(["simon1","anchor1","yahoo","anchor2"], this.get("a:only-child"), "Only Child");
-        this.assertEnumEqual(["firstUL"], this.get("ul:empty"), "Empty");
+        this.assertEnumEqual(["firstUL","secondUL"], this.get("ul:empty"), "Empty");
         this.assertEnumEqual(["text1","radio1","radio2","check1","check2","hidden2","name"], this.get("#form input:enabled"), "Enabled UI Element");
         this.assertEnumEqual(["text2"], this.get("#form input:disabled"), "Disabled UI Element");
         this.assertEnumEqual(["radio2","check1"], this.get("#form input:checked"), "Checked UI Element");
