@@ -12,8 +12,15 @@ DOMAssistant.Events = function () {
 			dom: /^DOM/,
 			on: /^on/i
 		},
+		isBubble = function (e) {
+			// Test for event bubbling
+			e = 'on' + e;
+			var el = document.createElement('div');
+			el.setAttribute(e, '');
+			return (typeof el[e] === 'function');
+		},
 		special = function (e) {
-			return DOMAssistant.isIE && regex.special.test(e);
+			return regex.special.test(e) && !isBubble(e);
 		},
 		fix = function (e) {
 			return translate[e] || e;

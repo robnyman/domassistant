@@ -22,7 +22,7 @@ DOMAssistant.Content = function () {
 		},
 
 		setAttributes : function (attr) {
-			if (DOMAssistant.isIE) {
+			if (!DOMAssistant.strictElmCreation) {
 				var setAttr = function (elm, att, val) {
 					var attLower = att.toLowerCase();
 					switch (attLower) {

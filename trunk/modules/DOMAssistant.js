@@ -6,6 +6,15 @@ var DOMAssistant = function () {
 	w = window, _$ = w.$, _$$ = w.$$,
 	isIE = /*@cc_on!@*/false,
 	isIE5 = isIE && parseFloat(navigator.appVersion) < 6,
+	strictElmCreation = function() {
+		if (!isIE) return true;
+		try {
+			document.createElement('<img />');
+			return false;
+		} catch (e) {
+			return true;
+		}
+	}(),
 	sort, tagCache = {}, lastCache = {}, useCache = true,
 	slice = Array.prototype.slice,
 	camel = {
@@ -74,6 +83,7 @@ var DOMAssistant = function () {
 	}
 	return {
 		isIE : isIE,
+		strictElmCreation : strictElmCreation,
 		camel : camel,
 		def : def,
 		allMethods : [],
