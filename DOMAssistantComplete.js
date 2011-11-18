@@ -6,6 +6,15 @@ var DOMAssistant = function () {
 	w = window, _$ = w.$, _$$ = w.$$,
 	isIE = /*@cc_on!@*/false,
 	isIE5 = isIE && parseFloat(navigator.appVersion) < 6,
+	strictElmCreation = function() {
+		if (!isIE) return true;
+		try {
+			document.createElement('<img />');
+			return false;
+		} catch (e) {
+			return true;
+		}
+	}(),
 	sort, tagCache = {}, lastCache = {}, useCache = true,
 	slice = Array.prototype.slice,
 	camel = {
@@ -74,6 +83,7 @@ var DOMAssistant = function () {
 	}
 	return {
 		isIE : isIE,
+		strictElmCreation : strictElmCreation,
 		camel : camel,
 		def : def,
 		allMethods : [],
@@ -1110,7 +1120,7 @@ DOMAssistant.Content = function () {
 		},
 
 		setAttributes : function (attr) {
-			if (DOMAssistant.isIE) {
+			if (!DOMAssistant.strictElmCreation) {
 				var setAttr = function (elm, att, val) {
 					var attLower = att.toLowerCase();
 					switch (attLower) {
@@ -1226,8 +1236,15 @@ DOMAssistant.Events = function () {
 			dom: /^DOM/,
 			on: /^on/i
 		},
+		isBubble = function (e) {
+			// Test for event bubbling
+			e = 'on' + e;
+			var el = document.createElement('div');
+			el.setAttribute(e, '');
+			return (typeof el[e] === 'function');
+		},
 		special = function (e) {
-			return DOMAssistant.isIE && regex.special.test(e);
+			return regex.special.test(e) && !isBubble(e);
 		},
 		fix = function (e) {
 			return translate[e] || e;

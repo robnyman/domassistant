@@ -2,6 +2,8 @@ Version 2.8.1:
 =============
 - [Fix] attribute selector [value*=''], [value^=''] and [value$=''] do not work in IE
 - [Fix] :empty does not select elements that contain only comment nodes in IE
+- [Fix] setAttributes() does not work in IE9
+- [Fix] Special events handling in IE9
 
 Version 2.8:
 =============
