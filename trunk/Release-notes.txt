@@ -4,6 +4,8 @@ Version 2.8.1:
 - [Fix] :empty does not select elements that contain only comment nodes in IE
 - [Fix] setAttributes() does not work in IE9
 - [Fix] Special events handling in IE9
+- [Fix] Selecting dashed attributes does not work in IE
+- [Fix] Unable to select empty attributes in IE
 
 Version 2.8:
 =============
