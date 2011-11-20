@@ -56,8 +56,8 @@ DOMAssistant.CSS = function () {
 		getStyle : function (cssRule) {
 			var val = "", f;
 			cssRule = cssRule.toLowerCase();
-			if (document.defaultView && document.defaultView.getComputedStyle) {
-				val = document.defaultView.getComputedStyle(this, "").getPropertyValue(cssRule);
+			if (window.getComputedStyle) {
+				val = document.defaultView.getComputedStyle(this, null).getPropertyValue(cssRule);
 			}
 			else if (this.currentStyle) {
 				if ("filters" in this && cssRule === "opacity") {

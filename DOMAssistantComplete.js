@@ -32,14 +32,14 @@ var DOMAssistant = function () {
 	},
 	regex = {
 		rules: /\s*,\s*/g,
-		selector: /^(\w+|\*)?(#[\w\u00C0-\uFFFF\-=$]+)?((\.[\w\u00C0-\uFFFF\-]+)*)?((\[\w+\s*([~^$*|])?(=\s*([-\w\u00C0-\uFFFF\s.]+|"[^"]*"|'[^']*'))?\]+)*)?((:\w[-\w]*(\((odd|even|\-?\d*n?([-+]\d+)?|[:#]?[-\w\u00C0-\uFFFF.]+|"[^"]*"|'[^']*'|((\w*\.[-\w\u00C0-\uFFFF]+)*)?|(\[#?\w+([~^$*|])?=?[-\w\u00C0-\uFFFF\s.'"]+\]+)|(:\w[-\w]*\(.+\)))\))?)*)?([+>~])?/,
+		selector: /^(\w+|\*)?(#[\w\u00C0-\uFFFF\-=$]+)?((\.[\w\u00C0-\uFFFF\-]+)*)?((\[\w[-\w]*\s*([~^$*|])?(=\s*([-\w\u00C0-\uFFFF\s.]+|"[^"]*"|'[^']*'))?\]+)*)?((:\w[-\w]*(\((odd|even|\-?\d*n?([-+]\d+)?|[:#]?[-\w\u00C0-\uFFFF.]+|"[^"]*"|'[^']*'|((\w*\.[-\w\u00C0-\uFFFF]+)*)?|(\[#?\w[-\w]*([~^$*|])?=?[-\w\u00C0-\uFFFF\s.'"]+\]+)|(:\w[-\w]*\(.+\)))\))?)*)?([+>~])?/,
 		selectorSplit: /(?:\[.*\]|\(.*\)|[^\s+>~[(])+|[+>~]/g,
 		id: /^#([-\w\u00C0-\uFFFF=$]+)$/,
 		tag: /^\w+/,
 		relation: /^[+>~]$/,
 		pseudo: /^:(\w[-\w]*)(\((.+)\))?$/,
 		pseudos: /:(\w[-\w]*)(\((([^(]+)|([^(]+\([^(]+)\))\))?/g,
-		attribs: /\[(\w+)\s*([~^$*|])?(=)?\s*([^\[\]]*|"[^"]*"|'[^']*')?\](?=$|\[|:|\s)/g,
+		attribs: /\[(\w[-\w]*)\s*([~^$*|])?(=)?\s*([^\[\]]*|"[^"]*"|'[^']*')?\](?=$|\[|:|\s)/g,
 		classes: /\.([-\w\u00C0-\uFFFF]+)/g,
 		quoted: /^["'](.*)["']$/,
 		nth: /^((odd|even)|([1-9]\d*)|((([1-9]\d*)?)n([-+]\d+)?)|(-(([1-9]\d*)?)n\+(\d+)))$/,
@@ -359,8 +359,13 @@ var DOMAssistant = function () {
 				}
 				return arr1;
 			}
+			function hasAttr (elm, attr) {
+				return elm.hasAttribute? elm.hasAttribute(attr) : (elm.attributes && elm.attributes[attr] && !/type/.test(attr))? !!elm.attributes[attr].specified : (elm.getAttribute(attr) !== null);
+			}
 			function getAttr (elm, attr) {
-				return (isIE || regex.special.test(attr))? elm[camel[attr.toLowerCase()] || attr] : elm.getAttribute(attr, 2);
+				var isSpecial = regex.special.test(attr);
+				if (isIE && !isSpecial && !hasAttr(elm, attr)) { return undefined; }
+				return (isIE || isSpecial)? elm[camel[attr.toLowerCase()] || attr] : elm.getAttribute(attr, 2);
 			}
 			function attrToRegExp (attrVal, substrOperator) {
 				attrVal = attrVal? attrVal.replace(regex.quoted, "$1").replace(/(\.|\[|\])/g, "\\$1") : null;
@@ -641,7 +646,7 @@ var DOMAssistant = function () {
 								var attributeRE = regExpAttributes[s][0], attributeRegExp = attributeRE? new RegExp(attributeRE) : null, currentAttr = getAttr(current, regExpAttributes[s][1]);
 								matchAttr = true;
 								if (!attributeRegExp && currentAttr === true) { continue; }
-								if (emptyAttrRegExp.test(attributeRE) || (!attributeRegExp && (!currentAttr || typeof currentAttr !== "string" || !currentAttr.length)) || (!!attributeRegExp && !attributeRegExp.test(currentAttr))) {
+								if (emptyAttrRegExp.test(attributeRE) || (!attributeRegExp && typeof currentAttr !== "string") || (!!attributeRegExp && !attributeRegExp.test(currentAttr))) {
 									matchAttr = false;
 									break;
 								}
@@ -1076,8 +1081,8 @@ DOMAssistant.CSS = function () {
 		getStyle : function (cssRule) {
 			var val = "", f;
 			cssRule = cssRule.toLowerCase();
-			if (document.defaultView && document.defaultView.getComputedStyle) {
-				val = document.defaultView.getComputedStyle(this, "").getPropertyValue(cssRule);
+			if (window.getComputedStyle) {
+				val = document.defaultView.getComputedStyle(this, null).getPropertyValue(cssRule);
 			}
 			else if (this.currentStyle) {
 				if ("filters" in this && cssRule === "opacity") {
