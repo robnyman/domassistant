@@ -115,10 +115,10 @@ SugarTest()
       elm.setStyle({ 'text-decoration': 'underline', 'font-size': '14px' });
       this.assertEqual('14px', elm.getStyle('font-size'));
       this.assertEqual('underline', elm.getStyle('text-decoration'));
-      elm.setStyle({ 'float': 'right', 'border-top-width': '2px', 'opacity': 0.23 });
+      elm.setStyle({ 'float': 'right', 'border-top-width': '2px', 'opacity': 0.75 });
       this.assertEqual('2px', elm.getStyle('border-top-width'));
       this.assertEqual('right', elm.getStyle('float'));
-      this.assertEqual(0.23, elm.getStyle('opacity'));
+      this.assertEqual(0.75, elm.getStyle('opacity'));
       elm = $('span.klassM').first();
       this.assertEqual('block', elm.getStyle('display'));
       this.assertEqual('11px', elm.getStyle('font-size'));
@@ -126,8 +126,8 @@ SugarTest()
       this.assertEqual('dotted', elm.getStyle('border-left-style'));
       
       this.assertEqual(0, $$('foo').getStyle('opacity'), 'get opacity set via stylesheet');
-      $$('foo').setStyle({ opacity: 0.6 });
-      this.assertEqual(0.6, $$('foo').getStyle('opacity'), 'get opacity set via setStyle()');
+      $$('foo').setStyle({ opacity: 0.5 });
+      this.assertEqual(0.5, $$('foo').getStyle('opacity'), 'get opacity set via setStyle()');
 
       // Box dimensions - does not work correctly. A 'real' dimensions module is needed.
       /*
@@ -715,6 +715,8 @@ SugarTest()
         this.assertEnumEqual(["labelT2"], this.get("label[for=T2]"), "Select label by 'for' attribute");
         this.assertEnumEqual(["labelT2"], this.get("label[for='T2']"), "Select label by 'for' attribute with quotes");
 
+        this.assertEnumEqual(["dash1","dash2","dash3"], this.get("img[dashed-attribute]", $$("test_attr")), "Dashed attributes");
+
         // Dynamically created and manipulated form elements
         var testdyn = $$('testdata').create('form', { id:'testdyn' }, true);
         var selDyn = testdyn.create('select', { id:'selDyn' }, true);
@@ -1266,7 +1268,7 @@ SugarTest()
         	return this.id.length <= 6;
         }).addClass('awesome').each( function() {
         	this.setAttribute('foo', 'bar');
-        }).end().end().setStyle('opacity', 0.2);
+        }).end().end().setStyle('opacity', 0.25);
         this.assertHasClass($$('outer'), 'awesome');
         this.assertHasClass($$('inner'), 'awesome');
         this.assertNotHasClass($$('test_06_span_01'), 'awesome');
@@ -1275,7 +1277,7 @@ SugarTest()
         this.assertNullOrUndefined($$('test_06_span_01').getAttribute('foo'));
         var sugar = this;
         $('#test_06 span').each( function() {
-        	sugar.assertEqual(0.2, this.getStyle('opacity'));
+        	sugar.assertEqual(0.25, this.getStyle('opacity'));
         });
   	})
   .end()
@@ -1340,6 +1342,6 @@ SugarTest()
 	DOMAssistant.$$('testdata').remove();
   })
   .after( function() {
-  	  window.scrollTo(0,0);
+  	  //window.scrollTo(0,0);
   })
 .run();
