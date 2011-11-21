@@ -5,7 +5,7 @@ var DOMAssistant = function () {
 	},
 	w = window, _$ = w.$, _$$ = w.$$,
 	isIE = /*@cc_on!@*/false,
-	isIE5 = isIE && parseFloat(navigator.appVersion) < 6,
+	byTag = !!document.getElementsByTagName('*').length,
 	strictElmCreation = function() {
 		if (!isIE) return true;
 		try {
@@ -381,7 +381,7 @@ var DOMAssistant = function () {
 				return (el || this).tagName !== "!";
 			}
 			function getTags (tag, context) {
-				return isIE5? (tag === "*"? context.all : context.all.tags(tag)) : context.getElementsByTagName(tag);
+				return byTag? context.getElementsByTagName(tag) : (tag === "*"? context.all : context.all.tags(tag));
 			}
 			function getElementsByTagName (tag, parent) {
 				tag = tag || "*";
