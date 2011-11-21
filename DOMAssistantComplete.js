@@ -493,7 +493,7 @@ var DOMAssistant = function () {
 							var notTag = regex.tag.exec(pseudoValue);
 							var notClass = regex.classes.exec(pseudoValue);
 							var notAttr = regex.attribs.exec(pseudoValue);
-							var notRegExp = new RegExp(notAttr? attrToRegExp(notAttr[4], notAttr[2]) : "(^|\\s)" + (notTag? notTag[0] : notClass? notClass[1] : "") + "(\\s|$)", "i");
+							var notRegExp = new RegExp(notAttr? attrToRegExp(notAttr[4], notAttr[2]) || "" : "(^|\\s)" + (notTag? notTag[0] : notClass? notClass[1] : "") + "(\\s|$)", "i");
 							while ((notElm=previousMatch[idx++])) {
 								addElm = null;
 								if (notTag && !notRegExp.test(notElm.nodeName) || notClass && !notRegExp.test(notElm.className)) {

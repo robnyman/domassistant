@@ -6,6 +6,7 @@ Version 2.8.1:
 - [Fix] Special events handling in IE9
 - [Fix] Selecting dashed attributes does not work in IE
 - [Fix] Unable to select empty attributes in IE
+- [Fix] :not([attrib]) does not work in IE
 
 Version 2.8:
 =============
