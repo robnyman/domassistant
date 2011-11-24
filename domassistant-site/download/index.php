@@ -27,7 +27,7 @@
 					<div id="content-areas">
 						<div id="main-content-area">
 							<h1>Download DOMAssistant</h1>
-							<p>DOMAssistant consists of 6 individual modules, where only the core DOMAssistant module is required. Any other module can be used without any relational dependency to each other. All modules are available as separate downloads, in the <a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCompressed-2.8.js">DOMAssistantCompressed.js file</a> (for production) or in the <a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantComplete-2.8.js">DOMAssistantComplete.js file</a> (for learning and development).</p>
+							<p>DOMAssistant consists of 6 individual modules, where only the core DOMAssistant module is required. Any other module can be used without any relational dependency to each other. All modules are available as separate downloads, in the <a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCompressed-2.8.1.js">DOMAssistantCompressed.js file</a> (for production) or in the <a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantComplete-2.8.1.js">DOMAssistantComplete.js file</a> (for learning and development).</p>
 							<p>File download hosing is offered through Google Code, and all download links lead to respective download at that web site.</p>
 							
 							<h2>DOMAssistant through Subversion</h2>
@@ -38,25 +38,25 @@
 							<h3>All modules in one file</h3>	
 							<dl class="dl">
 								<dt>
-									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCompressed-2.8.js">DOMAssistant 2.8, compressed</a><br>
+									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCompressed-2.8.1.js">DOMAssistant 2.8.1, compressed</a><br>
 									(10kb <a href="http://en.wikipedia.org/wiki/Gzip" class="small">Gzipped</a>)
 								</dt>
 								<dd>Intended for production.</dd>
 
 								<dt>
-									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantComplete-2.8.js">DOMAssistant 2.8, complete</a><br>
+									<a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantComplete-2.8.1.js">DOMAssistant 2.8.1, complete</a><br>
 									(50kb)
 								</dt>
 								<dd>Intended for learning and development.</dd>
 							</dl>
 							<h3>Individual modules</h3>	
 							<ul>	
-								<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistant-2.8.js">DOMAssistant Core</a></li>
-								<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantAJAX-2.8.js">DOMAssistantAJAX</a></li>
-								<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantContent-2.8.js">DOMAssistantContent</a></li>
-								<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCSS-2.8.js">DOMAssistantCSS</a></li>
-								<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantEvents-2.8.js">DOMAssistantEvents</a></li>
-								<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantLoad-2.8.js">DOMAssistantLoad</a></li>
+								<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistant-2.8.1.js">DOMAssistant Core</a></li>
+								<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantAJAX-2.8.1.js">DOMAssistantAJAX</a></li>
+								<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantContent-2.8.1.js">DOMAssistantContent</a></li>
+								<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantCSS-2.8.1.js">DOMAssistantCSS</a></li>
+								<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantEvents-2.8.1.js">DOMAssistantEvents</a></li>
+								<li><a href="http://code.google.com/p/domassistant/downloads/detail?name=DOMAssistantLoad-2.8.1.js">DOMAssistantLoad</a></li>
 							</ul>
 						</div>
 					</div>
