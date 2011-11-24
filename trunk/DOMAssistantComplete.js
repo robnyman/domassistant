@@ -5,11 +5,11 @@ var DOMAssistant = function () {
 	},
 	w = window, _$ = w.$, _$$ = w.$$,
 	isIE = /*@cc_on!@*/false,
-	byTag = !!document.getElementsByTagName('*').length,
+	byTag = !!document.getElementsByTagName("*").length,
 	strictElmCreation = function() {
 		if (!isIE) return true;
 		try {
-			document.createElement('<img />');
+			document.createElement("<img />");
 			return false;
 		} catch (e) {
 			return true;
