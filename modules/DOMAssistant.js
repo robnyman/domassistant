@@ -1,4 +1,4 @@
-// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://domassistant.googlecode.com/, documentation: http://www.domassistant.com/documentation, version 2.8.1
+// Developed by Robert Nyman/DOMAssistant team, code/licensing: http://domassistant.googlecode.com/, documentation: http://www.domassistant.com/documentation, version 2.8.2
 var DOMAssistant = function () {
 	var HTMLArray = function () {
 		// Constructor
@@ -360,7 +360,7 @@ var DOMAssistant = function () {
 				return arr1;
 			}
 			function hasAttr (elm, attr) {
-				return elm.hasAttribute? elm.hasAttribute(attr) : (elm.attributes && elm.attributes[attr] && !/type/.test(attr))? !!elm.attributes[attr].specified : (elm.getAttribute(attr) !== null);
+				return elm.hasAttribute? elm.hasAttribute(attr) : (elm.attributes && elm.attributes[attr] && attr !== "type")? !!elm.attributes[attr].specified : (elm.getAttribute(attr) !== null);
 			}
 			function getAttr (elm, attr) {
 				var isSpecial = regex.special.test(attr);
