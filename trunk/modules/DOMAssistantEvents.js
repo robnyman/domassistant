@@ -5,7 +5,7 @@ DOMAssistant.Events = function () {
 		key = "_events",
 		w3cMode = !!document.addEventListener,
 		useCapture = { focus: true, blur: true },
-		translate = DOMAssistant.isIE? { focus: "activate", blur: "deactivate", mouseenter: "mouseover", mouseleave: "mouseout" } : { mouseenter: "mouseover", mouseleave: "mouseout" },
+		translate = DOMAssistant.isIE? { focus: "activate", blur: "deactivate" } : { mouseenter: "mouseover", mouseleave: "mouseout" },
 		regex = {
 			special: /^submit|reset|change|select$/i,
 			mouseenterleave: /^mouse(enter|leave)$/i,
@@ -14,10 +14,10 @@ DOMAssistant.Events = function () {
 		},
 		isBubble = function (e) {
 			// Test for event bubbling
-			e = 'on' + e;
-			var el = document.createElement('div');
-			el.setAttribute(e, '');
-			return (typeof el[e] === 'function');
+			e = "on" + e;
+			var el = document.createElement("div");
+			el.setAttribute(e, "");
+			return (typeof el[e] === "function");
 		},
 		special = function (e) {
 			return regex.special.test(e) && !isBubble(e);
@@ -106,11 +106,11 @@ DOMAssistant.Events = function () {
 		},
 
 		addEvent : function (evt, func, relay, proxy, selector) {
-			var existingEvent,
+			var data, existingEvent,
 				fevt = fix(evt),
 				uid = fevt + this.retrieve(),
 				onevt = "on" + fevt;
-			if (!(func.attachedElements && func.attachedElements[uid])) {
+			if (!(func.data && (data = func.data[fevt]) && data.attachedElements && data.attachedElements[uid])) {
 				var events = this.retrieve(key) || {};
 				if (!events[fevt]) {
 					events[fevt] = [];
@@ -125,12 +125,10 @@ DOMAssistant.Events = function () {
 				if (existingEvent) {
 					events[fevt].push(existingEvent);
 				}
-				if (fevt !== evt) { func.evt = evt; }
-				func.relay = relay;
-				func.proxy = proxy;
-				func.selector = selector;
-				func.attachedElements = func.attachedElements || {};
-				func.attachedElements[uid] = true;
+				data = { evt: evt, relay: relay, proxy: proxy, selector: selector, attachedElements: {} };
+				data.attachedElements[uid] = true;
+				func.data = func.data || {};
+				func.data[fevt] = data;
 				events[fevt].push(func);
 				this.store(key, events);
 			}
@@ -142,15 +140,15 @@ DOMAssistant.Events = function () {
 				type = fix(currentEvt.type),
 				targ = currentEvt.target,
 				relatedTarg = currentEvt.relatedTarget,
-				eventColl = this.retrieve(key)[type].slice(0), eventCollLength, eventReturn, oevt;
+				eventColl = this.retrieve(key)[type].slice(0), eventCollLength, eventReturn, data, oevt;
 			if ((eventCollLength = eventColl.length)) {
 				for (var i=0; i<eventCollLength; i++) {
 					if (typeof eventColl[i] === "function") {
-						if ((oevt = eventColl[i].evt) && oevt !== type) {
+						if (eventColl[i].data && (data = eventColl[i].data[type]) && (oevt = data.evt) && oevt !== type) {
 							currentEvt.type = oevt;
 							if (relatedTarg && regex.mouseenterleave.test(oevt)) {
-								if (eventColl[i].relay) {
-									var elms = eventColl[i].elms || (eventColl[i].elms = this.cssSelect(eventColl[i].selector));
+								if (data.relay) {
+									var elms = data.elms || (data.elms = eventColl[i].data[type].elms = this.cssSelect(data.selector));
 									if (elms.indexOf(targ) < 0 || !DOMAssistant.hasChild.call(relatedTarg, targ)) { continue; }
 								}
 								else if (this === relatedTarg || this.hasChild(relatedTarg)) { continue; }
@@ -181,17 +179,14 @@ DOMAssistant.Events = function () {
 				}
 			}
 			else if (events && events[evt]) {
-				var eventColl = events[evt];
+				var data, eventColl = events[evt];
 				for (var fn, i=eventColl.length; i--;) {
 					fn = func || eventColl[i];
-					if (eventColl[i] === fn && relay === fn.relay && proxy === fn.proxy) {
+					if (fn.data && fn.data[evt]) { data = fn.data[evt]; }
+					if (eventColl[i] === fn && (!data || relay === data.relay && proxy === data.proxy)) {
 						eventColl.splice(i, 1);
-						if (!!proxy && fn.selector) {
-							this.cssSelect(fn.selector).removeEvent(proxy);
-						}
-						if (fn.attachedElements) {
-							fn.attachedElements[uid] = null;
-						}
+						if (!!proxy && data.selector) { this.cssSelect(data.selector).removeEvent(proxy); }
+						if (data) { fn.data[evt] = null; }
 					}
 				}
 				if (!events[evt].length) {
