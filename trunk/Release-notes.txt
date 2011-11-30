@@ -1,6 +1,7 @@
 Version 2.8.2:
 =============
 - [Fix] Unable to assign the same event handler to 2 or more events on an element
+- [Fix] relayEvent broken for mouseenter and mouseleave
 
 Version 2.8.1:
 =============

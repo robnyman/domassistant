@@ -1234,7 +1234,7 @@ DOMAssistant.Events = function () {
 		key = "_events",
 		w3cMode = !!document.addEventListener,
 		useCapture = { focus: true, blur: true },
-		translate = DOMAssistant.isIE? { focus: "activate", blur: "deactivate" } : { mouseenter: "mouseover", mouseleave: "mouseout" },
+		translate = DOMAssistant.isIE? { focus: "activate", blur: "deactivate", mouseenter: "mouseover", mouseleave: "mouseout" } : { mouseenter: "mouseover", mouseleave: "mouseout" },
 		regex = {
 			special: /^submit|reset|change|select$/i,
 			mouseenterleave: /^mouse(enter|leave)$/i,
@@ -1378,7 +1378,7 @@ DOMAssistant.Events = function () {
 							if (relatedTarg && regex.mouseenterleave.test(oevt)) {
 								if (data.relay) {
 									var elms = data.elms || (data.elms = eventColl[i].data[type].elms = this.cssSelect(data.selector));
-									if (elms.indexOf(targ) < 0 || !DOMAssistant.hasChild.call(relatedTarg, targ)) { continue; }
+									if (elms.indexOf(targ) < 0 || DOMAssistant.hasChild.call(targ, relatedTarg)) { continue; }
 								}
 								else if (this === relatedTarg || this.hasChild(relatedTarg)) { continue; }
 							}
